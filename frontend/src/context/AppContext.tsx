@@ -72,6 +72,26 @@ interface AppContextType {
   setSelectedSlotId: (id: string | null) => void;
   selectedSlot: Slot | undefined;
 
+  // New Booking Prefill State
+  bookingPrefill: {
+    courtId?: string;
+    courtName?: string;
+    sport?: string;
+    date?: string;
+    startTime?: string;
+    endTime?: string;
+    totalPrice?: number;
+  } | null;
+  setBookingPrefill: (prefill: {
+    courtId?: string;
+    courtName?: string;
+    sport?: string;
+    date?: string;
+    startTime?: string;
+    endTime?: string;
+    totalPrice?: number;
+  } | null) => void;
+
   // Active Modals / Sheets
   activeModal:
     | null
@@ -269,6 +289,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>('BK10231');
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
+  const [bookingPrefill, setBookingPrefill] = useState<{
+    courtId?: string;
+    courtName?: string;
+    sport?: string;
+    date?: string;
+    startTime?: string;
+    endTime?: string;
+    totalPrice?: number;
+  } | null>(null);
   
   const [activeModal, setActiveModal] = useState<
     null | 'payment_options' | 'qr_payment' | 'record_cash' | 'slot_details' | 'block_slot' | 'new_booking' | 'payment_link' | 'logout_confirm'
@@ -1212,6 +1241,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         selectedSlotId,
         setSelectedSlotId,
         selectedSlot,
+        bookingPrefill,
+        setBookingPrefill,
         activeModal,
         setActiveModal,
         sendPaymentLink,

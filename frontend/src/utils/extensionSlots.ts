@@ -30,6 +30,38 @@ export function parseTimeToMinutes(tStr: string): number {
   return h * 60 + m;
 }
 
+export function parseBookingRangeToMinutes(timeSlotStr: string): { startMins: number; endMins: number } | null {
+  if (!timeSlotStr) return null;
+  const cleanStr = timeSlotStr.replace(/\(.*?\)/g, '').trim();
+  const parts = cleanStr.split(/[–\-]| to /i).map((p) => p.trim());
+  if (parts.length >= 2) {
+    const p0 = parts[0];
+    const p1 = parts[1];
+    const hasP0Period = /AM|PM/i.test(p0);
+    const p1IsPM = /PM/i.test(p1);
+
+    let startMins = parseTimeToMinutes(p0);
+    let endMins = parseTimeToMinutes(p1);
+
+    if (!hasP0Period && p1IsPM) {
+      const pmStartMins = startMins < 720 ? startMins + 720 : startMins;
+      if (pmStartMins < endMins) {
+        startMins = pmStartMins;
+      }
+    }
+
+    if (endMins <= startMins && (p1.toLowerCase().includes('am') || p1.includes('12') || endMins === 0)) {
+      endMins += 1440;
+    }
+
+    return { startMins, endMins };
+  } else if (parts.length === 1 && parts[0]) {
+    const startMins = parseTimeToMinutes(parts[0]);
+    return { startMins, endMins: startMins + 60 };
+  }
+  return null;
+}
+
 export function formatMinutesToTime(totalMins: number): string {
   const normalized = ((totalMins % 1440) + 1440) % 1440;
   const h24 = Math.floor(normalized / 60);

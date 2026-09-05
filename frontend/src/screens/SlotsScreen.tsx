@@ -28,7 +28,7 @@ import {
 import { haptics } from '../utils/haptics';
 import { SlotState, Court, Booking } from '../types';
 import { DateMonthPickerSheet } from '../components/DateMonthPickerSheet';
-import { getAvailableExtensionSlots, parseTimeToMinutes } from '../utils/extensionSlots';
+import { getAvailableExtensionSlots, parseTimeToMinutes, parseBookingRangeToMinutes } from '../utils/extensionSlots';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface MatrixCellData {
@@ -117,6 +117,7 @@ export const SlotsScreen: React.FC = () => {
     releaseExpiredSlot,
     confirmBookingPayment,
     sendPaymentLink,
+    setBookingPrefill,
   } = useApp();
 
   // Active approved courts
@@ -269,12 +270,18 @@ export const SlotsScreen: React.FC = () => {
         const isSlotAlreadyPassed = isPastDate || (isTodayDate && timeDef.hour24 < CURRENT_HOUR_BASELINE);
 
         // Check if matching active booking exists
+        const cellStart = timeDef.hour24 * 60;
+        const cellEnd = (timeDef.hour24 + 1) * 60;
+
         const matchedBooking = courtBookings.find((b) => {
+          const range = parseBookingRangeToMinutes(b.timeSlot || '');
+          if (range) {
+            return Math.max(range.startMins, cellStart) < Math.min(range.endMins, cellEnd);
+          }
           const slotStr = b.timeSlot || '';
           return (
             slotStr.includes(timeDef.time) ||
-            slotStr.includes(timeDef.start) ||
-            (slotStr.includes(timeDef.start.split(' ')[0]) && slotStr.includes(timeDef.start.split(' ')[1]))
+            slotStr.includes(timeDef.start)
           );
         });
 
@@ -303,20 +310,12 @@ export const SlotsScreen: React.FC = () => {
 
         // Check if maintenance block exists
         const matchedBlock = courtBlocks.find((s) => {
+          const range = parseBookingRangeToMinutes(s.timeFull || s.time || '');
+          if (range) {
+            return Math.max(range.startMins, cellStart) < Math.min(range.endMins, cellEnd);
+          }
           const blkTime = s.time || '';
-          if (blkTime.includes(timeDef.start) || blkTime.includes(timeDef.time) || blkTime.includes(timeDef.start.split(' ')[0])) {
-            return true;
-          }
-          const parts = blkTime.split(/[–\-]| to /i).map((p) => p.trim());
-          if (parts.length >= 2) {
-            const sMin = parseTimeToMinutes(parts[0]);
-            let eMin = parseTimeToMinutes(parts[1]);
-            if (eMin <= sMin && parts[1].includes('12')) eMin = 1440;
-            const cellStart = timeDef.hour24 * 60;
-            const cellEnd = (timeDef.hour24 + 1) * 60;
-            return Math.max(sMin, cellStart) < Math.min(eMin, cellEnd);
-          }
-          return false;
+          return blkTime.includes(timeDef.start) || blkTime.includes(timeDef.time);
         });
 
         if (matchedBlock) {
@@ -519,8 +518,24 @@ export const SlotsScreen: React.FC = () => {
     if (!rangeSelection) return;
     haptics.success();
     setSelectedSlotId(`slot-${rangeSelection.courtId}-${rangeSelection.startIndex}`);
+    setBookingPrefill({
+      courtId: rangeSelection.courtId,
+      courtName: rangeSelection.courtName,
+      sport: rangeSelection.sport,
+      date: currentDate,
+      startTime: rangeSelection.startTime,
+      endTime: rangeSelection.endTime,
+      totalPrice: rangeSelection.totalPrice,
+    });
+    setRangeSelection(null);
     setActiveModal('new_booking');
   };
+
+  // Clear any active range selection when bookings list updates or date changes
+  useEffect(() => {
+    setRangeSelection(null);
+    setSelectedSlotId(null);
+  }, [bookings.length, currentDate]);
 
   // -------------------------------------------------------------
   // INTERACTIVE CELL POPUP / MODAL
@@ -630,6 +645,13 @@ export const SlotsScreen: React.FC = () => {
                 return;
               }
               haptics.tap();
+              setBookingPrefill({
+                courtId: selectedCourt?.id,
+                courtName: selectedCourt?.name,
+                sport: selectedCourt?.sports[0],
+                date: currentDate,
+              });
+              setRangeSelection(null);
               setActiveModal('new_booking');
             }}
             disabled={isPastDate}

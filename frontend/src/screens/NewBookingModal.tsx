@@ -61,10 +61,31 @@ const MONTH_SHORT = [
 
 const DAYS_SHORT = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 
+// Helper to parse '28 Aug 2026' or '28 August 2026'
+const parseBookingDate = (dateStr: string) => {
+  const parts = dateStr.trim().split(' ');
+  if (parts.length >= 3) {
+    const day = parseInt(parts[0], 10);
+    const mStr = parts[1].toLowerCase().slice(0, 3);
+    const year = parseInt(parts[2], 10);
+    const mIdx = MONTH_SHORT.findIndex((m) => m.toLowerCase().slice(0, 3) === mStr);
+    if (!isNaN(day) && mIdx !== -1 && !isNaN(year)) {
+      return { day, month: mIdx, year };
+    }
+  }
+  return null;
+};
+
 export const NewBookingModal: React.FC = () => {
-  const { activeModal, setActiveModal, courts, createNewBooking, showToast } = useApp();
-
-
+  const {
+    activeModal,
+    setActiveModal,
+    courts,
+    createNewBooking,
+    showToast,
+    bookingPrefill,
+    setBookingPrefill,
+  } = useApp();
 
   // 1. Customer Details (Mobile First, then Customer Name)
   const [customerPhone, setCustomerPhone] = useState('');
@@ -112,9 +133,42 @@ export const NewBookingModal: React.FC = () => {
   const startTimeRef = useRef<HTMLDivElement>(null);
   const endTimeRef = useRef<HTMLDivElement>(null);
 
-  // 5. Payment on Confirmation
-  const [paymentOption, setPaymentOption] = useState<'full' | 'advance' | 'later'>('full');
-  const [paymentMethod, setPaymentMethod] = useState<'UPI' | 'Cash'>('UPI');
+  // Sync selected court, date, startTime, and endTime from slot selection when modal opens
+  useEffect(() => {
+    if (activeModal === 'new_booking' && bookingPrefill) {
+      if (bookingPrefill.courtId) {
+        setCourtId(bookingPrefill.courtId);
+        const targetCourt = approvedCourts.find((c) => c.id === bookingPrefill.courtId);
+        if (targetCourt) {
+          if (
+            bookingPrefill.sport &&
+            targetCourt.sports.some((s) => s.toLowerCase() === bookingPrefill.sport?.toLowerCase())
+          ) {
+            setSelectedSport(bookingPrefill.sport);
+          } else if (targetCourt.sports[0]) {
+            setSelectedSport(targetCourt.sports[0]);
+          }
+        }
+      }
+      if (bookingPrefill.date) {
+        const parsed = parseBookingDate(bookingPrefill.date);
+        if (parsed) {
+          setSelectedDay(parsed.day);
+          setSelectedMonth(parsed.month);
+          setSelectedYear(parsed.year);
+        }
+      }
+      if (bookingPrefill.startTime) {
+        setStartTime(bookingPrefill.startTime);
+      }
+      if (bookingPrefill.endTime) {
+        setEndTime(bookingPrefill.endTime);
+      }
+    }
+  }, [activeModal, bookingPrefill, approvedCourts]);
+
+  // 5. Payment on Confirmation (Only Full Paid or 50% Advance)
+  const [paymentOption, setPaymentOption] = useState<'full' | 'advance'>('full');
 
   const currentCourt =
     approvedCourts.find((c) => c.id === courtId) || approvedCourts[0] || courts[0];
@@ -231,7 +285,11 @@ export const NewBookingModal: React.FC = () => {
   const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
   const firstDayIndex = (new Date(selectedYear, selectedMonth, 1).getDay() + 6) % 7; // Monday = 0
 
-  if (activeModal !== 'new_booking') return null;
+  const handleCloseModal = () => {
+    haptics.tap();
+    setBookingPrefill(null);
+    setActiveModal(null);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -246,7 +304,8 @@ export const NewBookingModal: React.FC = () => {
 
     const court = approvedCourts.find((c) => c.id === courtId) || approvedCourts[0];
     const computedSlot = `${startTime} – ${endTime} (${durationHours} hr${durationHours !== 1 ? 's' : ''})`;
-    const paid = paymentOption === 'full' ? computedTotal : paymentOption === 'advance' ? computedAdvance : 0;
+    const paid = paymentOption === 'full' ? computedTotal : computedAdvance;
+    const balance = computedTotal - paid;
 
     haptics.success();
     createNewBooking({
@@ -259,15 +318,25 @@ export const NewBookingModal: React.FC = () => {
       date: bookingDate,
       totalAmount: computedTotal,
       paidAmount: paid,
-      paymentMethod: paymentOption === 'later' ? 'Cash' : paymentMethod,
+      balanceAmount: balance,
+      status: 'Confirmed',
+      paymentStatus: balance === 0 ? 'Paid' : 'Partially Paid',
+      paymentMethod: 'UPI',
       notes: `${selectedSport} booking for ${customerName} (${startTime} to ${endTime})`,
     });
+
+    setBookingPrefill(null);
+    setCustomerPhone('');
+    setCustomerName('');
+    setActiveModal(null);
   };
+
+  if (activeModal !== 'new_booking') return null;
 
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 bg-black/60 backdrop-blur-xs">
-        <div className="absolute inset-0" onClick={() => setActiveModal(null)} />
+        <div className="absolute inset-0" onClick={handleCloseModal} />
 
         <motion.div
           initial={{ opacity: 0, y: '100%' }}
@@ -283,10 +352,7 @@ export const NewBookingModal: React.FC = () => {
           <div className="flex items-center justify-between pb-3 border-b border-[#F1F0EC]">
             <h2 className="text-[17px] font-black text-[#171717]">New Booking</h2>
             <button
-              onClick={() => {
-                setActiveModal(null);
-                haptics.tap();
-              }}
+              onClick={handleCloseModal}
               className="w-8 h-8 rounded-full bg-[#F1F0EC] flex items-center justify-center text-[#777570] hover:text-[#171717] cursor-pointer"
             >
               <X className="w-4 h-4" />
@@ -672,7 +738,16 @@ export const NewBookingModal: React.FC = () => {
 
             {/* 4. Payment on Booking */}
             <div className="bg-[#FAF9F6] border border-[#E8E6E1] rounded-2xl p-3 space-y-2.5">
-              <div className="grid grid-cols-3 gap-2">
+              <div className="flex items-center justify-between pb-1 border-b border-[#F1F0EC]">
+                <span className="text-[11px] font-bold text-[#777570] uppercase tracking-wider">
+                  Payment Collection
+                </span>
+                <span className="text-[11.5px] font-black text-[#171717]">
+                  Total: ₹{computedTotal.toLocaleString('en-IN')}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
                   onClick={() => {
@@ -718,67 +793,7 @@ export const NewBookingModal: React.FC = () => {
                     Due ₹{computedTotal - computedAdvance}
                   </span>
                 </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    haptics.tap();
-                    setPaymentOption('later');
-                  }}
-                  className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
-                    paymentOption === 'later'
-                      ? 'bg-[#171717] text-white border-[#171717] shadow-xs'
-                      : 'bg-white border-[#E8E6E1] text-[#171717] hover:bg-[#F1F0EC]'
-                  }`}
-                >
-                  <span className="text-[10px] font-bold uppercase tracking-wider block opacity-80">
-                    Pay at Venue
-                  </span>
-                  <span className="text-[15px] font-black block mt-0.5">
-                    ₹0
-                  </span>
-                  <span className={`text-[9px] block mt-0.5 ${paymentOption === 'later' ? 'text-amber-300' : 'text-[#FF6B2C]'}`}>
-                    Due ₹{computedTotal}
-                  </span>
-                </button>
               </div>
-
-              {/* Payment Mode (UPI vs Cash) when collecting upfront */}
-              {paymentOption !== 'later' && (
-                <div className="pt-2 border-t border-[#F1F0EC] flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-[#777570]">Collected Via:</span>
-                  <div className="flex gap-1.5">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        haptics.tap();
-                        setPaymentMethod('UPI');
-                      }}
-                      className={`px-3 py-1 rounded-lg text-[11px] font-black transition-all cursor-pointer ${
-                        paymentMethod === 'UPI'
-                          ? 'bg-[#FF6B2C] text-white shadow-2xs'
-                          : 'bg-white border border-[#E8E6E1] text-[#777570]'
-                      }`}
-                    >
-                      UPI / QR
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        haptics.tap();
-                        setPaymentMethod('Cash');
-                      }}
-                      className={`px-3 py-1 rounded-lg text-[11px] font-black transition-all cursor-pointer ${
-                        paymentMethod === 'Cash'
-                          ? 'bg-[#2FA66A] text-white shadow-2xs'
-                          : 'bg-white border border-[#E8E6E1] text-[#777570]'
-                      }`}
-                    >
-                      Cash
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Submit Button */}
@@ -790,9 +805,7 @@ export const NewBookingModal: React.FC = () => {
               <span>
                 {paymentOption === 'full'
                   ? `Confirm & Collect ₹${computedTotal.toLocaleString('en-IN')}`
-                  : paymentOption === 'advance'
-                  ? `Confirm Booking (₹${computedAdvance.toLocaleString('en-IN')} Paid)`
-                  : `Confirm Booking (₹${computedTotal.toLocaleString('en-IN')} Due)`}
+                  : `Confirm Booking (₹${computedAdvance.toLocaleString('en-IN')} Paid)`}
               </span>
             </button>
           </form>
