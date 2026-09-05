@@ -1,0 +1,1290 @@
+import React, { createContext, useContext, useState, ReactNode } from 'react';
+import {
+  ScreenType,
+  BottomNavTab,
+  Booking,
+  Court,
+  Slot,
+  PaymentRecord,
+  SettlementRecord,
+  OperatingHourDay,
+  BookingSettingsConfig,
+  PaymentSettingsConfig,
+  SupportTicket,
+  ToastMessage,
+  AmenityItem,
+  CancellationPolicyConfig,
+  StaffMember,
+  NotificationPreferencesConfig,
+  NotificationItem,
+} from '../types';
+import {
+  initialBookings,
+  initialCourts,
+  initialSlots,
+  initialPaymentRecords,
+  initialSettlements,
+  initialOperatingHours,
+  initialBookingSettings,
+  initialPaymentSettings,
+  initialSupportTickets,
+  initialAmenities,
+  initialCancellationPolicy,
+  initialStaffMembers,
+  initialNotificationPreferences,
+  initialNotifications,
+} from '../data/mockData';
+import { calculateBookingFinancials } from '../utils/feeCalculator';
+
+interface AppContextType {
+  // Navigation
+  currentScreen: ScreenType;
+  setCurrentScreen: (screen: ScreenType) => void;
+  activeTab: BottomNavTab;
+  setActiveTab: (tab: BottomNavTab) => void;
+  navigateTo: (screen: ScreenType) => void;
+  goBack: () => void;
+  screenHistory: ScreenType[];
+
+  // Entities & State
+  bookings: Booking[];
+  courts: Court[];
+  slots: Slot[];
+  payments: PaymentRecord[];
+  settlements: SettlementRecord[];
+  operatingHours: OperatingHourDay[];
+  bookingSettings: BookingSettingsConfig;
+  paymentSettings: PaymentSettingsConfig;
+  supportTickets: SupportTicket[];
+  amenities: AmenityItem[];
+  cancellationPolicy: CancellationPolicyConfig;
+  staffMembers: StaffMember[];
+  notificationPreferences: NotificationPreferencesConfig;
+  notifications: NotificationItem[];
+  unreadNotifCount: number;
+
+  // Selection
+  selectedBookingId: string | null;
+  setSelectedBookingId: (id: string | null) => void;
+  selectedBooking: Booking | undefined;
+  
+  selectedSlotId: string | null;
+  setSelectedSlotId: (id: string | null) => void;
+  selectedSlot: Slot | undefined;
+
+  // Active Modals / Sheets
+  activeModal:
+    | null
+    | 'payment_options'
+    | 'qr_payment'
+    | 'record_cash'
+    | 'slot_details'
+    | 'block_slot'
+    | 'new_booking'
+    | 'payment_link'
+    | 'logout_confirm';
+  setActiveModal: (
+    modal:
+      | null
+      | 'payment_options'
+      | 'qr_payment'
+      | 'record_cash'
+      | 'slot_details'
+      | 'block_slot'
+      | 'new_booking'
+      | 'payment_link'
+      | 'logout_confirm'
+  ) => void;
+
+  // Actions
+  sendPaymentLink: (bookingId: string) => void;
+  recordCashPayment: (bookingId: string, amount: number) => void;
+  completeBookingPayment: (bookingId: string) => void;
+  markBookingCompleted: (bookingId: string) => void;
+  checkInBooking: (bookingId: string) => void;
+  checkOutBooking: (bookingId: string) => void;
+  extendBookingSlot: (
+    bookingId: string,
+    additionalMinutes: number,
+    additionalFee: number,
+    newTimeSlot: string
+  ) => void;
+  confirmBookingPayment: (
+    bookingId: string,
+    paymentMethod?: 'Online' | 'UPI' | 'Cash' | 'Card',
+    paymentType?: 'full' | 'advance'
+  ) => void;
+  relockAndResendLink: (bookingId: string, extensionMinutes?: number) => void;
+  releaseExpiredSlot: (bookingId: string) => void;
+  requestInstantSettlement: (amount?: number) => void;
+  cancelBookingWithRefund: (bookingId: string, reason: string) => void;
+  blockSlotAction: (
+    courtId: string,
+    courtName: string,
+    time: string,
+    reason: string,
+    type: 'maintenance' | 'coaching' | 'tournament' | 'private' | 'owner_block',
+    notes?: string,
+    date?: string
+  ) => void;
+  unblockSlotAction: (slotId: string) => void;
+  addNewCourt: (newCourt: Partial<Court>) => void;
+  updateCourt: (courtId: string, updatedData: Partial<Court>) => void;
+  addNewBooking: (newBooking: Partial<Booking>) => void;
+  createNewBooking: (newBooking: Partial<Booking>) => void;
+  createSupportTicket: (ticket: Omit<SupportTicket, 'id' | 'status' | 'date'>) => void;
+  addSupportTicket: (ticket: Omit<SupportTicket, 'id' | 'status' | 'date'>) => void;
+  updateBookingSettings: (settings: Partial<BookingSettingsConfig>) => void;
+  updatePaymentSettings: (settings: Partial<PaymentSettingsConfig>) => void;
+  toggleOperatingDay: (dayName: string) => void;
+  updateOperatingDayHours: (dayName: string, openTime: string, closeTime: string) => void;
+  updateOperatingHours: (hours: OperatingHourDay[]) => void;
+
+  // Amenity Actions
+  toggleAmenity: (id: string) => void;
+  addAmenity: (item: Omit<AmenityItem, 'id'>) => void;
+
+  // Cancellation Actions
+  updateCancellationPolicy: (policy: Partial<CancellationPolicyConfig>) => void;
+
+  // Staff Actions
+  addStaffMember: (member: Omit<StaffMember, 'id'>) => void;
+  updateStaffMember: (id: string, updatedData: Partial<StaffMember>) => void;
+  toggleStaffStatus: (id: string) => void;
+  updateStaffPermissions: (id: string, permKey: keyof StaffMember['permissions']) => void;
+
+  // Notification actions
+  updateNotificationPreferences: (prefs: Partial<NotificationPreferencesConfig>) => void;
+  markNotificationAsRead: (id: string) => void;
+  markAllNotificationsAsRead: () => void;
+  deleteNotification: (id: string) => void;
+
+  // Notification / Toast
+  toasts: ToastMessage[];
+  showToast: (title: string, description?: string, type?: 'success' | 'warning' | 'info' | 'error') => void;
+  dismissToast: (id: string) => void;
+
+  // Frame layout switch
+  isPhoneFrame: boolean;
+  setIsPhoneFrame: (val: boolean | ((prev: boolean) => boolean)) => void;
+  isDesktop: boolean;
+  isSidebarCollapsed: boolean;
+  setIsSidebarCollapsed: (val: boolean | ((prev: boolean) => boolean)) => void;
+  toggleSidebar: () => void;
+
+  // Auth / Venue setup simulation
+  ownerName: string;
+  venueName: string;
+  venueAddress: string;
+  venueCity: string;
+  ownerPhone: string;
+  ownerEmail: string;
+  ownerPan: string;
+  venuePincode: string;
+  venueEstablished: string;
+  venueDescription: string;
+  venuePhotos: { id: string; url: string; label: string }[];
+  addVenuePhoto: (photo: { url: string; label: string }) => void;
+  removeVenuePhoto: (id: string) => void;
+  setVenuePhotos: React.Dispatch<React.SetStateAction<{ id: string; url: string; label: string }[]>>;
+  setVenueDetails: (details: {
+    name?: string;
+    address?: string;
+    city?: string;
+    phone?: string;
+    venueName?: string;
+    venueAddress?: string;
+    venueCity?: string;
+    ownerPhone?: string;
+    ownerName?: string;
+    ownerEmail?: string;
+    ownerPan?: string;
+    venuePincode?: string;
+    venueEstablished?: string;
+    venueDescription?: string;
+  }) => void;
+}
+
+const AppContext = createContext<AppContextType | undefined>(undefined);
+
+export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [currentScreen, setCurrentScreen] = useState<ScreenType>('splash');
+  const [activeTab, setActiveTab] = useState<BottomNavTab>('home');
+  const [screenHistory, setScreenHistory] = useState<ScreenType[]>(['splash']);
+  const [isDesktop, setIsDesktop] = useState<boolean>(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
+
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed((prev) => !prev);
+  };
+
+  React.useEffect(() => {
+    const checkIsDesktop = () => {
+      const desktop = window.innerWidth >= 768;
+      setIsDesktop(desktop);
+      // On desktop, immediately skip splash screen and show login
+      if (desktop) {
+        setCurrentScreen((prev) => (prev === 'splash' ? 'login' : prev));
+      }
+    };
+    checkIsDesktop();
+    window.addEventListener('resize', checkIsDesktop);
+    return () => window.removeEventListener('resize', checkIsDesktop);
+  }, []);
+
+  const [bookings, setBookings] = useState<Booking[]>(initialBookings);
+
+  // Synchronize initial bookings to ensure Expired bookings are loaded into active state
+  React.useEffect(() => {
+    setBookings((prev) => {
+      const hasExpired = prev.some((b) => b.status === 'Expired');
+      if (!hasExpired) {
+        const existingMap = new Map(prev.map((b) => [b.id, b]));
+        initialBookings.forEach((ib) => {
+          if (!existingMap.has(ib.id) || ib.status === 'Expired') {
+            existingMap.set(ib.id, ib);
+          }
+        });
+        return Array.from(existingMap.values());
+      }
+      return prev;
+    });
+  }, []);
+
+  const [courts, setCourts] = useState<Court[]>(initialCourts);
+  const [slots, setSlots] = useState<Slot[]>(initialSlots);
+  const [payments, setPayments] = useState<PaymentRecord[]>(initialPaymentRecords);
+  const [settlements, setSettlements] = useState<SettlementRecord[]>(initialSettlements);
+  const [operatingHours, setOperatingHours] = useState<OperatingHourDay[]>(initialOperatingHours);
+  const [bookingSettings, setBookingSettings] = useState<BookingSettingsConfig>(initialBookingSettings);
+  const [paymentSettings, setPaymentSettings] = useState<PaymentSettingsConfig>(initialPaymentSettings);
+  const [supportTickets, setSupportTickets] = useState<SupportTicket[]>(initialSupportTickets);
+  const [amenities, setAmenities] = useState<AmenityItem[]>(initialAmenities);
+  const [cancellationPolicy, setCancellationPolicy] = useState<CancellationPolicyConfig>(initialCancellationPolicy);
+  const [staffMembers, setStaffMembers] = useState<StaffMember[]>(initialStaffMembers);
+  const [notificationPreferences, setNotificationPreferences] = useState<NotificationPreferencesConfig>(initialNotificationPreferences);
+  const [notifications, setNotifications] = useState<NotificationItem[]>(initialNotifications);
+
+  const unreadNotifCount = notifications.filter((n) => !n.read).length;
+
+  const [selectedBookingId, setSelectedBookingId] = useState<string | null>('BK10231');
+  const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
+  
+  const [activeModal, setActiveModal] = useState<
+    null | 'payment_options' | 'qr_payment' | 'record_cash' | 'slot_details' | 'block_slot' | 'new_booking' | 'payment_link' | 'logout_confirm'
+  >(null);
+
+  const [toasts, setToasts] = useState<ToastMessage[]>([]);
+  const [isPhoneFrame, setIsPhoneFrame] = useState<boolean>(true);
+
+  // Venue Info
+  const [venueName, setVenueName] = useState<string>('TurfTown Arena');
+  const [venueAddress, setVenueAddress] = useState<string>('Plot 42, Sector 5, Outer Ring Road, HSR Layout');
+  const [venueCity, setVenueCity] = useState<string>('Koramangala, Bengaluru');
+  const [ownerPhone, setOwnerPhone] = useState<string>('+91 98765 43210');
+  const [ownerName, setOwnerName] = useState<string>('Dhanush Kumar');
+  const [ownerEmail, setOwnerEmail] = useState<string>('owner@turftown.app');
+  const [ownerPan, setOwnerPan] = useState<string>('ABCDE1234F');
+  const [venuePincode, setVenuePincode] = useState<string>('560102');
+  const [venueEstablished, setVenueEstablished] = useState<string>('2023');
+  const [venueDescription, setVenueDescription] = useState<string>(
+    'Premier FIFA-grade synthetic turf and BWF-standard badminton courts with locker rooms, LED floodlights, and player lounge.'
+  );
+
+  const [venuePhotos, setVenuePhotos] = useState<{ id: string; url: string; label: string }[]>([
+    {
+      id: 'p1',
+      url: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=600&q=80',
+      label: 'Main Pitch 1 (Floodlit)',
+    },
+    {
+      id: 'p2',
+      url: 'https://images.unsplash.com/photo-1529900240051-06c3960f15d8?auto=format&fit=crop&w=600&q=80',
+      label: 'Covered AstroTurf 2',
+    },
+    {
+      id: 'p3',
+      url: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=600&q=80',
+      label: 'Badminton Court 1',
+    },
+    {
+      id: 'p4',
+      url: 'https://images.unsplash.com/photo-1554068865-24cecd4e34b8?auto=format&fit=crop&w=600&q=80',
+      label: 'Pickleball Arena',
+    },
+    {
+      id: 'p5',
+      url: 'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?auto=format&fit=crop&w=600&q=80',
+      label: 'Changing Rooms & Lockers',
+    },
+    {
+      id: 'p6',
+      url: 'https://images.unsplash.com/photo-1519766304817-4f37bda74a29?auto=format&fit=crop&w=600&q=80',
+      label: 'Arena Entrance & Parking',
+    },
+  ]);
+
+  const addVenuePhoto = (photo: { url: string; label: string }) => {
+    if (venuePhotos.length >= 8) {
+      showToast('Maximum Reached', 'You can upload up to 8 photos maximum.', 'info');
+      return;
+    }
+    const newId = `p${Date.now()}`;
+    setVenuePhotos((prev) => [...prev, { id: newId, url: photo.url, label: photo.label }]);
+    showToast('Photo Added', `${photo.label} added to venue gallery.`, 'success');
+  };
+
+  const removeVenuePhoto = (id: string) => {
+    if (venuePhotos.length <= 4) {
+      showToast('Minimum Required', 'Minimum 4 photos required for active verification.', 'warning');
+      return;
+    }
+    setVenuePhotos((prev) => prev.filter((p) => p.id !== id));
+    showToast('Photo Removed', 'Photo removed from gallery.', 'info');
+  };
+
+  const selectedBooking = bookings.find((b) => b.id === selectedBookingId);
+  const selectedSlot = slots.find((s) => s.id === selectedSlotId);
+
+  const showToast = (
+    title: string,
+    description?: string,
+    type: 'success' | 'warning' | 'info' | 'error' = 'success'
+  ) => {
+    const id = 'toast-' + Math.random().toString(36).substring(2, 9);
+    setToasts((prev) => [...prev, { id, title, description, type }]);
+    setTimeout(() => {
+      dismissToast(id);
+    }, 4000);
+  };
+
+  const dismissToast = (id: string) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  };
+
+  const navigateTo = (screen: ScreenType) => {
+    setScreenHistory((prev) => [...prev, screen]);
+    setCurrentScreen(screen);
+
+    // Map screen to bottom navigation tab if applicable
+    if (screen === 'home') setActiveTab('home');
+    else if (screen === 'bookings' || screen === 'booking_details') setActiveTab('bookings');
+    else if (screen === 'slots') setActiveTab('slots');
+    else if (screen === 'payments') setActiveTab('payments');
+    else if (
+      screen === 'settings' ||
+      screen === 'venue_profile' ||
+      screen === 'courts' ||
+      screen === 'operating_hours' ||
+      screen === 'booking_settings' ||
+      screen === 'payment_settings' ||
+      screen === 'amenities' ||
+      screen === 'cancellation_settings' ||
+      screen === 'staff_management' ||
+      screen === 'notification_settings' ||
+      screen === 'help_support' ||
+      screen === 'support_form'
+    ) {
+      setActiveTab('settings');
+    }
+  };
+
+  const goBack = () => {
+    if (screenHistory.length > 1) {
+      const newHistory = [...screenHistory];
+      newHistory.pop();
+      const prevScreen = newHistory[newHistory.length - 1];
+      setScreenHistory(newHistory);
+      setCurrentScreen(prevScreen);
+
+      if (prevScreen === 'home') setActiveTab('home');
+      else if (prevScreen === 'bookings') setActiveTab('bookings');
+      else if (prevScreen === 'slots') setActiveTab('slots');
+      else if (prevScreen === 'payments') setActiveTab('payments');
+      else if (prevScreen === 'settings') setActiveTab('settings');
+    } else {
+      navigateTo('home');
+    }
+  };
+
+  const sendPaymentLink = (bookingId: string) => {
+    const booking = bookings.find((b) => b.id === bookingId);
+    if (!booking) return;
+
+    setSelectedBookingId(bookingId);
+    setActiveModal('payment_link');
+
+    showToast(
+      'Payment Link Sent',
+      `Payment link for ₹${booking.balanceAmount.toLocaleString('en-IN')} sent to ${booking.customerName} (${booking.customerPhone}) via SMS & WhatsApp. Slot is locked for 15 mins.`,
+      'success'
+    );
+  };
+
+  const recordCashPayment = (bookingId: string, amount: number) => {
+    const fin = calculateBookingFinancials(amount);
+
+    setBookings((prev) =>
+      prev.map((b) => {
+        if (b.id === bookingId) {
+          const isSettled = amount >= (b.balanceAmount || b.totalAmount) || b.balanceAmount <= amount;
+          const newPaid = isSettled ? b.totalAmount : Math.min(b.totalAmount, b.paidAmount + amount);
+          const newBalance = Math.max(0, b.totalAmount - newPaid);
+          return {
+            ...b,
+            paidAmount: newPaid,
+            balanceAmount: newBalance,
+            status: b.status === 'Ongoing' ? 'Ongoing' : (newBalance === 0 ? 'Confirmed' : 'Partially Paid'),
+            paymentStatus: newBalance === 0 ? 'Paid' : 'Partially Paid',
+            paymentMethod: 'Cash',
+            notes: `Paid in Cash · ₹${fin.totalConvenienceWithGst} platform fee (5% + 18% GST) to be deducted on next settlement`,
+          };
+        }
+        return b;
+      })
+    );
+
+    setSlots((prev) =>
+      prev.map((s) => {
+        if (s.bookingId === bookingId) {
+          return { ...s, paidAmount: s.price };
+        }
+        return s;
+      })
+    );
+
+    const booking = bookings.find((b) => b.id === bookingId);
+    if (booking) {
+      const newPaymentRecord: PaymentRecord = {
+        id: `PAY-${Math.floor(1000 + Math.random() * 9000)}`,
+        bookingId: booking.id,
+        customerName: booking.customerName,
+        customerPhone: booking.customerPhone,
+        courtName: booking.courtName,
+        timeSlot: booking.timeSlot,
+        date: booking.date,
+        totalAmount: booking.totalAmount,
+        paidAmount: amount,
+        balance: Math.max(0, booking.balanceAmount - amount),
+        status: booking.balanceAmount - amount <= 0 ? 'Paid' : 'Partial',
+        method: 'Cash',
+        timestamp: 'Just now',
+      };
+      setPayments((prev) => [newPaymentRecord, ...prev]);
+    }
+
+    showToast(
+      'Cash Payment Logged',
+      `₹${amount.toLocaleString('en-IN')} received in cash. Note: ₹${fin.totalConvenienceWithGst} convenience fee (5% + 18% GST) will be deducted from your next bank payout.`,
+      'success'
+    );
+    setActiveModal(null);
+  };
+
+  const completeBookingPayment = (bookingId: string) => {
+    const booking = bookings.find((b) => b.id === bookingId);
+    if (!booking) return;
+
+    const remaining = booking.balanceAmount;
+    setBookings((prev) =>
+      prev.map((b) => {
+        if (b.id === bookingId) {
+          return {
+            ...b,
+            paidAmount: b.totalAmount,
+            balanceAmount: 0,
+            status: b.status === 'Ongoing' ? 'Ongoing' : 'Confirmed',
+            paymentStatus: 'Paid',
+            paymentMethod: 'Online',
+          };
+        }
+        return b;
+      })
+    );
+
+    setSlots((prev) =>
+      prev.map((s) => (s.bookingId === bookingId ? { ...s, state: 'booked', paidAmount: s.price } : s))
+    );
+
+    const newPaymentRecord: PaymentRecord = {
+      id: `PAY-${Math.floor(1000 + Math.random() * 9000)}`,
+      bookingId: booking.id,
+      customerName: booking.customerName,
+      customerPhone: booking.customerPhone,
+      courtName: booking.courtName,
+      timeSlot: booking.timeSlot,
+      date: booking.date,
+      totalAmount: booking.totalAmount,
+      paidAmount: remaining,
+      balance: 0,
+      status: 'Paid',
+      method: 'Online (Razorpay)',
+      timestamp: 'Just now',
+    };
+    setPayments((prev) => [newPaymentRecord, ...prev]);
+
+    showToast('Payment Successful', `₹${remaining.toLocaleString('en-IN')} received online for ${booking.customerName}.`, 'success');
+  };
+
+  const markBookingCompleted = (bookingId: string) => {
+    setBookings((prev) =>
+      prev.map((b) => (b.id === bookingId ? { ...b, status: 'Completed' } : b))
+    );
+    showToast('Booking Completed', `Booking ${bookingId} has been successfully completed and archived.`, 'success');
+  };
+
+  const checkInBooking = (bookingId: string) => {
+    const booking = bookings.find((b) => b.id === bookingId);
+    if (!booking) return;
+
+    setBookings((prev) =>
+      prev.map((b) => (b.id === bookingId ? { ...b, status: 'Ongoing' } : b))
+    );
+    setSlots((prev) =>
+      prev.map((s) => (s.bookingId === bookingId ? { ...s, state: 'ongoing' } : s))
+    );
+    showToast(
+      'Player Checked In',
+      `${booking.customerName} checked in on ${booking.courtName}. Match is now ONGOING. Check-Out is now enabled.`,
+      'success'
+    );
+  };
+
+  const checkOutBooking = (bookingId: string) => {
+    const booking = bookings.find((b) => b.id === bookingId);
+    if (!booking) return;
+
+    if (booking.balanceAmount > 0) {
+      showToast(
+        'Outstanding Balance Due',
+        `Collect balance of ₹${booking.balanceAmount.toLocaleString('en-IN')} before completing check-out.`,
+        'warning'
+      );
+      setSelectedBookingId(bookingId);
+      setActiveModal('payment_options');
+      return;
+    }
+
+    setBookings((prev) =>
+      prev.map((b) => (b.id === bookingId ? { ...b, status: 'Completed' } : b))
+    );
+    setSlots((prev) =>
+      prev.filter((s) => s.bookingId !== bookingId)
+    );
+    showToast(
+      'Session Checked Out',
+      `Match for ${booking.customerName} completed & court slot closed.`,
+      'success'
+    );
+  };
+
+  const extendBookingSlot = (
+    bookingId: string,
+    additionalMinutes: number,
+    additionalFee: number,
+    newTimeSlot: string
+  ) => {
+    const booking = bookings.find((b) => b.id === bookingId);
+    if (!booking) return;
+
+    setBookings((prev) =>
+      prev.map((b) => {
+        if (b.id === bookingId) {
+          const newTotal = b.totalAmount + additionalFee;
+          const newBalance = b.balanceAmount + additionalFee;
+          return {
+            ...b,
+            timeSlot: newTimeSlot,
+            totalAmount: newTotal,
+            balanceAmount: newBalance,
+            paymentStatus: newBalance === 0 ? 'Paid' : 'Partially Paid',
+          };
+        }
+        return b;
+      })
+    );
+
+    setSlots((prev) =>
+      prev.map((s) =>
+        s.bookingId === bookingId
+          ? { ...s, timeFull: newTimeSlot, price: s.price + additionalFee }
+          : s
+      )
+    );
+
+    showToast(
+      'Slot Extended Successfully',
+      `Extended by ${additionalMinutes} mins (+₹${additionalFee.toLocaleString('en-IN')}). New slot: ${newTimeSlot}. Added to pending balance.`,
+      'success'
+    );
+  };
+
+  const confirmBookingPayment = (
+    bookingId: string,
+    paymentMethod: 'Online' | 'UPI' | 'Cash' | 'Card' = 'Online',
+    paymentType: 'full' | 'advance' = 'full'
+  ) => {
+    const booking = bookings.find((b) => b.id === bookingId);
+    if (!booking) return;
+
+    const total = booking.totalAmount;
+    const isAdvance = paymentType === 'advance';
+    const paid = isAdvance ? Math.round(total * 0.5) : total;
+    const balance = Math.max(0, total - paid);
+
+    setBookings((prev) =>
+      prev.map((b) =>
+        b.id === bookingId
+          ? {
+              ...b,
+              status: 'Confirmed',
+              paymentStatus: balance === 0 ? 'Paid' : 'Partially Paid',
+              paidAmount: paid,
+              balanceAmount: balance,
+              paymentMethod,
+              holdExpiresInMinutes: 0,
+              notes: isAdvance
+                ? `Customer paid ₹${paid} Advance via online payment link · ₹${balance} due at venue`
+                : `Customer paid Full ₹${paid} via online payment link`,
+            }
+          : b
+      )
+    );
+
+    setSlots((prev) =>
+      prev.map((s) => (s.bookingId === bookingId ? { ...s, state: 'booked', paidAmount: paid } : s))
+    );
+
+    const newPaymentRecord: PaymentRecord = {
+      id: `PAY-${Math.floor(1000 + Math.random() * 9000)}`,
+      bookingId: booking.id,
+      customerName: booking.customerName,
+      customerPhone: booking.customerPhone,
+      courtName: booking.courtName,
+      timeSlot: booking.timeSlot,
+      date: booking.date,
+      totalAmount: total,
+      paidAmount: paid,
+      balance,
+      status: balance === 0 ? 'Paid' : 'Partial',
+      method: paymentMethod === 'Cash' ? 'Cash' : 'Online (Razorpay)',
+      timestamp: 'Just now',
+    };
+    setPayments((prev) => [newPaymentRecord, ...prev]);
+
+    showToast(
+      'Booking Confirmed!',
+      isAdvance
+        ? `₹${paid.toLocaleString('en-IN')} (50% Advance) received from ${booking.customerName}. Booking Confirmed! ₹${balance.toLocaleString('en-IN')} due at venue.`
+        : `Full ₹${paid.toLocaleString('en-IN')} received from ${booking.customerName}. Booking Confirmed! Ready for player check-in.`,
+      'success'
+    );
+  };
+
+  const relockAndResendLink = (bookingId: string, holdMinutes: number = 15) => {
+    const booking = bookings.find((b) => b.id === bookingId);
+    if (!booking) return;
+
+    setBookings((prev) =>
+      prev.map((b) =>
+        b.id === bookingId
+          ? {
+              ...b,
+              status: 'Payment Pending',
+              holdExpiresInMinutes: holdMinutes,
+              notes: `Slot re-locked with ${holdMinutes}m fresh payment link`,
+            }
+          : b
+      )
+    );
+
+    setSlots((prev) =>
+      prev.map((s) =>
+        s.bookingId === bookingId
+          ? {
+              ...s,
+              state: 'locked',
+              countdown: `${holdMinutes}:00`,
+            }
+          : s
+      )
+    );
+
+    setSelectedBookingId(bookingId);
+    setActiveModal('payment_link');
+
+    showToast(
+      'Slot Re-locked & Link Active',
+      `Hold renewed for ${holdMinutes} mins. Fresh valid payment link generated for ${booking.customerName}.`,
+      'success'
+    );
+  };
+
+  const releaseExpiredSlot = (bookingId: string) => {
+    const booking = bookings.find((b) => b.id === bookingId);
+    if (!booking) return;
+
+    setBookings((prev) =>
+      prev.map((b) =>
+        b.id === bookingId
+          ? {
+              ...b,
+              status: 'Cancelled',
+            }
+          : b
+      )
+    );
+
+    showToast(
+      'Expired Slot Released',
+      `Slot for ${booking.courtName} (${booking.timeSlot}) is now available for new bookings.`,
+      'info'
+    );
+  };
+
+  const cancelBookingWithRefund = (bookingId: string, reason: string) => {
+    const booking = bookings.find((b) => b.id === bookingId);
+    if (!booking) return;
+
+    // Find the court to get cancellation policy
+    const court = courts.find((c) => c.id === booking.courtId);
+    const refundPct = court?.refundPercentage ?? 100;
+    const refundAmount = Math.round((booking.paidAmount * refundPct) / 100);
+    const isEligible = refundAmount > 0;
+    const cancelledAt = '28 Aug 2026, ' + new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+
+    // 1. Update booking status
+    setBookings((prev) =>
+      prev.map((b) =>
+        b.id === bookingId
+          ? {
+              ...b,
+              status: 'Cancelled' as const,
+              cancellationReason: reason,
+              cancelledAt,
+              refundAmount,
+              refundStatus: isEligible ? ('Processed' as const) : ('Not Eligible' as const),
+            }
+          : b
+      )
+    );
+
+    // 2. If a refund is due, add a refund entry to the settlement audit
+    if (isEligible) {
+      const refundSettlement: SettlementRecord = {
+        id: `REF-${Date.now()}`,
+        utrNumber: `RFND${Math.floor(100000000000 + Math.random() * 900000000000)}`,
+        settledAmount: -refundAmount,
+        grossAmount: -refundAmount,
+        feeDeductions: 0,
+        date: '28 Aug 2026',
+        time: 'Just now',
+        bankName: 'Customer Source Account',
+        accountMasked: 'Razorpay Auto-Refund',
+        status: 'Refunded',
+        period: 'Customer Cancellation Refund',
+        payoutMode: 'Refund Debit',
+        type: 'refund_debit',
+        refundNote: `Refund for #${bookingId} – ${booking.customerName}. Reason: ${reason || 'Customer cancelled'}`,
+        bookingId,
+      };
+      setSettlements((prev) => [refundSettlement, ...prev]);
+
+      // 3. Push notification
+      const newNotif: NotificationItem = {
+        id: `notif-${Date.now()}`,
+        title: 'Booking Cancelled · Refund Processed',
+        message: `${booking.customerName} cancelled #${bookingId} (${booking.timeSlot}, ${booking.date}). ₹${refundAmount.toLocaleString('en-IN')} refund issued to customer source.`,
+        time: 'Just now',
+        category: 'payment',
+        read: false,
+        amount: refundAmount,
+        bookingId,
+      };
+      setNotifications((prev) => [newNotif, ...prev]);
+
+      showToast(
+        'Booking Cancelled & Refund Issued',
+        `₹${refundAmount.toLocaleString('en-IN')} refunded to ${booking.customerName}. Reason: "${reason || 'Customer cancelled'}".`,
+        'success'
+      );
+    } else {
+      // No refund (no advance was paid or outside policy)
+      const newNotif: NotificationItem = {
+        id: `notif-${Date.now()}`,
+        title: 'Booking Cancelled',
+        message: `${booking.customerName} cancelled #${bookingId} (${booking.timeSlot}, ${booking.date}). No refund applicable – no advance paid.`,
+        time: 'Just now',
+        category: 'booking',
+        read: false,
+        bookingId,
+      };
+      setNotifications((prev) => [newNotif, ...prev]);
+
+      showToast(
+        'Booking Cancelled',
+        `${booking.customerName}'s booking cancelled. Reason: "${reason || 'Customer cancelled'}". No refund applicable.`,
+        'info'
+      );
+    }
+  };
+
+  const requestInstantSettlement = (amount: number = 12800) => {
+    const newSettlement: SettlementRecord = {
+      id: `SET-${Date.now()}`,
+      utrNumber: `IMPS${Math.floor(100000000000 + Math.random() * 900000000000)}`,
+      settledAmount: amount,
+      grossAmount: amount,
+      feeDeductions: 0,
+      date: '28 Aug 2026',
+      time: 'Just now',
+      bankName: paymentSettings.bankName,
+      accountMasked: paymentSettings.accountNumberMasked,
+      status: 'Settled',
+      period: 'Instant On-Demand Payout',
+      payoutMode: 'Instant IMPS',
+    };
+
+    setSettlements((prev) => [newSettlement, ...prev]);
+
+    // Also add to notifications
+    const newNotif: NotificationItem = {
+      id: `notif-${Date.now()}`,
+      title: 'Instant Settlement Processed',
+      message: `₹${amount.toLocaleString('en-IN')} successfully settled to ${paymentSettings.bankName} (${paymentSettings.accountNumberMasked}).`,
+      time: 'Just now',
+      category: 'payment',
+      read: false,
+      amount,
+    };
+    setNotifications((prev) => [newNotif, ...prev]);
+
+    showToast(
+      'Settlement Initiated',
+      `₹${amount.toLocaleString('en-IN')} settled to ${paymentSettings.bankName} ${paymentSettings.accountNumberMasked} via Instant IMPS.`,
+      'success'
+    );
+  };
+
+  const blockSlotAction = (
+    courtId: string,
+    courtName: string,
+    time: string,
+    reason: string,
+    type: 'maintenance' | 'coaching' | 'tournament' | 'private' | 'owner_block',
+    notes?: string,
+    date?: string
+  ) => {
+    const stateMap: Record<string, Slot['state']> = {
+      maintenance: 'maintenance',
+      coaching: 'coaching',
+      tournament: 'tournament',
+      private: 'booked',
+      owner_block: 'maintenance',
+    };
+
+    const newSlot: Slot = {
+      id: `slot-custom-${Date.now()}`,
+      courtId,
+      courtName,
+      sport: 'Football',
+      time,
+      timeFull: `${time} Slot`,
+      date: date || '28 Aug 2026',
+      state: stateMap[type] || 'maintenance',
+      reason,
+      price: 1000,
+      notes: notes || `Blocked for ${type}`,
+    };
+
+    setSlots((prev) => [newSlot, ...prev.filter((s) => !(s.courtId === courtId && s.time === time && (!date || s.date === date)))]);
+    showToast('Slot Blocked', `${courtName} blocked for ${reason}.`, 'success');
+    setActiveModal(null);
+  };
+
+  const unblockSlotAction = (slotId: string) => {
+    setSlots((prev) =>
+      prev.map((s) =>
+        s.id === slotId
+          ? {
+              ...s,
+              state: 'available',
+              customerName: undefined,
+              customerPhone: undefined,
+              reason: undefined,
+              bookingId: undefined,
+              notes: undefined,
+            }
+          : s
+      )
+    );
+    showToast('Slot Unblocked', 'The slot is now open and available for bookings.', 'info');
+    setActiveModal(null);
+  };
+
+  const addNewCourt = (newCourt: Partial<Court>) => {
+    const court: Court = {
+      id: `court-${Date.now()}`,
+      name: newCourt.name || 'New Turf',
+      displayName: newCourt.displayName || undefined,
+      samePhysicalSports: newCourt.samePhysicalSports ?? false,
+      sports: newCourt.sports && newCourt.sports.length > 0 ? newCourt.sports : ['Football'],
+      pricePerHour: newCourt.pricePerHour || 1000,
+      minBookingDuration: newCourt.minBookingDuration,
+      peakHoursStart: newCourt.peakHoursStart,
+      peakHoursEnd: newCourt.peakHoursEnd,
+      peakDays: newCourt.peakDays,
+      peakHoursPrice: newCourt.peakHoursPrice,
+      weekendPrice: newCourt.weekendPrice,
+      status: 'Pending Approval',
+      statusDetails: 'Submitted just now · Under fast review',
+      operatingHours: newCourt.operatingHours || '06:00 AM – 11:00 PM',
+      type: newCourt.type || 'Outdoor',
+      cancellationWindowHours: newCourt.cancellationWindowHours ?? 12,
+      refundPercentage: newCourt.refundPercentage ?? 100,
+      cancellationPolicyLabel: newCourt.cancellationPolicyLabel,
+    };
+    setCourts((prev) => [...prev, court]);
+    showToast('Court Added', `${court.name} created and submitted for verification.`, 'success');
+  };
+
+  const updateCourt = (courtId: string, updatedData: Partial<Court>) => {
+    setCourts((prev) =>
+      prev.map((c) => (c.id === courtId ? { ...c, ...updatedData } : c))
+    );
+    showToast('Court Updated', 'Court details and pricing rules have been updated.', 'success');
+  };
+
+  const addNewBooking = (newBooking: Partial<Booking>) => {
+    const total = newBooking.totalAmount || 1200;
+    const paid = newBooking.paidAmount !== undefined ? newBooking.paidAmount : total;
+    const balance = Math.max(0, total - paid);
+    const bookingId = `BK${Math.floor(10240 + Math.random() * 100)}`;
+    const isFullyPaid = balance === 0;
+
+    const booking: Booking = {
+      id: bookingId,
+      customerName: newBooking.customerName || 'Customer',
+      customerPhone: newBooking.customerPhone || '+91 98765 00000',
+      courtId: newBooking.courtId || 'court-1',
+      courtName: newBooking.courtName || 'Turf 1',
+      sport: (newBooking.sport as any) || 'Football',
+      date: newBooking.date || '28 Aug 2026',
+      timeSlot: newBooking.timeSlot || '8:00–9:00 PM',
+      totalAmount: total,
+      paidAmount: paid,
+      balanceAmount: balance,
+      status: isFullyPaid ? 'Confirmed' : paid > 0 ? 'Partially Paid' : 'Payment Pending',
+      paymentStatus: isFullyPaid ? 'Paid' : paid > 0 ? 'Partially Paid' : 'Pending',
+      paymentMethod: newBooking.paymentMethod || (isFullyPaid ? 'Online' : 'Cash'),
+      createdAt: 'Just now',
+      notes: newBooking.notes || `Booking created · ₹${paid} paid, ₹${balance} due`,
+      holdExpiresInMinutes: isFullyPaid ? 0 : 30,
+      reservationType: 'direct_booking',
+    };
+
+    setBookings((prev) => [booking, ...prev]);
+
+    // Update slot on matrix
+    setSlots((prev) => [
+      {
+        id: `slot-new-${Date.now()}`,
+        courtId: booking.courtId,
+        courtName: booking.courtName,
+        sport: booking.sport,
+        time: booking.timeSlot.split('–')[0].trim(),
+        timeFull: booking.timeSlot,
+        state: isFullyPaid ? 'booked' : paid > 0 ? 'booked' : 'locked',
+        bookingId: booking.id,
+        customerName: booking.customerName,
+        customerPhone: booking.customerPhone,
+        price: booking.totalAmount,
+        paidAmount: booking.paidAmount,
+      },
+      ...prev,
+    ]);
+
+    if (paid > 0) {
+      const newPaymentRecord: PaymentRecord = {
+        id: `PAY-${Math.floor(1000 + Math.random() * 9000)}`,
+        bookingId: booking.id,
+        customerName: booking.customerName,
+        customerPhone: booking.customerPhone,
+        courtName: booking.courtName,
+        timeSlot: booking.timeSlot,
+        date: booking.date,
+        totalAmount: booking.totalAmount,
+        paidAmount: paid,
+        balance: balance,
+        status: isFullyPaid ? 'Paid' : 'Partial',
+        method: booking.paymentMethod || 'Online',
+        timestamp: 'Just now',
+      };
+      setPayments((prev) => [newPaymentRecord, ...prev]);
+    }
+
+    setActiveModal(null);
+    showToast(
+      'Booking Confirmed',
+      `Booking #${booking.id} created for ${booking.customerName} (₹${paid} paid, ₹${balance} due).`,
+      'success'
+    );
+  };
+
+  const createSupportTicket = (ticket: Omit<SupportTicket, 'id' | 'status' | 'date'>) => {
+    const newTicket: SupportTicket = {
+      ...ticket,
+      id: `SUP${Math.floor(10235 + Math.random() * 50)}`,
+      status: 'Open',
+      date: '28 Aug 2026',
+    };
+    setSupportTickets((prev) => [newTicket, ...prev]);
+    showToast('Support Ticket Created', `Ticket #${newTicket.id} submitted. Our venue manager team will reply shortly.`, 'success');
+    navigateTo('help_support');
+  };
+
+  const updateBookingSettings = (settings: Partial<BookingSettingsConfig>) => {
+    setBookingSettings((prev) => ({ ...prev, ...settings }));
+    showToast('Settings Saved', 'Booking policies updated successfully.', 'success');
+  };
+
+  const updatePaymentSettings = (settings: Partial<PaymentSettingsConfig>) => {
+    setPaymentSettings((prev) => ({ ...prev, ...settings }));
+    showToast('Settings Saved', 'Payment preferences updated.', 'success');
+  };
+
+  const toggleOperatingDay = (dayName: string) => {
+    setOperatingHours((prev) =>
+      prev.map((d) => (d.day === dayName ? { ...d, isOpen: !d.isOpen } : d))
+    );
+  };
+
+  const updateOperatingDayHours = (dayName: string, openTime: string, closeTime: string) => {
+    setOperatingHours((prev) =>
+      prev.map((d) => (d.day === dayName ? { ...d, openTime, closeTime } : d))
+    );
+  };
+
+  const toggleAmenity = (id: string) => {
+    setAmenities((prev) =>
+      prev.map((a) => (a.id === id ? { ...a, enabled: !a.enabled } : a))
+    );
+  };
+
+  const addAmenity = (item: Omit<AmenityItem, 'id'>) => {
+    const newAmenity: AmenityItem = {
+      ...item,
+      id: `am-${Date.now()}`,
+    };
+    setAmenities((prev) => [...prev, newAmenity]);
+    showToast('Amenity Added', `${newAmenity.name} added to venue profile.`, 'success');
+  };
+
+  const updateCancellationPolicy = (policy: Partial<CancellationPolicyConfig>) => {
+    setCancellationPolicy((prev) => ({ ...prev, ...policy }));
+    showToast('Policy Saved', 'Cancellation and refund rules updated.', 'success');
+  };
+
+  const addStaffMember = (member: Omit<StaffMember, 'id'>) => {
+    const newStaff: StaffMember = {
+      ...member,
+      id: `st-${Date.now()}`,
+    };
+    setStaffMembers((prev) => [...prev, newStaff]);
+    showToast('Staff Added', `${newStaff.name} added as ${newStaff.role}.`, 'success');
+  };
+
+  const updateStaffMember = (id: string, updatedData: Partial<StaffMember>) => {
+    setStaffMembers((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, ...updatedData } : s))
+    );
+    showToast('Staff Updated', 'Staff role & details updated successfully.', 'success');
+  };
+
+  const toggleStaffStatus = (id: string) => {
+    setStaffMembers((prev) =>
+      prev.map((s) => {
+        if (s.id === id) {
+          const nextStatus = s.status === 'Active' ? 'Inactive' : 'Active';
+          return { ...s, status: nextStatus };
+        }
+        return s;
+      })
+    );
+  };
+
+  const updateStaffPermissions = (id: string, permKey: keyof StaffMember['permissions']) => {
+    setStaffMembers((prev) =>
+      prev.map((s) =>
+        s.id === id
+          ? {
+              ...s,
+              permissions: {
+                ...s.permissions,
+                [permKey]: !s.permissions[permKey],
+              },
+            }
+          : s
+      )
+    );
+  };
+
+  const updateNotificationPreferences = (prefs: Partial<NotificationPreferencesConfig>) => {
+    setNotificationPreferences((prev) => ({ ...prev, ...prefs }));
+    showToast('Alerts Updated', 'Notification preferences saved.', 'success');
+  };
+
+  const markNotificationAsRead = (id: string) => {
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+    );
+  };
+
+  const markAllNotificationsAsRead = () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    showToast('All Caught Up', 'Marked all notifications as read.', 'info');
+  };
+
+  const deleteNotification = (id: string) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
+  };
+
+  const updateOperatingHours = (hours: OperatingHourDay[]) => {
+    setOperatingHours(hours);
+  };
+
+  const setVenueDetails = (details: {
+    name?: string;
+    address?: string;
+    city?: string;
+    phone?: string;
+    venueName?: string;
+    venueAddress?: string;
+    venueCity?: string;
+    ownerPhone?: string;
+    ownerName?: string;
+    ownerEmail?: string;
+    ownerPan?: string;
+    venuePincode?: string;
+    venueEstablished?: string;
+    venueDescription?: string;
+  }) => {
+    if (details.name || details.venueName) setVenueName(details.venueName || details.name || '');
+    if (details.address || details.venueAddress) setVenueAddress(details.venueAddress || details.address || '');
+    if (details.city || details.venueCity) setVenueCity(details.venueCity || details.city || '');
+    if (details.phone || details.ownerPhone) setOwnerPhone(details.ownerPhone || details.phone || '');
+    if (details.ownerName) setOwnerName(details.ownerName);
+    if (details.ownerEmail) setOwnerEmail(details.ownerEmail);
+    if (details.ownerPan) setOwnerPan(details.ownerPan);
+    if (details.venuePincode) setVenuePincode(details.venuePincode);
+    if (details.venueEstablished) setVenueEstablished(details.venueEstablished);
+    if (details.venueDescription) setVenueDescription(details.venueDescription);
+  };
+
+  return (
+    <AppContext.Provider
+      value={{
+        currentScreen,
+        setCurrentScreen,
+        activeTab,
+        setActiveTab,
+        navigateTo,
+        goBack,
+        screenHistory,
+        bookings,
+        courts,
+        slots,
+        payments,
+        settlements,
+        operatingHours,
+        bookingSettings,
+        paymentSettings,
+        supportTickets,
+        amenities,
+        cancellationPolicy,
+        staffMembers,
+        notificationPreferences,
+        notifications,
+        unreadNotifCount,
+        selectedBookingId,
+        setSelectedBookingId,
+        selectedBooking,
+        selectedSlotId,
+        setSelectedSlotId,
+        selectedSlot,
+        activeModal,
+        setActiveModal,
+        sendPaymentLink,
+        recordCashPayment,
+        completeBookingPayment,
+        markBookingCompleted,
+        checkInBooking,
+        checkOutBooking,
+        extendBookingSlot,
+        relockAndResendLink,
+        confirmBookingPayment,
+        releaseExpiredSlot,
+        requestInstantSettlement,
+        cancelBookingWithRefund,
+        blockSlotAction,
+        unblockSlotAction,
+        addNewCourt,
+        updateCourt,
+        addNewBooking,
+        createNewBooking: addNewBooking,
+        createSupportTicket,
+        addSupportTicket: createSupportTicket,
+        updateBookingSettings,
+        updatePaymentSettings,
+        toggleOperatingDay,
+        updateOperatingDayHours,
+        updateOperatingHours,
+        toggleAmenity,
+        addAmenity,
+        updateCancellationPolicy,
+        addStaffMember,
+        updateStaffMember,
+        toggleStaffStatus,
+        updateStaffPermissions,
+        updateNotificationPreferences,
+        markNotificationAsRead,
+        markAllNotificationsAsRead,
+        deleteNotification,
+        toasts,
+        showToast,
+        dismissToast,
+        isPhoneFrame,
+        setIsPhoneFrame,
+        isDesktop,
+        isSidebarCollapsed,
+        setIsSidebarCollapsed,
+        toggleSidebar,
+        ownerName,
+        venueName,
+        venueAddress,
+        venueCity,
+        ownerPhone,
+        ownerEmail,
+        ownerPan,
+        venuePincode,
+        venueEstablished,
+        venueDescription,
+        venuePhotos,
+        addVenuePhoto,
+        removeVenuePhoto,
+        setVenuePhotos,
+        setVenueDetails,
+      }}
+    >
+      {children}
+    </AppContext.Provider>
+  );
+};
+
+export const useApp = () => {
+  const context = useContext(AppContext);
+  if (!context) {
+    throw new Error('useApp must be used within an AppProvider');
+  }
+  return context;
+};

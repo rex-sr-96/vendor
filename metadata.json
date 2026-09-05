@@ -1,0 +1,8 @@
+{
+  "name": "Remix TurfTown Owner",
+  "description": "A premium mobile control center for venue owners to manage bookings, court availability, and revenue with professional-grade design.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

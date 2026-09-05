@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-turf-orange: #FF6B2C;
+    --color-pitch-black: #171717;
+    --color-warm-mist: #F6F5F2;
+    --color-surface-white: #FFFFFF;
+    --color-secondary-surface: #F1F0EC;
+    --color-input-bg: #F7F7F5;
+    --color-secondary-text: #777570;
+    --color-border: #E8E6E1;
+    --color-success: #2FA66A;
+    --color-warning: #E7A72F;
+    --color-error: #D94B4B;
+    --color-info: #4D83C4;
+  }
+
+  html, body {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--color-warm-mist);
+    color: var(--color-pitch-black);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Prevent iOS Safari auto-zoom on input focus */
+  input, textarea, select {
+    font-size: 16px;
+  }
+
+  /* Remove 300ms tap delay and optimize touch actions */
+  button, a, input, select, textarea, [role="button"] {
+    touch-action: manipulation;
+  }
+}
+
+/* Custom scrollbar hiding for horizontal tabs/carousels */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Smooth active press feedback */
+.active-press {
+  transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.12s ease;
+}
+.active-press:active {
+  transform: scale(0.965);
+}
+
+/* Native momentum scrolling for mobile containers */
+.touch-scroll {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+}
+
+#mobile-scroll-canvas {
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Safe area padding utilities */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 24px);
+}
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 16px);
+}
