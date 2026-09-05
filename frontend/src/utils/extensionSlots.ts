@@ -68,7 +68,8 @@ export function formatMinutesToTime(totalMins: number): string {
   const m = normalized % 60;
   const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
   const ampm = h24 >= 12 ? 'PM' : 'AM';
-  return `${h12}:${m < 10 ? '0' + m : m} ${ampm}`;
+  const padH = h12 < 10 ? '0' + h12 : String(h12);
+  return `${padH}:${m < 10 ? '0' + m : m} ${ampm}`;
 }
 
 export function getAvailableExtensionSlots(

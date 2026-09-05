@@ -5,6 +5,8 @@ import {
   Calendar as CalendarIcon,
   Clock,
   CheckCircle2,
+  Check,
+  Ban,
   Lock,
   ChevronDown,
   ChevronLeft,
@@ -13,6 +15,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { haptics } from '../utils/haptics';
+import { parseTimeToMinutes, parseBookingRangeToMinutes, formatMinutesToTime } from '../utils/extensionSlots';
 
 // Standard 30-min & 1-hour operating time slots
 const ALL_TIME_SLOTS = [
@@ -85,7 +88,15 @@ export const NewBookingModal: React.FC = () => {
     showToast,
     bookingPrefill,
     setBookingPrefill,
+    bookings,
+    slots,
   } = useApp();
+
+  // Facility baseline: 28 Aug 2026, 5:00 PM (17:00)
+  const TODAY_YEAR = 2026;
+  const TODAY_MONTH = 7; // August (0-indexed)
+  const TODAY_DAY = 28;
+  const CURRENT_HOUR_BASELINE = 17; // 5:00 PM
 
   // 1. Customer Details (Mobile First, then Customer Name)
   const [customerPhone, setCustomerPhone] = useState('');
@@ -120,6 +131,15 @@ export const NewBookingModal: React.FC = () => {
   const [selectedDay, setSelectedDay] = useState(28); // 28 August 2026 (Today)
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const datePickerRef = useRef<HTMLDivElement>(null);
+
+  const isSelectedDateToday =
+    selectedYear === TODAY_YEAR &&
+    selectedMonth === TODAY_MONTH &&
+    selectedDay === TODAY_DAY;
+
+  const isCurrentMonthOrPast =
+    selectedYear < TODAY_YEAR ||
+    (selectedYear === TODAY_YEAR && selectedMonth <= TODAY_MONTH);
 
   const bookingDate = useMemo(() => {
     return `${selectedDay} ${MONTH_SHORT[selectedMonth]} ${selectedYear}`;
@@ -279,6 +299,155 @@ export const NewBookingModal: React.FC = () => {
     haptics.tap();
     setEndTime(val);
     setIsEndTimeOpen(false);
+  };
+
+  // Active bookings on this court and date
+  const courtBookingsOnDate = useMemo(() => {
+    return bookings.filter(
+      (b) =>
+        b.courtId === courtId &&
+        b.date === bookingDate &&
+        b.status !== 'Cancelled' &&
+        b.status !== 'Expired'
+    );
+  }, [bookings, courtId, bookingDate]);
+
+  // Active maintenance blocks on this court and date
+  const courtBlocksOnDate = useMemo(() => {
+    return slots.filter(
+      (s) =>
+        s.courtId === courtId &&
+        s.state === 'maintenance' &&
+        (s.date === bookingDate || !s.date)
+    );
+  }, [slots, courtId, bookingDate]);
+
+  // Comprehensive Timeline Slots for the chosen court & date
+  const timelineSlots = useMemo(() => {
+    const step = isCourt30Min ? 30 : 60;
+    const startMin = 360; // 6:00 AM
+    const endMin = 1380; // 11:00 PM
+    const list = [];
+
+    const selStart = parseTimeToMinutes(startTime);
+    const selEnd = parseTimeToMinutes(endTime);
+
+    for (let m = startMin; m < endMin; m += step) {
+      const nextM = m + step;
+      const startStr = formatMinutesToTime(m);
+      const endStr = formatMinutesToTime(nextM);
+
+      const h24 = Math.floor(m / 60);
+      const mins = m % 60;
+      const ampm = h24 >= 12 ? 'PM' : 'AM';
+      const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
+      const label = mins === 0 ? `${h12} ${ampm}` : `${h12}:${mins < 10 ? '0' + mins : mins}`;
+
+      // Passed check: if selected date is today, hours before baseline 17:00 (5 PM) are passed
+      const isPassed = isSelectedDateToday && m < CURRENT_HOUR_BASELINE * 60;
+
+      const matchedBooking = courtBookingsOnDate.find((b) => {
+        const range = parseBookingRangeToMinutes(b.timeSlot || '');
+        if (range) {
+          return Math.max(range.startMins, m) < Math.min(range.endMins, nextM);
+        }
+        return false;
+      });
+
+      const matchedBlock = courtBlocksOnDate.find((blk) => {
+        const range = parseBookingRangeToMinutes(blk.timeFull || blk.time || '');
+        if (range) {
+          return Math.max(range.startMins, m) < Math.min(range.endMins, nextM);
+        }
+        return false;
+      });
+
+      const isSelected = m >= selStart && nextM <= selEnd;
+      const isSelectionStart = m === selStart;
+      const isSelectionEnd = nextM === selEnd;
+
+      list.push({
+        label,
+        start: startStr,
+        end: endStr,
+        startMins: m,
+        endMins: nextM,
+        isPassed,
+        isBooked: !!matchedBooking,
+        bookingCustomer: matchedBooking?.customerName?.split(' ')[0] || '',
+        isBlocked: !!matchedBlock,
+        isSelected,
+        isSelectionStart,
+        isSelectionEnd,
+      });
+    }
+
+    return list;
+  }, [
+    isCourt30Min,
+    isSelectedDateToday,
+    courtBookingsOnDate,
+    courtBlocksOnDate,
+    startTime,
+    endTime,
+  ]);
+
+  // Auto-align start time if currently passed on today
+  useEffect(() => {
+    if (isSelectedDateToday) {
+      const sMins = parseTimeToMinutes(startTime);
+      if (sMins < CURRENT_HOUR_BASELINE * 60) {
+        const firstAvailable = timelineSlots.find(
+          (ts) => !ts.isPassed && !ts.isBooked && !ts.isBlocked
+        );
+        if (firstAvailable) {
+          setStartTime(firstAvailable.start);
+          setEndTime(firstAvailable.end);
+        } else {
+          setStartTime('06:00 PM');
+          setEndTime('07:00 PM');
+        }
+      }
+    }
+  }, [isSelectedDateToday, selectedDay, selectedMonth, selectedYear]);
+
+  const handleTimelineSlotClick = (slot: (typeof timelineSlots)[0]) => {
+    if (slot.isPassed) {
+      showToast('Slot Passed', `${slot.label} has already passed today.`, 'warning');
+      return;
+    }
+    if (slot.isBooked) {
+      showToast('Slot Booked', `${slot.label} is already booked by ${slot.bookingCustomer || 'another customer'}.`, 'warning');
+      return;
+    }
+    if (slot.isBlocked) {
+      showToast('Slot Blocked', `${slot.label} is currently blocked for maintenance.`, 'warning');
+      return;
+    }
+
+    haptics.tap();
+    const currentStart = parseTimeToMinutes(startTime);
+    const currentEnd = parseTimeToMinutes(endTime);
+    const minStep = isCourt30Min ? 30 : 60;
+    const isSingleSlotActive = currentEnd - currentStart <= minStep;
+
+    if (isSingleSlotActive && slot.startMins > currentStart) {
+      const hasBlockedOrBooked = timelineSlots.some(
+        (ts) =>
+          ts.startMins >= currentStart &&
+          ts.endMins <= slot.endMins &&
+          (ts.isBooked || ts.isBlocked || ts.isPassed)
+      );
+      if (hasBlockedOrBooked) {
+        setStartTime(slot.start);
+        setEndTime(slot.end);
+      } else {
+        setEndTime(slot.end);
+      }
+    } else {
+      setStartTime(slot.start);
+      setEndTime(slot.end);
+    }
   };
 
   // Calendar calculations
@@ -452,287 +621,389 @@ export const NewBookingModal: React.FC = () => {
               </div>
             </div>
 
-            {/* 3. App-Themed Date & Time Row */}
-            <div className="grid grid-cols-3 gap-2">
-              {/* App-Themed Date Picker Trigger & Popover */}
-              <div className="relative" ref={datePickerRef}>
-                <label className="block text-[11px] font-bold text-[#777570] mb-1">Date</label>
-                <button
-                  type="button"
-                  onClick={() => {
-                    haptics.tap();
-                    setIsDatePickerOpen(!isDatePickerOpen);
-                    setIsStartTimeOpen(false);
-                    setIsEndTimeOpen(false);
-                  }}
-                  className="w-full bg-[#F7F7F5] border border-[#E8E6E1] hover:border-[#FF6B2C] rounded-xl px-2 py-2 text-left flex items-center justify-between cursor-pointer transition-all"
-                >
-                  <div className="flex items-center gap-1.5 min-w-0">
-                    <CalendarIcon className="w-3.5 h-3.5 text-[#FF6B2C] shrink-0" />
-                    <span className="text-[11.5px] font-black text-[#171717] truncate">
-                      {bookingDate}
-                    </span>
-                  </div>
-                  <ChevronDown className="w-3 h-3 text-[#777570] shrink-0" />
-                </button>
-
-                {/* App-Themed Calendar Popover */}
-                <AnimatePresence>
-                  {isDatePickerOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 6, scale: 0.98 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 4, scale: 0.98 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute left-0 top-full mt-1.5 w-68 bg-white rounded-2xl border border-[#E8E6E1] shadow-2xl p-3 z-50"
-                    >
-                      {/* Month Navigation */}
-                      <div className="flex items-center justify-between pb-2 border-b border-[#F1F0EC] mb-2">
-                        <span className="text-[12px] font-black text-[#171717]">
-                          {MONTH_NAMES[selectedMonth]} {selectedYear}
+            {/* 3. Date Selection & Interactive Timeline Slot Selection */}
+            <div className="space-y-2.5 pt-0.5">
+              {/* Row A: Date Picker Trigger */}
+              <div className="flex items-center justify-between gap-2">
+                <div className="relative flex-1" ref={datePickerRef}>
+                  <label className="block text-[11px] font-bold text-[#777570] mb-1">
+                    Booking Date <span className="text-[#FF6B2C]">*</span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      haptics.tap();
+                      setIsDatePickerOpen(!isDatePickerOpen);
+                      setIsStartTimeOpen(false);
+                      setIsEndTimeOpen(false);
+                    }}
+                    className="w-full bg-[#F7F7F5] border border-[#E8E6E1] hover:border-[#FF6B2C] rounded-xl px-2.5 py-2 text-left flex items-center justify-between cursor-pointer transition-all"
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      <CalendarIcon className="w-3.5 h-3.5 text-[#FF6B2C] shrink-0" />
+                      <span className="text-[12px] font-black text-[#171717] truncate">
+                        {bookingDate}
+                      </span>
+                      {isSelectedDateToday && (
+                        <span className="text-[9px] font-black bg-[#FF6B2C]/15 text-[#FF6B2C] px-1.5 py-0.2 rounded">
+                          Today
                         </span>
-                        <div className="flex items-center gap-1">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              haptics.tap();
-                              setSelectedMonth((prev) => (prev === 0 ? 11 : prev - 1));
-                            }}
-                            className="w-6 h-6 rounded-lg bg-[#FAF9F6] flex items-center justify-center text-[#777570] hover:text-[#171717]"
-                          >
-                            <ChevronLeft className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              haptics.tap();
-                              setSelectedMonth((prev) => (prev === 11 ? 0 : prev + 1));
-                            }}
-                            className="w-6 h-6 rounded-lg bg-[#FAF9F6] flex items-center justify-center text-[#777570] hover:text-[#171717]"
-                          >
-                            <ChevronRight className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </div>
+                      )}
+                    </div>
+                    <ChevronDown className="w-3.5 h-3.5 text-[#777570] shrink-0" />
+                  </button>
 
-                      {/* Weekday Header */}
-                      <div className="grid grid-cols-7 gap-1 text-center mb-1">
-                        {DAYS_SHORT.map((d) => (
-                          <span key={d} className="text-[9.5px] font-bold text-[#A3A099]">
-                            {d}
+                  {/* Calendar Popover */}
+                  <AnimatePresence>
+                    {isDatePickerOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 6, scale: 0.98 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 4, scale: 0.98 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute left-0 top-full mt-1.5 w-72 bg-white rounded-2xl border border-[#E8E6E1] shadow-2xl p-3 z-50"
+                      >
+                        {/* Month Navigation */}
+                        <div className="flex items-center justify-between pb-2 border-b border-[#F1F0EC] mb-2">
+                          <span className="text-[12px] font-black text-[#171717]">
+                            {MONTH_NAMES[selectedMonth]} {selectedYear}
                           </span>
-                        ))}
-                      </div>
-
-                      {/* Day Grid */}
-                      <div className="grid grid-cols-7 gap-1 text-center">
-                        {Array.from({ length: firstDayIndex }).map((_, i) => (
-                          <div key={`empty-${i}`} className="w-7 h-7" />
-                        ))}
-                        {Array.from({ length: daysInMonth }).map((_, i) => {
-                          const dNum = i + 1;
-                          const isSelected = dNum === selectedDay;
-                          const isToday = dNum === 28 && selectedMonth === 7;
-
-                          return (
+                          <div className="flex items-center gap-1">
                             <button
-                              key={dNum}
+                              type="button"
+                              disabled={isCurrentMonthOrPast}
+                              onClick={() => {
+                                if (isCurrentMonthOrPast) return;
+                                haptics.tap();
+                                setSelectedMonth((prev) => {
+                                  if (prev === 0) {
+                                    setSelectedYear((y) => y - 1);
+                                    return 11;
+                                  }
+                                  return prev - 1;
+                                });
+                              }}
+                              className={`w-6 h-6 rounded-lg bg-[#FAF9F6] flex items-center justify-center transition-all ${
+                                isCurrentMonthOrPast
+                                  ? 'opacity-25 cursor-not-allowed text-[#A3A099]'
+                                  : 'text-[#777570] hover:text-[#171717] cursor-pointer'
+                              }`}
+                            >
+                              <ChevronLeft className="w-3.5 h-3.5" />
+                            </button>
+                            <button
                               type="button"
                               onClick={() => {
                                 haptics.tap();
-                                setSelectedDay(dNum);
-                                setIsDatePickerOpen(false);
+                                setSelectedMonth((prev) => {
+                                  if (prev === 11) {
+                                    setSelectedYear((y) => y + 1);
+                                    return 0;
+                                  }
+                                  return prev + 1;
+                                });
                               }}
-                              className={`w-7 h-7 rounded-lg text-[11px] font-extrabold flex items-center justify-center transition-all cursor-pointer ${
-                                isSelected
-                                  ? 'bg-[#171717] text-white shadow-xs'
-                                  : isToday
-                                  ? 'bg-[#FF6B2C]/15 text-[#FF6B2C] hover:bg-[#FF6B2C]/25'
-                                  : 'text-[#171717] hover:bg-[#FAF9F6]'
-                              }`}
+                              className="w-6 h-6 rounded-lg bg-[#FAF9F6] flex items-center justify-center text-[#777570] hover:text-[#171717] cursor-pointer"
                             >
-                              {dNum}
+                              <ChevronRight className="w-3.5 h-3.5" />
                             </button>
-                          );
-                        })}
-                      </div>
+                          </div>
+                        </div>
 
-                      {/* Quick Date Chips */}
-                      <div className="flex items-center justify-between pt-2.5 mt-2 border-t border-[#F1F0EC]">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            haptics.tap();
-                            setSelectedDay(28);
-                            setSelectedMonth(7);
-                            setIsDatePickerOpen(false);
-                          }}
-                          className="text-[10px] font-extrabold text-[#FF6B2C] hover:underline"
-                        >
-                          Today
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            haptics.tap();
-                            setSelectedDay(29);
-                            setSelectedMonth(7);
-                            setIsDatePickerOpen(false);
-                          }}
-                          className="text-[10px] font-bold text-[#777570] hover:text-[#171717]"
-                        >
-                          Tomorrow
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            haptics.tap();
-                            setSelectedDay(30);
-                            setSelectedMonth(7);
-                            setIsDatePickerOpen(false);
-                          }}
-                          className="text-[10px] font-bold text-[#777570] hover:text-[#171717]"
-                        >
-                          Sun (Weekend)
-                        </button>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                        {/* Weekday Header */}
+                        <div className="grid grid-cols-7 gap-1 text-center mb-1">
+                          {DAYS_SHORT.map((d) => (
+                            <span key={d} className="text-[9.5px] font-bold text-[#A3A099]">
+                              {d}
+                            </span>
+                          ))}
+                        </div>
+
+                        {/* Day Grid */}
+                        <div className="grid grid-cols-7 gap-1 text-center">
+                          {Array.from({ length: firstDayIndex }).map((_, i) => (
+                            <div key={`empty-${i}`} className="w-7 h-7" />
+                          ))}
+                          {Array.from({ length: daysInMonth }).map((_, i) => {
+                            const dNum = i + 1;
+                            const isSelected = dNum === selectedDay;
+                            const isToday = dNum === TODAY_DAY && selectedMonth === TODAY_MONTH && selectedYear === TODAY_YEAR;
+                            const isPast =
+                              selectedYear < TODAY_YEAR ||
+                              (selectedYear === TODAY_YEAR && selectedMonth < TODAY_MONTH) ||
+                              (selectedYear === TODAY_YEAR && selectedMonth === TODAY_MONTH && dNum < TODAY_DAY);
+
+                            return (
+                              <button
+                                key={dNum}
+                                type="button"
+                                disabled={isPast}
+                                onClick={() => {
+                                  if (isPast) return;
+                                  haptics.tap();
+                                  setSelectedDay(dNum);
+                                  setIsDatePickerOpen(false);
+                                }}
+                                className={`w-7 h-7 rounded-lg text-[11px] font-extrabold flex items-center justify-center transition-all ${
+                                  isSelected
+                                    ? 'bg-[#171717] text-white shadow-xs cursor-pointer'
+                                    : isPast
+                                    ? 'text-[#C5C3BD] bg-transparent line-through cursor-not-allowed opacity-35'
+                                    : isToday
+                                    ? 'bg-[#FF6B2C]/15 text-[#FF6B2C] hover:bg-[#FF6B2C]/25 cursor-pointer'
+                                    : 'text-[#171717] hover:bg-[#FAF9F6] cursor-pointer'
+                                }`}
+                              >
+                                {dNum}
+                              </button>
+                            );
+                          })}
+                        </div>
+
+                        {/* Quick Date Chips */}
+                        <div className="flex items-center justify-between pt-2.5 mt-2 border-t border-[#F1F0EC]">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              haptics.tap();
+                              setSelectedDay(TODAY_DAY);
+                              setSelectedMonth(TODAY_MONTH);
+                              setSelectedYear(TODAY_YEAR);
+                              setIsDatePickerOpen(false);
+                            }}
+                            className="text-[10px] font-extrabold text-[#FF6B2C] hover:underline cursor-pointer"
+                          >
+                            Today
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              haptics.tap();
+                              setSelectedDay(TODAY_DAY + 1);
+                              setSelectedMonth(TODAY_MONTH);
+                              setSelectedYear(TODAY_YEAR);
+                              setIsDatePickerOpen(false);
+                            }}
+                            className="text-[10px] font-bold text-[#777570] hover:text-[#171717] cursor-pointer"
+                          >
+                            Tomorrow
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              haptics.tap();
+                              setSelectedDay(TODAY_DAY + 2);
+                              setSelectedMonth(TODAY_MONTH);
+                              setSelectedYear(TODAY_YEAR);
+                              setIsDatePickerOpen(false);
+                            }}
+                            className="text-[10px] font-bold text-[#777570] hover:text-[#171717] cursor-pointer"
+                          >
+                            Sun (Weekend)
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                <div className="text-right shrink-0 pt-3">
+                  <span className="block text-[10px] font-bold text-[#777570]">Rate</span>
+                  <span className="text-[12.5px] font-black text-[#171717]">₹{effectiveRate}/hr</span>
+                </div>
               </div>
 
-              {/* App-Themed Start Time Picker Trigger & Popover */}
-              <div className="relative" ref={startTimeRef}>
-                <label className="block text-[11px] font-bold text-[#777570] mb-1">Start Time</label>
-                <button
-                  type="button"
-                  onClick={() => {
-                    haptics.tap();
-                    setIsStartTimeOpen(!isStartTimeOpen);
-                    setIsDatePickerOpen(false);
-                    setIsEndTimeOpen(false);
-                  }}
-                  className="w-full bg-[#F7F7F5] border border-[#E8E6E1] hover:border-[#FF6B2C] rounded-xl px-2 py-2 text-left flex items-center justify-between cursor-pointer transition-all"
-                >
+              {/* Row B: Interactive Timeline Slot Selection */}
+              <div className="bg-[#FAF9F6] border border-[#E8E6E1] rounded-2xl p-2.5 space-y-2">
+                <div className="flex items-center justify-between flex-wrap gap-1">
+                  <div className="flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5 text-[#FF6B2C]" />
+                    <span className="text-[11px] font-black text-[#171717]">Timeline Slot Selection</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-[9px] font-bold text-[#777570]">
+                    <span className="flex items-center gap-0.5"><span className="w-2 h-2 rounded-full bg-[#FF6B2C]" /> Selected</span>
+                    <span className="flex items-center gap-0.5"><span className="w-2 h-2 rounded-full bg-[#171717]" /> Booked</span>
+                    <span className="flex items-center gap-0.5"><span className="w-2 h-2 rounded-full bg-[#D4D2CD]" /> Passed</span>
+                  </div>
+                </div>
+
+                {/* Scrollable Timeline Track */}
+                <div className="overflow-x-auto no-scrollbar pb-1">
+                  <div className="flex items-center gap-1.5 min-w-max">
+                    {timelineSlots.map((slot) => {
+                      const isClickable = !slot.isPassed && !slot.isBooked && !slot.isBlocked;
+
+                      return (
+                        <button
+                          key={`timeline-${slot.startMins}`}
+                          type="button"
+                          disabled={!isClickable}
+                          onClick={() => handleTimelineSlotClick(slot)}
+                          className={`px-2.5 py-1.5 rounded-xl text-center transition-all shrink-0 flex flex-col items-center justify-center min-w-[58px] select-none ${
+                            slot.isSelected
+                              ? 'bg-gradient-to-r from-[#FF6B2C] to-[#FA5A14] text-white shadow-xs ring-1 ring-[#FF6B2C] cursor-pointer active:scale-95'
+                              : slot.isPassed
+                              ? 'bg-[#ECEAE4]/50 border border-[#E8E6E1] text-[#A3A099] line-through cursor-not-allowed opacity-50'
+                              : slot.isBooked
+                              ? 'bg-[#171717] text-white border border-[#171717] cursor-not-allowed'
+                              : slot.isBlocked
+                              ? 'bg-[#F1F5F9] text-[#475569] border border-[#CBD5E1] cursor-not-allowed'
+                              : 'bg-white border border-[#E8E6E1] hover:border-[#FF6B2C] text-[#171717] hover:bg-white/80 cursor-pointer active:scale-95 shadow-2xs'
+                          }`}
+                        >
+                          <span className={`text-[10px] font-black leading-tight ${slot.isSelected ? 'text-white' : ''}`}>
+                            {slot.label}
+                          </span>
+                          <span className={`text-[8px] font-bold leading-tight mt-0.5 ${
+                            slot.isSelected
+                              ? 'text-white/90'
+                              : slot.isPassed
+                              ? 'text-[#A3A099]'
+                              : slot.isBooked
+                              ? 'text-[#FF6B2C]'
+                              : slot.isBlocked
+                              ? 'text-[#475569]'
+                              : 'text-[#777570]'
+                          }`}>
+                            {slot.isSelected
+                              ? (slot.isSelectionStart ? 'Start' : slot.isSelectionEnd ? 'End' : 'Selected')
+                              : slot.isPassed
+                              ? 'Passed'
+                              : slot.isBooked
+                              ? (slot.bookingCustomer ? slot.bookingCustomer.slice(0, 5) : 'Booked')
+                              : slot.isBlocked
+                              ? 'Blocked'
+                              : `₹${effectiveRate}`}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Quick Selection Summary & Start/End Controls */}
+                <div className="flex items-center justify-between gap-2 pt-1 border-t border-[#E8E6E1]/60">
                   <div className="flex items-center gap-1.5 min-w-0">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#2FA66A] shrink-0" />
-                    <span className="text-[11.5px] font-black text-[#171717] truncate">
-                      {startTime}
+                    <span className="text-[10.5px] font-black text-[#171717] truncate">
+                      {startTime} – {endTime}
+                    </span>
+                    <span className="text-[9.5px] font-black bg-[#FF6B2C]/15 text-[#FF6B2C] px-1.5 py-0.2 rounded-md shrink-0">
+                      {durationHours} hr{durationHours !== 1 ? 's' : ''}
                     </span>
                   </div>
-                  <ChevronDown className="w-3 h-3 text-[#777570] shrink-0" />
-                </button>
 
-                {/* App-Themed Start Time Popover */}
-                <AnimatePresence>
-                  {isStartTimeOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 6, scale: 0.98 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 4, scale: 0.98 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute left-0 top-full mt-1.5 w-64 max-h-60 overflow-y-auto no-scrollbar bg-white rounded-2xl border border-[#E8E6E1] shadow-2xl p-2.5 z-50"
-                    >
-                      <div className="px-1.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#A3A099] flex items-center justify-between">
-                        <span>Select Start Time</span>
-                        <span className="text-[9px] font-black text-[#FF6B2C] bg-[#FF6B2C]/10 px-1.5 py-0.5 rounded">
-                          {isCourt30Min ? '30m Interval' : '1hr Interval'}
-                        </span>
-                      </div>
-                      <div className="grid grid-cols-2 gap-1.5 pt-1">
-                        {courtTimeSlots.slice(0, -1).map((s) => {
-                          const isSelected = s.value === startTime;
-                          return (
-                            <button
-                              key={s.value}
-                              type="button"
-                              onClick={() => handleSelectStartTime(s.value)}
-                              className={`px-2 py-1.5 rounded-lg text-[11px] font-bold flex items-center justify-between transition-all cursor-pointer ${
-                                isSelected
-                                  ? 'bg-[#171717] text-white shadow-xs'
-                                  : 'bg-[#FAF9F6] text-[#171717] hover:bg-[#F1F0EC]'
-                              }`}
-                            >
-                              <span>{s.value}</span>
-                              {s.isPrime && (
-                                <span className="text-[8.5px] font-extrabold text-[#FF6B2C]">
-                                  ⚡
-                                </span>
-                              )}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {/* Start Time Dropdown Trigger */}
+                    <div className="relative" ref={startTimeRef}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          haptics.tap();
+                          setIsStartTimeOpen(!isStartTimeOpen);
+                          setIsEndTimeOpen(false);
+                          setIsDatePickerOpen(false);
+                        }}
+                        className="text-[10px] font-extrabold text-[#777570] hover:text-[#171717] bg-white border border-[#E8E6E1] px-2 py-1 rounded-lg flex items-center gap-1 cursor-pointer"
+                      >
+                        <span>Start: {startTime}</span>
+                        <ChevronDown className="w-2.5 h-2.5" />
+                      </button>
 
-              {/* App-Themed End Time Picker Trigger & Popover */}
-              <div className="relative" ref={endTimeRef}>
-                <label className="block text-[11px] font-bold text-[#777570] mb-1">End Time</label>
-                <button
-                  type="button"
-                  onClick={() => {
-                    haptics.tap();
-                    setIsEndTimeOpen(!isEndTimeOpen);
-                    setIsDatePickerOpen(false);
-                    setIsStartTimeOpen(false);
-                  }}
-                  className="w-full bg-[#F7F7F5] border border-[#E8E6E1] hover:border-[#FF6B2C] rounded-xl px-2 py-2 text-left flex items-center justify-between cursor-pointer transition-all"
-                >
-                  <div className="flex items-center gap-1.5 min-w-0">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#FF6B2C] shrink-0" />
-                    <span className="text-[11.5px] font-black text-[#171717] truncate">
-                      {endTime}
-                    </span>
+                      {/* Start Time Popover */}
+                      <AnimatePresence>
+                        {isStartTimeOpen && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 4, scale: 0.98 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 4, scale: 0.98 }}
+                            className="absolute right-0 bottom-full mb-1.5 w-60 max-h-52 overflow-y-auto no-scrollbar bg-white rounded-2xl border border-[#E8E6E1] shadow-2xl p-2 z-50"
+                          >
+                            <div className="px-1.5 py-1 text-[9.5px] font-bold uppercase tracking-wider text-[#A3A099]">
+                              Select Start Time
+                            </div>
+                            <div className="grid grid-cols-2 gap-1 pt-1">
+                              {courtTimeSlots.slice(0, -1).map((s) => {
+                                const isSelected = s.value === startTime;
+                                const isSlotPassed = isSelectedDateToday && s.minutes < CURRENT_HOUR_BASELINE * 60;
+
+                                return (
+                                  <button
+                                    key={s.value}
+                                    type="button"
+                                    disabled={isSlotPassed}
+                                    onClick={() => handleSelectStartTime(s.value)}
+                                    className={`px-2 py-1 rounded-lg text-[10.5px] font-bold flex items-center justify-between transition-all ${
+                                      isSelected
+                                        ? 'bg-[#171717] text-white shadow-xs cursor-pointer'
+                                        : isSlotPassed
+                                        ? 'bg-transparent text-[#C5C3BD] line-through cursor-not-allowed opacity-35'
+                                        : 'bg-[#FAF9F6] text-[#171717] hover:bg-[#F1F0EC] cursor-pointer'
+                                    }`}
+                                  >
+                                    <span>{s.value}</span>
+                                    {isSlotPassed && <span className="text-[7.5px] text-[#A3A099]">Passed</span>}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+
+                    {/* End Time Dropdown Trigger */}
+                    <div className="relative" ref={endTimeRef}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          haptics.tap();
+                          setIsEndTimeOpen(!isEndTimeOpen);
+                          setIsStartTimeOpen(false);
+                          setIsDatePickerOpen(false);
+                        }}
+                        className="text-[10px] font-extrabold text-[#777570] hover:text-[#171717] bg-white border border-[#E8E6E1] px-2 py-1 rounded-lg flex items-center gap-1 cursor-pointer"
+                      >
+                        <span>End: {endTime}</span>
+                        <ChevronDown className="w-2.5 h-2.5" />
+                      </button>
+
+                      {/* End Time Popover */}
+                      <AnimatePresence>
+                        {isEndTimeOpen && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 4, scale: 0.98 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 4, scale: 0.98 }}
+                            className="absolute right-0 bottom-full mb-1.5 w-60 max-h-52 overflow-y-auto no-scrollbar bg-white rounded-2xl border border-[#E8E6E1] shadow-2xl p-2 z-50"
+                          >
+                            <div className="px-1.5 py-1 text-[9.5px] font-bold uppercase tracking-wider text-[#A3A099]">
+                              Select End Time
+                            </div>
+                            <div className="grid grid-cols-2 gap-1 pt-1">
+                              {validEndOptions.map((s) => {
+                                const isSelected = s.value === endTime;
+                                return (
+                                  <button
+                                    key={s.value}
+                                    type="button"
+                                    onClick={() => handleSelectEndTime(s.value)}
+                                    className={`px-2 py-1 rounded-lg text-[10.5px] font-bold flex items-center justify-between transition-all cursor-pointer ${
+                                      isSelected
+                                        ? 'bg-[#171717] text-white shadow-xs'
+                                        : 'bg-[#FAF9F6] text-[#171717] hover:bg-[#F1F0EC]'
+                                    }`}
+                                  >
+                                    <span>{s.value}</span>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
                   </div>
-                  <ChevronDown className="w-3 h-3 text-[#777570] shrink-0" />
-                </button>
-
-                {/* App-Themed End Time Popover */}
-                <AnimatePresence>
-                  {isEndTimeOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 6, scale: 0.98 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 4, scale: 0.98 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute right-0 top-full mt-1.5 w-64 max-h-60 overflow-y-auto no-scrollbar bg-white rounded-2xl border border-[#E8E6E1] shadow-2xl p-2.5 z-50"
-                    >
-                      <div className="px-1.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#A3A099] flex items-center justify-between">
-                        <span>Select End Time</span>
-                        <span className="text-[9px] font-black text-[#FF6B2C] bg-[#FF6B2C]/10 px-1.5 py-0.5 rounded">
-                          Min: {isCourt30Min ? '30m' : '1 hr'}
-                        </span>
-                      </div>
-                      <div className="grid grid-cols-2 gap-1.5 pt-1">
-                        {validEndOptions.map((s) => {
-                          const isSelected = s.value === endTime;
-                          return (
-                            <button
-                              key={s.value}
-                              type="button"
-                              onClick={() => handleSelectEndTime(s.value)}
-                              className={`px-2 py-1.5 rounded-lg text-[11px] font-bold flex items-center justify-between transition-all cursor-pointer ${
-                                isSelected
-                                  ? 'bg-[#171717] text-white shadow-xs'
-                                  : 'bg-[#FAF9F6] text-[#171717] hover:bg-[#F1F0EC]'
-                              }`}
-                            >
-                              <span>{s.value}</span>
-                              {s.isPrime && (
-                                <span className="text-[8.5px] font-extrabold text-[#FF6B2C]">
-                                  ⚡
-                                </span>
-                              )}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                </div>
               </div>
             </div>
 
