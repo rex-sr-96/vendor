@@ -63,6 +63,8 @@ export interface Court {
   name: string;
   displayName?: string;
   samePhysicalSports?: boolean;
+  parentCourtId?: string;
+  parentCourtName?: string;
   sports: string[];
   pricePerHour: number;
   minBookingDuration?: string;

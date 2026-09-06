@@ -957,6 +957,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       name: newCourt.name || 'New Turf',
       displayName: newCourt.displayName || undefined,
       samePhysicalSports: newCourt.samePhysicalSports ?? false,
+      parentCourtId: newCourt.parentCourtId,
+      parentCourtName: newCourt.parentCourtName,
       sports: newCourt.sports && newCourt.sports.length > 0 ? newCourt.sports : ['Football'],
       pricePerHour: newCourt.pricePerHour || 1000,
       minBookingDuration: newCourt.minBookingDuration,
