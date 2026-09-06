@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import {
   Search,
@@ -35,13 +35,14 @@ import {
   Trash2,
   SlidersHorizontal,
   MessageCircle,
+  Lock,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Booking, BookingStatus, PaymentStatus } from '../types';
 import { haptics } from '../utils/haptics';
 import { DateMonthPickerSheet } from '../components/DateMonthPickerSheet';
 import { exportSingleBookingReceipt } from '../utils/exportUtils';
-import { calculateBookingFinancials } from '../utils/feeCalculator';
+import { calculateBookingFinancials, formatMinutesSeconds } from '../utils/feeCalculator';
 import { getAvailableExtensionSlots } from '../utils/extensionSlots';
 
 type DateFilterType = 'today' | 'tomorrow' | 'upcoming' | 'particular' | 'all';
@@ -62,6 +63,9 @@ export const BookingListScreen: React.FC = () => {
     navigateTo,
     setSelectedBookingId,
     setActiveModal,
+    sendPaymentLink,
+    isPaymentLinkBlocked,
+    getPaymentLinkTimeRemaining,
     showToast,
     checkInBooking,
     checkOutBooking,
@@ -70,6 +74,12 @@ export const BookingListScreen: React.FC = () => {
     confirmBookingPayment,
     releaseExpiredSlot,
   } = useApp();
+
+  const [, setTimerTick] = useState(0);
+  useEffect(() => {
+    const interval = setInterval(() => setTimerTick((t) => t + 1), 1000);
+    return () => clearInterval(interval);
+  }, []);
 
 
 
@@ -1113,20 +1123,37 @@ export const BookingListScreen: React.FC = () => {
                     </>
                   )}
 
-                  {/* ACTIVE PAYMENT PENDING (HOLD ACTIVE) -> VIEW PAYMENT LINK */}
+                  {/* ACTIVE PAYMENT PENDING (HOLD ACTIVE) -> VIEW / SEND PAYMENT LINK */}
                   {b.status === 'Payment Pending' && !isBookingExpired(b) && (
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         haptics.tap();
-                        setSelectedBookingId(b.id);
-                        setActiveModal('payment_link');
+                        if (isPaymentLinkBlocked(b.id)) {
+                          const sec = getPaymentLinkTimeRemaining(b.id);
+                          showToast('Payment Link Active', `Link is valid for 15 mins. Button blocked for ${formatMinutesSeconds(sec)}.`, 'info');
+                          return;
+                        }
+                        sendPaymentLink(b.id);
                       }}
-                      className="h-8 px-2.5 rounded-xl bg-white border border-[#FF6B2C]/40 hover:bg-[#FAF9F6] text-[#FF6B2C] text-[10.5px] font-bold flex items-center gap-1 shadow-2xs active-press cursor-pointer transition-colors whitespace-nowrap"
-                      title="View active payment link & hold timer"
+                      className={`h-8 px-2.5 rounded-xl border text-[10.5px] font-bold flex items-center gap-1 shadow-2xs whitespace-nowrap transition-colors ${
+                        isPaymentLinkBlocked(b.id)
+                          ? 'bg-amber-50 border-amber-300 text-amber-800 cursor-not-allowed'
+                          : 'bg-white border-[#FF6B2C]/40 hover:bg-[#FAF9F6] text-[#FF6B2C] active-press cursor-pointer'
+                      }`}
+                      title={isPaymentLinkBlocked(b.id) ? `Link active (Valid for ${formatMinutesSeconds(getPaymentLinkTimeRemaining(b.id))})` : "Send payment link"}
                     >
-                      <Link2 className="w-3 h-3" />
-                      <span>View Link</span>
+                      {isPaymentLinkBlocked(b.id) ? (
+                        <>
+                          <Lock className="w-3 h-3 text-amber-600" />
+                          <span>Sent ({formatMinutesSeconds(getPaymentLinkTimeRemaining(b.id))})</span>
+                        </>
+                      ) : (
+                        <>
+                          <Link2 className="w-3 h-3" />
+                          <span>Send Link</span>
+                        </>
+                      )}
                     </button>
                   )}
 
@@ -1319,20 +1346,37 @@ export const BookingListScreen: React.FC = () => {
                         </>
                       )}
 
-                      {/* ACTIVE PAYMENT PENDING (HOLD ACTIVE) -> VIEW PAYMENT LINK */}
+                      {/* ACTIVE PAYMENT PENDING (HOLD ACTIVE) -> VIEW / SEND PAYMENT LINK */}
                       {b.status === 'Payment Pending' && !isBookingExpired(b) && (
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             haptics.tap();
-                            setSelectedBookingId(b.id);
-                            setActiveModal('payment_link');
+                            if (isPaymentLinkBlocked(b.id)) {
+                              const sec = getPaymentLinkTimeRemaining(b.id);
+                              showToast('Payment Link Active', `Link is valid for 15 mins. Button blocked for ${formatMinutesSeconds(sec)}.`, 'info');
+                              return;
+                            }
+                            sendPaymentLink(b.id);
                           }}
-                          className="h-8 px-2.5 rounded-xl bg-white border border-[#FF6B2C]/40 hover:bg-[#FAF9F6] text-[#FF6B2C] text-[10.5px] font-bold flex items-center gap-1 shadow-2xs active-press cursor-pointer transition-colors whitespace-nowrap shrink-0"
-                          title="View active payment link & hold timer"
+                          className={`h-8 px-2.5 rounded-xl border text-[10.5px] font-bold flex items-center gap-1 shadow-2xs whitespace-nowrap shrink-0 transition-colors ${
+                            isPaymentLinkBlocked(b.id)
+                              ? 'bg-amber-50 border-amber-300 text-amber-800 cursor-not-allowed'
+                              : 'bg-white border-[#FF6B2C]/40 hover:bg-[#FAF9F6] text-[#FF6B2C] active-press cursor-pointer'
+                          }`}
+                          title={isPaymentLinkBlocked(b.id) ? `Link active (Valid for ${formatMinutesSeconds(getPaymentLinkTimeRemaining(b.id))})` : "Send payment link"}
                         >
-                          <Link2 className="w-3 h-3" />
-                          <span>View Link</span>
+                          {isPaymentLinkBlocked(b.id) ? (
+                            <>
+                              <Lock className="w-3 h-3 text-amber-600" />
+                              <span>Sent ({formatMinutesSeconds(getPaymentLinkTimeRemaining(b.id))})</span>
+                            </>
+                          ) : (
+                            <>
+                              <Link2 className="w-3 h-3" />
+                              <span>Send Link</span>
+                            </>
+                          )}
                         </button>
                       )}
 
@@ -1991,19 +2035,38 @@ export const BookingListScreen: React.FC = () => {
                       </span>
                     </div>
                     <p className="text-[11px] text-[#777570]">
-                      Payment link has already been sent to customer for online confirmation. When customer completes payment, booking automatically moves to <strong>Confirmed</strong>.
+                      Payment link is valid for 15 minutes. When customer completes payment, booking automatically moves to <strong>Confirmed</strong>.
                     </p>
                     <button
                       type="button"
+                      disabled={isPaymentLinkBlocked(activePopupBooking.id)}
                       onClick={() => {
-                        setSelectedBookingId(activePopupBooking.id);
+                        haptics.tap();
+                        if (isPaymentLinkBlocked(activePopupBooking.id)) {
+                          const sec = getPaymentLinkTimeRemaining(activePopupBooking.id);
+                          showToast('Payment Link Active', `Link is valid for 15 mins. Button blocked for ${formatMinutesSeconds(sec)}.`, 'info');
+                          return;
+                        }
+                        sendPaymentLink(activePopupBooking.id);
                         setSelectedPopupBooking(null);
-                        setActiveModal('payment_link');
                       }}
-                      className="w-full h-10 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white font-black text-[12px] flex items-center justify-center gap-2 shadow-xs cursor-pointer transition-colors"
+                      className={`w-full h-10 rounded-xl font-black text-[12px] flex items-center justify-center gap-2 shadow-xs transition-colors ${
+                        isPaymentLinkBlocked(activePopupBooking.id)
+                          ? 'bg-amber-100 text-amber-900 border border-amber-300 cursor-not-allowed'
+                          : 'bg-[#FF6B2C] hover:bg-[#e85b1e] text-white cursor-pointer'
+                      }`}
                     >
-                      <Link2 className="w-4 h-4" />
-                      <span>View & Share Payment Link</span>
+                      {isPaymentLinkBlocked(activePopupBooking.id) ? (
+                        <>
+                          <Lock className="w-4 h-4 text-amber-700" />
+                          <span>Link Active · Blocked for {formatMinutesSeconds(getPaymentLinkTimeRemaining(activePopupBooking.id))}</span>
+                        </>
+                      ) : (
+                        <>
+                          <Link2 className="w-4 h-4" />
+                          <span>Send Payment Link (15m Validity)</span>
+                        </>
+                      )}
                     </button>
                   </div>
                 </div>
@@ -2028,23 +2091,38 @@ export const BookingListScreen: React.FC = () => {
                       {/* Option 1: Payment Link */}
                       <button
                         type="button"
+                        disabled={isPaymentLinkBlocked(activePopupBooking.id)}
                         onClick={() => {
                           haptics.tap();
-                          setSelectedBookingId(activePopupBooking.id);
+                          if (isPaymentLinkBlocked(activePopupBooking.id)) {
+                            const sec = getPaymentLinkTimeRemaining(activePopupBooking.id);
+                            showToast('Payment Link Active', `Link is valid for 15 mins. Button blocked for ${formatMinutesSeconds(sec)}.`, 'info');
+                            return;
+                          }
+                          sendPaymentLink(activePopupBooking.id);
                           setSelectedPopupBooking(null);
-                          setActiveModal('payment_link');
                         }}
-                        className="p-2.5 rounded-2xl bg-[#FAF9F6] hover:bg-[#F1F0EC] border border-[#E8E6E1] text-left flex flex-col justify-between transition-all cursor-pointer group active-press"
+                        className={`p-2.5 rounded-2xl border text-left flex flex-col justify-between transition-all active-press ${
+                          isPaymentLinkBlocked(activePopupBooking.id)
+                            ? 'bg-amber-50 border-amber-300 opacity-90 cursor-not-allowed'
+                            : 'bg-[#FAF9F6] hover:bg-[#F1F0EC] border-[#E8E6E1] cursor-pointer group'
+                        }`}
                       >
-                        <div className="w-7 h-7 rounded-xl bg-[#FF6B2C] text-white flex items-center justify-center shadow-xs mb-1.5">
-                          <Link2 className="w-3.5 h-3.5" />
+                        <div className={`w-7 h-7 rounded-xl text-white flex items-center justify-center shadow-xs mb-1.5 ${
+                          isPaymentLinkBlocked(activePopupBooking.id) ? 'bg-amber-500' : 'bg-[#FF6B2C]'
+                        }`}>
+                          {isPaymentLinkBlocked(activePopupBooking.id) ? <Lock className="w-3.5 h-3.5" /> : <Link2 className="w-3.5 h-3.5" />}
                         </div>
                         <div>
-                          <span className="text-[11.5px] font-black text-[#171717] block group-hover:text-[#FF6B2C] transition-colors leading-tight">
-                            Pay Link
+                          <span className={`text-[11.5px] font-black block leading-tight ${
+                            isPaymentLinkBlocked(activePopupBooking.id) ? 'text-amber-900' : 'text-[#171717] group-hover:text-[#FF6B2C]'
+                          }`}>
+                            {isPaymentLinkBlocked(activePopupBooking.id) ? 'Link Sent' : 'Pay Link'}
                           </span>
                           <span className="text-[9px] text-[#777570] block leading-tight mt-0.5">
-                            Share Online
+                            {isPaymentLinkBlocked(activePopupBooking.id)
+                              ? `${formatMinutesSeconds(getPaymentLinkTimeRemaining(activePopupBooking.id))} left`
+                              : 'Share Online'}
                           </span>
                         </div>
                       </button>

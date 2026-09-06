@@ -74,3 +74,9 @@ export function calculateBookingFinancials(courtAmount: number = 0): BookingFina
     cashPayoutDeduction: totalConvenienceWithGst,
   };
 }
+
+export function formatMinutesSeconds(totalSeconds: number): string {
+  const m = Math.floor(Math.max(0, totalSeconds) / 60);
+  const s = Math.max(0, totalSeconds) % 60;
+  return `${m}:${s < 10 ? '0' : ''}${s}`;
+}

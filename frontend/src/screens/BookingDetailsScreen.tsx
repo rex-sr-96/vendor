@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import {
   ChevronLeft,
@@ -18,10 +18,11 @@ import {
   AlertCircle,
   ChevronDown,
   ChevronUp,
+  Lock,
 } from 'lucide-react';
 import { haptics } from '../utils/haptics';
 import { exportSingleBookingReceipt } from '../utils/exportUtils';
-import { calculateBookingFinancials } from '../utils/feeCalculator';
+import { calculateBookingFinancials, formatMinutesSeconds } from '../utils/feeCalculator';
 
 export const BookingDetailsScreen: React.FC = () => {
   const {
@@ -32,10 +33,18 @@ export const BookingDetailsScreen: React.FC = () => {
     goBack,
     setActiveModal,
     sendPaymentLink,
+    isPaymentLinkBlocked,
+    getPaymentLinkTimeRemaining,
     markBookingCompleted,
     cancelBookingWithRefund,
     showToast,
   } = useApp();
+
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    const timer = setInterval(() => setTick((t) => t + 1), 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   // Cancel confirm state
   const [isCancelExpanded, setIsCancelExpanded] = useState(false);
@@ -368,31 +377,52 @@ export const BookingDetailsScreen: React.FC = () => {
           )}
 
           {/* Payment / Action Hub based on exact Booking Status */}
-          {/* State A: Payment Pending (Online hold active, link already sent) */}
+          {/* State A: Hold Active (Payment Pending) */}
           {b.status === 'Payment Pending' && (
             <div className="space-y-2.5 pt-1">
-              <div className="bg-[#E7A72F]/10 border border-[#E7A72F]/30 rounded-2xl p-3.5 space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11.5px] font-black text-[#B87C0D] uppercase tracking-wider flex items-center gap-1.5">
-                    <Clock className="w-4 h-4 text-[#B87C0D]" />
-                    Payment Link Sent · Hold Active ({b.holdExpiresInMinutes || 15}m)
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-2xl space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-bold text-amber-800 flex items-center gap-1.5">
+                    <Clock className="w-4 h-4 text-amber-600" />
+                    Pending Customer Online Payment
                   </span>
                   <span className="text-[11px] font-bold text-[#171717] bg-white px-2.5 py-0.5 rounded-md border border-[#E8E6E1]">
-                    Due ₹{b.balanceAmount.toLocaleString('en-IN')}
+                    Due ₹{(b.balanceAmount || 0).toLocaleString('en-IN')}
                   </span>
                 </div>
                 <p className="text-[11px] text-[#777570]">
-                  Payment link has already been sent to customer for online confirmation. When customer completes payment, booking automatically moves to <strong>Confirmed</strong>.
+                  Payment link is valid for 15 minutes. When customer completes payment, booking automatically moves to <strong>Confirmed</strong>.
                 </p>
                 <button
                   type="button"
+                  disabled={isPaymentLinkBlocked(b.id)}
                   onClick={() => {
                     haptics.tap();
-                    setActiveModal('payment_link');
+                    if (isPaymentLinkBlocked(b.id)) {
+                      const sec = getPaymentLinkTimeRemaining(b.id);
+                      showToast(
+                        'Payment Link Active',
+                        `Payment link is valid for 15 mins. Button blocked for ${formatMinutesSeconds(sec)}.`,
+                        'info'
+                      );
+                      return;
+                    }
+                    sendPaymentLink(b.id);
                   }}
-                  className="w-full h-11 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white font-black text-[12.5px] flex items-center justify-center gap-2 shadow-xs cursor-pointer transition-colors"
+                  className={`w-full h-11 rounded-xl font-black text-[12.5px] flex items-center justify-center gap-2 shadow-xs transition-all ${
+                    isPaymentLinkBlocked(b.id)
+                      ? 'bg-amber-100 text-amber-900 border border-amber-300 cursor-not-allowed'
+                      : 'bg-[#FF6B2C] hover:bg-[#e85b1e] text-white cursor-pointer'
+                  }`}
                 >
-                  <span>View & Share Payment Link</span>
+                  {isPaymentLinkBlocked(b.id) ? (
+                    <>
+                      <Lock className="w-4 h-4 text-amber-700" />
+                      <span>Payment Link Active · Blocked for {formatMinutesSeconds(getPaymentLinkTimeRemaining(b.id))}</span>
+                    </>
+                  ) : (
+                    <span>Send Payment Link (15m Validity)</span>
+                  )}
                 </button>
               </div>
             </div>
@@ -411,7 +441,7 @@ export const BookingDetailsScreen: React.FC = () => {
               <button
                 onClick={() => {
                   haptics.tap();
-                  setActiveModal('payment_link');
+                  sendPaymentLink(b.id);
                 }}
                 className="w-full h-11 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white font-black text-[12.5px] flex items-center justify-center gap-1.5 shadow-xs cursor-pointer transition-colors"
               >
@@ -425,7 +455,7 @@ export const BookingDetailsScreen: React.FC = () => {
             <div className="space-y-2 pt-1">
               <div className="flex items-center justify-between pb-1">
                 <span className="text-[11px] font-bold text-[#FF6B2C] uppercase tracking-wider">
-                  Balance Due: ₹{b.balanceAmount.toLocaleString('en-IN')}
+                  Balance Due: ₹{(b.balanceAmount || 0).toLocaleString('en-IN')}
                 </span>
                 <span className="text-[11px] font-semibold text-[#777570]">
                   Choose Collection Method
@@ -434,13 +464,34 @@ export const BookingDetailsScreen: React.FC = () => {
 
               <div className="grid grid-cols-3 gap-2">
                 <button
+                  disabled={isPaymentLinkBlocked(b.id)}
                   onClick={() => {
                     haptics.tap();
-                    setActiveModal('payment_link');
+                    if (isPaymentLinkBlocked(b.id)) {
+                      const sec = getPaymentLinkTimeRemaining(b.id);
+                      showToast(
+                        'Payment Link Active',
+                        `Payment link is active for 15 mins. Button blocked for ${formatMinutesSeconds(sec)}.`,
+                        'info'
+                      );
+                      return;
+                    }
+                    sendPaymentLink(b.id);
                   }}
-                  className="h-11 rounded-xl bg-[#FF6B2C] text-white font-bold text-[11.5px] flex items-center justify-center gap-1 shadow-xs hover:bg-[#e85b1e] active-press transition-all cursor-pointer"
+                  className={`h-11 rounded-xl font-bold text-[11.5px] flex items-center justify-center gap-1 shadow-xs transition-all ${
+                    isPaymentLinkBlocked(b.id)
+                      ? 'bg-amber-100 text-amber-900 border border-amber-300 cursor-not-allowed'
+                      : 'bg-[#FF6B2C] text-white hover:bg-[#e85b1e] active-press cursor-pointer'
+                  }`}
                 >
-                  <span>Pay Link</span>
+                  {isPaymentLinkBlocked(b.id) ? (
+                    <>
+                      <Lock className="w-3.5 h-3.5 text-amber-700" />
+                      <span>Link Sent ({formatMinutesSeconds(getPaymentLinkTimeRemaining(b.id))})</span>
+                    </>
+                  ) : (
+                    <span>Pay Link</span>
+                  )}
                 </button>
                 <button
                   onClick={() => {

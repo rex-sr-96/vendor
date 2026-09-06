@@ -1,22 +1,46 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
-import { QrCode, Banknote, Link2, X, ChevronRight, AlertTriangle } from 'lucide-react';
+import { QrCode, Banknote, Link2, X, ChevronRight, AlertTriangle, Clock, Lock } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { haptics } from '../utils/haptics';
-import { calculateBookingFinancials } from '../utils/feeCalculator';
+import { calculateBookingFinancials, formatMinutesSeconds } from '../utils/feeCalculator';
 
 export const PaymentCollectionSheet: React.FC = () => {
-  const { activeModal, setActiveModal, selectedBooking } = useApp();
+  const {
+    activeModal,
+    setActiveModal,
+    selectedBooking,
+    sendPaymentLink,
+    isPaymentLinkBlocked,
+    getPaymentLinkTimeRemaining,
+    showToast,
+  } = useApp();
+
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    const timer = setInterval(() => setTick((t) => t + 1), 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   if (activeModal !== 'payment_options' || !selectedBooking) return null;
 
   const balance = selectedBooking.balanceAmount || selectedBooking.totalAmount;
   const fin = calculateBookingFinancials(balance);
+  const isBlocked = isPaymentLinkBlocked(selectedBooking.id);
+  const remainingSeconds = getPaymentLinkTimeRemaining(selectedBooking.id);
 
   const handleSelect = (mode: 'link' | 'qr' | 'cash') => {
     haptics.tap();
     if (mode === 'link') {
-      setActiveModal('payment_link');
+      if (isBlocked) {
+        showToast(
+          'Payment Link Active',
+          `Payment link is valid for 15 mins. Button is blocked for another ${Math.ceil(remainingSeconds / 60)} mins.`,
+          'info'
+        );
+        return;
+      }
+      sendPaymentLink(selectedBooking.id);
     } else if (mode === 'qr') {
       setActiveModal('qr_payment');
     } else if (mode === 'cash') {
@@ -65,23 +89,52 @@ export const PaymentCollectionSheet: React.FC = () => {
           <div className="space-y-2 py-1">
             {/* Option 1: Send Payment Link */}
             <div
+              id="btn-send-payment-link-option"
               onClick={() => handleSelect('link')}
-              className="bg-[#FAF9F6] hover:bg-[#F1F0EC] p-3 rounded-2xl border border-[#E8E6E1] flex items-center justify-between cursor-pointer active-press transition-all group"
+              className={`p-3 rounded-2xl border flex items-center justify-between transition-all ${
+                isBlocked
+                  ? 'bg-amber-50/70 border-amber-300 opacity-95 cursor-not-allowed shadow-2xs'
+                  : 'bg-[#FAF9F6] hover:bg-[#F1F0EC] border-[#E8E6E1] cursor-pointer active-press group'
+              }`}
             >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#FF6B2C] text-white flex items-center justify-center shadow-xs">
-                  <Link2 className="w-5 h-5" />
+                <div
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-xs transition-colors ${
+                    isBlocked ? 'bg-amber-500 text-white' : 'bg-[#FF6B2C] text-white'
+                  }`}
+                >
+                  {isBlocked ? <Lock className="w-5 h-5" /> : <Link2 className="w-5 h-5" />}
                 </div>
                 <div>
-                  <h3 className="text-[14px] font-bold text-[#171717] group-hover:text-[#FF6B2C] transition-colors">
-                    Send Payment Link
-                  </h3>
+                  <div className="flex items-center gap-2">
+                    <h3
+                      className={`text-[14px] font-bold ${
+                        isBlocked ? 'text-amber-950' : 'text-[#171717] group-hover:text-[#FF6B2C]'
+                      } transition-colors`}
+                    >
+                      {isBlocked ? 'Payment Link Sent' : 'Send Payment Link'}
+                    </h3>
+                    {isBlocked && (
+                      <span className="px-2 py-0.5 rounded-full text-[10.5px] font-black bg-amber-100 text-amber-800 border border-amber-200 flex items-center gap-1">
+                        <Clock className="w-3 h-3 text-amber-600 animate-pulse" />
+                        <span>Valid for {formatMinutesSeconds(remainingSeconds)}</span>
+                      </span>
+                    )}
+                  </div>
                   <p className="text-[11px] text-[#777570]">
-                    Share link via WhatsApp / SMS (Total ₹{fin.totalCustomerPayable})
+                    {isBlocked
+                      ? `Active payment link valid for 15 mins. Button blocked for ${formatMinutesSeconds(remainingSeconds)}.`
+                      : `Share link via WhatsApp / SMS (Total ₹${fin.totalCustomerPayable})`}
                   </p>
                 </div>
               </div>
-              <ChevronRight className="w-4 h-4 text-[#777570] group-hover:text-[#171717]" />
+              {isBlocked ? (
+                <span className="text-[10px] font-black text-amber-800 bg-amber-200/80 px-2 py-1 rounded-lg border border-amber-300">
+                  BLOCKED
+                </span>
+              ) : (
+                <ChevronRight className="w-4 h-4 text-[#777570] group-hover:text-[#171717]" />
+              )}
             </div>
 
             {/* Option 2: Show QR */}

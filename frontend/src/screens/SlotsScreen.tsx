@@ -30,6 +30,7 @@ import { haptics } from '../utils/haptics';
 import { SlotState, Court, Booking } from '../types';
 import { DateMonthPickerSheet } from '../components/DateMonthPickerSheet';
 import { getAvailableExtensionSlots, parseTimeToMinutes, parseBookingRangeToMinutes } from '../utils/extensionSlots';
+import { formatMinutesSeconds } from '../utils/feeCalculator';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface MatrixCellData {
@@ -118,6 +119,8 @@ export const SlotsScreen: React.FC = () => {
     releaseExpiredSlot,
     confirmBookingPayment,
     sendPaymentLink,
+    isPaymentLinkBlocked,
+    getPaymentLinkTimeRemaining,
     setBookingPrefill,
   } = useApp();
 
@@ -1917,15 +1920,34 @@ export const SlotsScreen: React.FC = () => {
                     <span className="font-bold text-amber-700">Payment Pending</span>
                   </div>
                   <button
+                    disabled={isPaymentLinkBlocked(selectedCell.booking!.id)}
                     onClick={() => {
-                      setSelectedBookingId(selectedCell.booking!.id);
-                      setActiveModal('payment_link');
+                      haptics.tap();
+                      if (isPaymentLinkBlocked(selectedCell.booking!.id)) {
+                        const sec = getPaymentLinkTimeRemaining(selectedCell.booking!.id);
+                        showToast('Payment Link Active', `Payment link is valid for 15 mins. Button blocked for ${formatMinutesSeconds(sec)}.`, 'info');
+                        return;
+                      }
+                      sendPaymentLink(selectedCell.booking!.id);
                       setSelectedCell(null);
                     }}
-                    className="w-full h-10 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white font-black text-[12px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
+                    className={`w-full h-10 rounded-xl font-black text-[12px] flex items-center justify-center gap-1.5 transition-colors shadow-2xs ${
+                      isPaymentLinkBlocked(selectedCell.booking!.id)
+                        ? 'bg-amber-100 text-amber-900 border border-amber-300 cursor-not-allowed'
+                        : 'bg-[#FF6B2C] hover:bg-[#e85b1e] text-white cursor-pointer'
+                    }`}
                   >
-                    <Link2 className="w-4 h-4" />
-                    <span>View & Share Payment Link</span>
+                    {isPaymentLinkBlocked(selectedCell.booking!.id) ? (
+                      <>
+                        <Lock className="w-3.5 h-3.5 text-amber-700" />
+                        <span>Link Active · Blocked for {formatMinutesSeconds(getPaymentLinkTimeRemaining(selectedCell.booking!.id))}</span>
+                      </>
+                    ) : (
+                      <>
+                        <Link2 className="w-4 h-4" />
+                        <span>Send Payment Link (15m Validity)</span>
+                      </>
+                    )}
                   </button>
                 </div>
               )}

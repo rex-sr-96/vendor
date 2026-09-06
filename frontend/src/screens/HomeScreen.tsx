@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import {
   Bell,
@@ -17,8 +17,10 @@ import {
   Sparkles,
   CheckCircle2,
   ShieldCheck,
+  Lock,
 } from 'lucide-react';
 import { haptics } from '../utils/haptics';
+import { formatMinutesSeconds } from '../utils/feeCalculator';
 
 export type TimeframeType = 'today' | 'month' | 'yearly';
 
@@ -36,9 +38,18 @@ export const HomeScreen: React.FC = () => {
     navigateTo,
     setSelectedBookingId,
     setActiveModal,
+    sendPaymentLink,
+    isPaymentLinkBlocked,
+    getPaymentLinkTimeRemaining,
     showToast,
     unreadNotifCount,
   } = useApp();
+
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    const timer = setInterval(() => setTick((t) => t + 1), 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   // Active Timeframe: 'today' | 'month' | 'yearly'
   const [timeframe, setTimeframe] = useState<TimeframeType>('today');
@@ -155,8 +166,12 @@ export const HomeScreen: React.FC = () => {
   const handleActionRequiredPaymentLink = (e: React.MouseEvent, bookingId: string) => {
     e.stopPropagation();
     haptics.tap();
-    setSelectedBookingId(bookingId);
-    setActiveModal('payment_link');
+    if (isPaymentLinkBlocked(bookingId)) {
+      const remaining = getPaymentLinkTimeRemaining(bookingId);
+      showToast('Payment Link Active', `Link is valid for 15 mins. Button blocked for ${formatMinutesSeconds(remaining)}.`, 'info');
+      return;
+    }
+    sendPaymentLink(bookingId);
   };
 
   const handleViewBooking = (bookingId: string) => {
@@ -514,11 +529,25 @@ export const HomeScreen: React.FC = () => {
                   </p>
                 </div>
                 <button
+                  disabled={isPaymentLinkBlocked('BK10232')}
                   onClick={(e) => handleActionRequiredPaymentLink(e, 'BK10232')}
-                  className="px-3 py-1.5 rounded-xl bg-[#171717] text-white text-[11.5px] font-bold flex items-center gap-1 active-press cursor-pointer"
+                  className={`px-3 py-1.5 rounded-xl text-[11.5px] font-bold flex items-center gap-1 transition-all ${
+                    isPaymentLinkBlocked('BK10232')
+                      ? 'bg-amber-100 text-amber-900 border border-amber-300 cursor-not-allowed'
+                      : 'bg-[#171717] hover:bg-[#333] text-white active-press cursor-pointer'
+                  }`}
                 >
-                  <Link2 className="w-3 h-3" />
-                  <span>View Link</span>
+                  {isPaymentLinkBlocked('BK10232') ? (
+                    <>
+                      <Lock className="w-3 h-3 text-amber-700" />
+                      <span>Sent ({formatMinutesSeconds(getPaymentLinkTimeRemaining('BK10232'))})</span>
+                    </>
+                  ) : (
+                    <>
+                      <Link2 className="w-3 h-3" />
+                      <span>Send Link</span>
+                    </>
+                  )}
                 </button>
               </div>
             </div>

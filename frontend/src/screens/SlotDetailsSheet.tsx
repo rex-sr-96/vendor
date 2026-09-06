@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import {
   X,
@@ -14,9 +14,11 @@ import {
   GraduationCap,
   Trophy,
   Link2,
+  Lock,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { haptics } from '../utils/haptics';
+import { formatMinutesSeconds } from '../utils/feeCalculator';
 
 export const SlotDetailsSheet: React.FC = () => {
   const {
@@ -27,10 +29,19 @@ export const SlotDetailsSheet: React.FC = () => {
     slots,
     courts,
     sendPaymentLink,
+    isPaymentLinkBlocked,
+    getPaymentLinkTimeRemaining,
+    showToast,
     unblockSlotAction,
     setSelectedBookingId,
     navigateTo,
   } = useApp();
+
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    const timer = setInterval(() => setTick((t) => t + 1), 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   if (activeModal !== 'slot_details') return null;
 
@@ -236,17 +247,43 @@ export const SlotDetailsSheet: React.FC = () => {
                   </div>
                 </div>
 
-                <button
-                  onClick={() => {
-                    setSelectedBookingId(slot.bookingId || 'BK10232');
-                    setActiveModal('payment_link');
-                    haptics.tap();
-                  }}
-                  className="w-full h-11 bg-[#FF6B2C] text-white rounded-xl font-bold text-[12.5px] flex items-center justify-center gap-1.5 shadow-xs hover:bg-[#e85b1e] active-press cursor-pointer"
-                >
-                  <Link2 className="w-3.5 h-3.5" />
-                  <span>View & Share Payment Link</span>
-                </button>
+                {(() => {
+                  const targetBookingId = slot.bookingId || 'BK10232';
+                  const isBlocked = isPaymentLinkBlocked(targetBookingId);
+                  const remaining = getPaymentLinkTimeRemaining(targetBookingId);
+
+                  return (
+                    <button
+                      disabled={isBlocked}
+                      onClick={() => {
+                        haptics.tap();
+                        if (isBlocked) {
+                          showToast('Payment Link Active', `Link is valid for 15 mins. Button blocked for ${formatMinutesSeconds(remaining)}.`, 'info');
+                          return;
+                        }
+                        sendPaymentLink(targetBookingId);
+                        setActiveModal(null);
+                      }}
+                      className={`w-full h-11 rounded-xl font-bold text-[12.5px] flex items-center justify-center gap-1.5 shadow-xs transition-colors ${
+                        isBlocked
+                          ? 'bg-amber-100 text-amber-900 border border-amber-300 cursor-not-allowed'
+                          : 'bg-[#FF6B2C] text-white hover:bg-[#e85b1e] active-press cursor-pointer'
+                      }`}
+                    >
+                      {isBlocked ? (
+                        <>
+                          <Lock className="w-3.5 h-3.5 text-amber-700" />
+                          <span>Link Active · Blocked for {formatMinutesSeconds(remaining)}</span>
+                        </>
+                      ) : (
+                        <>
+                          <Link2 className="w-3.5 h-3.5" />
+                          <span>Send Payment Link (15m Validity)</span>
+                        </>
+                      )}
+                    </button>
+                  );
+                })()}
               </div>
             )}
 
