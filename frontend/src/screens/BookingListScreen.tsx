@@ -34,7 +34,6 @@ import {
   RefreshCw,
   Trash2,
   SlidersHorizontal,
-  MessageCircle,
   Lock,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -1854,16 +1853,6 @@ export const BookingListScreen: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-1.5">
-                  <a
-                    href={`https://wa.me/91${activePopupBooking.customerPhone.replace(/[^0-9]/g, '')}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={() => haptics.tap()}
-                    className="w-9 h-9 rounded-xl bg-[#2FA66A]/10 border border-[#2FA66A]/20 flex items-center justify-center text-[#2FA66A] hover:bg-[#2FA66A] hover:text-white transition-all shadow-2xs cursor-pointer"
-                    title="WhatsApp Customer"
-                  >
-                    <MessageCircle className="w-4 h-4" />
-                  </a>
                   <a
                     href={`tel:${activePopupBooking.customerPhone}`}
                     onClick={() => haptics.tap()}
