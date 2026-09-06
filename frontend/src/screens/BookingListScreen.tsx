@@ -1441,22 +1441,64 @@ export const BookingListScreen: React.FC = () => {
                     {/* If next slot is booked immediately */}
                     {extData.hasConflict ? (
                       <div className="space-y-3">
-                        <div className="bg-[#D94B4B]/10 border border-[#D94B4B]/30 rounded-2xl p-4 text-[12px] text-[#B52B2B] space-y-1.5">
-                          <p className="font-black flex items-center gap-2 text-[13px]">
+                        {/* Visual Timeline Showing Conflict */}
+                        <div className="bg-[#FAF9F6] border border-[#E8E6E1] rounded-2xl p-3 space-y-2.5">
+                          <div className="flex items-center justify-between text-[11px] font-bold">
+                            <span className="text-[#777570] uppercase tracking-wider flex items-center gap-1.5">
+                              <Clock className="w-3.5 h-3.5 text-[#FF6B2C]" />
+                              Pitch Schedule Timeline
+                            </span>
+                            <span className="text-[#D94B4B] flex items-center gap-1 font-extrabold">
+                              <Ban className="w-3 h-3" /> Conflict Detected
+                            </span>
+                          </div>
+
+                          <div className="overflow-x-auto no-scrollbar py-1">
+                            <div className="flex items-center gap-2 min-w-max">
+                              {/* Current Match */}
+                              <div className="bg-[#171717] text-white px-3.5 py-2.5 rounded-xl flex flex-col items-center justify-center min-w-[120px] shadow-2xs">
+                                <span className="text-[9px] font-black uppercase tracking-wider text-[#FF9D66] bg-white/10 px-1.5 py-0.5 rounded-full mb-0.5">
+                                  Current Match
+                                </span>
+                                <span className="text-[12px] font-black">{extendingBooking.timeSlot}</span>
+                                <span className="text-[9.5px] text-[#A3A099] max-w-[110px] truncate">{extendingBooking.customerName}</span>
+                              </div>
+
+                              <ArrowRight className="w-4 h-4 text-[#A3A099] shrink-0" />
+
+                              {/* Conflicting booked block */}
+                              <div className="bg-[#D94B4B]/10 border-2 border-[#D94B4B] text-[#D94B4B] px-3.5 py-2.5 rounded-xl flex flex-col items-center justify-center min-w-[130px] shadow-2xs">
+                                <span className="text-[9px] font-black uppercase tracking-wider bg-[#D94B4B] text-white px-1.5 py-0.5 rounded-full mb-0.5 flex items-center gap-1">
+                                  <Ban className="w-2.5 h-2.5" /> Booked
+                                </span>
+                                <span className="text-[12px] font-black text-[#B52B2B]">
+                                  {extData.conflictingBooking?.timeSlot || 'Next Slot'}
+                                </span>
+                                <span className="text-[9.5px] text-[#8A1A1A] font-bold max-w-[120px] truncate">
+                                  {extData.conflictingBooking?.customerName || 'Other Customer'}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-[#D94B4B]/10 border border-[#D94B4B]/30 rounded-2xl p-3.5 text-[12px] text-[#B52B2B] space-y-1">
+                          <p className="font-black flex items-center gap-2 text-[12.5px]">
                             <AlertTriangle className="w-4 h-4 shrink-0 text-[#D94B4B]" />
-                            <span>Extension Not Allowed</span>
+                            <span>Court Extension Blocked</span>
                           </p>
                           <p className="text-[11.5px] leading-relaxed text-[#8A1A1A]">
-                            {extData.conflictMessage || 'Next slot on this court is already booked by another customer. Court extension is not allowed.'}
+                            {extData.conflictMessage || 'Next slot on this court is already booked by another customer. Court cannot be extended.'}
                           </p>
                         </div>
+
                         <button
                           type="button"
                           disabled
                           className="w-full h-11 rounded-2xl bg-[#F1F0EC] text-[#A09D96] font-black text-[12.5px] flex items-center justify-center gap-2 cursor-not-allowed border border-[#E8E6E1]"
                         >
                           <Ban className="w-4 h-4 text-[#D94B4B]" />
-                          <span>Extension Not Allowed (Slot Occupied)</span>
+                          <span>Extension Unavailable (Next Slot Occupied)</span>
                         </button>
                       </div>
                     ) : extData.availableOptions.length === 0 ? (
@@ -1480,80 +1522,173 @@ export const BookingListScreen: React.FC = () => {
                     ) : (
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <span className="text-[11px] font-black text-[#777570] uppercase tracking-wider block">
-                            Select Available Extension Slot:
+                          <span className="text-[11px] font-black text-[#777570] uppercase tracking-wider flex items-center gap-1.5">
+                            <Clock className="w-3.5 h-3.5 text-[#FF6B2C]" />
+                            Timeline Slot Extension
                           </span>
                           <span className="text-[10.5px] text-[#2FA66A] font-bold flex items-center gap-1">
                             <CheckCircle2 className="w-3 h-3" />
-                            {extData.availableOptions.length} Available Slots
+                            {extData.availableOptions.length} Slots Available
                           </span>
                         </div>
 
-                        {/* Guidance alert when no extra hour is selected */}
-                        {!activeOption && (
+                        {/* Interactive Timeline Track Card */}
+                        <div className="bg-[#FAF9F6] border border-[#E8E6E1] rounded-2xl p-3 space-y-2.5">
+                          {/* Legend & Header */}
+                          <div className="flex items-center justify-between text-[9.5px] text-[#777570] font-bold pb-1 border-b border-[#E8E6E1]">
+                            <span>Court Pitch Schedule Track</span>
+                            <div className="flex items-center gap-2">
+                              <span className="flex items-center gap-1">
+                                <span className="w-2 h-2 rounded-full bg-[#171717]" /> Current
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <span className="w-2 h-2 rounded-full bg-[#FF6B2C]" /> Extended
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <span className="w-2 h-2 rounded-full bg-[#2FA66A]" /> Available
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Scrollable Timeline */}
+                          <div className="overflow-x-auto no-scrollbar py-1">
+                            <div className="flex items-center gap-2 min-w-max">
+                              {/* Pinned Current Match */}
+                              <div className="bg-[#171717] text-white px-3 py-2.5 rounded-2xl flex flex-col items-center justify-center min-w-[115px] shadow-xs select-none shrink-0">
+                                <span className="text-[8.5px] font-black uppercase tracking-wider text-[#FF9D66] bg-white/10 px-1.5 py-0.5 rounded-full mb-1">
+                                  Current Match
+                                </span>
+                                <span className="text-[12px] font-black leading-tight text-white">
+                                  {extendingBooking.timeSlot}
+                                </span>
+                                <span className="text-[9.5px] text-[#A3A099] mt-0.5 max-w-[105px] truncate">
+                                  {extendingBooking.customerName.split(' ')[0]}
+                                </span>
+                              </div>
+
+                              <ArrowRight className="w-3.5 h-3.5 text-[#A3A099] shrink-0" />
+
+                              {/* Available Extension Slot Segments */}
+                              {extData.availableOptions.map((opt) => {
+                                const isSelected = extensionMinutes !== null && opt.addedMinutes <= extensionMinutes;
+                                const isTargetEnd = extensionMinutes === opt.addedMinutes;
+
+                                return (
+                                  <button
+                                    key={opt.addedMinutes}
+                                    type="button"
+                                    onClick={() => {
+                                      haptics.tap();
+                                      if (extensionMinutes === opt.addedMinutes) {
+                                        setExtensionMinutes(null);
+                                      } else {
+                                        setExtensionMinutes(opt.addedMinutes);
+                                      }
+                                    }}
+                                    className={`px-3 py-2.5 rounded-2xl text-center transition-all shrink-0 flex flex-col items-center justify-center min-w-[108px] cursor-pointer select-none ${
+                                      isSelected
+                                        ? 'bg-gradient-to-r from-[#FF6B2C] to-[#FA5A14] text-white shadow-md ring-2 ring-[#FF6B2C]/40 active:scale-95'
+                                        : 'bg-white border-2 border-dashed border-[#2FA66A]/40 hover:border-[#FF6B2C] hover:bg-[#FFF8F5] text-[#171717] shadow-2xs active:scale-95'
+                                    }`}
+                                  >
+                                    <div className="flex items-center gap-1 mb-0.5">
+                                      <span className={`text-[11px] font-black ${isSelected ? 'text-white' : 'text-[#171717]'}`}>
+                                        +{opt.addedHours}h
+                                      </span>
+                                      {isTargetEnd && (
+                                        <span className="w-3.5 h-3.5 rounded-full bg-white text-[#FF6B2C] flex items-center justify-center text-[9px] font-black">
+                                          ✓
+                                        </span>
+                                      )}
+                                    </div>
+                                    <span className={`text-[11px] font-bold leading-tight ${isSelected ? 'text-white/95' : 'text-[#55534E]'}`}>
+                                      until {opt.stepEndTime}
+                                    </span>
+                                    <div className="flex items-center gap-1.5 mt-1">
+                                      <span className={`text-[11px] font-black ${isSelected ? 'text-[#FFE4D6]' : 'text-[#FF6B2C]'}`}>
+                                        +₹{opt.addedFee.toLocaleString('en-IN')}
+                                      </span>
+                                      <span className={`text-[8.5px] font-bold uppercase tracking-wider px-1 py-0.2 rounded ${
+                                        isSelected ? 'bg-white/20 text-white' : 'bg-[#2FA66A]/10 text-[#2FA66A]'
+                                      }`}>
+                                        {isSelected ? 'Selected' : 'Add'}
+                                      </span>
+                                    </div>
+                                  </button>
+                                );
+                              })}
+
+                              {/* Next occupied block if scanned hit a booked slot */}
+                              {extData.nextOccupiedBooking && (
+                                <>
+                                  <ArrowRight className="w-3.5 h-3.5 text-[#A3A099] shrink-0" />
+                                  <div className="bg-[#ECEAE4] border border-[#D5D3CC] text-[#777570] px-3 py-2.5 rounded-2xl shrink-0 min-w-[110px] flex flex-col items-center justify-center opacity-75 select-none">
+                                    <span className="text-[8.5px] font-bold uppercase tracking-wider text-[#D94B4B] bg-[#D94B4B]/10 px-1.5 py-0.5 rounded-full mb-0.5">
+                                      Booked
+                                    </span>
+                                    <span className="text-[11px] font-bold text-[#44423E]">
+                                      {extData.nextOccupiedTime}
+                                    </span>
+                                    <span className="text-[9px] text-[#777570] truncate max-w-[100px]">
+                                      {extData.nextOccupiedBooking.customerName.split(' ')[0]}
+                                    </span>
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Quick Selection Pills */}
+                          <div className="pt-2 border-t border-[#E8E6E1] flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+                            <span className="text-[10px] font-extrabold text-[#777570] uppercase tracking-wider shrink-0 mr-0.5">
+                              Quick Add:
+                            </span>
+                            {extData.availableOptions.map((opt) => {
+                              const isTarget = extensionMinutes === opt.addedMinutes;
+                              return (
+                                <button
+                                  key={`quick-${opt.addedMinutes}`}
+                                  type="button"
+                                  onClick={() => {
+                                    haptics.tap();
+                                    setExtensionMinutes(isTarget ? null : opt.addedMinutes);
+                                  }}
+                                  className={`px-2.5 py-1 rounded-full text-[10.5px] font-black shrink-0 transition-all cursor-pointer flex items-center gap-1 ${
+                                    isTarget
+                                      ? 'bg-[#171717] text-white shadow-2xs'
+                                      : 'bg-white border border-[#E8E6E1] text-[#55534E] hover:border-[#FF6B2C] hover:text-[#FF6B2C]'
+                                  }`}
+                                >
+                                  <span>+{opt.addedHours}h</span>
+                                  <span className={isTarget ? 'text-[#FF9D66]' : 'text-[#777570]'}>
+                                    (+₹{opt.addedFee.toLocaleString('en-IN')})
+                                  </span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Tip or Summary */}
+                        {!activeOption ? (
                           <div className="bg-[#FFF8E6] border border-[#FFE082] rounded-xl p-2.5 text-[11.5px] text-[#8C6B00] flex items-start gap-2">
                             <AlertCircle className="w-4 h-4 shrink-0 text-[#E65100] mt-0.5" />
                             <span>
-                              <strong>Action Required:</strong> You must select the extra hours below to extend. Extension is not allowed without selecting extra hours.
+                              <strong>Timeline Selection Required:</strong> Tap a slot on the timeline above or pick a Quick Add preset to extend this court match.
                             </span>
                           </div>
-                        )}
-
-                        {/* Interactive Selectable Available Slot Options */}
-                        <div className="space-y-2 max-h-48 overflow-y-auto pr-0.5">
-                          {extData.availableOptions.map((opt) => {
-                            const isSelected = extensionMinutes === opt.addedMinutes;
-                            return (
-                              <button
-                                key={opt.addedMinutes}
-                                type="button"
-                                onClick={() => {
-                                  haptics.tap();
-                                  setExtensionMinutes(opt.addedMinutes);
-                                }}
-                                className={`w-full p-3 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between ${
-                                  isSelected
-                                    ? 'bg-[#171717] text-white border-[#171717] ring-2 ring-[#FF6B2C]/40 shadow-xs'
-                                    : 'bg-[#FAF9F6] text-[#171717] border-[#E8E6E1] hover:bg-[#F1F0EC] hover:border-[#D0CECB]'
-                                }`}
-                              >
-                                <div className="space-y-0.5">
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-[12.5px] font-black block">
-                                      {opt.label}
-                                    </span>
-                                    {isSelected && (
-                                      <span className="px-1.5 py-0.5 rounded-full bg-[#FF6B2C] text-white text-[9.5px] font-extrabold uppercase">
-                                        Selected
-                                      </span>
-                                    )}
-                                  </div>
-                                  <span className={`text-[10.5px] ${isSelected ? 'text-[#FF9D66]' : 'text-[#777570]'}`}>
-                                    New Full Time: {opt.newFullTimeSlot}
-                                  </span>
-                                </div>
-                                <div className="text-right">
-                                  <span className={`text-[13px] font-black block ${isSelected ? 'text-[#FF6B2C]' : 'text-[#171717]'}`}>
-                                    +₹{opt.addedFee.toLocaleString('en-IN')}
-                                  </span>
-                                  <span className="text-[9.5px] font-bold text-[#2FA66A] uppercase tracking-wider">
-                                    Available
-                                  </span>
-                                </div>
-                              </button>
-                            );
-                          })}
-                        </div>
-
-                        {/* Summary & Price calculation */}
-                        {activeOption && (
+                        ) : (
                           <div className="bg-[#FAF9F6] p-3 rounded-2xl border border-[#E8E6E1] space-y-1.5 text-[12px] animate-in fade-in duration-200">
                             <div className="flex justify-between text-[#777570]">
                               <span>New Match Timing:</span>
-                              <strong className="text-[#171717]">{activeOption.newFullTimeSlot}</strong>
+                              <strong className="text-[#171717] font-black">{activeOption.newFullTimeSlot}</strong>
                             </div>
                             <div className="flex justify-between text-[#777570]">
-                              <span>Additional Extension Fee:</span>
+                              <span>Extension Added:</span>
+                              <strong className="text-[#171717]">+{activeOption.addedHours} Hour{activeOption.addedHours !== 1 ? 's' : ''}</strong>
+                            </div>
+                            <div className="flex justify-between text-[#777570]">
+                              <span>Additional Fee:</span>
                               <strong className="text-[#FF6B2C]">+₹{activeOption.addedFee.toLocaleString('en-IN')}</strong>
                             </div>
                             <div className="pt-1.5 border-t border-[#E8E6E1] flex justify-between items-baseline">
@@ -1581,9 +1716,9 @@ export const BookingListScreen: React.FC = () => {
                               setExtendingBooking(null);
                             }
                           }}
-                          className={`w-full h-11 rounded-2xl font-black text-[13px] flex items-center justify-center gap-2 shadow-xs transition-colors ${
+                          className={`w-full h-11 rounded-2xl font-black text-[13px] flex items-center justify-center gap-2 shadow-xs transition-all ${
                             activeOption
-                              ? 'bg-[#FF6B2C] hover:bg-[#e85b1e] text-white cursor-pointer'
+                              ? 'bg-gradient-to-r from-[#FF6B2C] to-[#FA5A14] hover:brightness-105 text-white cursor-pointer shadow-md'
                               : 'bg-[#E8E6E1] text-[#777570] border border-[#D5D3CC] cursor-not-allowed'
                           }`}
                         >
@@ -1596,8 +1731,8 @@ export const BookingListScreen: React.FC = () => {
                             </>
                           ) : (
                             <>
-                              <Ban className="w-4 h-4 text-[#777570]" />
-                              <span>Select Extra Hours to Extend (Required)</span>
+                              <Clock className="w-4 h-4 text-[#777570]" />
+                              <span>Select Extension Slot on Timeline (Required)</span>
                             </>
                           )}
                         </button>

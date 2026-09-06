@@ -24,6 +24,7 @@ import {
   Sliders,
   Lock,
   Link2,
+  ArrowRight,
 } from 'lucide-react';
 import { haptics } from '../utils/haptics';
 import { SlotState, Court, Booking } from '../types';
@@ -1567,13 +1568,54 @@ export const SlotsScreen: React.FC = () => {
                   </div>
 
                   {extData.hasConflict ? (
-                    <div className="space-y-2">
-                      <div className="bg-[#D94B4B]/10 border border-[#D94B4B]/30 rounded-xl p-3 text-[11.5px] text-[#B52B2B] space-y-1">
-                        <p className="font-bold flex items-center gap-1.5 text-[12px]">
+                    <div className="space-y-2.5">
+                      {/* Visual Conflict Timeline */}
+                      <div className="bg-[#FAF9F6] border border-[#E8E6E1] rounded-2xl p-2.5 space-y-2">
+                        <div className="flex items-center justify-between text-[10.5px] font-bold">
+                          <span className="text-[#777570] uppercase tracking-wider flex items-center gap-1.5">
+                            <Clock className="w-3.5 h-3.5 text-[#FF6B2C]" />
+                            Court Timeline
+                          </span>
+                          <span className="text-[#D94B4B] flex items-center gap-1 font-bold text-[10px]">
+                            <Ban className="w-3 h-3" /> Conflict
+                          </span>
+                        </div>
+
+                        <div className="overflow-x-auto no-scrollbar py-0.5">
+                          <div className="flex items-center gap-2 min-w-max">
+                            {/* Current Match */}
+                            <div className="bg-[#171717] text-white px-3 py-2 rounded-xl flex flex-col items-center justify-center min-w-[110px] shadow-2xs">
+                              <span className="text-[8.5px] font-black uppercase tracking-wider text-[#FF9D66] bg-white/10 px-1.5 py-0.5 rounded-full mb-0.5">
+                                Current Match
+                              </span>
+                              <span className="text-[11.5px] font-black">{selectedCell.booking.timeSlot}</span>
+                              <span className="text-[9px] text-[#A3A099] truncate max-w-[100px]">{selectedCell.booking.customerName}</span>
+                            </div>
+
+                            <ArrowRight className="w-3.5 h-3.5 text-[#A3A099] shrink-0" />
+
+                            {/* Booked Block */}
+                            <div className="bg-[#D94B4B]/10 border-2 border-[#D94B4B] text-[#D94B4B] px-3 py-2 rounded-xl flex flex-col items-center justify-center min-w-[115px] shadow-2xs">
+                              <span className="text-[8.5px] font-black uppercase tracking-wider bg-[#D94B4B] text-white px-1.5 py-0.5 rounded-full mb-0.5 flex items-center gap-1">
+                                <Ban className="w-2.5 h-2.5" /> Booked
+                              </span>
+                              <span className="text-[11.5px] font-black text-[#B52B2B]">
+                                {extData.conflictingBooking?.timeSlot || 'Next Slot'}
+                              </span>
+                              <span className="text-[9px] text-[#8A1A1A] font-bold truncate max-w-[105px]">
+                                {extData.conflictingBooking?.customerName || 'Other Customer'}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="bg-[#D94B4B]/10 border border-[#D94B4B]/30 rounded-xl p-2.5 text-[11px] text-[#B52B2B] space-y-1">
+                        <p className="font-bold flex items-center gap-1.5 text-[11.5px]">
                           <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-                          <span>Extension Not Allowed</span>
+                          <span>Extension Blocked</span>
                         </p>
-                        <p className="text-[10.5px] leading-relaxed text-[#8A1A1A]">
+                        <p className="text-[10px] leading-relaxed text-[#8A1A1A]">
                           {extData.conflictMessage || 'Next slot is already booked by another player. Court extension is not allowed.'}
                         </p>
                       </div>
@@ -1583,7 +1625,7 @@ export const SlotsScreen: React.FC = () => {
                         className="w-full h-10 rounded-xl bg-[#F1F0EC] text-[#A09D96] font-bold text-[11.5px] cursor-not-allowed flex items-center justify-center gap-1.5 border border-[#E8E6E1]"
                       >
                         <Ban className="w-3.5 h-3.5 text-[#D94B4B]" />
-                        <span>Extension Not Allowed</span>
+                        <span>Extension Unavailable (Slot Booked)</span>
                       </button>
                     </div>
                   ) : extData.availableOptions.length === 0 ? (
@@ -1607,58 +1649,164 @@ export const SlotsScreen: React.FC = () => {
                   ) : (
                     <div className="space-y-2.5">
                       <div className="flex items-center justify-between">
-                        <span className="text-[10.5px] font-bold text-[#777570] block">
-                          Select extra hours to extend:
+                        <span className="text-[10.5px] font-bold text-[#777570] flex items-center gap-1">
+                          <Clock className="w-3 h-3 text-[#FF6B2C]" />
+                          Timeline Slot Selection:
                         </span>
-                        {!activeOption && (
-                          <span className="text-[10px] text-[#D94B4B] font-bold">
-                            * Selection Required
-                          </span>
-                        )}
+                        <span className="text-[10px] text-[#2FA66A] font-bold flex items-center gap-1">
+                          <CheckCircle2 className="w-3 h-3" />
+                          {extData.availableOptions.length} Slots Available
+                        </span>
                       </div>
 
-                      <div className="space-y-1.5 max-h-40 overflow-y-auto pr-0.5">
-                        {extData.availableOptions.map((opt) => {
-                          const isSelected = extensionMinutes === opt.addedMinutes;
-                          return (
-                            <button
-                              key={opt.addedMinutes}
-                              type="button"
-                              onClick={() => {
-                                haptics.tap();
-                                setExtensionMinutes(opt.addedMinutes);
-                              }}
-                              className={`w-full p-2.5 rounded-xl text-left border transition-all cursor-pointer flex items-center justify-between ${
-                                isSelected
-                                  ? 'bg-[#171717] text-white border-[#171717] ring-2 ring-[#FF6B2C]/40 shadow-2xs'
-                                  : 'bg-white border-[#E8E6E1] text-[#777570] hover:text-[#171717] hover:border-[#D0CECB]'
-                              }`}
-                            >
-                              <div>
-                                <div className="flex items-center gap-1.5">
-                                  <span className="text-[11.5px] font-bold block">{opt.label}</span>
-                                  {isSelected && (
-                                    <span className="px-1 py-0.2 rounded bg-[#FF6B2C] text-white text-[9px] font-extrabold uppercase">
-                                      Selected
+                      {/* Interactive Horizontal Timeline Track */}
+                      <div className="bg-[#FAF9F6] border border-[#E8E6E1] rounded-2xl p-2.5 space-y-2">
+                        {/* Timeline Header */}
+                        <div className="flex items-center justify-between text-[9px] text-[#777570] font-bold pb-1 border-b border-[#E8E6E1]">
+                          <span>Court Pitch Track</span>
+                          <div className="flex items-center gap-1.5">
+                            <span className="flex items-center gap-0.5">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#171717]" /> Current
+                            </span>
+                            <span className="flex items-center gap-0.5">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#FF6B2C]" /> Extended
+                            </span>
+                            <span className="flex items-center gap-0.5">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#2FA66A]" /> Available
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Scrollable Track */}
+                        <div className="overflow-x-auto no-scrollbar py-0.5">
+                          <div className="flex items-center gap-1.5 min-w-max">
+                            {/* Current Match */}
+                            <div className="bg-[#171717] text-white px-2.5 py-2 rounded-xl flex flex-col items-center justify-center min-w-[100px] shadow-2xs shrink-0 select-none">
+                              <span className="text-[8px] font-black uppercase text-[#FF9D66] bg-white/10 px-1 py-0.2 rounded-full mb-0.5">
+                                Current
+                              </span>
+                              <span className="text-[11px] font-black">{selectedCell.booking.timeSlot}</span>
+                              <span className="text-[9px] text-[#A3A099] truncate max-w-[90px]">
+                                {selectedCell.booking.customerName.split(' ')[0]}
+                              </span>
+                            </div>
+
+                            <ArrowRight className="w-3.5 h-3.5 text-[#A3A099] shrink-0" />
+
+                            {/* Extension Slots */}
+                            {extData.availableOptions.map((opt) => {
+                              const isSelected = extensionMinutes !== null && opt.addedMinutes <= extensionMinutes;
+                              const isTargetEnd = extensionMinutes === opt.addedMinutes;
+
+                              return (
+                                <button
+                                  key={opt.addedMinutes}
+                                  type="button"
+                                  onClick={() => {
+                                    haptics.tap();
+                                    if (extensionMinutes === opt.addedMinutes) {
+                                      setExtensionMinutes(null);
+                                    } else {
+                                      setExtensionMinutes(opt.addedMinutes);
+                                    }
+                                  }}
+                                  className={`px-2.5 py-2 rounded-xl text-center transition-all shrink-0 flex flex-col items-center justify-center min-w-[95px] cursor-pointer select-none ${
+                                    isSelected
+                                      ? 'bg-gradient-to-r from-[#FF6B2C] to-[#FA5A14] text-white shadow-md ring-2 ring-[#FF6B2C]/40 active:scale-95'
+                                      : 'bg-white border-2 border-dashed border-[#2FA66A]/40 hover:border-[#FF6B2C] hover:bg-[#FFF8F5] text-[#171717] shadow-2xs active:scale-95'
+                                  }`}
+                                >
+                                  <div className="flex items-center gap-1 mb-0.5">
+                                    <span className={`text-[10.5px] font-black ${isSelected ? 'text-white' : 'text-[#171717]'}`}>
+                                      +{opt.addedHours}h
                                     </span>
-                                  )}
+                                    {isTargetEnd && (
+                                      <span className="w-3 h-3 rounded-full bg-white text-[#FF6B2C] flex items-center justify-center text-[8px] font-black">
+                                        ✓
+                                      </span>
+                                    )}
+                                  </div>
+                                  <span className={`text-[10px] font-bold leading-tight ${isSelected ? 'text-white/95' : 'text-[#55534E]'}`}>
+                                    to {opt.stepEndTime}
+                                  </span>
+                                  <div className="flex items-center gap-1 mt-0.5">
+                                    <span className={`text-[10.5px] font-black ${isSelected ? 'text-[#FFE4D6]' : 'text-[#FF6B2C]'}`}>
+                                      +₹{opt.addedFee}
+                                    </span>
+                                    <span className={`text-[8px] font-bold uppercase px-1 py-0.2 rounded ${
+                                      isSelected ? 'bg-white/20 text-white' : 'bg-[#2FA66A]/10 text-[#2FA66A]'
+                                    }`}>
+                                      {isSelected ? 'Selected' : 'Add'}
+                                    </span>
+                                  </div>
+                                </button>
+                              );
+                            })}
+
+                            {/* Booked block if next is occupied */}
+                            {extData.nextOccupiedBooking && (
+                              <>
+                                <ArrowRight className="w-3 h-3 text-[#A3A099] shrink-0" />
+                                <div className="bg-[#ECEAE4] border border-[#D5D3CC] text-[#777570] px-2.5 py-2 rounded-xl shrink-0 min-w-[95px] flex flex-col items-center justify-center opacity-75 select-none">
+                                  <span className="text-[8px] font-bold uppercase text-[#D94B4B] bg-[#D94B4B]/10 px-1 py-0.2 rounded-full mb-0.5">
+                                    Booked
+                                  </span>
+                                  <span className="text-[10px] font-bold text-[#44423E]">
+                                    {extData.nextOccupiedTime}
+                                  </span>
+                                  <span className="text-[8.5px] text-[#777570] truncate max-w-[85px]">
+                                    {extData.nextOccupiedBooking.customerName.split(' ')[0]}
+                                  </span>
                                 </div>
-                                <span className={`text-[10px] ${isSelected ? 'text-[#FF9D66]' : 'text-[#777570]'}`}>
-                                  Total: {opt.newFullTimeSlot}
+                              </>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Quick Presets */}
+                        <div className="pt-1.5 border-t border-[#E8E6E1] flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+                          <span className="text-[9.5px] font-extrabold text-[#777570] uppercase shrink-0">
+                            Quick:
+                          </span>
+                          {extData.availableOptions.map((opt) => {
+                            const isTarget = extensionMinutes === opt.addedMinutes;
+                            return (
+                              <button
+                                key={`quick-slots-${opt.addedMinutes}`}
+                                type="button"
+                                onClick={() => {
+                                  haptics.tap();
+                                  setExtensionMinutes(isTarget ? null : opt.addedMinutes);
+                                }}
+                                className={`px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 transition-all cursor-pointer flex items-center gap-1 ${
+                                  isTarget
+                                    ? 'bg-[#171717] text-white shadow-2xs'
+                                    : 'bg-white border border-[#E8E6E1] text-[#55534E] hover:border-[#FF6B2C] hover:text-[#FF6B2C]'
+                                }`}
+                              >
+                                <span>+{opt.addedHours}h</span>
+                                <span className={isTarget ? 'text-[#FF9D66]' : 'text-[#777570]'}>
+                                  (+₹{opt.addedFee})
                                 </span>
-                              </div>
-                              <div className="text-right">
-                                <span className={`text-[12px] font-black block ${isSelected ? 'text-[#FF6B2C]' : 'text-[#171717]'}`}>
-                                  +₹{opt.addedFee}
-                                </span>
-                                <span className="text-[9px] font-bold text-[#2FA66A] uppercase">
-                                  Available
-                                </span>
-                              </div>
-                            </button>
-                          );
-                        })}
+                              </button>
+                            );
+                          })}
+                        </div>
                       </div>
+
+                      {/* Summary calculation */}
+                      {activeOption && (
+                        <div className="bg-[#FAF9F6] p-2.5 rounded-xl border border-[#E8E6E1] space-y-1 text-[11px] animate-in fade-in duration-200">
+                          <div className="flex justify-between text-[#777570]">
+                            <span>New Match Timing:</span>
+                            <strong className="text-[#171717] font-black">{activeOption.newFullTimeSlot}</strong>
+                          </div>
+                          <div className="flex justify-between text-[#777570]">
+                            <span>Extension Fee:</span>
+                            <strong className="text-[#FF6B2C] font-black">+₹{activeOption.addedFee}</strong>
+                          </div>
+                        </div>
+                      )}
 
                       <button
                         type="button"
@@ -1676,9 +1824,9 @@ export const SlotsScreen: React.FC = () => {
                             setSelectedCell(null);
                           }
                         }}
-                        className={`w-full h-10 rounded-xl font-black text-[12px] shadow-2xs transition-colors flex items-center justify-center gap-1.5 ${
+                        className={`w-full h-10 rounded-xl font-black text-[12px] shadow-2xs transition-all flex items-center justify-center gap-1.5 ${
                           activeOption
-                            ? 'bg-[#FF6B2C] hover:bg-[#e85b1e] text-white cursor-pointer'
+                            ? 'bg-gradient-to-r from-[#FF6B2C] to-[#FA5A14] hover:brightness-105 text-white cursor-pointer shadow-md'
                             : 'bg-[#E8E6E1] text-[#777570] border border-[#D5D3CC] cursor-not-allowed'
                         }`}
                       >
@@ -1691,8 +1839,8 @@ export const SlotsScreen: React.FC = () => {
                           </>
                         ) : (
                           <>
-                            <Ban className="w-3.5 h-3.5 text-[#777570]" />
-                            <span>Select Extra Hours (Not Allowed Without Selection)</span>
+                            <Clock className="w-3.5 h-3.5 text-[#777570]" />
+                            <span>Select Extension Slot on Timeline</span>
                           </>
                         )}
                       </button>

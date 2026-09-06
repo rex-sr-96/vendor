@@ -12,6 +12,10 @@ import {
   ChevronLeft,
   ChevronRight,
   Zap,
+  Sun,
+  Moon,
+  AlertCircle,
+  Timer,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { haptics } from '../utils/haptics';
@@ -31,11 +35,17 @@ const ALL_TIME_SLOTS = [
   { value: '10:00 AM', minutes: 600, period: 'morning' },
   { value: '10:30 AM', minutes: 630, period: 'morning' },
   { value: '11:00 AM', minutes: 660, period: 'morning' },
+  { value: '11:30 AM', minutes: 690, period: 'morning' },
   { value: '12:00 PM', minutes: 720, period: 'afternoon' },
+  { value: '12:30 PM', minutes: 750, period: 'afternoon' },
   { value: '01:00 PM', minutes: 780, period: 'afternoon' },
+  { value: '01:30 PM', minutes: 810, period: 'afternoon' },
   { value: '02:00 PM', minutes: 840, period: 'afternoon' },
+  { value: '02:30 PM', minutes: 870, period: 'afternoon' },
   { value: '03:00 PM', minutes: 900, period: 'afternoon' },
+  { value: '03:30 PM', minutes: 930, period: 'afternoon' },
   { value: '04:00 PM', minutes: 960, period: 'afternoon' },
+  { value: '04:30 PM', minutes: 990, period: 'afternoon' },
   { value: '05:00 PM', minutes: 1020, period: 'evening' },
   { value: '05:30 PM', minutes: 1050, period: 'evening' },
   { value: '06:00 PM', minutes: 1080, period: 'evening', isPrime: true },
@@ -49,6 +59,7 @@ const ALL_TIME_SLOTS = [
   { value: '10:00 PM', minutes: 1320, period: 'night' },
   { value: '10:30 PM', minutes: 1350, period: 'night' },
   { value: '11:00 PM', minutes: 1380, period: 'night' },
+  { value: '11:30 PM', minutes: 1410, period: 'night' },
   { value: '12:00 AM', minutes: 1440, period: 'night' },
 ];
 
@@ -346,6 +357,7 @@ export const NewBookingModal: React.FC = () => {
       // Passed check: if selected date is today, hours before baseline 17:00 (5 PM) are passed
       const isPassed = isSelectedDateToday && m < CURRENT_HOUR_BASELINE * 60;
 
+      // Matched booking
       const matchedBooking = courtBookingsOnDate.find((b) => {
         const range = parseBookingRangeToMinutes(b.timeSlot || '');
         if (range) {
@@ -354,6 +366,7 @@ export const NewBookingModal: React.FC = () => {
         return false;
       });
 
+      // Matched court block / maintenance
       const matchedBlock = courtBlocksOnDate.find((blk) => {
         const range = parseBookingRangeToMinutes(blk.timeFull || blk.time || '');
         if (range) {
@@ -361,6 +374,31 @@ export const NewBookingModal: React.FC = () => {
         }
         return false;
       });
+
+      // Matched slots matrix state
+      const matchedSlot = slots.find((s) => {
+        if (s.courtId !== courtId) return false;
+        if (s.date && s.date !== bookingDate) return false;
+        const range = parseBookingRangeToMinutes(s.timeFull || s.time || '');
+        if (range) {
+          return Math.max(range.startMins, m) < Math.min(range.endMins, nextM);
+        }
+        return false;
+      });
+
+      // Hold status: Payment pending or lock timer
+      const isBookingHold = !!matchedBooking && (
+        matchedBooking.status === 'Payment Pending' ||
+        (matchedBooking.holdExpiresInMinutes !== undefined && matchedBooking.holdExpiresInMinutes > 0)
+      );
+      const isSlotHold = matchedSlot?.state === 'locked' || matchedSlot?.state === 'pending';
+      const isHold = isBookingHold || isSlotHold;
+
+      // Booked status
+      const isBooked = !!matchedBooking && !isHold;
+
+      // Blocked / Unavailable status
+      const isBlocked = !!matchedBlock || matchedSlot?.state === 'maintenance';
 
       const isSelected = m >= selStart && nextM <= selEnd;
       const isSelectionStart = m === selStart;
@@ -373,9 +411,10 @@ export const NewBookingModal: React.FC = () => {
         startMins: m,
         endMins: nextM,
         isPassed,
-        isBooked: !!matchedBooking,
+        isHold,
+        isBooked,
         bookingCustomer: matchedBooking?.customerName?.split(' ')[0] || '',
-        isBlocked: !!matchedBlock,
+        isBlocked,
         isSelected,
         isSelectionStart,
         isSelectionEnd,
@@ -388,9 +427,16 @@ export const NewBookingModal: React.FC = () => {
     isSelectedDateToday,
     courtBookingsOnDate,
     courtBlocksOnDate,
+    slots,
+    courtId,
+    bookingDate,
     startTime,
     endTime,
   ]);
+
+  // 2-Row Split: Row 1 = 06:00 AM to 02:00 PM (m < 840), Row 2 = 02:00 PM to 11:00 PM (m >= 840)
+  const row1Slots = useMemo(() => timelineSlots.filter((s) => s.startMins < 840), [timelineSlots]);
+  const row2Slots = useMemo(() => timelineSlots.filter((s) => s.startMins >= 840), [timelineSlots]);
 
   // Auto-align start time if currently passed on today
   useEffect(() => {
@@ -398,7 +444,7 @@ export const NewBookingModal: React.FC = () => {
       const sMins = parseTimeToMinutes(startTime);
       if (sMins < CURRENT_HOUR_BASELINE * 60) {
         const firstAvailable = timelineSlots.find(
-          (ts) => !ts.isPassed && !ts.isBooked && !ts.isBlocked
+          (ts) => !ts.isPassed && !ts.isBooked && !ts.isBlocked && !ts.isHold
         );
         if (firstAvailable) {
           setStartTime(firstAvailable.start);
@@ -411,9 +457,14 @@ export const NewBookingModal: React.FC = () => {
     }
   }, [isSelectedDateToday, selectedDay, selectedMonth, selectedYear]);
 
+  // Interactive timeline slot click supporting multi-slot selection (any number of slots: 1, 2, 3, 4, 5...)
   const handleTimelineSlotClick = (slot: (typeof timelineSlots)[0]) => {
     if (slot.isPassed) {
       showToast('Slot Passed', `${slot.label} has already passed today.`, 'warning');
+      return;
+    }
+    if (slot.isHold) {
+      showToast('Slot on Hold', `${slot.label} is currently held pending payment confirmation.`, 'warning');
       return;
     }
     if (slot.isBooked) {
@@ -421,7 +472,7 @@ export const NewBookingModal: React.FC = () => {
       return;
     }
     if (slot.isBlocked) {
-      showToast('Slot Blocked', `${slot.label} is currently blocked for maintenance.`, 'warning');
+      showToast('Slot Unavailable', `${slot.label} is currently blocked / unavailable.`, 'warning');
       return;
     }
 
@@ -429,25 +480,70 @@ export const NewBookingModal: React.FC = () => {
     const currentStart = parseTimeToMinutes(startTime);
     const currentEnd = parseTimeToMinutes(endTime);
     const minStep = isCourt30Min ? 30 : 60;
-    const isSingleSlotActive = currentEnd - currentStart <= minStep;
 
-    if (isSingleSlotActive && slot.startMins > currentStart) {
-      const hasBlockedOrBooked = timelineSlots.some(
+    // 1. If clicking start slot while single slot is selected -> keep it
+    if (slot.startMins === currentStart && currentEnd - currentStart <= minStep) {
+      return;
+    }
+
+    // 2. If clicking a slot after current start -> extend range to this slot's end (multi-slot selection!)
+    if (slot.startMins >= currentStart) {
+      const hasConflict = timelineSlots.some(
         (ts) =>
           ts.startMins >= currentStart &&
           ts.endMins <= slot.endMins &&
-          (ts.isBooked || ts.isBlocked || ts.isPassed)
+          (ts.isBooked || ts.isBlocked || ts.isPassed || ts.isHold)
       );
-      if (hasBlockedOrBooked) {
+
+      if (hasConflict) {
+        // Range hits an occupied or held slot; start new single slot at clicked slot
         setStartTime(slot.start);
         setEndTime(slot.end);
       } else {
+        // Successfully extend range up to clicked slot's end time (1, 2, 3, 4, 5, 6... any number of slots!)
         setEndTime(slot.end);
       }
     } else {
-      setStartTime(slot.start);
-      setEndTime(slot.end);
+      // 3. If clicking a slot before current start -> try to expand start time backwards
+      const hasConflict = timelineSlots.some(
+        (ts) =>
+          ts.startMins >= slot.startMins &&
+          ts.endMins <= currentEnd &&
+          (ts.isBooked || ts.isBlocked || ts.isPassed || ts.isHold)
+      );
+
+      if (!hasConflict) {
+        setStartTime(slot.start);
+      } else {
+        setStartTime(slot.start);
+        setEndTime(slot.end);
+      }
     }
+  };
+
+  // Quick preset duration handler (1hr, 2hr, 3hr, 4hr, 5hr, 6hr...)
+  const handleQuickDuration = (hrs: number) => {
+    haptics.tap();
+    const startM = parseTimeToMinutes(startTime);
+    const targetEndM = startM + hrs * 60;
+    if (targetEndM > 1380) {
+      showToast('Exceeds Hours', `Selected duration exceeds closing time (11:00 PM).`, 'warning');
+      return;
+    }
+
+    const hasConflict = timelineSlots.some(
+      (ts) =>
+        ts.startMins >= startM &&
+        ts.endMins <= targetEndM &&
+        (ts.isBooked || ts.isBlocked || ts.isPassed || ts.isHold)
+    );
+
+    if (hasConflict) {
+      showToast('Slot Conflict', `Cannot select ${hrs} hours: Some slots in this duration are booked, on hold, or unavailable.`, 'warning');
+      return;
+    }
+
+    setEndTime(formatMinutesToTime(targetEndM));
   };
 
   // Calendar calculations
@@ -813,78 +909,160 @@ export const NewBookingModal: React.FC = () => {
                 </div>
               </div>
 
-              {/* Row B: Interactive Timeline Slot Selection */}
-              <div className="bg-[#FAF9F6] border border-[#E8E6E1] rounded-2xl p-2.5 space-y-2">
-                <div className="flex items-center justify-between flex-wrap gap-1">
+              {/* Row B: Interactive 2-Row Timeline Slot Selection */}
+              <div className="bg-[#FAF9F6] border border-[#E8E6E1] rounded-2xl p-3 space-y-2.5">
+                {/* Header & Comprehensive Status Legend */}
+                <div className="flex items-center justify-between flex-wrap gap-1.5 pb-2 border-b border-[#E8E6E1]">
                   <div className="flex items-center gap-1.5">
                     <Clock className="w-3.5 h-3.5 text-[#FF6B2C]" />
-                    <span className="text-[11px] font-black text-[#171717]">Timeline Slot Selection</span>
+                    <span className="text-[11px] font-black text-[#171717]">Timeline Slot Selection (2-Row View)</span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-[9px] font-bold text-[#777570]">
-                    <span className="flex items-center gap-0.5"><span className="w-2 h-2 rounded-full bg-[#FF6B2C]" /> Selected</span>
-                    <span className="flex items-center gap-0.5"><span className="w-2 h-2 rounded-full bg-[#171717]" /> Booked</span>
-                    <span className="flex items-center gap-0.5"><span className="w-2 h-2 rounded-full bg-[#D4D2CD]" /> Passed</span>
-                  </div>
-                </div>
-
-                {/* Scrollable Timeline Track */}
-                <div className="overflow-x-auto no-scrollbar pb-1">
-                  <div className="flex items-center gap-1.5 min-w-max">
-                    {timelineSlots.map((slot) => {
-                      const isClickable = !slot.isPassed && !slot.isBooked && !slot.isBlocked;
-
-                      return (
-                        <button
-                          key={`timeline-${slot.startMins}`}
-                          type="button"
-                          disabled={!isClickable}
-                          onClick={() => handleTimelineSlotClick(slot)}
-                          className={`px-2.5 py-1.5 rounded-xl text-center transition-all shrink-0 flex flex-col items-center justify-center min-w-[58px] select-none ${
-                            slot.isSelected
-                              ? 'bg-gradient-to-r from-[#FF6B2C] to-[#FA5A14] text-white shadow-xs ring-1 ring-[#FF6B2C] cursor-pointer active:scale-95'
-                              : slot.isPassed
-                              ? 'bg-[#ECEAE4]/50 border border-[#E8E6E1] text-[#A3A099] line-through cursor-not-allowed opacity-50'
-                              : slot.isBooked
-                              ? 'bg-[#171717] text-white border border-[#171717] cursor-not-allowed'
-                              : slot.isBlocked
-                              ? 'bg-[#F1F5F9] text-[#475569] border border-[#CBD5E1] cursor-not-allowed'
-                              : 'bg-white border border-[#E8E6E1] hover:border-[#FF6B2C] text-[#171717] hover:bg-white/80 cursor-pointer active:scale-95 shadow-2xs'
-                          }`}
-                        >
-                          <span className={`text-[10px] font-black leading-tight ${slot.isSelected ? 'text-white' : ''}`}>
-                            {slot.label}
-                          </span>
-                          <span className={`text-[8px] font-bold leading-tight mt-0.5 ${
-                            slot.isSelected
-                              ? 'text-white/90'
-                              : slot.isPassed
-                              ? 'text-[#A3A099]'
-                              : slot.isBooked
-                              ? 'text-[#FF6B2C]'
-                              : slot.isBlocked
-                              ? 'text-[#475569]'
-                              : 'text-[#777570]'
-                          }`}>
-                            {slot.isSelected
-                              ? (slot.isSelectionStart ? 'Start' : slot.isSelectionEnd ? 'End' : 'Selected')
-                              : slot.isPassed
-                              ? 'Passed'
-                              : slot.isBooked
-                              ? (slot.bookingCustomer ? slot.bookingCustomer.slice(0, 5) : 'Booked')
-                              : slot.isBlocked
-                              ? 'Blocked'
-                              : `₹${effectiveRate}`}
-                          </span>
-                        </button>
-                      );
-                    })}
+                  <div className="flex items-center gap-2 text-[9px] font-bold text-[#777570] flex-wrap">
+                    <span className="flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-full bg-[#FF6B2C]" /> Selected
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-full bg-[#2FA66A]" /> Available
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-full bg-[#F59E0B]" /> Hold
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-full bg-[#171717]" /> Booked
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-full bg-[#94A3B8]" /> Blocked
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-full bg-[#D4D2CD]" /> Passed
+                    </span>
                   </div>
                 </div>
 
-                {/* Quick Selection Summary & Start/End Controls */}
+                {/* Helper for rendering individual slot button */}
+                {(() => {
+                  const renderSlotBtn = (slot: (typeof timelineSlots)[0]) => {
+                    const isClickable = !slot.isPassed && !slot.isBooked && !slot.isBlocked && !slot.isHold;
+
+                    return (
+                      <button
+                        key={`timeline-${slot.startMins}`}
+                        type="button"
+                        disabled={!isClickable}
+                        onClick={() => handleTimelineSlotClick(slot)}
+                        className={`px-2.5 py-1.5 rounded-xl text-center transition-all shrink-0 flex flex-col items-center justify-center min-w-[60px] select-none ${
+                          slot.isSelected
+                            ? 'bg-gradient-to-r from-[#FF6B2C] to-[#FA5A14] text-white shadow-xs ring-1 ring-[#FF6B2C] cursor-pointer active:scale-95'
+                            : slot.isPassed
+                            ? 'bg-[#ECEAE4]/50 border border-[#E8E6E1] text-[#A3A099] line-through cursor-not-allowed opacity-50'
+                            : slot.isHold
+                            ? 'bg-[#FFFBEB] border-2 border-[#F59E0B] text-[#B45309] shadow-2xs cursor-not-allowed'
+                            : slot.isBooked
+                            ? 'bg-[#171717] text-white border border-[#171717] cursor-not-allowed shadow-2xs'
+                            : slot.isBlocked
+                            ? 'bg-[#F1F5F9] text-[#475569] border border-[#CBD5E1] cursor-not-allowed'
+                            : 'bg-white border border-[#E8E6E1] hover:border-[#FF6B2C] text-[#171717] hover:bg-white/80 cursor-pointer active:scale-95 shadow-2xs'
+                        }`}
+                      >
+                        <span className={`text-[10px] font-black leading-tight ${slot.isSelected ? 'text-white' : ''}`}>
+                          {slot.label}
+                        </span>
+                        <span className={`text-[8px] font-bold leading-tight mt-0.5 flex items-center justify-center gap-0.5 ${
+                          slot.isSelected
+                            ? 'text-white/95 font-black'
+                            : slot.isPassed
+                            ? 'text-[#A3A099]'
+                            : slot.isHold
+                            ? 'text-[#D97706] font-black uppercase'
+                            : slot.isBooked
+                            ? 'text-[#FF6B2C] font-bold'
+                            : slot.isBlocked
+                            ? 'text-[#475569] font-bold'
+                            : 'text-[#777570]'
+                        }`}>
+                          {slot.isSelected ? (
+                            slot.isSelectionStart ? 'Start' : slot.isSelectionEnd ? 'End' : 'Selected'
+                          ) : slot.isPassed ? (
+                            'Passed'
+                          ) : slot.isHold ? (
+                            <span className="flex items-center gap-0.5"><Lock className="w-2 h-2" /> Hold</span>
+                          ) : slot.isBooked ? (
+                            slot.bookingCustomer ? slot.bookingCustomer.slice(0, 5) : 'Booked'
+                          ) : slot.isBlocked ? (
+                            'Blocked'
+                          ) : (
+                            `₹${effectiveRate}`
+                          )}
+                        </span>
+                      </button>
+                    );
+                  };
+
+                  return (
+                    <div className="space-y-2.5">
+                      {/* Row 1: Morning & Afternoon */}
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between text-[9.5px] font-bold text-[#777570] px-0.5">
+                          <span className="flex items-center gap-1 text-[#D97706] font-black">
+                            <Sun className="w-3 h-3 text-[#F59E0B]" /> Morning & Afternoon (06:00 AM – 02:00 PM)
+                          </span>
+                          <span className="text-[9px] text-[#A3A099] font-extrabold">Row 1</span>
+                        </div>
+                        <div className="overflow-x-auto no-scrollbar py-0.5">
+                          <div className="flex items-center gap-1.5 min-w-max">
+                            {row1Slots.map(renderSlotBtn)}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Row 2: Evening & Prime Night */}
+                      <div className="space-y-1 pt-1.5 border-t border-[#E8E6E1]/60">
+                        <div className="flex items-center justify-between text-[9.5px] font-bold text-[#777570] px-0.5">
+                          <span className="flex items-center gap-1 text-[#4F46E5] font-black">
+                            <Moon className="w-3 h-3 text-[#6366F1]" /> Evening & Prime Time (02:00 PM – 11:00 PM)
+                          </span>
+                          <span className="text-[9px] text-[#A3A099] font-extrabold">Row 2</span>
+                        </div>
+                        <div className="overflow-x-auto no-scrollbar py-0.5">
+                          <div className="flex items-center gap-1.5 min-w-max">
+                            {row2Slots.map(renderSlotBtn)}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Multi-Slot Quick Duration Chips */}
+                      <div className="pt-1.5 border-t border-[#E8E6E1]/60 flex items-center justify-between flex-wrap gap-2">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="text-[9.5px] font-black text-[#777570] uppercase tracking-wider shrink-0 mr-0.5">
+                            Duration:
+                          </span>
+                          {[1, 2, 3, 4, 5, 6].map((hrs) => {
+                            const isCurrent = Math.round(durationHours * 10) / 10 === hrs;
+                            return (
+                              <button
+                                key={`quick-dur-${hrs}`}
+                                type="button"
+                                onClick={() => handleQuickDuration(hrs)}
+                                className={`px-2 py-0.5 rounded-lg text-[10.5px] font-black transition-all cursor-pointer ${
+                                  isCurrent
+                                    ? 'bg-[#171717] text-white shadow-2xs ring-1 ring-[#171717]'
+                                    : 'bg-white border border-[#E8E6E1] text-[#55534E] hover:border-[#FF6B2C] hover:text-[#FF6B2C]'
+                                }`}
+                              >
+                                {hrs} hr{hrs > 1 ? 's' : ''}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* Range Timing Display & Start/End Dropdown Controls */}
                 <div className="flex items-center justify-between gap-2 pt-1 border-t border-[#E8E6E1]/60">
                   <div className="flex items-center gap-1.5 min-w-0">
-                    <span className="text-[10.5px] font-black text-[#171717] truncate">
+                    <span className="text-[11px] font-black text-[#171717] truncate">
                       {startTime} – {endTime}
                     </span>
                     <span className="text-[9.5px] font-black bg-[#FF6B2C]/15 text-[#FF6B2C] px-1.5 py-0.2 rounded-md shrink-0">

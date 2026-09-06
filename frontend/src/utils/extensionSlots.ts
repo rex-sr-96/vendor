@@ -5,6 +5,8 @@ export interface AvailableExtensionOption {
   addedHours: number;
   stepStartTime: string;
   stepEndTime: string;
+  segmentStartTime: string;
+  segmentEndTime: string;
   newFullTimeSlot: string;
   addedFee: number;
   label: string;
@@ -14,7 +16,12 @@ export interface ExtensionAvailabilityResult {
   hasConflict: boolean;
   conflictingBooking?: Booking;
   conflictMessage?: string;
+  nextOccupiedBooking?: Booking;
+  nextOccupiedTime?: string;
   availableOptions: AvailableExtensionOption[];
+  stepMinutes: number;
+  currentStartTimeStr: string;
+  currentEndTimeStr: string;
 }
 
 export function parseTimeToMinutes(tStr: string): number {
@@ -119,6 +126,8 @@ export function getAvailableExtensionSlots(
   let hasConflict = false;
   let conflictingBooking: Booking | undefined;
   let conflictMessage: string | undefined;
+  let nextOccupiedBooking: Booking | undefined;
+  let nextOccupiedTime: string | undefined;
 
   let currentCheckingStart = currentEndMins;
 
@@ -133,6 +142,8 @@ export function getAvailableExtensionSlots(
     );
 
     if (overlapping) {
+      nextOccupiedBooking = overlapping.booking;
+      nextOccupiedTime = `${formatMinutesToTime(overlapping.startMins)}–${formatMinutesToTime(overlapping.endMins)}`;
       if (stepIndex === 1) {
         hasConflict = true;
         conflictingBooking = overlapping.booking;
@@ -152,6 +163,8 @@ export function getAvailableExtensionSlots(
       addedHours,
       stepStartTime: formatMinutesToTime(currentEndMins),
       stepEndTime: newEndStr,
+      segmentStartTime: formatMinutesToTime(currentCheckingStart),
+      segmentEndTime: newEndStr,
       newFullTimeSlot: `${matchStartTimeStr}–${newEndStr}`,
       addedFee,
       label: `+${addedHours} Hour${addedHours !== 1 ? 's' : ''} (${formatMinutesToTime(currentCheckingStart)} – ${newEndStr})`,
@@ -164,6 +177,11 @@ export function getAvailableExtensionSlots(
     hasConflict,
     conflictingBooking,
     conflictMessage,
+    nextOccupiedBooking,
+    nextOccupiedTime,
     availableOptions,
+    stepMinutes,
+    currentStartTimeStr: matchStartTimeStr,
+    currentEndTimeStr,
   };
 }
