@@ -490,6 +490,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   const navigateTo = (screen: ScreenType) => {
+    // Staff access guard: silently redirect to home if attempting restricted screens
+    const staffRestrictedScreens: ScreenType[] = ['staff_management', 'payment_settings'];
+    if (currentUser?.type === 'staff' && staffRestrictedScreens.includes(screen)) {
+      setScreenHistory((prev) => [...prev, 'home']);
+      setCurrentScreen('home');
+      setActiveTab('home');
+      return;
+    }
+
     setScreenHistory((prev) => [...prev, screen]);
     setCurrentScreen(screen);
 

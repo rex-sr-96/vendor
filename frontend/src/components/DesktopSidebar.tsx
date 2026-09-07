@@ -63,6 +63,8 @@ export const DesktopSidebar: React.FC = () => {
 
   const pendingBookingsCount = bookings.filter((b) => b.balanceAmount > 0).length;
 
+  const isStaff = currentUser?.type === 'staff';
+
   const navGroups = [
     {
       group: 'OPERATIONS',
@@ -114,12 +116,13 @@ export const DesktopSidebar: React.FC = () => {
     {
       group: 'MANAGEMENT & TOOLS',
       items: [
-        {
+        // Staff & Roles: only visible to owners
+        ...(!isStaff ? [{
           id: 'staff_management' as ScreenType,
           label: 'Staff & Roles',
           icon: Users,
           active: currentScreen === 'staff_management',
-        },
+        }] : []),
         {
           id: 'export_report' as ScreenType,
           label: 'Export Reports',
@@ -214,7 +217,7 @@ export const DesktopSidebar: React.FC = () => {
                   </span>
                 </div>
                 <p className="text-[10.5px] font-bold text-[#777570] tracking-wide mt-0.5">
-                  Owner OS
+                  {isStaff ? `${currentUser?.role ?? 'Staff'} Portal` : 'Owner OS'}
                 </p>
               </div>
             </div>

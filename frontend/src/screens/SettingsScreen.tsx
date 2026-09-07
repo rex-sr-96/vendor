@@ -93,7 +93,10 @@ export const SettingsScreen: React.FC = () => {
     courts,
     showToast,
     setActiveModal,
+    currentUser,
   } = useApp();
+
+  const isStaff = currentUser?.type === 'staff';
 
   const [activeTab, setActiveTab] = useState<SettingsTab>('general');
   const [isMobileGeneralOpen, setIsMobileGeneralOpen] = useState(false);
@@ -311,9 +314,10 @@ export const SettingsScreen: React.FC = () => {
   };
 
   // Nav menu items (Staff Management and Cancellation & Refunds REMOVED)
+  // Payment Settings also hidden from staff users
   const navItems: { id: SettingsTab; label: string; icon: React.FC<{ className?: string }>; badge?: string }[] = [
     { id: 'general', label: 'Venue Profile & Info', icon: Building2, badge: `${venuePhotos.length} Photos` },
-    { id: 'payment_settings', label: 'Payment Settings', icon: Wallet, badge: bankChangeRequest?.pending ? 'Pending' : 'Bank Verified' },
+    ...(!isStaff ? [{ id: 'payment_settings' as SettingsTab, label: 'Payment Settings', icon: Wallet, badge: bankChangeRequest?.pending ? 'Pending' : 'Bank Verified' }] : []),
     { id: 'amenities', label: 'Amenities', icon: Coffee, badge: `${activeAmenitiesCount} on` },
     { id: 'operating_hours', label: 'Operating Hours', icon: Clock, badge: 'Daily' },
     { id: 'booking_settings', label: 'Booking Settings', icon: SlidersHorizontal },
@@ -404,7 +408,7 @@ export const SettingsScreen: React.FC = () => {
         <div className="space-y-2">
           {[
             { id: 'general', title: 'Venue Profile & Photos', caption: `Owner details & ${venuePhotos.length} photos`, icon: Building2, screen: 'venue_profile' as const },
-            { id: 'payment_settings', title: 'Payment & Bank Details', caption: 'HDFC verified payout · Change request form', icon: Wallet, screen: 'payment_settings' as const },
+            ...(!isStaff ? [{ id: 'payment_settings', title: 'Payment & Bank Details', caption: 'HDFC verified payout · Change request form', icon: Wallet, screen: 'payment_settings' as const }] : []),
             { id: 'amenities', title: 'Amenities', caption: `${activeAmenitiesCount} active · Admin verified amenities`, icon: Coffee, screen: 'amenities' as const },
             { id: 'operating_hours', title: 'Operating Hours', caption: '06:00 AM – 11:00 PM (Daily schedule)', icon: Clock, screen: 'operating_hours' as const },
             { id: 'booking_settings', title: 'Booking Settings', caption: 'Advance reservation & slot duration', icon: SlidersHorizontal, screen: 'booking_settings' as const },
