@@ -24,7 +24,18 @@ const extract10DigitPhone = (raw: string): string => {
 };
 
 export const LoginScreen: React.FC = () => {
-  const { navigateTo, ownerPhone, setVenueDetails, venueName, venueAddress, venueCity, setVerificationId, showToast } = useApp();
+  const {
+    navigateTo,
+    ownerPhone,
+    ownerName,
+    setVenueDetails,
+    venueName,
+    venueAddress,
+    venueCity,
+    setVerificationId,
+    checkPhoneAccess,
+    showToast,
+  } = useApp();
   const [phoneNumber, setPhoneNumber] = useState(() => extract10DigitPhone(ownerPhone || ''));
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -39,9 +50,43 @@ export const LoginScreen: React.FC = () => {
     setErrorMessage(null);
     setIsLoading(true);
 
+    // 1. Verify that the mobile number belongs to an Owner or Authorized Staff Member
+    const access = checkPhoneAccess(cleanPhone);
+    if (!access.allowed) {
+      setErrorMessage(
+        access.reason ||
+          'Access restricted. This mobile number is not registered as an arena owner or authorized staff member. Please contact your venue administrator.'
+      );
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const res = await authApi.sendLoginOtp(cleanPhone);
       setVerificationId(res.verification_id || res.reqId || null);
+
+      // Store pending user authentication info for OtpScreen
+      if (typeof window !== 'undefined') {
+        const pendingUser =
+          access.userType === 'staff' && access.staff
+            ? {
+                type: 'staff',
+                id: access.staff.id,
+                name: access.staff.name,
+                role: access.staff.role,
+                phone: cleanPhone,
+                email: access.staff.email,
+                permissions: access.staff.permissions,
+              }
+            : {
+                type: 'owner',
+                name: ownerName || 'Karthik Rajan',
+                role: 'Arena Director',
+                phone: cleanPhone,
+              };
+        sessionStorage.setItem('turftown_pending_user', JSON.stringify(pendingUser));
+      }
+
       setVenueDetails({
         name: venueName,
         address: venueAddress,
@@ -49,7 +94,9 @@ export const LoginScreen: React.FC = () => {
         phone: cleanPhone,
         ownerPhone: cleanPhone,
       });
-      showToast('OTP Dispatched', `6-digit verification code sent to +91 ${cleanPhone} via MSG91 SMS.`, 'success');
+
+      const roleBadge = access.userType === 'staff' ? ` (${access.staff?.role})` : ' (Owner)';
+      showToast('OTP Dispatched', `6-digit verification code sent to +91 ${cleanPhone}${roleBadge} via MSG91 SMS.`, 'success');
       navigateTo('otp');
     } catch (err: any) {
       setErrorMessage(err.message || 'Unable to dispatch verification code via MSG91. Please verify your mobile number.');

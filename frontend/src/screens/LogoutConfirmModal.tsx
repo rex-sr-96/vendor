@@ -5,7 +5,17 @@ import { motion, AnimatePresence } from 'motion/react';
 import { haptics } from '@/utils/haptics';
 
 export const LogoutConfirmModal: React.FC = () => {
-  const { activeModal, setActiveModal, navigateTo, ownerName, ownerPhone, venueName, showToast } = useApp();
+  const {
+    activeModal,
+    setActiveModal,
+    navigateTo,
+    ownerName,
+    ownerPhone,
+    currentUser,
+    setCurrentUser,
+    venueName,
+    showToast,
+  } = useApp();
 
   if (activeModal !== 'logout_confirm') return null;
 
@@ -17,6 +27,11 @@ export const LogoutConfirmModal: React.FC = () => {
   const handleConfirmLogout = () => {
     haptics.tap();
     setActiveModal(null);
+    setCurrentUser(null);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('turftown_current_user');
+      sessionStorage.removeItem('turftown_pending_user');
+    }
     navigateTo('login');
     showToast('Signed Out', 'You have been safely signed out.', 'info');
   };
@@ -60,14 +75,14 @@ export const LogoutConfirmModal: React.FC = () => {
           {/* User Account Info Chip */}
           <div className="bg-[#FAF9F6] p-3 rounded-2xl border border-[#E8E6E1] flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-[#171717] text-white flex items-center justify-center font-black text-[12px] shrink-0">
-              TT
+              {currentUser?.name ? currentUser.name.slice(0, 2).toUpperCase() : 'TT'}
             </div>
             <div className="min-w-0 text-left">
               <p className="text-[12.5px] font-black text-[#171717] leading-none truncate">
-                {ownerName}
+                {currentUser?.name || ownerName}
               </p>
               <p className="text-[11px] text-[#777570] mt-1 font-mono truncate">
-                {ownerPhone} · Arena Director
+                {currentUser?.phone || ownerPhone} · {currentUser?.type === 'staff' ? currentUser.role : 'Arena Director'}
               </p>
             </div>
           </div>

@@ -4,7 +4,17 @@ import { ChevronLeft, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
 import { authApi } from '../lib/api';
 
 export const OtpScreen: React.FC = () => {
-  const { navigateTo, ownerPhone, verificationId, setVerificationId, refreshFromOnboarding, showToast } = useApp();
+  const {
+    navigateTo,
+    ownerPhone,
+    ownerName,
+    verificationId,
+    setVerificationId,
+    refreshFromOnboarding,
+    showToast,
+    setCurrentUser,
+    checkPhoneAccess,
+  } = useApp();
   const cleanPhone = (ownerPhone || '9876543210').replace(/\D/g, '').slice(-10);
   const [otp, setOtp] = useState<string[]>(['', '', '', '', '', '']);
   const [countdown, setCountdown] = useState<number>(60);
@@ -76,6 +86,44 @@ export const OtpScreen: React.FC = () => {
       }
       localStorage.setItem('ibooksports_partner_mobile', cleanPhone);
 
+      // Determine user identity (staff member or owner)
+      let resolvedUser: any = null;
+      if (typeof window !== 'undefined') {
+        try {
+          const pendingStr = sessionStorage.getItem('turftown_pending_user');
+          if (pendingStr) {
+            resolvedUser = JSON.parse(pendingStr);
+            sessionStorage.removeItem('turftown_pending_user');
+          }
+        } catch (e) {
+          console.warn('Could not parse pending user', e);
+        }
+      }
+
+      if (!resolvedUser) {
+        const access = checkPhoneAccess(cleanPhone);
+        if (access.userType === 'staff' && access.staff) {
+          resolvedUser = {
+            type: 'staff',
+            id: access.staff.id,
+            name: access.staff.name,
+            role: access.staff.role,
+            phone: cleanPhone,
+            email: access.staff.email,
+            permissions: access.staff.permissions,
+          };
+        } else {
+          resolvedUser = {
+            type: 'owner',
+            name: ownerName || 'Karthik Rajan',
+            role: 'Arena Director',
+            phone: cleanPhone,
+          };
+        }
+      }
+
+      setCurrentUser(resolvedUser);
+
       // Refresh vendor profile from backend
       try {
         await refreshFromOnboarding(cleanPhone);
@@ -83,7 +131,12 @@ export const OtpScreen: React.FC = () => {
         console.warn('Profile refresh fallback:', e);
       }
 
-      showToast('Authentication Successful', 'Logged in to vendor control center.', 'success');
+      const welcomeMsg =
+        resolvedUser.type === 'staff'
+          ? `Logged in as ${resolvedUser.name} (${resolvedUser.role}).`
+          : `Logged in to arena owner control center.`;
+
+      showToast('Authentication Successful', welcomeMsg, 'success');
       navigateTo('home');
     } catch (err: any) {
       setErrorMessage(err.message || 'Invalid or expired verification code. Please check and try again.');

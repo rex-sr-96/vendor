@@ -18,6 +18,7 @@ import {
   NotificationPreferencesConfig,
   NotificationItem,
   BankDetails,
+  LoggedInUser,
 } from '../types';
 import {
   initialBookings,
@@ -237,6 +238,16 @@ interface AppContextType {
   refreshFromOnboarding: (phone?: string) => Promise<void>;
   verificationId: string | null;
   setVerificationId: (id: string | null) => void;
+
+  // Staff & Owner Authentication Control
+  currentUser: LoggedInUser | null;
+  setCurrentUser: (user: LoggedInUser | null) => void;
+  checkPhoneAccess: (rawPhone: string) => {
+    allowed: boolean;
+    reason?: string;
+    userType?: 'owner' | 'staff';
+    staff?: StaffMember;
+  };
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -295,7 +306,64 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [supportTickets, setSupportTickets] = useState<SupportTicket[]>(initialSupportTickets);
   const [amenities, setAmenities] = useState<AmenityItem[]>(initialAmenities);
   const [cancellationPolicy, setCancellationPolicy] = useState<CancellationPolicyConfig>(initialCancellationPolicy);
-  const [staffMembers, setStaffMembers] = useState<StaffMember[]>(initialStaffMembers);
+
+  // Staff Members State with LocalStorage Persistence
+  const [staffMembers, setStaffMembers] = useState<StaffMember[]>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('turftown_staff_members');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed;
+          }
+        }
+      } catch (e) {
+        console.warn('Failed to parse stored staff members', e);
+      }
+    }
+    return initialStaffMembers;
+  });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('turftown_staff_members', JSON.stringify(staffMembers));
+      } catch (e) {
+        console.warn('Failed to save staff members', e);
+      }
+    }
+  }, [staffMembers]);
+
+  // Logged-in Staff or Owner State
+  const [currentUser, setCurrentUser] = useState<LoggedInUser | null>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('turftown_current_user');
+        if (stored) {
+          return JSON.parse(stored);
+        }
+      } catch (e) {
+        console.warn('Failed to parse current user session', e);
+      }
+    }
+    return null;
+  });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        if (currentUser) {
+          localStorage.setItem('turftown_current_user', JSON.stringify(currentUser));
+        } else {
+          localStorage.removeItem('turftown_current_user');
+        }
+      } catch (e) {
+        console.warn('Failed to save current user', e);
+      }
+    }
+  }, [currentUser]);
+
   const [notificationPreferences, setNotificationPreferences] = useState<NotificationPreferencesConfig>(initialNotificationPreferences);
   const [notifications, setNotifications] = useState<NotificationItem[]>(initialNotifications);
 
@@ -1208,8 +1276,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   const addStaffMember = (member: Omit<StaffMember, 'id'>) => {
+    const raw = member.phone || '';
+    const cleanDigits = raw.replace(/\D/g, '').slice(-10);
+    const formattedPhone = cleanDigits.length === 10
+      ? `+91 ${cleanDigits.slice(0, 5)} ${cleanDigits.slice(5)}`
+      : raw.trim();
+
     const newStaff: StaffMember = {
       ...member,
+      phone: formattedPhone,
       id: `st-${Date.now()}`,
     };
     setStaffMembers((prev) => [...prev, newStaff]);
@@ -1217,8 +1292,24 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   const updateStaffMember = (id: string, updatedData: Partial<StaffMember>) => {
+    let formattedPhone = updatedData.phone;
+    if (updatedData.phone) {
+      const cleanDigits = updatedData.phone.replace(/\D/g, '').slice(-10);
+      if (cleanDigits.length === 10) {
+        formattedPhone = `+91 ${cleanDigits.slice(0, 5)} ${cleanDigits.slice(5)}`;
+      }
+    }
+
     setStaffMembers((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, ...updatedData } : s))
+      prev.map((s) =>
+        s.id === id
+          ? {
+              ...s,
+              ...updatedData,
+              ...(formattedPhone ? { phone: formattedPhone } : {}),
+            }
+          : s
+      )
     );
     showToast('Staff Updated', 'Staff role & details updated successfully.', 'success');
   };
@@ -1249,6 +1340,47 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
           : s
       )
     );
+  };
+
+  // Staff & Owner Access Verification Gate
+  const checkPhoneAccess = (rawPhone: string) => {
+    const clean = (rawPhone || '').replace(/\D/g, '').slice(-10);
+    if (!clean || clean.length < 10) {
+      return { allowed: false, reason: 'Please enter a valid 10-digit mobile number.' };
+    }
+
+    // 1. Check if Owner
+    const currentOwnerClean = (ownerPhone || '').replace(/\D/g, '').slice(-10);
+    const registeredOwnerNumbers = ['6369591821', '9876543210'];
+    if (clean === currentOwnerClean || registeredOwnerNumbers.includes(clean)) {
+      return { allowed: true, userType: 'owner' as const };
+    }
+
+    // 2. Check if Staff Member (from active state or stored list)
+    const matchedStaff = staffMembers.find((s) => {
+      const staffClean = (s.phone || '').replace(/\D/g, '').slice(-10);
+      return staffClean === clean;
+    });
+
+    if (matchedStaff) {
+      if (matchedStaff.status === 'Inactive') {
+        return {
+          allowed: false,
+          reason: `Access restricted. Staff account for ${matchedStaff.name} is currently inactive. Please contact the arena owner.`,
+        };
+      }
+      return {
+        allowed: true,
+        userType: 'staff' as const,
+        staff: matchedStaff,
+      };
+    }
+
+    return {
+      allowed: false,
+      reason:
+        'Access restricted. This mobile number is not registered as an arena owner or authorized staff member. Please contact your venue administrator.',
+    };
   };
 
   const updateNotificationPreferences = (prefs: Partial<NotificationPreferencesConfig>) => {
@@ -1602,6 +1734,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         refreshFromOnboarding: fetchOnboardingProfile,
         verificationId,
         setVerificationId,
+        currentUser,
+        setCurrentUser,
+        checkPhoneAccess,
       }}
     >
       {children}

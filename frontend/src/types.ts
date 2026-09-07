@@ -231,6 +231,16 @@ export interface StaffMember {
   status: 'Active' | 'On Leave' | 'Inactive';
 }
 
+export interface LoggedInUser {
+  type: 'owner' | 'staff';
+  id?: string;
+  name: string;
+  role: string;
+  phone: string;
+  email?: string;
+  permissions?: StaffMember['permissions'];
+}
+
 export interface NotificationPreferencesConfig {
   whatsappBookingConfirmation: boolean;
   whatsappPaymentReminder: boolean;

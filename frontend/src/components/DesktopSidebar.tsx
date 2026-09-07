@@ -36,6 +36,7 @@ export const DesktopSidebar: React.FC = () => {
     venueName,
     venueCity,
     ownerName,
+    currentUser,
     unreadNotifCount,
     bookings,
     setVenueDetails,
@@ -414,15 +415,15 @@ export const DesktopSidebar: React.FC = () => {
             title={isSidebarCollapsed ? `${ownerName} (Settings)` : undefined}
           >
             <div className="w-8 h-8 rounded-xl bg-[#171717] text-white flex items-center justify-center font-black text-xs shadow-xs group-hover:ring-2 group-hover:ring-[#FF6B2C] transition-all shrink-0">
-              TT
+              {currentUser?.name ? currentUser.name.slice(0, 2).toUpperCase() : 'TT'}
             </div>
             {!isSidebarCollapsed && (
               <div className="min-w-0">
                 <p className="text-[12px] font-extrabold text-[#171717] leading-none truncate">
-                  {ownerName}
+                  {currentUser?.name || ownerName}
                 </p>
                 <p className="text-[10px] font-semibold text-[#777570] leading-none mt-1 truncate">
-                  Arena Director
+                  {currentUser?.type === 'staff' ? currentUser.role : 'Arena Director'}
                 </p>
               </div>
             )}
