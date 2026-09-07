@@ -60,8 +60,13 @@ const TIME_SLOTS = [
 
 const DAYS_OF_WEEK = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-export const AddCourtScreen: React.FC = () => {
+interface AddCourtScreenProps {
+  onClose?: () => void;
+}
+
+export const AddCourtScreen: React.FC<AddCourtScreenProps> = ({ onClose }) => {
   const { goBack, addNewCourt, showToast, courts } = useApp();
+  const handleClose = () => { if (onClose) onClose(); else goBack(); };
 
   // 1. Same physical ground question
   const [isSamePhysicalSports, setIsSamePhysicalSports] = useState<'yes' | 'no'>('no');
@@ -118,6 +123,7 @@ export const AddCourtScreen: React.FC = () => {
 
   const handleSaveCourt = (e: React.FormEvent) => {
     e.preventDefault();
+    const closeAfter = onClose || goBack;
 
     if (isSamePhysicalSports === 'yes') {
       if (!selectedParentCourt) {
@@ -153,7 +159,7 @@ export const AddCourtScreen: React.FC = () => {
 
       showToast('Sport Added to Court', `${sportToAdd} added to ${selectedParentCourt.name} (${finalDisplayName})!`, 'success');
       haptics.success();
-      goBack();
+      closeAfter();
       return;
     }
 
@@ -196,30 +202,32 @@ export const AddCourtScreen: React.FC = () => {
     });
     showToast('Court Added', `${courtName} created with custom cancellation policy`, 'success');
     haptics.success();
-    goBack();
+    closeAfter();
   };
 
   return (
-    <div className="pb-32 pt-1 px-4 w-full max-w-3xl mx-auto space-y-4 select-none">
-      {/* Top Header */}
-      <div className="flex items-center justify-between pb-2 border-b border-[#E8E6E1]">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={goBack}
-            className="md:hidden w-9 h-9 rounded-xl bg-white border border-[#E8E6E1] flex items-center justify-center text-[#171717] hover:bg-[#F7F7F5] shadow-2xs active-press cursor-pointer transition-all"
-          >
-            <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
-          </button>
-          <div>
-            <h1 className="text-[21px] font-black text-[#171717] tracking-tight">Add New Court / Turf</h1>
-            <p className="text-[11.5px] font-medium text-[#777570]">Configure court specs, sport layouts, pricing rates & peak schedules</p>
+    <div className={`w-full max-w-3xl mx-auto space-y-4 select-none ${onClose ? 'pb-4' : 'pb-32 pt-1 px-4'}`}>
+      {/* Top Header - only shown in standalone screen mode (not in modal) */}
+      {!onClose && (
+        <div className="flex items-center justify-between pb-2 border-b border-[#E8E6E1]">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleClose}
+              className="md:hidden w-9 h-9 rounded-xl bg-white border border-[#E8E6E1] flex items-center justify-center text-[#171717] hover:bg-[#F7F7F5] shadow-2xs active-press cursor-pointer transition-all"
+            >
+              <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
+            </button>
+            <div>
+              <h1 className="text-[21px] font-black text-[#171717] tracking-tight">Add New Court / Turf</h1>
+              <p className="text-[11.5px] font-medium text-[#777570]">Configure court specs, sport layouts, pricing rates &amp; peak schedules</p>
+            </div>
+          </div>
+
+          <div className="w-9 h-9 rounded-xl bg-[#FF6B2C]/10 text-[#FF6B2C] flex items-center justify-center">
+            <Layers className="w-4 h-4" />
           </div>
         </div>
-
-        <div className="w-9 h-9 rounded-xl bg-[#FF6B2C]/10 text-[#FF6B2C] flex items-center justify-center">
-          <Layers className="w-4 h-4" />
-        </div>
-      </div>
+      )}
 
       <form onSubmit={handleSaveCourt} className="space-y-3.5">
         {/* ========================================================================= */}
@@ -242,7 +250,7 @@ export const AddCourtScreen: React.FC = () => {
             Select <strong className="text-[#171717]">Yes</strong> if this sport will share the ground with an already live physical court (e.g. Football pitch also used for Box Cricket).
           </p>
 
-          <div className="grid grid-cols-2 gap-2 pt-0.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-0.5">
             <button
               type="button"
               id="btn-same-physical-yes"
@@ -256,7 +264,7 @@ export const AddCourtScreen: React.FC = () => {
                   setDisplayName(`${selectedParentCourt.name} (${selectedSports[0] === 'Football' ? 'Cricket' : selectedSports[0]})`);
                 }
               }}
-              className={`py-2.5 px-3 rounded-xl font-bold text-[13px] flex items-center justify-center gap-1.5 transition-all border cursor-pointer ${
+              className={`py-2.5 px-3 rounded-xl font-bold text-[12.5px] sm:text-[13px] flex items-center justify-center gap-1.5 transition-all border cursor-pointer active-press ${
                 isSamePhysicalSports === 'yes'
                   ? 'bg-[#171717] text-white border-[#171717] shadow-xs'
                   : 'bg-[#FAF9F6] text-[#777570] border-[#E8E6E1] hover:text-[#171717]'
@@ -273,7 +281,7 @@ export const AddCourtScreen: React.FC = () => {
                 haptics.tap();
                 setIsSamePhysicalSports('no');
               }}
-              className={`py-2.5 px-3 rounded-xl font-bold text-[13px] flex items-center justify-center gap-1.5 transition-all border cursor-pointer ${
+              className={`py-2.5 px-3 rounded-xl font-bold text-[12.5px] sm:text-[13px] flex items-center justify-center gap-1.5 transition-all border cursor-pointer active-press ${
                 isSamePhysicalSports === 'no'
                   ? 'bg-[#171717] text-white border-[#171717] shadow-xs'
                   : 'bg-[#FAF9F6] text-[#777570] border-[#E8E6E1] hover:text-[#171717]'
@@ -566,7 +574,7 @@ export const AddCourtScreen: React.FC = () => {
                 <label className="block text-[11px] font-bold text-[#777570] mb-1.5">
                   Minimum Booking Duration
                 </label>
-                <div className="grid grid-cols-5 gap-1.5">
+                <div className="grid grid-cols-3 sm:grid-cols-5 gap-1.5">
                   {DURATION_OPTIONS.map((dur) => (
                     <button
                       key={dur}
@@ -575,7 +583,7 @@ export const AddCourtScreen: React.FC = () => {
                         haptics.tap();
                         setMinBookingTime(dur);
                       }}
-                      className={`py-1.5 px-2 rounded-xl text-[11px] font-bold transition-all border cursor-pointer text-center ${
+                      className={`py-2 px-2 rounded-xl text-[11px] sm:text-[11.5px] font-bold transition-all border cursor-pointer text-center active-press ${
                         minBookingTime === dur
                           ? 'bg-[#171717] text-white border-[#171717]'
                           : 'bg-[#FAF9F6] text-[#777570] border-[#E8E6E1] hover:text-[#171717]'
@@ -739,7 +747,7 @@ export const AddCourtScreen: React.FC = () => {
               <label className="block text-[12px] font-bold text-[#171717] mb-2">
                 Notice Buffer Before Match Kickoff:
               </label>
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {(['2 Hours', '4 Hours', '12 Hours', '24 Hours'] as const).map((win) => {
                   const isSelected = cancellationNoticeHours === win;
                   return (
@@ -750,7 +758,7 @@ export const AddCourtScreen: React.FC = () => {
                         haptics.tap();
                         setCancellationNoticeHours(win);
                       }}
-                      className={`py-2.5 px-3 rounded-xl font-black text-[13px] transition-all border cursor-pointer text-center ${
+                      className={`py-2 px-2.5 rounded-xl font-black text-[12px] sm:text-[13px] transition-all border cursor-pointer text-center active-press ${
                         isSelected
                           ? 'bg-[#171717] text-white border-[#171717] shadow-xs'
                           : 'bg-[#FAF9F6] text-[#171717] border-[#E8E6E1] hover:bg-[#F1F0EC]'
@@ -784,7 +792,7 @@ export const AddCourtScreen: React.FC = () => {
               <label className="block text-[12px] font-bold text-[#171717] mb-2">
                 Eligible Refund Value:
               </label>
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {(['50%', '75%', '90%', '100%'] as const).map((pct) => {
                   const isSelected = refundPercentage === pct;
                   return (
@@ -795,7 +803,7 @@ export const AddCourtScreen: React.FC = () => {
                         haptics.tap();
                         setRefundPercentage(pct);
                       }}
-                      className={`py-2.5 px-3 rounded-xl font-black text-[13px] transition-all border cursor-pointer text-center ${
+                      className={`py-2 px-2.5 rounded-xl font-black text-[12px] sm:text-[13px] transition-all border cursor-pointer text-center active-press ${
                         isSelected
                           ? 'bg-[#2FA66A] text-white border-[#2FA66A] shadow-xs'
                           : 'bg-[#FAF9F6] text-[#171717] border-[#E8E6E1] hover:bg-[#F1F0EC]'

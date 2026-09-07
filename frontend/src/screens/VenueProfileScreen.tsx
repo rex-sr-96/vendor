@@ -23,6 +23,8 @@ import {
   Info,
   ExternalLink,
   Lock,
+  Building,
+  ArrowRight,
 } from 'lucide-react';
 import { haptics } from '../utils/haptics';
 
@@ -42,6 +44,7 @@ export const VenueProfileScreen: React.FC = () => {
     addVenuePhoto,
     removeVenuePhoto,
     setVenueDetails,
+    navigateTo,
     goBack,
     showToast,
     currentUser,
@@ -193,6 +196,7 @@ export const VenueProfileScreen: React.FC = () => {
           </div>
         </div>
       </div>
+
 
       {/* SECTION 1: VENUE PHOTO GALLERY */}
       <div className="bg-white rounded-3xl border border-[#E8E6E1] p-4 shadow-2xs space-y-3.5">
