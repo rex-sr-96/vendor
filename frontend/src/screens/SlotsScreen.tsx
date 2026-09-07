@@ -24,11 +24,14 @@ import {
   Sliders,
   Lock,
   Link2,
+  ArrowRight,
 } from 'lucide-react';
 import { haptics } from '../utils/haptics';
 import { SlotState, Court, Booking } from '../types';
 import { DateMonthPickerSheet } from '../components/DateMonthPickerSheet';
-import { getAvailableExtensionSlots, parseTimeToMinutes } from '../utils/extensionSlots';
+import { parseTimeToMinutes, parseBookingRangeToMinutes } from '../utils/extensionSlots';
+import { ExtendSlotModal } from '../components/ExtendSlotModal';
+import { formatMinutesSeconds } from '../utils/feeCalculator';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface MatrixCellData {
@@ -117,6 +120,9 @@ export const SlotsScreen: React.FC = () => {
     releaseExpiredSlot,
     confirmBookingPayment,
     sendPaymentLink,
+    isPaymentLinkBlocked,
+    getPaymentLinkTimeRemaining,
+    setBookingPrefill,
   } = useApp();
 
   // Active approved courts
@@ -269,12 +275,18 @@ export const SlotsScreen: React.FC = () => {
         const isSlotAlreadyPassed = isPastDate || (isTodayDate && timeDef.hour24 < CURRENT_HOUR_BASELINE);
 
         // Check if matching active booking exists
+        const cellStart = timeDef.hour24 * 60;
+        const cellEnd = (timeDef.hour24 + 1) * 60;
+
         const matchedBooking = courtBookings.find((b) => {
+          const range = parseBookingRangeToMinutes(b.timeSlot || '');
+          if (range) {
+            return Math.max(range.startMins, cellStart) < Math.min(range.endMins, cellEnd);
+          }
           const slotStr = b.timeSlot || '';
           return (
             slotStr.includes(timeDef.time) ||
-            slotStr.includes(timeDef.start) ||
-            (slotStr.includes(timeDef.start.split(' ')[0]) && slotStr.includes(timeDef.start.split(' ')[1]))
+            slotStr.includes(timeDef.start)
           );
         });
 
@@ -303,20 +315,12 @@ export const SlotsScreen: React.FC = () => {
 
         // Check if maintenance block exists
         const matchedBlock = courtBlocks.find((s) => {
+          const range = parseBookingRangeToMinutes(s.timeFull || s.time || '');
+          if (range) {
+            return Math.max(range.startMins, cellStart) < Math.min(range.endMins, cellEnd);
+          }
           const blkTime = s.time || '';
-          if (blkTime.includes(timeDef.start) || blkTime.includes(timeDef.time) || blkTime.includes(timeDef.start.split(' ')[0])) {
-            return true;
-          }
-          const parts = blkTime.split(/[–\-]| to /i).map((p) => p.trim());
-          if (parts.length >= 2) {
-            const sMin = parseTimeToMinutes(parts[0]);
-            let eMin = parseTimeToMinutes(parts[1]);
-            if (eMin <= sMin && parts[1].includes('12')) eMin = 1440;
-            const cellStart = timeDef.hour24 * 60;
-            const cellEnd = (timeDef.hour24 + 1) * 60;
-            return Math.max(sMin, cellStart) < Math.min(eMin, cellEnd);
-          }
-          return false;
+          return blkTime.includes(timeDef.start) || blkTime.includes(timeDef.time);
         });
 
         if (matchedBlock) {
@@ -519,8 +523,24 @@ export const SlotsScreen: React.FC = () => {
     if (!rangeSelection) return;
     haptics.success();
     setSelectedSlotId(`slot-${rangeSelection.courtId}-${rangeSelection.startIndex}`);
+    setBookingPrefill({
+      courtId: rangeSelection.courtId,
+      courtName: rangeSelection.courtName,
+      sport: rangeSelection.sport,
+      date: currentDate,
+      startTime: rangeSelection.startTime,
+      endTime: rangeSelection.endTime,
+      totalPrice: rangeSelection.totalPrice,
+    });
+    setRangeSelection(null);
     setActiveModal('new_booking');
   };
+
+  // Clear any active range selection when bookings list updates or date changes
+  useEffect(() => {
+    setRangeSelection(null);
+    setSelectedSlotId(null);
+  }, [bookings.length, currentDate]);
 
   // -------------------------------------------------------------
   // INTERACTIVE CELL POPUP / MODAL
@@ -630,6 +650,13 @@ export const SlotsScreen: React.FC = () => {
                 return;
               }
               haptics.tap();
+              setBookingPrefill({
+                courtId: selectedCourt?.id,
+                courtName: selectedCourt?.name,
+                sport: selectedCourt?.sports[0],
+                date: currentDate,
+              });
+              setRangeSelection(null);
               setActiveModal('new_booking');
             }}
             disabled={isPastDate}
@@ -1434,6 +1461,15 @@ export const SlotsScreen: React.FC = () => {
       {/* --------------------------------------------------------- */}
       {/* 8. INTERACTIVE SLOT DETAILS MODAL (MOBILE BOTTOM SHEET)   */}
       {/* --------------------------------------------------------- */}
+      {/* 2-Row Interactive Timeline Slot Picker for Session Extension */}
+      <ExtendSlotModal
+        isOpen={showExtensionModal && !!selectedCell?.booking}
+        onClose={() => {
+          setShowExtensionModal(false);
+          setSelectedCell(null);
+        }}
+        booking={selectedCell?.booking || null}
+      />
       {selectedCell && (
         <div
           onClick={() => {
@@ -1519,166 +1555,7 @@ export const SlotsScreen: React.FC = () => {
               </div>
             ) : null}
 
-            {showExtensionModal && selectedCell.booking && (() => {
-              const cellCourt = courts.find((c) => c.id === selectedCell.courtId) || courts[0];
-              const extData = getAvailableExtensionSlots(selectedCell.booking, bookings, cellCourt);
-              const activeOption = extensionMinutes !== null
-                ? extData.availableOptions.find((o) => o.addedMinutes === extensionMinutes) || null
-                : null;
 
-              return (
-                <div className="bg-[#FAF9F6] rounded-2xl p-4 border border-[#FF6B2C]/30 space-y-3 animate-in fade-in duration-200">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[12px] font-black text-[#171717] flex items-center gap-1.5">
-                      <Clock className="w-4 h-4 text-[#FF6B2C]" />
-                      <span>Extend Session Time</span>
-                    </span>
-                    {activeOption ? (
-                      <span className="text-[11px] text-[#FF6B2C] font-bold">
-                        +₹{activeOption.addedFee} added to due balance
-                      </span>
-                    ) : (
-                      <span className="text-[10px] text-[#B87C0D] font-bold bg-[#FFF8E6] px-2 py-0.5 rounded-md border border-[#FFE082]">
-                        Selection Required
-                      </span>
-                    )}
-                  </div>
-
-                  {extData.hasConflict ? (
-                    <div className="space-y-2">
-                      <div className="bg-[#D94B4B]/10 border border-[#D94B4B]/30 rounded-xl p-3 text-[11.5px] text-[#B52B2B] space-y-1">
-                        <p className="font-bold flex items-center gap-1.5 text-[12px]">
-                          <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-                          <span>Extension Not Allowed</span>
-                        </p>
-                        <p className="text-[10.5px] leading-relaxed text-[#8A1A1A]">
-                          {extData.conflictMessage || 'Next slot is already booked by another player. Court extension is not allowed.'}
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        disabled
-                        className="w-full h-10 rounded-xl bg-[#F1F0EC] text-[#A09D96] font-bold text-[11.5px] cursor-not-allowed flex items-center justify-center gap-1.5 border border-[#E8E6E1]"
-                      >
-                        <Ban className="w-3.5 h-3.5 text-[#D94B4B]" />
-                        <span>Extension Not Allowed</span>
-                      </button>
-                    </div>
-                  ) : extData.availableOptions.length === 0 ? (
-                    <div className="space-y-2">
-                      <div className="bg-[#FAF9F6] border border-[#E8E6E1] rounded-xl p-3 text-[11.5px] text-[#777570] text-center space-y-1">
-                        <p className="font-bold text-[#D94B4B] flex items-center justify-center gap-1">
-                          <Ban className="w-3.5 h-3.5" />
-                          <span>Extension Not Allowed</span>
-                        </p>
-                        <p className="text-[10.5px]">Court operating hours end after this match schedule.</p>
-                      </div>
-                      <button
-                        type="button"
-                        disabled
-                        className="w-full h-10 rounded-xl bg-[#F1F0EC] text-[#A09D96] font-bold text-[11.5px] cursor-not-allowed flex items-center justify-center gap-1.5 border border-[#E8E6E1]"
-                      >
-                        <Ban className="w-3.5 h-3.5 text-[#D94B4B]" />
-                        <span>Extension Not Allowed</span>
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="space-y-2.5">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10.5px] font-bold text-[#777570] block">
-                          Select extra hours to extend:
-                        </span>
-                        {!activeOption && (
-                          <span className="text-[10px] text-[#D94B4B] font-bold">
-                            * Selection Required
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="space-y-1.5 max-h-40 overflow-y-auto pr-0.5">
-                        {extData.availableOptions.map((opt) => {
-                          const isSelected = extensionMinutes === opt.addedMinutes;
-                          return (
-                            <button
-                              key={opt.addedMinutes}
-                              type="button"
-                              onClick={() => {
-                                haptics.tap();
-                                setExtensionMinutes(opt.addedMinutes);
-                              }}
-                              className={`w-full p-2.5 rounded-xl text-left border transition-all cursor-pointer flex items-center justify-between ${
-                                isSelected
-                                  ? 'bg-[#171717] text-white border-[#171717] ring-2 ring-[#FF6B2C]/40 shadow-2xs'
-                                  : 'bg-white border-[#E8E6E1] text-[#777570] hover:text-[#171717] hover:border-[#D0CECB]'
-                              }`}
-                            >
-                              <div>
-                                <div className="flex items-center gap-1.5">
-                                  <span className="text-[11.5px] font-bold block">{opt.label}</span>
-                                  {isSelected && (
-                                    <span className="px-1 py-0.2 rounded bg-[#FF6B2C] text-white text-[9px] font-extrabold uppercase">
-                                      Selected
-                                    </span>
-                                  )}
-                                </div>
-                                <span className={`text-[10px] ${isSelected ? 'text-[#FF9D66]' : 'text-[#777570]'}`}>
-                                  Total: {opt.newFullTimeSlot}
-                                </span>
-                              </div>
-                              <div className="text-right">
-                                <span className={`text-[12px] font-black block ${isSelected ? 'text-[#FF6B2C]' : 'text-[#171717]'}`}>
-                                  +₹{opt.addedFee}
-                                </span>
-                                <span className="text-[9px] font-bold text-[#2FA66A] uppercase">
-                                  Available
-                                </span>
-                              </div>
-                            </button>
-                          );
-                        })}
-                      </div>
-
-                      <button
-                        type="button"
-                        disabled={!activeOption}
-                        onClick={() => {
-                          if (selectedCell.booking && activeOption) {
-                            haptics.success();
-                            extendBookingSlot(
-                              selectedCell.booking.id,
-                              activeOption.addedMinutes,
-                              activeOption.addedFee,
-                              activeOption.newFullTimeSlot
-                            );
-                            setShowExtensionModal(false);
-                            setSelectedCell(null);
-                          }
-                        }}
-                        className={`w-full h-10 rounded-xl font-black text-[12px] shadow-2xs transition-colors flex items-center justify-center gap-1.5 ${
-                          activeOption
-                            ? 'bg-[#FF6B2C] hover:bg-[#e85b1e] text-white cursor-pointer'
-                            : 'bg-[#E8E6E1] text-[#777570] border border-[#D5D3CC] cursor-not-allowed'
-                        }`}
-                      >
-                        {activeOption ? (
-                          <>
-                            <Check className="w-3.5 h-3.5 stroke-[3]" />
-                            <span>
-                              Confirm Extension ({activeOption.newFullTimeSlot} · +₹{activeOption.addedFee})
-                            </span>
-                          </>
-                        ) : (
-                          <>
-                            <Ban className="w-3.5 h-3.5 text-[#777570]" />
-                            <span>Select Extra Hours (Not Allowed Without Selection)</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  )}
-                </div>
-              );
-            })()}
 
             <div className="pt-2 space-y-2">
               {selectedCell.booking && selectedCell.state === 'ongoing' && (
@@ -1747,15 +1624,34 @@ export const SlotsScreen: React.FC = () => {
                     <span className="font-bold text-amber-700">Payment Pending</span>
                   </div>
                   <button
+                    disabled={isPaymentLinkBlocked(selectedCell.booking!.id)}
                     onClick={() => {
-                      setSelectedBookingId(selectedCell.booking!.id);
-                      setActiveModal('payment_link');
+                      haptics.tap();
+                      if (isPaymentLinkBlocked(selectedCell.booking!.id)) {
+                        const sec = getPaymentLinkTimeRemaining(selectedCell.booking!.id);
+                        showToast('Payment Link Active', `Payment link is valid for 15 mins. Button blocked for ${formatMinutesSeconds(sec)}.`, 'info');
+                        return;
+                      }
+                      sendPaymentLink(selectedCell.booking!.id);
                       setSelectedCell(null);
                     }}
-                    className="w-full h-10 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white font-black text-[12px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
+                    className={`w-full h-10 rounded-xl font-black text-[12px] flex items-center justify-center gap-1.5 transition-colors shadow-2xs ${
+                      isPaymentLinkBlocked(selectedCell.booking!.id)
+                        ? 'bg-amber-100 text-amber-900 border border-amber-300 cursor-not-allowed'
+                        : 'bg-[#FF6B2C] hover:bg-[#e85b1e] text-white cursor-pointer'
+                    }`}
                   >
-                    <Link2 className="w-4 h-4" />
-                    <span>View & Share Payment Link</span>
+                    {isPaymentLinkBlocked(selectedCell.booking!.id) ? (
+                      <>
+                        <Lock className="w-3.5 h-3.5 text-amber-700" />
+                        <span>Link Active · Blocked for {formatMinutesSeconds(getPaymentLinkTimeRemaining(selectedCell.booking!.id))}</span>
+                      </>
+                    ) : (
+                      <>
+                        <Link2 className="w-4 h-4" />
+                        <span>Send Payment Link (15m Validity)</span>
+                      </>
+                    )}
                   </button>
                 </div>
               )}

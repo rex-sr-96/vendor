@@ -235,8 +235,9 @@ export const CourtsScreen: React.FC = () => {
                     </span>
                   )}
                   {court.samePhysicalSports && (
-                    <span className="px-2 py-0.5 rounded-lg bg-[#2FA66A]/10 text-[#2FA66A] text-[10px] font-bold">
-                      Shared Ground
+                    <span className="px-2 py-0.5 rounded-lg bg-[#2FA66A]/10 text-[#2FA66A] text-[10.5px] font-extrabold flex items-center gap-1">
+                      <Layers className="w-3 h-3" />
+                      <span>{court.parentCourtName ? `Shares ${court.parentCourtName}` : 'Shared Physical Ground'}</span>
                     </span>
                   )}
                 </div>

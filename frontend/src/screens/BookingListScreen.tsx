@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import {
   Search,
@@ -34,15 +34,15 @@ import {
   RefreshCw,
   Trash2,
   SlidersHorizontal,
-  MessageCircle,
+  Lock,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Booking, BookingStatus, PaymentStatus } from '../types';
 import { haptics } from '../utils/haptics';
 import { DateMonthPickerSheet } from '../components/DateMonthPickerSheet';
 import { exportSingleBookingReceipt } from '../utils/exportUtils';
-import { calculateBookingFinancials } from '../utils/feeCalculator';
-import { getAvailableExtensionSlots } from '../utils/extensionSlots';
+import { calculateBookingFinancials, formatMinutesSeconds } from '../utils/feeCalculator';
+import { ExtendSlotModal } from '../components/ExtendSlotModal';
 
 type DateFilterType = 'today' | 'tomorrow' | 'upcoming' | 'particular' | 'all';
 type ViewMode = 'grid' | 'table';
@@ -62,6 +62,9 @@ export const BookingListScreen: React.FC = () => {
     navigateTo,
     setSelectedBookingId,
     setActiveModal,
+    sendPaymentLink,
+    isPaymentLinkBlocked,
+    getPaymentLinkTimeRemaining,
     showToast,
     checkInBooking,
     checkOutBooking,
@@ -70,6 +73,12 @@ export const BookingListScreen: React.FC = () => {
     confirmBookingPayment,
     releaseExpiredSlot,
   } = useApp();
+
+  const [, setTimerTick] = useState(0);
+  useEffect(() => {
+    const interval = setInterval(() => setTimerTick((t) => t + 1), 1000);
+    return () => clearInterval(interval);
+  }, []);
 
 
 
@@ -1113,20 +1122,37 @@ export const BookingListScreen: React.FC = () => {
                     </>
                   )}
 
-                  {/* ACTIVE PAYMENT PENDING (HOLD ACTIVE) -> VIEW PAYMENT LINK */}
+                  {/* ACTIVE PAYMENT PENDING (HOLD ACTIVE) -> VIEW / SEND PAYMENT LINK */}
                   {b.status === 'Payment Pending' && !isBookingExpired(b) && (
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         haptics.tap();
-                        setSelectedBookingId(b.id);
-                        setActiveModal('payment_link');
+                        if (isPaymentLinkBlocked(b.id)) {
+                          const sec = getPaymentLinkTimeRemaining(b.id);
+                          showToast('Payment Link Active', `Link is valid for 15 mins. Button blocked for ${formatMinutesSeconds(sec)}.`, 'info');
+                          return;
+                        }
+                        sendPaymentLink(b.id);
                       }}
-                      className="h-8 px-2.5 rounded-xl bg-white border border-[#FF6B2C]/40 hover:bg-[#FAF9F6] text-[#FF6B2C] text-[10.5px] font-bold flex items-center gap-1 shadow-2xs active-press cursor-pointer transition-colors whitespace-nowrap"
-                      title="View active payment link & hold timer"
+                      className={`h-8 px-2.5 rounded-xl border text-[10.5px] font-bold flex items-center gap-1 shadow-2xs whitespace-nowrap transition-colors ${
+                        isPaymentLinkBlocked(b.id)
+                          ? 'bg-amber-50 border-amber-300 text-amber-800 cursor-not-allowed'
+                          : 'bg-white border-[#FF6B2C]/40 hover:bg-[#FAF9F6] text-[#FF6B2C] active-press cursor-pointer'
+                      }`}
+                      title={isPaymentLinkBlocked(b.id) ? `Link active (Valid for ${formatMinutesSeconds(getPaymentLinkTimeRemaining(b.id))})` : "Send payment link"}
                     >
-                      <Link2 className="w-3 h-3" />
-                      <span>View Link</span>
+                      {isPaymentLinkBlocked(b.id) ? (
+                        <>
+                          <Lock className="w-3 h-3 text-amber-600" />
+                          <span>Sent ({formatMinutesSeconds(getPaymentLinkTimeRemaining(b.id))})</span>
+                        </>
+                      ) : (
+                        <>
+                          <Link2 className="w-3 h-3" />
+                          <span>Send Link</span>
+                        </>
+                      )}
                     </button>
                   )}
 
@@ -1319,20 +1345,37 @@ export const BookingListScreen: React.FC = () => {
                         </>
                       )}
 
-                      {/* ACTIVE PAYMENT PENDING (HOLD ACTIVE) -> VIEW PAYMENT LINK */}
+                      {/* ACTIVE PAYMENT PENDING (HOLD ACTIVE) -> VIEW / SEND PAYMENT LINK */}
                       {b.status === 'Payment Pending' && !isBookingExpired(b) && (
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             haptics.tap();
-                            setSelectedBookingId(b.id);
-                            setActiveModal('payment_link');
+                            if (isPaymentLinkBlocked(b.id)) {
+                              const sec = getPaymentLinkTimeRemaining(b.id);
+                              showToast('Payment Link Active', `Link is valid for 15 mins. Button blocked for ${formatMinutesSeconds(sec)}.`, 'info');
+                              return;
+                            }
+                            sendPaymentLink(b.id);
                           }}
-                          className="h-8 px-2.5 rounded-xl bg-white border border-[#FF6B2C]/40 hover:bg-[#FAF9F6] text-[#FF6B2C] text-[10.5px] font-bold flex items-center gap-1 shadow-2xs active-press cursor-pointer transition-colors whitespace-nowrap shrink-0"
-                          title="View active payment link & hold timer"
+                          className={`h-8 px-2.5 rounded-xl border text-[10.5px] font-bold flex items-center gap-1 shadow-2xs whitespace-nowrap shrink-0 transition-colors ${
+                            isPaymentLinkBlocked(b.id)
+                              ? 'bg-amber-50 border-amber-300 text-amber-800 cursor-not-allowed'
+                              : 'bg-white border-[#FF6B2C]/40 hover:bg-[#FAF9F6] text-[#FF6B2C] active-press cursor-pointer'
+                          }`}
+                          title={isPaymentLinkBlocked(b.id) ? `Link active (Valid for ${formatMinutesSeconds(getPaymentLinkTimeRemaining(b.id))})` : "Send payment link"}
                         >
-                          <Link2 className="w-3 h-3" />
-                          <span>View Link</span>
+                          {isPaymentLinkBlocked(b.id) ? (
+                            <>
+                              <Lock className="w-3 h-3 text-amber-600" />
+                              <span>Sent ({formatMinutesSeconds(getPaymentLinkTimeRemaining(b.id))})</span>
+                            </>
+                          ) : (
+                            <>
+                              <Link2 className="w-3 h-3" />
+                              <span>Send Link</span>
+                            </>
+                          )}
                         </button>
                       )}
 
@@ -1372,244 +1415,13 @@ export const BookingListScreen: React.FC = () => {
       )}
 
       {/* ========================================================================= */}
-      {/* 6. EXTEND SLOT DRAWER / MODAL (User Requested: Extend slot & add balance)  */}
+      {/* 6. EXTEND COURT SLOT MODAL (2-Row Interactive Timeline Slot Picker)       */}
       {/* ========================================================================= */}
-      <AnimatePresence>
-        {extendingBooking && (
-          <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 bg-black/60 backdrop-blur-xs select-none">
-            <div className="absolute inset-0" onClick={() => setExtendingBooking(null)} />
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-md bg-white rounded-t-[32px] md:rounded-3xl p-5 md:p-6 border border-[#E8E6E1] shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto pb-safe"
-            >
-              {/* Mobile Sheet Drag Handle */}
-              <div className="w-10 h-1 rounded-full bg-[#D4D2CD] mx-auto mb-2 md:hidden" />
-
-              {/* Header */}
-              <div className="flex items-center justify-between pb-3 border-b border-[#F1F0EC]">
-                <div className="flex items-center gap-2">
-                  <div className="w-9 h-9 rounded-xl bg-[#FF6B2C]/10 text-[#FF6B2C] flex items-center justify-center">
-                    <Clock className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h2 className="text-[16px] font-black text-[#171717]">Extend Court Slot</h2>
-                    <p className="text-[11.5px] text-[#777570] font-medium">
-                      Booking #{extendingBooking.id} · {extendingBooking.courtName}
-                    </p>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => setExtendingBooking(null)}
-                  className="w-8 h-8 rounded-full bg-[#F1F0EC] flex items-center justify-center text-[#777570] hover:text-[#171717] cursor-pointer"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Current Match Details */}
-              <div className="bg-[#FAF9F6] p-3 rounded-2xl border border-[#E8E6E1] text-[12px] space-y-1">
-                <div className="flex justify-between text-[#777570]">
-                  <span>Customer:</span>
-                  <strong className="text-[#171717]">{extendingBooking.customerName}</strong>
-                </div>
-                <div className="flex justify-between text-[#777570]">
-                  <span>Current Schedule:</span>
-                  <strong className="text-[#171717]">{extendingBooking.timeSlot} ({extendingBooking.date})</strong>
-                </div>
-                <div className="flex justify-between text-[#777570]">
-                  <span>Current Fee / Balance:</span>
-                  <span>
-                    ₹{extendingBooking.totalAmount.toLocaleString('en-IN')} (Due: <strong className="text-[#B87C0D]">₹{extendingBooking.balanceAmount.toLocaleString('en-IN')}</strong>)
-                  </span>
-                </div>
-              </div>
-
-              {/* Dynamic Available Slots Calculation */}
-              {(() => {
-                const court = courts.find((c) => c.id === extendingBooking.courtId || c.name === extendingBooking.courtName);
-                const extData = getAvailableExtensionSlots(extendingBooking, bookings, court);
-                const activeOption = extensionMinutes !== null
-                  ? extData.availableOptions.find((o) => o.addedMinutes === extensionMinutes) || null
-                  : null;
-
-                return (
-                  <div className="space-y-3">
-                    {/* If next slot is booked immediately */}
-                    {extData.hasConflict ? (
-                      <div className="space-y-3">
-                        <div className="bg-[#D94B4B]/10 border border-[#D94B4B]/30 rounded-2xl p-4 text-[12px] text-[#B52B2B] space-y-1.5">
-                          <p className="font-black flex items-center gap-2 text-[13px]">
-                            <AlertTriangle className="w-4 h-4 shrink-0 text-[#D94B4B]" />
-                            <span>Extension Not Allowed</span>
-                          </p>
-                          <p className="text-[11.5px] leading-relaxed text-[#8A1A1A]">
-                            {extData.conflictMessage || 'Next slot on this court is already booked by another customer. Court extension is not allowed.'}
-                          </p>
-                        </div>
-                        <button
-                          type="button"
-                          disabled
-                          className="w-full h-11 rounded-2xl bg-[#F1F0EC] text-[#A09D96] font-black text-[12.5px] flex items-center justify-center gap-2 cursor-not-allowed border border-[#E8E6E1]"
-                        >
-                          <Ban className="w-4 h-4 text-[#D94B4B]" />
-                          <span>Extension Not Allowed (Slot Occupied)</span>
-                        </button>
-                      </div>
-                    ) : extData.availableOptions.length === 0 ? (
-                      <div className="space-y-3">
-                        <div className="bg-[#FAF9F6] border border-[#E8E6E1] rounded-2xl p-4 text-[12px] text-[#777570] text-center space-y-1">
-                          <p className="font-black text-[#D94B4B] flex items-center justify-center gap-1.5 text-[13px]">
-                            <Ban className="w-4 h-4" />
-                            <span>Extension Not Allowed</span>
-                          </p>
-                          <p className="text-[11.5px]">Court operating hours have ended after current match schedule.</p>
-                        </div>
-                        <button
-                          type="button"
-                          disabled
-                          className="w-full h-11 rounded-2xl bg-[#F1F0EC] text-[#A09D96] font-black text-[12.5px] flex items-center justify-center gap-2 cursor-not-allowed border border-[#E8E6E1]"
-                        >
-                          <Ban className="w-4 h-4 text-[#D94B4B]" />
-                          <span>Extension Not Allowed (Operating Hours Ended)</span>
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <span className="text-[11px] font-black text-[#777570] uppercase tracking-wider block">
-                            Select Available Extension Slot:
-                          </span>
-                          <span className="text-[10.5px] text-[#2FA66A] font-bold flex items-center gap-1">
-                            <CheckCircle2 className="w-3 h-3" />
-                            {extData.availableOptions.length} Available Slots
-                          </span>
-                        </div>
-
-                        {/* Guidance alert when no extra hour is selected */}
-                        {!activeOption && (
-                          <div className="bg-[#FFF8E6] border border-[#FFE082] rounded-xl p-2.5 text-[11.5px] text-[#8C6B00] flex items-start gap-2">
-                            <AlertCircle className="w-4 h-4 shrink-0 text-[#E65100] mt-0.5" />
-                            <span>
-                              <strong>Action Required:</strong> You must select the extra hours below to extend. Extension is not allowed without selecting extra hours.
-                            </span>
-                          </div>
-                        )}
-
-                        {/* Interactive Selectable Available Slot Options */}
-                        <div className="space-y-2 max-h-48 overflow-y-auto pr-0.5">
-                          {extData.availableOptions.map((opt) => {
-                            const isSelected = extensionMinutes === opt.addedMinutes;
-                            return (
-                              <button
-                                key={opt.addedMinutes}
-                                type="button"
-                                onClick={() => {
-                                  haptics.tap();
-                                  setExtensionMinutes(opt.addedMinutes);
-                                }}
-                                className={`w-full p-3 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between ${
-                                  isSelected
-                                    ? 'bg-[#171717] text-white border-[#171717] ring-2 ring-[#FF6B2C]/40 shadow-xs'
-                                    : 'bg-[#FAF9F6] text-[#171717] border-[#E8E6E1] hover:bg-[#F1F0EC] hover:border-[#D0CECB]'
-                                }`}
-                              >
-                                <div className="space-y-0.5">
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-[12.5px] font-black block">
-                                      {opt.label}
-                                    </span>
-                                    {isSelected && (
-                                      <span className="px-1.5 py-0.5 rounded-full bg-[#FF6B2C] text-white text-[9.5px] font-extrabold uppercase">
-                                        Selected
-                                      </span>
-                                    )}
-                                  </div>
-                                  <span className={`text-[10.5px] ${isSelected ? 'text-[#FF9D66]' : 'text-[#777570]'}`}>
-                                    New Full Time: {opt.newFullTimeSlot}
-                                  </span>
-                                </div>
-                                <div className="text-right">
-                                  <span className={`text-[13px] font-black block ${isSelected ? 'text-[#FF6B2C]' : 'text-[#171717]'}`}>
-                                    +₹{opt.addedFee.toLocaleString('en-IN')}
-                                  </span>
-                                  <span className="text-[9.5px] font-bold text-[#2FA66A] uppercase tracking-wider">
-                                    Available
-                                  </span>
-                                </div>
-                              </button>
-                            );
-                          })}
-                        </div>
-
-                        {/* Summary & Price calculation */}
-                        {activeOption && (
-                          <div className="bg-[#FAF9F6] p-3 rounded-2xl border border-[#E8E6E1] space-y-1.5 text-[12px] animate-in fade-in duration-200">
-                            <div className="flex justify-between text-[#777570]">
-                              <span>New Match Timing:</span>
-                              <strong className="text-[#171717]">{activeOption.newFullTimeSlot}</strong>
-                            </div>
-                            <div className="flex justify-between text-[#777570]">
-                              <span>Additional Extension Fee:</span>
-                              <strong className="text-[#FF6B2C]">+₹{activeOption.addedFee.toLocaleString('en-IN')}</strong>
-                            </div>
-                            <div className="pt-1.5 border-t border-[#E8E6E1] flex justify-between items-baseline">
-                              <span className="font-bold text-[#171717]">New Balance Due:</span>
-                              <span className="text-[16px] font-black text-[#B87C0D]">
-                                ₹{(extendingBooking.balanceAmount + activeOption.addedFee).toLocaleString('en-IN')}
-                              </span>
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Action button */}
-                        <button
-                          type="button"
-                          disabled={!activeOption}
-                          onClick={() => {
-                            if (activeOption) {
-                              haptics.success();
-                              extendBookingSlot(
-                                extendingBooking.id,
-                                activeOption.addedMinutes,
-                                activeOption.addedFee,
-                                activeOption.newFullTimeSlot
-                              );
-                              setExtendingBooking(null);
-                            }
-                          }}
-                          className={`w-full h-11 rounded-2xl font-black text-[13px] flex items-center justify-center gap-2 shadow-xs transition-colors ${
-                            activeOption
-                              ? 'bg-[#FF6B2C] hover:bg-[#e85b1e] text-white cursor-pointer'
-                              : 'bg-[#E8E6E1] text-[#777570] border border-[#D5D3CC] cursor-not-allowed'
-                          }`}
-                        >
-                          {activeOption ? (
-                            <>
-                              <Check className="w-4 h-4 stroke-[3]" />
-                              <span>
-                                Confirm Extension to {activeOption.stepEndTime} (+₹{activeOption.addedFee.toLocaleString('en-IN')})
-                              </span>
-                            </>
-                          ) : (
-                            <>
-                              <Ban className="w-4 h-4 text-[#777570]" />
-                              <span>Select Extra Hours to Extend (Required)</span>
-                            </>
-                          )}
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                );
-              })()}
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+      <ExtendSlotModal
+        isOpen={!!extendingBooking}
+        onClose={() => setExtendingBooking(null)}
+        booking={extendingBooking}
+      />
 
       {/* ========================================================================= */}
       {/* 7. BOOKING DETAILS POPUP MODAL (User Requested: In-place Popup Dialog)     */}
@@ -1675,16 +1487,6 @@ export const BookingListScreen: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-1.5">
-                  <a
-                    href={`https://wa.me/91${activePopupBooking.customerPhone.replace(/[^0-9]/g, '')}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={() => haptics.tap()}
-                    className="w-9 h-9 rounded-xl bg-[#2FA66A]/10 border border-[#2FA66A]/20 flex items-center justify-center text-[#2FA66A] hover:bg-[#2FA66A] hover:text-white transition-all shadow-2xs cursor-pointer"
-                    title="WhatsApp Customer"
-                  >
-                    <MessageCircle className="w-4 h-4" />
-                  </a>
                   <a
                     href={`tel:${activePopupBooking.customerPhone}`}
                     onClick={() => haptics.tap()}
@@ -1856,19 +1658,38 @@ export const BookingListScreen: React.FC = () => {
                       </span>
                     </div>
                     <p className="text-[11px] text-[#777570]">
-                      Payment link has already been sent to customer for online confirmation. When customer completes payment, booking automatically moves to <strong>Confirmed</strong>.
+                      Payment link is valid for 15 minutes. When customer completes payment, booking automatically moves to <strong>Confirmed</strong>.
                     </p>
                     <button
                       type="button"
+                      disabled={isPaymentLinkBlocked(activePopupBooking.id)}
                       onClick={() => {
-                        setSelectedBookingId(activePopupBooking.id);
+                        haptics.tap();
+                        if (isPaymentLinkBlocked(activePopupBooking.id)) {
+                          const sec = getPaymentLinkTimeRemaining(activePopupBooking.id);
+                          showToast('Payment Link Active', `Link is valid for 15 mins. Button blocked for ${formatMinutesSeconds(sec)}.`, 'info');
+                          return;
+                        }
+                        sendPaymentLink(activePopupBooking.id);
                         setSelectedPopupBooking(null);
-                        setActiveModal('payment_link');
                       }}
-                      className="w-full h-10 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white font-black text-[12px] flex items-center justify-center gap-2 shadow-xs cursor-pointer transition-colors"
+                      className={`w-full h-10 rounded-xl font-black text-[12px] flex items-center justify-center gap-2 shadow-xs transition-colors ${
+                        isPaymentLinkBlocked(activePopupBooking.id)
+                          ? 'bg-amber-100 text-amber-900 border border-amber-300 cursor-not-allowed'
+                          : 'bg-[#FF6B2C] hover:bg-[#e85b1e] text-white cursor-pointer'
+                      }`}
                     >
-                      <Link2 className="w-4 h-4" />
-                      <span>View & Share Payment Link</span>
+                      {isPaymentLinkBlocked(activePopupBooking.id) ? (
+                        <>
+                          <Lock className="w-4 h-4 text-amber-700" />
+                          <span>Link Active · Blocked for {formatMinutesSeconds(getPaymentLinkTimeRemaining(activePopupBooking.id))}</span>
+                        </>
+                      ) : (
+                        <>
+                          <Link2 className="w-4 h-4" />
+                          <span>Send Payment Link (15m Validity)</span>
+                        </>
+                      )}
                     </button>
                   </div>
                 </div>
@@ -1893,23 +1714,38 @@ export const BookingListScreen: React.FC = () => {
                       {/* Option 1: Payment Link */}
                       <button
                         type="button"
+                        disabled={isPaymentLinkBlocked(activePopupBooking.id)}
                         onClick={() => {
                           haptics.tap();
-                          setSelectedBookingId(activePopupBooking.id);
+                          if (isPaymentLinkBlocked(activePopupBooking.id)) {
+                            const sec = getPaymentLinkTimeRemaining(activePopupBooking.id);
+                            showToast('Payment Link Active', `Link is valid for 15 mins. Button blocked for ${formatMinutesSeconds(sec)}.`, 'info');
+                            return;
+                          }
+                          sendPaymentLink(activePopupBooking.id);
                           setSelectedPopupBooking(null);
-                          setActiveModal('payment_link');
                         }}
-                        className="p-2.5 rounded-2xl bg-[#FAF9F6] hover:bg-[#F1F0EC] border border-[#E8E6E1] text-left flex flex-col justify-between transition-all cursor-pointer group active-press"
+                        className={`p-2.5 rounded-2xl border text-left flex flex-col justify-between transition-all active-press ${
+                          isPaymentLinkBlocked(activePopupBooking.id)
+                            ? 'bg-amber-50 border-amber-300 opacity-90 cursor-not-allowed'
+                            : 'bg-[#FAF9F6] hover:bg-[#F1F0EC] border-[#E8E6E1] cursor-pointer group'
+                        }`}
                       >
-                        <div className="w-7 h-7 rounded-xl bg-[#FF6B2C] text-white flex items-center justify-center shadow-xs mb-1.5">
-                          <Link2 className="w-3.5 h-3.5" />
+                        <div className={`w-7 h-7 rounded-xl text-white flex items-center justify-center shadow-xs mb-1.5 ${
+                          isPaymentLinkBlocked(activePopupBooking.id) ? 'bg-amber-500' : 'bg-[#FF6B2C]'
+                        }`}>
+                          {isPaymentLinkBlocked(activePopupBooking.id) ? <Lock className="w-3.5 h-3.5" /> : <Link2 className="w-3.5 h-3.5" />}
                         </div>
                         <div>
-                          <span className="text-[11.5px] font-black text-[#171717] block group-hover:text-[#FF6B2C] transition-colors leading-tight">
-                            Pay Link
+                          <span className={`text-[11.5px] font-black block leading-tight ${
+                            isPaymentLinkBlocked(activePopupBooking.id) ? 'text-amber-900' : 'text-[#171717] group-hover:text-[#FF6B2C]'
+                          }`}>
+                            {isPaymentLinkBlocked(activePopupBooking.id) ? 'Link Sent' : 'Pay Link'}
                           </span>
                           <span className="text-[9px] text-[#777570] block leading-tight mt-0.5">
-                            Share Online
+                            {isPaymentLinkBlocked(activePopupBooking.id)
+                              ? `${formatMinutesSeconds(getPaymentLinkTimeRemaining(activePopupBooking.id))} left`
+                              : 'Share Online'}
                           </span>
                         </div>
                       </button>

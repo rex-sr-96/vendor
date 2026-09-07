@@ -36,6 +36,7 @@ import {
   initialNotifications,
 } from '../data/mockData';
 import { calculateBookingFinancials } from '../utils/feeCalculator';
+import { haptics } from '../utils/haptics';
 
 interface AppContextType {
   // Navigation
@@ -73,6 +74,26 @@ interface AppContextType {
   setSelectedSlotId: (id: string | null) => void;
   selectedSlot: Slot | undefined;
 
+  // New Booking Prefill State
+  bookingPrefill: {
+    courtId?: string;
+    courtName?: string;
+    sport?: string;
+    date?: string;
+    startTime?: string;
+    endTime?: string;
+    totalPrice?: number;
+  } | null;
+  setBookingPrefill: (prefill: {
+    courtId?: string;
+    courtName?: string;
+    sport?: string;
+    date?: string;
+    startTime?: string;
+    endTime?: string;
+    totalPrice?: number;
+  } | null) => void;
+
   // Active Modals / Sheets
   activeModal:
     | null
@@ -99,6 +120,8 @@ interface AppContextType {
 
   // Actions
   sendPaymentLink: (bookingId: string) => void;
+  isPaymentLinkBlocked: (bookingId: string) => boolean;
+  getPaymentLinkTimeRemaining: (bookingId: string) => number;
   recordCashPayment: (bookingId: string, amount: number) => void;
   completeBookingPayment: (bookingId: string) => void;
   markBookingCompleted: (bookingId: string) => void;
@@ -280,6 +303,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>('BK10231');
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
+  const [bookingPrefill, setBookingPrefill] = useState<{
+    courtId?: string;
+    courtName?: string;
+    sport?: string;
+    date?: string;
+    startTime?: string;
+    endTime?: string;
+    totalPrice?: number;
+  } | null>(null);
   
   const [activeModal, setActiveModal] = useState<
     null | 'payment_options' | 'qr_payment' | 'record_cash' | 'slot_details' | 'block_slot' | 'new_booking' | 'payment_link' | 'logout_confirm'
@@ -438,14 +470,69 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const booking = bookings.find((b) => b.id === bookingId);
     if (!booking) return;
 
+    // Check if already blocked within 15 mins
+    if (booking.paymentLinkExpiresAt && booking.paymentLinkExpiresAt > Date.now()) {
+      const remainingSec = Math.max(0, Math.floor((booking.paymentLinkExpiresAt - Date.now()) / 1000));
+      const m = Math.floor(remainingSec / 60);
+      const s = remainingSec % 60;
+      showToast(
+        'Payment Link Active',
+        `Payment link already sent. Valid for ${m}:${s < 10 ? '0' : ''}${s} more mins (button blocked).`,
+        'info'
+      );
+      return;
+    }
+
+    const now = Date.now();
+    const expiresAt = now + 15 * 60 * 1000; // 15 mins validity & block
+
+    setBookings((prev) =>
+      prev.map((b) =>
+        b.id === bookingId
+          ? {
+              ...b,
+              paymentLinkSentAt: now,
+              paymentLinkExpiresAt: expiresAt,
+              holdExpiresInMinutes: 15,
+            }
+          : b
+      )
+    );
+
+    setSlots((prev) =>
+      prev.map((s) =>
+        s.bookingId === bookingId
+          ? {
+              ...s,
+              state: s.state === 'booked' ? 'booked' : 'locked',
+              countdown: '15:00',
+            }
+          : s
+      )
+    );
+
     setSelectedBookingId(bookingId);
-    setActiveModal('payment_link');
+    // Do NOT open payment link modal - only close modal and show success toast
+    setActiveModal(null);
 
     showToast(
-      'Payment Link Sent',
-      `Payment link for ₹${booking.balanceAmount.toLocaleString('en-IN')} sent to ${booking.customerName} (${booking.customerPhone}) via SMS & WhatsApp. Slot is locked for 15 mins.`,
+      'Payment Link Sent Successfully',
+      'Payment link sent successfully! It is valid for 15 mins.',
       'success'
     );
+    haptics.success();
+  };
+
+  const isPaymentLinkBlocked = (bookingId: string): boolean => {
+    const booking = bookings.find((b) => b.id === bookingId);
+    if (!booking || !booking.paymentLinkExpiresAt) return false;
+    return booking.paymentLinkExpiresAt > Date.now();
+  };
+
+  const getPaymentLinkTimeRemaining = (bookingId: string): number => {
+    const booking = bookings.find((b) => b.id === bookingId);
+    if (!booking || !booking.paymentLinkExpiresAt) return 0;
+    return Math.max(0, Math.floor((booking.paymentLinkExpiresAt - Date.now()) / 1000));
   };
 
   const recordCashPayment = (bookingId: string, amount: number) => {
@@ -712,6 +799,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const booking = bookings.find((b) => b.id === bookingId);
     if (!booking) return;
 
+    const now = Date.now();
+    const expiresAt = now + holdMinutes * 60 * 1000;
+
     setBookings((prev) =>
       prev.map((b) =>
         b.id === bookingId
@@ -719,6 +809,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
               ...b,
               status: 'Payment Pending',
               holdExpiresInMinutes: holdMinutes,
+              paymentLinkSentAt: now,
+              paymentLinkExpiresAt: expiresAt,
               notes: `Slot re-locked with ${holdMinutes}m fresh payment link`,
             }
           : b
@@ -738,13 +830,14 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     );
 
     setSelectedBookingId(bookingId);
-    setActiveModal('payment_link');
+    setActiveModal(null);
 
     showToast(
-      'Slot Re-locked & Link Active',
-      `Hold renewed for ${holdMinutes} mins. Fresh valid payment link generated for ${booking.customerName}.`,
+      'Payment Link Sent Successfully',
+      `Payment link sent successfully! It is valid for ${holdMinutes} mins.`,
       'success'
     );
+    haptics.success();
   };
 
   const releaseExpiredSlot = (bookingId: string) => {
@@ -955,6 +1048,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       name: newCourt.name || 'New Turf',
       displayName: newCourt.displayName || undefined,
       samePhysicalSports: newCourt.samePhysicalSports ?? false,
+      parentCourtId: newCourt.parentCourtId,
+      parentCourtName: newCourt.parentCourtName,
       sports: newCourt.sports && newCourt.sports.length > 0 ? newCourt.sports : ['Football'],
       pricePerHour: newCourt.pricePerHour || 1000,
       minBookingDuration: newCourt.minBookingDuration,
@@ -1433,9 +1528,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         selectedSlotId,
         setSelectedSlotId,
         selectedSlot,
+        bookingPrefill,
+        setBookingPrefill,
         activeModal,
         setActiveModal,
         sendPaymentLink,
+        isPaymentLinkBlocked,
+        getPaymentLinkTimeRemaining,
         recordCashPayment,
         completeBookingPayment,
         markBookingCompleted,

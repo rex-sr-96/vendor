@@ -49,6 +49,8 @@ export interface Booking {
   notes?: string;
   holdExpiresInMinutes?: number;
   reservationType?: 'direct_booking' | 'payment_link_request';
+  paymentLinkSentAt?: number;        // Epoch ms when payment link was sent
+  paymentLinkExpiresAt?: number;     // Epoch ms when 15-minute validity expires (button blocked)
   // Customer-initiated cancellation
   cancellationReason?: string;       // Reason customer gave when cancelling
   cancelledAt?: string;              // Timestamp of cancellation
@@ -63,6 +65,8 @@ export interface Court {
   name: string;
   displayName?: string;
   samePhysicalSports?: boolean;
+  parentCourtId?: string;
+  parentCourtName?: string;
   sports: string[];
   pricePerHour: number;
   minBookingDuration?: string;

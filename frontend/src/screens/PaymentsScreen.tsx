@@ -24,7 +24,6 @@ import {
   AlertCircle,
   ExternalLink,
   Phone,
-  MessageCircle,
   Copy,
   Check,
   ArrowRight,
@@ -1164,24 +1163,13 @@ export const PaymentsScreen: React.FC = () => {
             </div>
 
             {/* Customer Contact Action Buttons */}
-            <div className="grid grid-cols-2 gap-2">
+            <div>
               <a
                 href={`tel:${activeCollectionDetail.customerPhone}`}
-                className="h-9.5 rounded-xl bg-[#FAF9F6] border border-[#E8E6E1] hover:border-[#171717] text-[#171717] font-bold text-[11.5px] flex items-center justify-center gap-1.5 cursor-pointer active-press transition-colors"
+                className="w-full h-9.5 rounded-xl bg-[#FAF9F6] border border-[#E8E6E1] hover:border-[#171717] text-[#171717] font-bold text-[11.5px] flex items-center justify-center gap-1.5 cursor-pointer active-press transition-colors"
               >
                 <Phone className="w-3.5 h-3.5 text-[#FF6B2C]" />
-                <span>Call Customer</span>
-              </a>
-              <a
-                href={`https://wa.me/91${activeCollectionDetail.customerPhone.replace(/\D/g, '')}?text=${encodeURIComponent(
-                  `Hello ${activeCollectionDetail.customerName}, regarding your booking ${activeCollectionDetail.id} at TurfTown for ${activeCollectionDetail.courtName} (${activeCollectionDetail.date} ${activeCollectionDetail.timeSlot}). Total: ₹${activeCollectionDetail.totalAmount}, Balance: ₹${activeCollectionDetail.balanceAmount}.`
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="h-9.5 rounded-xl bg-[#2FA66A]/10 border border-[#2FA66A]/30 text-[#1E774A] font-bold text-[11.5px] flex items-center justify-center gap-1.5 cursor-pointer active-press transition-colors"
-              >
-                <MessageCircle className="w-3.5 h-3.5" />
-                <span>WhatsApp</span>
+                <span>Call Customer ({activeCollectionDetail.customerPhone})</span>
               </a>
             </div>
 
