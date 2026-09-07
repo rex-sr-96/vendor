@@ -1358,14 +1358,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       return { allowed: false, reason: 'Please enter a valid 10-digit mobile number.' };
     }
 
-    // 1. Check if Owner
+    // 1. Check if matches the actual backend ownerPhone — always owner
     const currentOwnerClean = (ownerPhone || '').replace(/\D/g, '').slice(-10);
-    const registeredOwnerNumbers = ['6369591821', '9876543210'];
-    if (clean === currentOwnerClean || registeredOwnerNumbers.includes(clean)) {
+    if (currentOwnerClean && clean === currentOwnerClean) {
       return { allowed: true, userType: 'owner' as const };
     }
 
-    // 2. Check if Staff Member (from active state or stored list)
+    // 2. Check staff list — staff takes priority over hardcoded fallback numbers
     const matchedStaff = staffMembers.find((s) => {
       const staffClean = (s.phone || '').replace(/\D/g, '').slice(-10);
       return staffClean === clean;
@@ -1383,6 +1382,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         userType: 'staff' as const,
         staff: matchedStaff,
       };
+    }
+
+    // 3. Fallback hardcoded owner numbers (demo / second owner)
+    const fallbackOwnerNumbers = ['6369591821', '9876543210'];
+    if (fallbackOwnerNumbers.includes(clean)) {
+      return { allowed: true, userType: 'owner' as const };
     }
 
     return {
