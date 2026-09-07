@@ -17,6 +17,7 @@ import {
 
 export const initialStaffMembers: StaffMember[] = [];
 export const initialNotifications: NotificationItem[] = [];
+export const initialSettlements: SettlementRecord[] = [];
 
 export const initialBookings: Booking[] = [
   {
@@ -919,7 +920,6 @@ export const initialPaymentRecords: PaymentRecord[] = [
     timestamp: '27 Aug, 05:05 PM',
   },
 ];
->>>>>>> origin/main
 
 // Standard operating hours template (overridden dynamically by verified onboarding record)
 export const initialOperatingHours: OperatingHourDay[] = [
