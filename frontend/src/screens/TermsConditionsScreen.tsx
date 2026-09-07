@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import {
   ChevronLeft,
@@ -15,6 +15,38 @@ import { haptics } from '../utils/haptics';
 
 export const TermsConditionsScreen: React.FC = () => {
   const { goBack, venueName } = useApp();
+  const [termsData, setTermsData] = useState<{
+    title: string;
+    version: string;
+    effective_date: string;
+    rich_text_html: string;
+  } | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadTerms() {
+      try {
+        const res = await fetch('http://localhost:4000/api/v1/cms/public/terms-and-conditions');
+        if (res.ok) {
+          const data = await res.json();
+          if (isMounted && data && data.rich_text_html) {
+            setTermsData({
+              title: data.title || 'Venue Partner Agreement & Service Terms',
+              version: data.version || '3.0',
+              effective_date: data.effective_date || '1 August 2026',
+              rich_text_html: data.rich_text_html,
+            });
+          }
+        }
+      } catch {
+        // Fallback to static termsList
+      }
+    }
+    loadTerms();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const termsList = [
     {
@@ -96,10 +128,10 @@ export const TermsConditionsScreen: React.FC = () => {
           </div>
           <div>
             <span className="text-[13px] font-extrabold text-white block leading-tight">
-              Venue Partner Agreement
+              {termsData?.title || 'Venue Partner Agreement'}
             </span>
             <span className="text-[10.5px] text-white/60">
-              Effective Date: August 2026
+              Effective Date: {termsData?.effective_date || 'August 2026'} · Version {termsData?.version || '3.0'}
             </span>
           </div>
         </div>
@@ -110,7 +142,23 @@ export const TermsConditionsScreen: React.FC = () => {
         </p>
       </div>
 
-      {/* Terms Accordions/Cards */}
+      {termsData?.rich_text_html ? (
+        <div className="bg-white rounded-2xl p-5 border border-[#E8E6E1] shadow-2xs">
+          <div
+            className="prose prose-sm max-w-none text-[#262524] leading-relaxed
+              [&_h1]:text-[18px] [&_h1]:font-black [&_h1]:text-[#171717] [&_h1]:mb-2
+              [&_h2]:text-[16px] [&_h2]:font-extrabold [&_h2]:text-[#171717] [&_h2]:mb-2
+              [&_h3]:text-[14px] [&_h3]:font-bold [&_h3]:text-[#171717] [&_h3]:mb-1.5 [&_h3]:mt-3
+              [&_p]:mb-2.5 [&_p]:text-[#55534E] [&_p]:text-[12.5px]
+              [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-2.5 [&_ul]:space-y-1 [&_ul]:text-[12.5px] [&_ul]:text-[#55534E]
+              [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-2.5 [&_ol]:space-y-1 [&_ol]:text-[12.5px] [&_ol]:text-[#55534E]
+              [&_blockquote]:border-l-3 [&_blockquote]:border-[#FF6B2C] [&_blockquote]:bg-[#FAF9F6] [&_blockquote]:p-3 [&_blockquote]:rounded-r-xl [&_blockquote]:text-[12px] [&_blockquote]:text-[#403E3B] [&_blockquote]:italic [&_blockquote]:my-3
+              [&_strong]:text-[#171717]"
+            dangerouslySetInnerHTML={{ __html: termsData.rich_text_html }}
+          />
+        </div>
+      ) : (
+      /* Terms Accordions/Cards */
       <div className="space-y-2.5">
         {termsList.map((item) => {
           const Icon = item.icon;
@@ -134,6 +182,7 @@ export const TermsConditionsScreen: React.FC = () => {
           );
         })}
       </div>
+      )}
 
       {/* Support & Legal Queries */}
       <div className="bg-[#FAF9F6] rounded-2xl p-4 border border-[#E8E6E1] space-y-2">

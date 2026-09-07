@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import {
   Search,
@@ -140,6 +140,36 @@ export const HelpFAQScreen: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [expandedFaqId, setExpandedFaqId] = useState<string | null>('faq-1');
   const [helpfulFeedback, setHelpfulFeedback] = useState<Record<string, boolean>>({});
+  const [faqList, setFaqList] = useState<FAQItem[]>(FAQ_DATA);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadCmsFaqs() {
+      try {
+        const res = await fetch('http://localhost:4000/api/v1/cms/public/vendor-faq');
+        if (res.ok) {
+          const data = await res.json();
+          if (isMounted && data && Array.isArray(data.faqs) && data.faqs.length > 0) {
+            const mapped: FAQItem[] = data.faqs.map((f: any) => ({
+              id: f.id,
+              category: f.category,
+              categoryLabel: f.category_label || f.category,
+              question: f.question,
+              answer: f.answer,
+              tags: Array.isArray(f.tags) ? f.tags : [],
+            }));
+            setFaqList(mapped);
+          }
+        }
+      } catch {
+        // Safe fallback to FAQ_DATA
+      }
+    }
+    loadCmsFaqs();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const categories = [
     { id: 'all', label: 'All Topics' },
@@ -151,7 +181,7 @@ export const HelpFAQScreen: React.FC = () => {
   ];
 
   const filteredFaqs = useMemo(() => {
-    return FAQ_DATA.filter((faq) => {
+    return faqList.filter((faq) => {
       const matchesCategory = activeCategory === 'all' || faq.category === activeCategory;
       const q = searchQuery.toLowerCase().trim();
       if (!q) return matchesCategory;
@@ -163,7 +193,7 @@ export const HelpFAQScreen: React.FC = () => {
 
       return matchesCategory && matchesSearch;
     });
-  }, [searchQuery, activeCategory]);
+  }, [faqList, searchQuery, activeCategory]);
 
   const handleHelpfulClick = (faqId: string) => {
     haptics.tap();
@@ -380,7 +410,10 @@ export const HelpFAQScreen: React.FC = () => {
                           className="overflow-hidden"
                         >
                           <div className="px-4 md:px-5 pb-5 pt-2 text-[13.5px] text-[#44423E] leading-relaxed border-t border-[#F1F0EC] bg-[#FAF9F6]/60">
-                            <p>{faq.answer}</p>
+                            <div
+                              className="prose prose-sm max-w-none text-[13.5px] text-[#44423E] leading-relaxed [&_p]:mb-1 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5"
+                              dangerouslySetInnerHTML={{ __html: faq.answer }}
+                            />
 
                             {/* Tags + Helpful button */}
                             <div className="mt-4 pt-3 border-t border-[#E8E6E1]/60 flex flex-wrap items-center justify-between gap-2">

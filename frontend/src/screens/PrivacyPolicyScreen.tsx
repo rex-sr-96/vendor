@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import {
   ChevronLeft,
@@ -12,6 +12,38 @@ import { haptics } from '../utils/haptics';
 
 export const PrivacyPolicyScreen: React.FC = () => {
   const { goBack, venueName } = useApp();
+  const [policyData, setPolicyData] = useState<{
+    title: string;
+    version: string;
+    effective_date: string;
+    rich_text_html: string;
+  } | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadPrivacyPolicy() {
+      try {
+        const res = await fetch('http://localhost:4000/api/v1/cms/public/privacy-policy');
+        if (res.ok) {
+          const data = await res.json();
+          if (isMounted && data && data.rich_text_html) {
+            setPolicyData({
+              title: data.title || 'TurfTown Partner & Venue Operator Privacy Policy',
+              version: data.version || '2.4',
+              effective_date: data.effective_date || '1 August 2026',
+              rich_text_html: data.rich_text_html,
+            });
+          }
+        }
+      } catch {
+        // Fallback to static
+      }
+    }
+    loadPrivacyPolicy();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <div className="pb-20 pt-2 w-full max-w-4xl mx-auto space-y-6 select-none">
@@ -56,21 +88,36 @@ export const PrivacyPolicyScreen: React.FC = () => {
         <div className="border-b border-[#F1F0EC] pb-6 space-y-2">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2FA66A]/10 text-[#2FA66A] text-[11px] font-bold mb-1">
             <Shield className="w-3.5 h-3.5" />
-            <span>Official Legal Notice · Version 2.4</span>
+            <span>Official Legal Notice · Version {policyData?.version || '2.4'}</span>
           </div>
           <h2 className="text-[26px] font-black text-[#171717] tracking-tight">
-            TurfTown Partner & Venue Operator Privacy Policy
+            {policyData?.title || 'TurfTown Partner & Venue Operator Privacy Policy'}
           </h2>
           <p className="text-[13px] text-[#777570]">
-            Effective Date: <strong>1 August 2026</strong> · Applicable to venue operations for{' '}
+            Effective Date: <strong>{policyData?.effective_date || '1 August 2026'}</strong> · Applicable to venue operations for{' '}
             <span className="text-[#171717] font-bold">{venueName}</span>
           </p>
         </div>
 
-        {/* Intro Callout */}
-        <div className="bg-[#FAF9F6] border-l-4 border-[#FF6B2C] rounded-r-2xl p-4 text-[13px] text-[#403E3B] leading-relaxed">
-          TurfTown is dedicated to maintaining the confidentiality, integrity, and operational security of your sports facility. This policy outlines how information is gathered, protected, and utilized across the TurfTown Partner Web Console and Manager App.
-        </div>
+        {policyData?.rich_text_html ? (
+          <div
+            className="prose prose-sm sm:prose-base max-w-none text-[#262524] leading-relaxed
+              [&_h1]:text-[22px] [&_h1]:font-black [&_h1]:text-[#171717] [&_h1]:mb-3
+              [&_h2]:text-[18px] [&_h2]:font-extrabold [&_h2]:text-[#171717] [&_h2]:mb-2.5
+              [&_h3]:text-[16px] [&_h3]:font-bold [&_h3]:text-[#171717] [&_h3]:mb-2 [&_h3]:mt-4
+              [&_p]:mb-3 [&_p]:text-[#55534E] [&_p]:text-[13.5px]
+              [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-3 [&_ul]:space-y-1 [&_ul]:text-[13px] [&_ul]:text-[#55534E]
+              [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-3 [&_ol]:space-y-1 [&_ol]:text-[13px] [&_ol]:text-[#55534E]
+              [&_blockquote]:border-l-4 [&_blockquote]:border-[#FF6B2C] [&_blockquote]:bg-[#FAF9F6] [&_blockquote]:p-4 [&_blockquote]:rounded-r-2xl [&_blockquote]:text-[13px] [&_blockquote]:text-[#403E3B] [&_blockquote]:italic [&_blockquote]:my-4
+              [&_strong]:text-[#171717]"
+            dangerouslySetInnerHTML={{ __html: policyData.rich_text_html }}
+          />
+        ) : (
+          <>
+            {/* Intro Callout */}
+            <div className="bg-[#FAF9F6] border-l-4 border-[#FF6B2C] rounded-r-2xl p-4 text-[13px] text-[#403E3B] leading-relaxed">
+              TurfTown is dedicated to maintaining the confidentiality, integrity, and operational security of your sports facility. This policy outlines how information is gathered, protected, and utilized across the TurfTown Partner Web Console and Manager App.
+            </div>
 
         {/* Section 1 */}
         <section className="space-y-3">
@@ -167,6 +214,8 @@ export const PrivacyPolicyScreen: React.FC = () => {
             </div>
           </div>
         </div>
+        </>
+        )}
       </div>
     </div>
   );
