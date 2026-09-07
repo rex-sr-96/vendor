@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { BankAccount } from '../types';
 import {
   ScreenType,
   BottomNavTab,
@@ -153,12 +154,17 @@ interface AppContextType {
   unblockSlotAction: (slotId: string) => void;
   addNewCourt: (newCourt: Partial<Court>) => void;
   updateCourt: (courtId: string, updatedData: Partial<Court>) => void;
+  toggleCourtActive: (courtId: string) => void;
+  deleteCourt: (courtId: string) => void;
   addNewBooking: (newBooking: Partial<Booking>) => void;
   createNewBooking: (newBooking: Partial<Booking>) => void;
   createSupportTicket: (ticket: Omit<SupportTicket, 'id' | 'status' | 'date'>) => void;
   addSupportTicket: (ticket: Omit<SupportTicket, 'id' | 'status' | 'date'>) => void;
   updateBookingSettings: (settings: Partial<BookingSettingsConfig>) => void;
   updatePaymentSettings: (settings: Partial<PaymentSettingsConfig>) => void;
+  addBankAccount: (account: Omit<BankAccount, 'id' | 'addedOn'>) => void;
+  deleteBankAccount: (accountId: string) => void;
+  setPrimaryBank: (accountId: string) => void;
   toggleOperatingDay: (dayName: string) => void;
   updateOperatingDayHours: (dayName: string, openTime: string, closeTime: string) => void;
   updateOperatingHours: (hours: OperatingHourDay[]) => void;
@@ -415,6 +421,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       screen === 'staff_management' ||
       screen === 'notification_settings' ||
       screen === 'help_support' ||
+      screen === 'help_faq' ||
+      screen === 'support' ||
       screen === 'support_form'
     ) {
       setActiveTab('settings');
@@ -1031,8 +1039,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       peakDays: newCourt.peakDays,
       peakHoursPrice: newCourt.peakHoursPrice,
       weekendPrice: newCourt.weekendPrice,
-      status: 'Pending Approval',
-      statusDetails: 'Submitted just now · Under fast review',
+      status: 'Approved',
+      isActive: true,
+      statusDetails: newCourt.statusDetails || 'Operational · Standard facility pitch',
       operatingHours: newCourt.operatingHours || '06:00 AM – 11:00 PM',
       type: newCourt.type || 'Outdoor',
       cancellationWindowHours: newCourt.cancellationWindowHours ?? 12,
@@ -1040,7 +1049,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       cancellationPolicyLabel: newCourt.cancellationPolicyLabel,
     };
     setCourts((prev) => [...prev, court]);
-    showToast('Court Added', `${court.name} created and submitted for verification.`, 'success');
+    showToast('Court Added', `${court.name} added successfully and is now active for bookings.`, 'success');
   };
 
   const updateCourt = (courtId: string, updatedData: Partial<Court>) => {
@@ -1048,6 +1057,29 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       prev.map((c) => (c.id === courtId ? { ...c, ...updatedData } : c))
     );
     showToast('Court Updated', 'Court details and pricing rules have been updated.', 'success');
+  };
+
+  const toggleCourtActive = (courtId: string) => {
+    const targetCourt = courts.find((c) => c.id === courtId);
+    if (!targetCourt) return;
+    const nextActive = targetCourt.isActive === false ? true : false;
+    setCourts((prev) =>
+      prev.map((c) => (c.id === courtId ? { ...c, isActive: nextActive } : c))
+    );
+    showToast(
+      nextActive ? 'Court Activated' : 'Court Deactivated',
+      `${targetCourt.name} is now ${nextActive ? 'Active and open for bookings' : 'Inactive. New bookings are paused'}.`,
+      nextActive ? 'success' : 'info'
+    );
+    haptics.tap();
+  };
+
+  const deleteCourt = (courtId: string) => {
+    const targetCourt = courts.find((c) => c.id === courtId);
+    const courtName = targetCourt ? targetCourt.name : 'Court';
+    setCourts((prev) => prev.filter((c) => c.id !== courtId));
+    showToast('Court Deleted', `${courtName} has been permanently deleted from facility grounds.`, 'info');
+    haptics.tap();
   };
 
   const addNewBooking = (newBooking: Partial<Booking>) => {
@@ -1127,15 +1159,29 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   const createSupportTicket = (ticket: Omit<SupportTicket, 'id' | 'status' | 'date'>) => {
+    let prefix = 'SUP';
+    let label = 'Support Ticket';
+    if (ticket.requestType === 'bank_change' || ticket.category === 'Bank Account') {
+      prefix = 'REQ-BNK';
+      label = 'Bank Account Change Request';
+    } else if (ticket.requestType === 'venue_change' || ticket.category === 'Venue Details') {
+      prefix = 'REQ-VNU';
+      label = 'Venue Profile Update Request';
+    } else if (ticket.requestType === 'court_approval' || ticket.category === 'Court Approval') {
+      prefix = 'REQ-CRT';
+      label = 'New Court Approval Request';
+    }
+
+    const randomNum = Math.floor(10240 + Math.random() * 50);
     const newTicket: SupportTicket = {
       ...ticket,
-      id: `SUP${Math.floor(10235 + Math.random() * 50)}`,
+      id: `${prefix}${randomNum}`,
       status: 'Open',
-      date: '28 Aug 2026',
+      date: 'Today',
     };
     setSupportTickets((prev) => [newTicket, ...prev]);
-    showToast('Support Ticket Created', `Ticket #${newTicket.id} submitted. Our venue manager team will reply shortly.`, 'success');
-    navigateTo('help_support');
+    showToast(`${label} Submitted`, `Request #${newTicket.id} is queued for operations review.`, 'success');
+    navigateTo('support');
   };
 
   const updateBookingSettings = (settings: Partial<BookingSettingsConfig>) => {
@@ -1146,6 +1192,70 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const updatePaymentSettings = (settings: Partial<PaymentSettingsConfig>) => {
     setPaymentSettings((prev) => ({ ...prev, ...settings }));
     showToast('Settings Saved', 'Payment preferences updated.', 'success');
+  };
+
+  const addBankAccount = (account: Omit<BankAccount, 'id' | 'addedOn'>) => {
+    const newId = `bank_${Date.now()}`;
+    const newAccount: BankAccount = {
+      ...account,
+      id: newId,
+      addedOn: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+    };
+    setPaymentSettings((prev) => {
+      const existing = prev.bankAccounts || [
+        {
+          id: 'bank_primary',
+          bankName: prev.bankName,
+          accountNumberMasked: prev.accountNumberMasked,
+          ifscCode: prev.ifscCode,
+          accountHolder: 'Dhanush Kumar (TurfTown Arena)',
+          accountType: 'Current Commercial' as const,
+          isVerified: prev.isVerified,
+          addedOn: '01 Jan 2025',
+        },
+      ];
+      // Max 2 accounts
+      if (existing.length >= 2) return prev;
+      return {
+        ...prev,
+        bankAccounts: [...existing, newAccount],
+        primaryBankId: prev.primaryBankId || 'bank_primary',
+      };
+    });
+    haptics.success();
+    showToast('Bank Account Added', `${account.bankName} (${account.accountNumberMasked}) added successfully.`, 'success');
+  };
+
+  const deleteBankAccount = (accountId: string) => {
+    setPaymentSettings((prev) => {
+      const existing = prev.bankAccounts || [];
+      const filtered = existing.filter((a) => a.id !== accountId);
+      // If we deleted the primary, set the first remaining as primary
+      const newPrimary =
+        prev.primaryBankId === accountId
+          ? (filtered[0]?.id ?? 'bank_primary')
+          : prev.primaryBankId;
+      return { ...prev, bankAccounts: filtered, primaryBankId: newPrimary };
+    });
+    haptics.tap();
+    showToast('Account Removed', 'Bank account has been removed from your profile.', 'info');
+  };
+
+  const setPrimaryBank = (accountId: string) => {
+    setPaymentSettings((prev) => {
+      const account = (prev.bankAccounts || []).find((a) => a.id === accountId);
+      if (!account) return prev;
+      return {
+        ...prev,
+        primaryBankId: accountId,
+        bankName: account.bankName,
+        accountNumberMasked: account.accountNumberMasked,
+        ifscCode: account.ifscCode,
+        isVerified: account.isVerified,
+      };
+    });
+    haptics.success();
+    showToast('Primary Account Updated', 'All settlements will now go to the selected account.', 'success');
   };
 
   const toggleOperatingDay = (dayName: string) => {
@@ -1329,12 +1439,17 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         unblockSlotAction,
         addNewCourt,
         updateCourt,
+        toggleCourtActive,
+        deleteCourt,
         addNewBooking,
         createNewBooking: addNewBooking,
         createSupportTicket,
         addSupportTicket: createSupportTicket,
         updateBookingSettings,
         updatePaymentSettings,
+        addBankAccount,
+        deleteBankAccount,
+        setPrimaryBank,
         toggleOperatingDay,
         updateOperatingDayHours,
         updateOperatingHours,

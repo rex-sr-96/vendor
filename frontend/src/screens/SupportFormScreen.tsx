@@ -12,10 +12,11 @@ export const SupportFormScreen: React.FC = () => {
   const [hasAttachment, setHasAttachment] = useState(false);
 
   const categories: SupportCategory[] = [
-    'Booking',
     'Payment',
-    'Court',
+    'Booking',
     'Technical',
+    'Settlements',
+    'General',
     'Other',
   ];
 

@@ -27,6 +27,8 @@ import { StaffManagementScreen } from '@/screens/StaffManagementScreen';
 import { NotificationSettingsScreen } from '@/screens/NotificationSettingsScreen';
 import { NotificationsScreen } from '@/screens/NotificationsScreen';
 import { HelpSupportScreen } from '@/screens/HelpSupportScreen';
+import { HelpFAQScreen } from '@/screens/HelpFAQScreen';
+import { SupportScreen } from '@/screens/SupportScreen';
 import { SupportFormScreen } from '@/screens/SupportFormScreen';
 import { ExportReportScreen } from '@/screens/ExportReportScreen';
 import { AddCourtScreen } from '@/screens/AddCourtScreen';
@@ -91,10 +93,14 @@ const MainAppContent: React.FC = () => {
         return <NotificationSettingsScreen />;
       case 'notifications':
         return <NotificationsScreen />;
+      case 'help_faq':
+        return <HelpFAQScreen />;
+      case 'support':
+        return <SupportScreen />;
       case 'help_support':
-        return <HelpSupportScreen />;
+        return <HelpFAQScreen />;
       case 'support_form':
-        return <SupportFormScreen />;
+        return <SupportScreen />;
       case 'export_report':
         return <ExportReportScreen />;
       case 'add_court':

@@ -19,6 +19,8 @@ export type ScreenType =
   | 'notification_settings'
   | 'notifications'
   | 'help_support'
+  | 'help_faq'
+  | 'support'
   | 'support_form'
   | 'export_report'
   | 'add_court'
@@ -77,6 +79,7 @@ export interface Court {
   weekendPrice?: number;
   status: CourtStatus;
   statusDetails?: string;
+  isActive?: boolean;
   operatingHours: string;
   type?: 'Outdoor' | 'Indoor' | 'Covered';
   cancellationWindowHours?: number; // e.g. 2, 4, 12, 24, 0 (no cancellation)
@@ -177,6 +180,18 @@ export interface BookingSettingsConfig {
   };
 }
 
+export interface BankAccount {
+  id: string;
+  bankName: string;
+  accountNumberMasked: string;
+  accountNumberFull?: string;
+  ifscCode: string;
+  accountHolder: string;
+  accountType: 'Savings' | 'Current' | 'Current Commercial';
+  isVerified: boolean;
+  addedOn: string;
+}
+
 export interface PaymentSettingsConfig {
   onlinePayment: boolean;
   cashPayment: boolean;
@@ -190,6 +205,9 @@ export interface PaymentSettingsConfig {
   upiQr?: boolean;
   acceptUpi?: boolean;
   acceptCash?: boolean;
+  // Multi-account support
+  bankAccounts?: BankAccount[];
+  primaryBankId?: string;
 }
 
 export interface AmenityItem {
@@ -260,18 +278,57 @@ export interface NotificationItem {
   amount?: number;
 }
 
-export type SupportCategory = 'Booking' | 'Payment' | 'Court' | 'Technical' | 'Other';
+export type SupportCategory =
+  | 'Payment'
+  | 'Booking'
+  | 'Technical'
+  | 'Settlements'
+  | 'General'
+  | 'Other';
 
 export interface SupportTicket {
   id: string;
-  category: string;
+  category: SupportCategory | string;
   issue?: string;
   subject: string;
   description: string;
   bookingId?: string;
-  status: 'In Progress' | 'Resolved' | 'Open';
+  status: 'In Progress' | 'Resolved' | 'Open' | 'Closed';
+  priority?: 'Low' | 'Medium' | 'High' | 'Urgent';
   createdAt?: string;
   date?: string;
+  lastUpdated?: string;
+  requestType?: 'venue_change' | 'bank_change' | 'court_approval' | 'general_support';
+  detailsPayload?: {
+    // Venue change
+    currentVenueName?: string;
+    requestedVenueName?: string;
+    requestedAddress?: string;
+    requestedPhone?: string;
+    // Bank change
+    currentBankName?: string;
+    requestedBankName?: string;
+    requestedAccountMasked?: string;
+    requestedIfsc?: string;
+    accountHolder?: string;
+    chequeAttached?: boolean;
+    // Court approval request
+    courtName?: string;
+    displayName?: string;
+    sports?: string[];
+    surfaceType?: string;
+    pricePerHour?: number;
+    minBookingDuration?: string;
+    peakHoursPrice?: number;
+    weekendPrice?: number;
+    peakSchedule?: string;
+    cancellationPolicyLabel?: string;
+    samePhysicalSports?: boolean;
+    parentCourtName?: string;
+    photosCount?: number;
+  };
+  attachmentName?: string;
+  adminReply?: string;
 }
 
 export interface ToastMessage {

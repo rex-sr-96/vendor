@@ -84,9 +84,12 @@ export const DesktopHeader: React.FC = () => {
         return { title: 'Export Financial Statements', category: 'Reports' };
       case 'notifications':
         return { title: 'Alert & Notifications Center', category: 'System' };
+      case 'help_faq':
       case 'help_support':
+        return { title: 'Help Center & Frequently Asked Questions', category: 'Knowledge Base' };
+      case 'support':
       case 'support_form':
-        return { title: 'Help Desk & Support', category: 'Assistance' };
+        return { title: 'Partner Support & Operations Desk', category: 'Assistance' };
       case 'settings':
       case 'booking_settings':
       case 'payment_settings':

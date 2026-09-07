@@ -7,6 +7,7 @@ import {
   SlidersHorizontal,
   Wallet,
   HelpCircle,
+  LifeBuoy,
   ChevronRight,
   ChevronLeft,
   LogOut,
@@ -35,6 +36,7 @@ import {
   Lock,
   Building,
   CreditCard,
+  ArrowRight,
   Image as ImageIcon,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -335,7 +337,8 @@ export const SettingsScreen: React.FC = () => {
             { id: 'privacy', title: 'Privacy Policy', caption: 'Rich text data protection & compliance', icon: Shield, screen: 'privacy_policy' as const },
             { id: 'terms', title: 'Terms & Conditions', caption: 'Platform rules & rights', icon: FileText, screen: 'terms_conditions' as const },
             { id: 'reports', title: 'Export Booking Reports', caption: 'Day, month & custom statements', icon: FileSpreadsheet, screen: 'export_report' as const },
-            { id: 'support', title: 'Help Desk & Support', caption: 'Raise ticket & toll-free hotline', icon: HelpCircle, screen: 'help_support' as const },
+            { id: 'help_faq', title: 'Help & FAQ', caption: 'Knowledge base, guides & self-serve answers', icon: HelpCircle, screen: 'help_faq' as const },
+            { id: 'support', title: 'Support & Tickets', caption: 'Raise query, view ticket statuses & hotline', icon: LifeBuoy, screen: 'support' as const },
           ].map((item) => {
             const Icon = item.icon;
             return (
@@ -722,154 +725,54 @@ export const SettingsScreen: React.FC = () => {
                 </p>
               </div>
 
-              {/* ACTIVE VERIFIED BANK ACCOUNT CARD */}
-              <div className="bg-[#FAF9F6] rounded-2xl p-4 border border-[#E8E6E1] space-y-3">
-                <div className="flex items-center justify-between pb-1 border-b border-[#E8E6E1]/70">
-                  <div className="flex items-center gap-2">
-                    <Building className="w-4 h-4 text-[#2FA66A]" />
-                    <span className="text-[13px] font-black text-[#171717] uppercase tracking-wider">
-                      Active Settlement Bank Account
-                    </span>
+              {/* ACTIVE SETTLEMENT BANK ACCOUNT */}
+              <div className="bg-[#171717] rounded-3xl p-5 border border-[#171717] space-y-4 shadow-md">
+                {/* Header */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center shrink-0">
+                      <Building className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <span className="text-[10.5px] font-bold uppercase tracking-wider text-[#A3A099] block">Settlement Account</span>
+                      <span className="text-[17px] font-black text-white tracking-tight">{paymentSettings.bankName}</span>
+                    </div>
                   </div>
-
-                  <span className="text-[10px] font-bold text-[#2FA66A] bg-[#2FA66A]/10 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                  <span className="text-[10px] font-bold bg-[#2FA66A]/20 text-[#2FA66A] border border-[#2FA66A]/30 px-2.5 py-1 rounded-full flex items-center gap-1 shrink-0">
                     <CheckCircle2 className="w-3 h-3" />
-                    <span>Verified & Active</span>
+                    Verified & Active
                   </span>
                 </div>
 
-                {/* Bank Details Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                {/* Details grid */}
+                <div className="grid grid-cols-3 gap-3 bg-white/8 rounded-2xl p-3.5">
                   <div>
-                    <span className="text-[10.5px] font-bold text-[#777570] block">Bank Name</span>
-                    <span className="text-[14px] font-black text-[#171717]">{activeBankDetails.bankName}</span>
+                    <span className="text-[10px] font-bold block text-[#A3A099] mb-0.5">Account No.</span>
+                    <span className="text-[13px] font-mono font-black text-white">{paymentSettings.accountNumberMasked}</span>
                   </div>
-
                   <div>
-                    <span className="text-[10.5px] font-bold text-[#777570] block">Account Number</span>
-                    <span className="text-[14px] font-mono font-black text-[#171717]">{activeBankDetails.maskedNumber}</span>
+                    <span className="text-[10px] font-bold block text-[#A3A099] mb-0.5">IFSC</span>
+                    <span className="text-[13px] font-mono font-black text-white">{paymentSettings.ifscCode}</span>
                   </div>
-
                   <div>
-                    <span className="text-[10.5px] font-bold text-[#777570] block">IFSC Code</span>
-                    <span className="text-[14px] font-mono font-black text-[#171717]">{activeBankDetails.ifsc}</span>
+                    <span className="text-[10px] font-bold block text-[#A3A099] mb-0.5">Type</span>
+                    <span className="text-[12px] font-bold text-white">Current A/C</span>
                   </div>
-
-                  <div>
-                    <span className="text-[10.5px] font-bold text-[#777570] block">Account Holder</span>
-                    <span className="text-[13px] font-bold text-[#171717]">{activeBankDetails.accountHolder}</span>
-                  </div>
-
-                  <div>
-                    <span className="text-[10.5px] font-bold text-[#777570] block">Account Type</span>
-                    <span className="text-[13px] font-bold text-[#171717]">{activeBankDetails.accountType}</span>
-                  </div>
-
-                  <div>
-                    <span className="text-[10.5px] font-bold text-[#777570] block">Daily Settlement</span>
-                    <span className="text-[12px] font-bold text-[#2FA66A]">{activeBankDetails.payoutSchedule}</span>
+                  <div className="col-span-3 border-t border-white/10 pt-2.5 mt-0.5">
+                    <span className="text-[10px] font-bold block text-[#A3A099] mb-0.5">Account Holder</span>
+                    <span className="text-[12.5px] font-bold text-white">Dhanush Kumar (TurfTown Arena)</span>
                   </div>
                 </div>
 
-                {/* Change Request Action Button */}
-                <div className="pt-2 border-t border-[#E8E6E1]/70 flex items-center justify-between">
-                  <p className="text-[11px] text-[#777570]">
-                    To change payout bank account, submit a signed request to TurfTown operations for verification.
-                  </p>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      haptics.tap();
-                      setIsBankChangeModalOpen(true);
-                    }}
-                    className="h-8.5 px-3.5 rounded-xl bg-[#171717] hover:bg-[#2b2b2b] text-white font-bold text-[12px] flex items-center gap-1.5 shadow-xs active-press cursor-pointer transition-colors shrink-0"
-                  >
-                    <CreditCard className="w-3.5 h-3.5 text-[#FF6B2C]" />
-                    <span>Request Bank Change</span>
-                  </button>
+                {/* Settlement info */}
+                <div className="flex items-center justify-between pt-1 border-t border-white/10">
+                  <span className="text-[11px] font-bold text-[#2FA66A] flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    T+0 Auto IMPS · Midnight Direct Settlement
+                  </span>
                 </div>
               </div>
 
-              {/* PENDING ADMIN APPROVAL BANNER IF REQUEST SUBMITTED */}
-              {bankChangeRequest?.pending && (
-                <div className="bg-[#E7A72F]/10 border border-[#E7A72F]/30 rounded-2xl p-4 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-[#B87C0D]" />
-                      <span className="text-[13px] font-black text-[#171717]">
-                        Bank Account Change Request ({bankChangeRequest.requestId})
-                      </span>
-                    </div>
-                    <span className="text-[10px] font-bold text-[#B87C0D] bg-white px-2 py-0.5 rounded-full border border-[#E7A72F]/30">
-                      Pending Admin Approval
-                    </span>
-                  </div>
-                  <p className="text-[11.5px] text-[#55534E] leading-relaxed">
-                    Requested new account: <strong className="text-[#171717]">{bankChangeRequest.newBankName} ({bankChangeRequest.newAccountMasked})</strong> with IFSC <strong className="text-[#171717]">{bankChangeRequest.newIfsc}</strong>. Submitted {bankChangeRequest.submittedAt}.
-                  </p>
-                  <p className="text-[11px] text-[#777570]">
-                    ✓ Your current HDFC account remains active for daily payouts until TurfTown admin approves the change.
-                  </p>
-                </div>
-              )}
-
-              {/* UPI & Cash Collection Toggles */}
-              <div className="space-y-3">
-                <h4 className="text-[13px] font-black text-[#171717] uppercase tracking-wider">
-                  Payment Channels & Reception Desk
-                </h4>
-
-                <div className="p-3.5 bg-[#FAF9F6] rounded-xl border border-[#E8E6E1] flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-[#2FA66A]/10 text-[#2FA66A] flex items-center justify-center">
-                      <Wallet className="w-4.5 h-4.5" />
-                    </div>
-                    <div>
-                      <h4 className="text-[13px] font-bold text-[#171717]">Dynamic UPI QR Collections</h4>
-                      <p className="text-[11px] text-[#777570]">Generate per-booking payment QR for Google Pay, PhonePe, Paytm</p>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => updatePaymentSettings({ acceptUpi: !paymentSettings.acceptUpi })}
-                    className={`w-9 h-5 rounded-full p-0.5 transition-colors cursor-pointer ${
-                      paymentSettings.acceptUpi ? 'bg-[#2FA66A]' : 'bg-[#D1CFCA]'
-                    }`}
-                  >
-                    <div
-                      className={`w-4 h-4 rounded-full bg-white transition-transform ${
-                        paymentSettings.acceptUpi ? 'translate-x-4' : 'translate-x-0'
-                      }`}
-                    />
-                  </button>
-                </div>
-
-                <div className="p-3.5 bg-[#FAF9F6] rounded-xl border border-[#E8E6E1] flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-[#FF6B2C]/10 text-[#FF6B2C] flex items-center justify-center">
-                      <CreditCard className="w-4.5 h-4.5" />
-                    </div>
-                    <div>
-                      <h4 className="text-[13px] font-bold text-[#171717]">Cash at Venue Mode</h4>
-                      <p className="text-[11px] text-[#777570]">Permit counter cash collection with manual balance reconciliation</p>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => updatePaymentSettings({ acceptCash: !paymentSettings.acceptCash })}
-                    className={`w-9 h-5 rounded-full p-0.5 transition-colors cursor-pointer ${
-                      paymentSettings.acceptCash ? 'bg-[#2FA66A]' : 'bg-[#D1CFCA]'
-                    }`}
-                  >
-                    <div
-                      className={`w-4 h-4 rounded-full bg-white transition-transform ${
-                        paymentSettings.acceptCash ? 'translate-x-4' : 'translate-x-0'
-                      }`}
-                    />
-                  </button>
-                </div>
-              </div>
             </div>
           )}
 

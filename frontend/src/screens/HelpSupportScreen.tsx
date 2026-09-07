@@ -316,7 +316,7 @@ export const HelpSupportScreen: React.FC = () => {
                     Category <span className="text-[#FF6B2C]">*</span>
                   </label>
                   <div className="flex flex-wrap gap-1.5">
-                    {(['Payment', 'Booking', 'Court', 'Technical', 'Other'] as const).map((cat) => (
+                    {(['Payment', 'Booking', 'Technical', 'Settlements', 'General', 'Other'] as SupportCategory[]).map((cat) => (
                       <button
                         key={cat}
                         type="button"
@@ -334,11 +334,13 @@ export const HelpSupportScreen: React.FC = () => {
                           ? 'Payments & Payouts'
                           : cat === 'Booking'
                           ? 'Booking & Slots'
-                          : cat === 'Court'
-                          ? 'Court Verification'
                           : cat === 'Technical'
-                          ? 'App / QR Scanner'
-                          : 'General Inquiry'}
+                          ? 'App / Technical'
+                          : cat === 'Settlements'
+                          ? 'Settlements'
+                          : cat === 'General'
+                          ? 'General'
+                          : 'Other'}
                       </button>
                     ))}
                   </div>
