@@ -54,6 +54,16 @@ type SettingsTab =
   | 'privacy'
   | 'terms';
 
+const SETTINGS_TIME_OPTIONS = [
+  '05:00 AM', '05:30 AM', '06:00 AM', '06:30 AM', '07:00 AM', '07:30 AM',
+  '08:00 AM', '08:30 AM', '09:00 AM', '09:30 AM', '10:00 AM', '10:30 AM',
+  '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '01:00 PM', '01:30 PM',
+  '02:00 PM', '02:30 PM', '03:00 PM', '03:30 PM', '04:00 PM', '04:30 PM',
+  '05:00 PM', '05:30 PM', '06:00 PM', '06:30 PM', '07:00 PM', '07:30 PM',
+  '08:00 PM', '08:30 PM', '09:00 PM', '09:30 PM', '10:00 PM', '10:30 PM',
+  '11:00 PM', '11:30 PM', '12:00 AM',
+];
+
 export const SettingsScreen: React.FC = () => {
   const {
     navigateTo,
@@ -115,10 +125,10 @@ export const SettingsScreen: React.FC = () => {
   );
 
   // Owner details
-  const [oName, setOName] = useState(ownerName || 'Karthik Rajan');
-  const [oPhone, setOPhone] = useState(ownerPhone || '+91 98765 43210');
-  const [oEmail, setOEmail] = useState(ownerEmail || 'partner@ibooksports.com');
-  const [oPan, setOPan] = useState(ownerPan || '33ABCDE1234F1Z5');
+  const [oName, setOName] = useState(ownerName || '');
+  const [oPhone, setOPhone] = useState(ownerPhone || '');
+  const [oEmail, setOEmail] = useState(ownerEmail || '');
+  const [oPan, setOPan] = useState(ownerPan || '');
 
   // Sync state whenever AppContext updates from backend onboarding
   useEffect(() => {
@@ -179,6 +189,10 @@ export const SettingsScreen: React.FC = () => {
   // Handle Venue Profile Save & Sync to Onboarding Database
   const handleSaveVenueProfile = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isStaff) {
+      showToast('View Only Mode', 'Only the venue owner can modify venue profile settings.', 'info');
+      return;
+    }
     if (venuePhotos.length < 4) {
       showToast('Photos Required', 'Please maintain at least 4 photos for verification.', 'warning');
       return;
@@ -410,7 +424,7 @@ export const SettingsScreen: React.FC = () => {
             { id: 'general', title: 'Venue Profile & Photos', caption: `Owner details & ${venuePhotos.length} photos`, icon: Building2, screen: 'venue_profile' as const },
             ...(!isStaff ? [{ id: 'payment_settings', title: 'Payment & Bank Details', caption: 'HDFC verified payout · Change request form', icon: Wallet, screen: 'payment_settings' as const }] : []),
             { id: 'amenities', title: 'Amenities', caption: `${activeAmenitiesCount} active · Admin verified amenities`, icon: Coffee, screen: 'amenities' as const },
-            { id: 'operating_hours', title: 'Operating Hours', caption: '06:00 AM – 11:00 PM (Daily schedule)', icon: Clock, screen: 'operating_hours' as const },
+            { id: 'operating_hours', title: 'Operating Hours', caption: `${operatingHours.filter((d) => d.isOpen).length}/7 Days Open · Onboarding Schedule`, icon: Clock, screen: 'operating_hours' as const },
             { id: 'booking_settings', title: 'Booking Settings', caption: 'Advance reservation & slot duration', icon: SlidersHorizontal, screen: 'booking_settings' as const },
             { id: 'notifications', title: 'Notification Settings', caption: 'WhatsApp & SMS alerts on/off toggles', icon: Bell, screen: 'notification_settings' as const },
             { id: 'privacy', title: 'Privacy Policy', caption: 'Rich text data protection & compliance', icon: Shield, screen: 'privacy_policy' as const },
@@ -542,13 +556,20 @@ export const SettingsScreen: React.FC = () => {
                   </p>
                 </div>
 
-                <button
-                  type="submit"
-                  className="h-8.5 px-4 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white font-bold text-[12px] flex items-center gap-1.5 shadow-sm active-press cursor-pointer"
-                >
-                  <Save className="w-3.5 h-3.5" />
-                  <span>Save All Changes</span>
-                </button>
+                {isStaff ? (
+                  <div className="h-8.5 px-3.5 rounded-xl bg-[#F1F0EC] text-[#777570] font-bold text-[12px] flex items-center gap-1.5 border border-[#E8E6E1]">
+                    <Lock className="w-3.5 h-3.5" />
+                    <span>View Only (Staff)</span>
+                  </div>
+                ) : (
+                  <button
+                    type="submit"
+                    className="h-8.5 px-4 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white font-bold text-[12px] flex items-center gap-1.5 shadow-sm active-press cursor-pointer"
+                  >
+                    <Save className="w-3.5 h-3.5" />
+                    <span>Save All Changes</span>
+                  </button>
+                )}
               </div>
 
               {/* SECTION A: OWNER DETAILS */}
@@ -571,9 +592,10 @@ export const SettingsScreen: React.FC = () => {
                     <input
                       type="text"
                       required
+                      disabled={isStaff}
                       value={oName}
                       onChange={(e) => setOName(e.target.value)}
-                      className="w-full bg-white border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none"
+                      className="w-full bg-white disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none"
                     />
                   </div>
 
@@ -584,9 +606,10 @@ export const SettingsScreen: React.FC = () => {
                     <input
                       type="text"
                       required
+                      disabled={isStaff}
                       value={oPhone}
                       onChange={(e) => setOPhone(e.target.value)}
-                      className="w-full bg-white border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none"
+                      className="w-full bg-white disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none"
                     />
                   </div>
 
@@ -595,9 +618,10 @@ export const SettingsScreen: React.FC = () => {
                     <input
                       type="email"
                       required
+                      disabled={isStaff}
                       value={oEmail}
                       onChange={(e) => setOEmail(e.target.value)}
-                      className="w-full bg-white border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none"
+                      className="w-full bg-white disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none"
                     />
                   </div>
 
@@ -605,9 +629,10 @@ export const SettingsScreen: React.FC = () => {
                     <label className="block text-[11px] font-bold text-[#777570] mb-1">PAN / Government ID</label>
                     <input
                       type="text"
+                      disabled={isStaff}
                       value={oPan}
                       onChange={(e) => setOPan(e.target.value)}
-                      className="w-full bg-white border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none uppercase"
+                      className="w-full bg-white disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none uppercase"
                     />
                   </div>
                 </div>
@@ -633,65 +658,47 @@ export const SettingsScreen: React.FC = () => {
                     <input
                       type="text"
                       required
+                      disabled={isStaff}
                       value={vName}
                       onChange={(e) => setVName(e.target.value)}
-                      className="w-full bg-white border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none"
+                      className="w-full bg-white disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-[#777570] mb-1">
-                      City & Area <span className="text-[#FF6B2C]">*</span>
-                    </label>
+                    <label className="block text-[11px] font-bold text-[#777570] mb-1">City / Region</label>
                     <input
                       type="text"
                       required
+                      disabled={isStaff}
                       value={vCity}
                       onChange={(e) => setVCity(e.target.value)}
-                      className="w-full bg-white border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none"
+                      className="w-full bg-white disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none"
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-[11px] font-bold text-[#777570] mb-1">Street Address</label>
+                  <div className="sm:col-span-2">
+                    <label className="block text-[11px] font-bold text-[#777570] mb-1">Physical Address</label>
                     <input
                       type="text"
+                      required
+                      disabled={isStaff}
                       value={vAddress}
                       onChange={(e) => setVAddress(e.target.value)}
-                      className="w-full bg-white border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none"
+                      className="w-full bg-white disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none"
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="block text-[11px] font-bold text-[#777570] mb-1">Pincode</label>
-                      <input
-                        type="text"
-                        value={vPincode}
-                        onChange={(e) => setVPincode(e.target.value)}
-                        className="w-full bg-white border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] font-bold text-[#777570] mb-1">Established Year</label>
-                      <input
-                        type="text"
-                        value={vEstablished}
-                        onChange={(e) => setVEstablished(e.target.value)}
-                        className="w-full bg-white border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none"
-                      />
-                    </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-[11px] font-bold text-[#777570] mb-1">About the Arena (Public Bio)</label>
+                    <textarea
+                      rows={2}
+                      disabled={isStaff}
+                      value={vDescription}
+                      onChange={(e) => setVDescription(e.target.value)}
+                      className="w-full bg-white disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-xl p-2.5 text-[12.5px] font-medium text-[#171717] focus:outline-none resize-none"
+                    />
                   </div>
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-bold text-[#777570] mb-1">About the Arena (Public Bio)</label>
-                  <textarea
-                    rows={2}
-                    value={vDescription}
-                    onChange={(e) => setVDescription(e.target.value)}
-                    className="w-full bg-white border border-[#E8E6E1] rounded-xl p-2.5 text-[12.5px] font-medium text-[#171717] focus:outline-none resize-none"
-                  />
                 </div>
               </div>
 
@@ -720,7 +727,7 @@ export const SettingsScreen: React.FC = () => {
                       {venuePhotos.length} / 8 Photos Uploaded
                     </span>
 
-                    {venuePhotos.length < 8 && (
+                    {venuePhotos.length < 8 && !isStaff && (
                       <button
                         type="button"
                         onClick={() => setIsAddPhotoOpen(true)}
@@ -753,20 +760,22 @@ export const SettingsScreen: React.FC = () => {
                         <span className="text-[8.5px] text-white/70">Photo {idx + 1}</span>
                       </div>
 
-                      {/* Delete button (only if > 4 photos) */}
-                      <button
-                        type="button"
-                        onClick={() => handleRemovePhoto(p.id)}
-                        className="absolute top-1.5 right-1.5 z-20 w-6 h-6 rounded-full bg-black/60 hover:bg-[#D94B4B] text-white flex items-center justify-center transition-colors cursor-pointer"
-                        title="Remove Photo"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </button>
+                      {/* Delete button (only for owner) */}
+                      {!isStaff && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemovePhoto(p.id)}
+                          className="absolute top-1.5 right-1.5 z-20 w-6 h-6 rounded-full bg-black/60 hover:bg-[#D94B4B] text-white flex items-center justify-center transition-colors cursor-pointer"
+                          title="Remove Photo"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      )}
                     </div>
                   ))}
 
-                  {/* Add Placeholder card if < 8 */}
-                  {venuePhotos.length < 8 && (
+                  {/* Add Placeholder card if < 8 and owner */}
+                  {venuePhotos.length < 8 && !isStaff && (
                     <button
                       type="button"
                       onClick={() => setIsAddPhotoOpen(true)}
@@ -1056,21 +1065,24 @@ export const SettingsScreen: React.FC = () => {
                     Configure daily facility opening & closing hours, slot availability and closed days
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    haptics.tap();
-                    operatingHours.forEach((d) => {
-                      if (d.isOpen) {
-                        updateOperatingDayHours(d.day, '06:00 AM', '11:00 PM');
-                      }
-                    });
-                    showToast('Hours Applied', '06:00 AM – 11:00 PM set for all open days.', 'success');
-                  }}
-                  className="text-[11px] font-bold text-[#FF6B2C] bg-[#FF6B2C]/10 hover:bg-[#FF6B2C]/20 px-3 py-1.5 rounded-xl transition-colors cursor-pointer self-start sm:self-auto"
-                >
-                  ⚡ Set 06:00 AM – 11:00 PM All
-                </button>
+                {isStaff ? (
+                  <span className="text-[11px] font-bold text-[#777570] bg-[#FAF9F6] px-3 py-1.5 rounded-xl border border-[#E8E6E1] self-start sm:self-auto flex items-center gap-1.5">
+                    <Lock className="w-3.5 h-3.5" />
+                    <span>View Only (Staff)</span>
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      haptics.tap();
+                      await refreshFromOnboarding();
+                      showToast('Operating Hours Synced', 'Schedule synchronized with verified onboarding records.', 'success');
+                    }}
+                    className="text-[11px] font-bold text-[#FF6B2C] bg-[#FF6B2C]/10 hover:bg-[#FF6B2C]/20 px-3 py-1.5 rounded-xl transition-colors cursor-pointer self-start sm:self-auto"
+                  >
+                    ⚡ Sync Onboarding Schedule
+                  </button>
+                )}
               </div>
 
               {/* Day Rows with Time Pickers */}
@@ -1111,21 +1123,23 @@ export const SettingsScreen: React.FC = () => {
                       {day.isOpen ? (
                         <div className="flex items-center gap-1.5">
                           <select
+                            disabled={isStaff}
                             value={day.openTime}
                             onChange={(e) => updateOperatingDayHours(day.day, e.target.value, day.closeTime)}
-                            className="bg-white border border-[#E8E6E1] rounded-xl px-2.5 py-1.5 text-[11.5px] font-bold text-[#171717] focus:outline-none cursor-pointer"
+                            className="bg-white disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-xl px-2.5 py-1.5 text-[11.5px] font-bold text-[#171717] focus:outline-none cursor-pointer"
                           >
-                            {['05:00 AM', '05:30 AM', '06:00 AM', '06:30 AM', '07:00 AM', '08:00 AM'].map((t) => (
+                            {Array.from(new Set([day.openTime, ...SETTINGS_TIME_OPTIONS])).map((t) => (
                               <option key={t} value={t}>{t}</option>
                             ))}
                           </select>
                           <span className="text-[11px] font-bold text-[#777570]">to</span>
                           <select
+                            disabled={isStaff}
                             value={day.closeTime}
                             onChange={(e) => updateOperatingDayHours(day.day, day.openTime, e.target.value)}
-                            className="bg-white border border-[#E8E6E1] rounded-xl px-2.5 py-1.5 text-[11.5px] font-bold text-[#171717] focus:outline-none cursor-pointer"
+                            className="bg-white disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-xl px-2.5 py-1.5 text-[11.5px] font-bold text-[#171717] focus:outline-none cursor-pointer"
                           >
-                            {['09:00 PM', '10:00 PM', '10:30 PM', '11:00 PM', '11:30 PM', '12:00 AM'].map((t) => (
+                            {Array.from(new Set([day.closeTime, ...SETTINGS_TIME_OPTIONS])).map((t) => (
                               <option key={t} value={t}>{t}</option>
                             ))}
                           </select>
@@ -1136,13 +1150,18 @@ export const SettingsScreen: React.FC = () => {
 
                       <button
                         type="button"
+                        disabled={isStaff}
                         onClick={() => {
+                          if (isStaff) {
+                            showToast('View Only Mode', 'Only the venue owner can toggle operating days.', 'info');
+                            return;
+                          }
                           haptics.tap();
                           toggleOperatingDay(day.day);
                         }}
-                        className={`w-10 h-5.5 rounded-full p-0.5 transition-colors cursor-pointer shrink-0 ${
-                          day.isOpen ? 'bg-[#171717]' : 'bg-[#D1CFCA]'
-                        }`}
+                        className={`w-10 h-5.5 rounded-full p-0.5 transition-colors shrink-0 ${
+                          isStaff ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'
+                        } ${day.isOpen ? 'bg-[#171717]' : 'bg-[#D1CFCA]'}`}
                       >
                         <div
                           className={`w-4.5 h-4.5 rounded-full bg-white transition-transform ${

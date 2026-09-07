@@ -23,24 +23,43 @@ import { haptics } from '../utils/haptics';
 
 const TIME_OPTIONS = [
   '05:00 AM',
+  '05:30 AM',
   '06:00 AM',
+  '06:30 AM',
   '07:00 AM',
+  '07:30 AM',
   '08:00 AM',
+  '08:30 AM',
   '09:00 AM',
+  '09:30 AM',
   '10:00 AM',
+  '10:30 AM',
   '11:00 AM',
+  '11:30 AM',
   '12:00 PM',
+  '12:30 PM',
   '01:00 PM',
+  '01:30 PM',
   '02:00 PM',
+  '02:30 PM',
   '03:00 PM',
+  '03:30 PM',
   '04:00 PM',
+  '04:30 PM',
   '05:00 PM',
+  '05:30 PM',
   '06:00 PM',
+  '06:30 PM',
   '07:00 PM',
+  '07:30 PM',
   '08:00 PM',
+  '08:30 PM',
   '09:00 PM',
+  '09:30 PM',
   '10:00 PM',
+  '10:30 PM',
   '11:00 PM',
+  '11:30 PM',
   '12:00 AM',
 ];
 
@@ -52,7 +71,7 @@ const PRESETS = [
 ];
 
 export const OperatingHoursScreen: React.FC = () => {
-  const { operatingHours, updateOperatingHours, goBack, showToast } = useApp();
+  const { operatingHours, updateOperatingHours, refreshFromOnboarding, goBack, showToast } = useApp();
   const [editingDay, setEditingDay] = useState<string | null>(null);
   const [editOpenTime, setEditOpenTime] = useState<string>('06:00 AM');
   const [editCloseTime, setEditCloseTime] = useState<string>('11:00 PM');
@@ -158,11 +177,15 @@ export const OperatingHoursScreen: React.FC = () => {
 
         <button
           type="button"
-          onClick={() => handleApplyPresetToAll()}
+          onClick={async () => {
+            haptics.tap();
+            await refreshFromOnboarding();
+            showToast('Operating Hours Synced', 'Schedule synchronized with verified onboarding records.', 'success');
+          }}
           className="h-10 px-4 rounded-xl bg-[#171717] hover:bg-[#2A2A2A] text-white font-bold text-[12.5px] flex items-center justify-center gap-2 shadow-xs active-press cursor-pointer transition-colors self-start sm:self-auto"
         >
           <Clock className="w-4 h-4 text-[#FF6B2C]" />
-          <span>Sync 06:00 AM – 11:00 PM All Days</span>
+          <span>Sync Onboarding Schedule</span>
         </button>
       </div>
 
@@ -220,7 +243,7 @@ export const OperatingHoursScreen: React.FC = () => {
                       <div className="flex items-center gap-1.5 mt-0.5">
                         {item.isOpen ? (
                           <span className="text-[13px] font-semibold text-[#55534E]">
-                            {item.openTime} – {item.closeTime} (17 Hours)
+                            {item.openTime} – {item.closeTime}
                           </span>
                         ) : (
                           <span className="text-[13px] font-semibold text-[#D94B4B]">
@@ -411,7 +434,7 @@ export const OperatingHoursScreen: React.FC = () => {
                         onChange={(e) => setEditOpenTime(e.target.value)}
                         className="w-full h-11 px-3 rounded-xl bg-[#FAF9F6] border border-[#E8E6E1] text-[13px] font-extrabold text-[#171717] focus:outline-none focus:border-[#FF6B2C] cursor-pointer"
                       >
-                        {TIME_OPTIONS.map((t) => (
+                        {Array.from(new Set([editOpenTime, ...TIME_OPTIONS])).map((t) => (
                           <option key={t} value={t}>
                             {t}
                           </option>
@@ -428,7 +451,7 @@ export const OperatingHoursScreen: React.FC = () => {
                         onChange={(e) => setEditCloseTime(e.target.value)}
                         className="w-full h-11 px-3 rounded-xl bg-[#FAF9F6] border border-[#E8E6E1] text-[13px] font-extrabold text-[#171717] focus:outline-none focus:border-[#FF6B2C] cursor-pointer"
                       >
-                        {TIME_OPTIONS.map((t) => (
+                        {Array.from(new Set([editCloseTime, ...TIME_OPTIONS])).map((t) => (
                           <option key={t} value={t}>
                             {t}
                           </option>

@@ -20,13 +20,15 @@ import {
   MoreVertical,
   Sun,
   ChevronLeft,
+  Lock,
 } from 'lucide-react';
 import { CourtStatus, Court } from '../types';
 import { haptics } from '../utils/haptics';
 import { EditCourtModal } from '../components/EditCourtModal';
 
 export const CourtsScreen: React.FC = () => {
-  const { courts, goBack, navigateTo, showToast } = useApp();
+  const { currentUser, courts, goBack, navigateTo, showToast } = useApp();
+  const isStaff = currentUser?.type === 'staff';
   const [searchTerm, setSearchTerm] = useState('');
   const [sportFilter, setSportFilter] = useState('All');
   const [editingCourt, setEditingCourt] = useState<Court | null>(null);
@@ -99,14 +101,21 @@ export const CourtsScreen: React.FC = () => {
           </p>
         </div>
 
-        <button
-          id="btn-open-add-court"
-          onClick={handleOpenAddModal}
-          className="h-10 px-4 rounded-xl bg-gradient-to-r from-[#FF6B2C] to-[#FF5410] hover:from-[#e85b1e] hover:to-[#db4a0b] text-white font-extrabold text-[13px] flex items-center justify-center gap-2 shadow-sm hover:shadow-md active-press cursor-pointer transition-all self-start sm:self-auto"
-        >
-          <Plus className="w-4 h-4 stroke-[3]" />
-          <span>+ Add New Court</span>
-        </button>
+        {isStaff ? (
+          <div className="h-10 px-4 rounded-xl bg-[#F1F0EC] border border-[#E8E6E1] text-[#777570] font-bold text-[12.5px] flex items-center justify-center gap-1.5 shadow-2xs self-start sm:self-auto cursor-not-allowed">
+            <Lock className="w-3.5 h-3.5 text-[#777570]" />
+            <span>View Only (Staff)</span>
+          </div>
+        ) : (
+          <button
+            id="btn-open-add-court"
+            onClick={handleOpenAddModal}
+            className="h-10 px-4 rounded-xl bg-gradient-to-r from-[#FF6B2C] to-[#FF5410] hover:from-[#e85b1e] hover:to-[#db4a0b] text-white font-extrabold text-[13px] flex items-center justify-center gap-2 shadow-sm hover:shadow-md active-press cursor-pointer transition-all self-start sm:self-auto"
+          >
+            <Plus className="w-4 h-4 stroke-[3]" />
+            <span>+ Add New Court</span>
+          </button>
+        )}
       </div>
 
       {/* Top KPI Metrics Bar for Desktop */}
@@ -323,16 +332,18 @@ export const CourtsScreen: React.FC = () => {
                   <span>View Slots</span>
                 </button>
 
-                <button
-                  onClick={() => {
-                    haptics.tap();
-                    setEditingCourt(court);
-                  }}
-                  className="py-2 px-3 rounded-xl bg-white hover:bg-[#F7F7F5] border border-[#E8E6E1] text-[#171717] text-[12px] font-bold flex items-center justify-center gap-1 transition-colors cursor-pointer active-press"
-                >
-                  <Edit2 className="w-3.5 h-3.5 text-[#777570]" />
-                  <span>Edit</span>
-                </button>
+                {!isStaff && (
+                  <button
+                    onClick={() => {
+                      haptics.tap();
+                      setEditingCourt(court);
+                    }}
+                    className="py-2 px-3 rounded-xl bg-white hover:bg-[#F7F7F5] border border-[#E8E6E1] text-[#171717] text-[12px] font-bold flex items-center justify-center gap-1 transition-colors cursor-pointer active-press"
+                  >
+                    <Edit2 className="w-3.5 h-3.5 text-[#777570]" />
+                    <span>Edit</span>
+                  </button>
+                )}
               </div>
             </div>
           ))}

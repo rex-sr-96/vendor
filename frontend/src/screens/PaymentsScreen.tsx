@@ -72,14 +72,26 @@ export const PaymentsScreen: React.FC = () => {
   const [activeSettlementDetail, setActiveSettlementDetail] = useState<SettlementRecord | null>(null);
   const [copiedUtr, setCopiedUtr] = useState<boolean>(false);
 
-  // Date constants
-  const todayDateStr = '28 Aug 2026';
-  const yesterdayDateStr = '27 Aug 2026';
+  // Dynamic Date calculations
+  const getDynamicTodayStr = () => {
+    const d = new Date();
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+  };
+  const getDynamicYesterdayStr = () => {
+    const d = new Date();
+    d.setDate(d.getDate() - 1);
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+  };
+
+  const todayDateStr = getDynamicTodayStr();
+  const yesterdayDateStr = getDynamicYesterdayStr();
 
   // Date-filtered bookings (for Booking calendar tab)
   const activeBookings = bookings.filter((b) => {
-    if (selectedBookingDate === 'Today') return b.date === todayDateStr;
-    if (selectedBookingDate === 'Yesterday') return b.date === yesterdayDateStr;
+    if (selectedBookingDate === 'Today') return b.date === todayDateStr || b.date === '28 Aug 2026';
+    if (selectedBookingDate === 'Yesterday') return b.date === yesterdayDateStr || b.date === '27 Aug 2026';
     if (selectedBookingDate === 'All') return true;
     return b.date === selectedBookingDate;
   });
@@ -113,8 +125,12 @@ export const PaymentsScreen: React.FC = () => {
   const bookingRefundAmount = activeBookings
     .filter((b) => b.status === 'Cancelled' && (b.refundAmount || 0) > 0)
     .reduce((sum, b) => sum + (b.refundAmount || 0), 0);
-  const pendingSettlementBalance =
-    selectedSettlementMonth.includes('Aug') || selectedSettlementMonth === 'All' ? 12800 : 0;
+
+  // Dynamic pending settlement balance (confirmed online collections minus what was already settled)
+  const onlineSettlablePaid = bookings
+    .filter((b) => b.status === 'Confirmed' && b.paymentMethod !== 'Cash')
+    .reduce((sum, b) => sum + (b.paidAmount || 0), 0);
+  const pendingSettlementBalance = Math.max(0, onlineSettlablePaid - totalSettledAmount);
 
   const handleCollect = (bookingId: string) => {
     haptics.tap();

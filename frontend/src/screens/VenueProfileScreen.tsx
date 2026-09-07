@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import {
   ChevronLeft,
@@ -22,6 +22,7 @@ import {
   Star,
   Info,
   ExternalLink,
+  Lock,
 } from 'lucide-react';
 import { haptics } from '../utils/haptics';
 
@@ -43,23 +44,39 @@ export const VenueProfileScreen: React.FC = () => {
     setVenueDetails,
     goBack,
     showToast,
+    currentUser,
   } = useApp();
+
+  const isStaff = currentUser?.type === 'staff';
 
   // Local form state
   const [vName, setVName] = useState(venueName || 'TurfTown Arena');
-  const [vCity, setVCity] = useState(venueCity || 'Koramangala, Bengaluru');
-  const [vAddress, setVAddress] = useState(venueAddress || 'Plot 42, Sector 5, Outer Ring Road, HSR Layout');
-  const [vPincode, setVPincode] = useState(venuePincode || '560102');
+  const [vCity, setVCity] = useState(venueCity || 'Coimbatore, Tamil Nadu');
+  const [vAddress, setVAddress] = useState(venueAddress || 'Coimbatore, Tamil Nadu');
+  const [vPincode, setVPincode] = useState(venuePincode || '641018');
   const [vEstablished, setVEstablished] = useState(venueEstablished || '2023');
   const [vDescription, setVDescription] = useState(
     venueDescription ||
       'Premier FIFA-grade synthetic turf and BWF-standard badminton courts with locker rooms, LED floodlights, and player lounge.'
   );
 
-  const [oName, setOName] = useState(ownerName || 'Dhanush Kumar');
-  const [oPhone, setOPhone] = useState(ownerPhone || '+91 98765 43210');
-  const [oEmail, setOEmail] = useState(ownerEmail || 'owner@turftown.app');
-  const [oPan, setOPan] = useState(ownerPan || 'ABCDE1234F');
+  const [oName, setOName] = useState(ownerName || '');
+  const [oPhone, setOPhone] = useState(ownerPhone || '');
+  const [oEmail, setOEmail] = useState(ownerEmail || '');
+  const [oPan, setOPan] = useState(ownerPan || '');
+
+  useEffect(() => {
+    if (venueName) setVName(venueName);
+    if (venueCity) setVCity(venueCity);
+    if (venueAddress) setVAddress(venueAddress);
+    if (venuePincode) setVPincode(venuePincode);
+    if (ownerName) setOName(ownerName);
+    if (ownerPhone) setOPhone(ownerPhone);
+    if (ownerEmail) setOEmail(ownerEmail);
+    if (ownerPan) setOPan(ownerPan);
+    if (venueEstablished) setVEstablished(venueEstablished);
+    if (venueDescription) setVDescription(venueDescription);
+  }, [venueName, venueCity, venueAddress, venuePincode, ownerName, ownerPhone, ownerEmail, ownerPan, venueEstablished, venueDescription]);
 
   // Add Photo Modal
   const [isAddPhotoOpen, setIsAddPhotoOpen] = useState(false);
@@ -113,6 +130,10 @@ export const VenueProfileScreen: React.FC = () => {
 
   const handleSave = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+    if (isStaff) {
+      showToast('View Only Mode', 'Only the venue owner can edit venue profile settings.', 'info');
+      return;
+    }
     if (!vName.trim()) {
       showToast('Name Required', 'Please enter your venue name.', 'warning');
       return;
@@ -224,21 +245,23 @@ export const VenueProfileScreen: React.FC = () => {
               )}
 
               {/* Delete Button */}
-              <button
-                type="button"
-                onClick={() => {
-                  if (venuePhotos.length <= 4) {
-                    showToast('Minimum Required', 'You must maintain at least 4 photos.', 'warning');
-                    return;
-                  }
-                  removeVenuePhoto(photo.id);
-                  haptics.tap();
-                }}
-                className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 hover:bg-[#D94B4B] text-white flex items-center justify-center backdrop-blur-md active-press cursor-pointer transition-colors"
-                title="Delete Photo"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-              </button>
+              {!isStaff && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (venuePhotos.length <= 4) {
+                      showToast('Minimum Required', 'You must maintain at least 4 photos.', 'warning');
+                      return;
+                    }
+                    removeVenuePhoto(photo.id);
+                    haptics.tap();
+                  }}
+                  className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 hover:bg-[#D94B4B] text-white flex items-center justify-center backdrop-blur-md active-press cursor-pointer transition-colors"
+                  title="Delete Photo"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              )}
 
               {/* Photo Label */}
               <div className="absolute bottom-2 left-2 right-2">
@@ -249,7 +272,7 @@ export const VenueProfileScreen: React.FC = () => {
           ))}
 
           {/* Add Photo Card if under 8 */}
-          {venuePhotos.length < 8 && (
+          {venuePhotos.length < 8 && !isStaff && (
             <button
               type="button"
               onClick={() => {
@@ -289,10 +312,11 @@ export const VenueProfileScreen: React.FC = () => {
               <input
                 type="text"
                 required
+                disabled={isStaff}
                 value={vName}
                 onChange={(e) => setVName(e.target.value)}
                 placeholder="e.g. TurfTown Arena"
-                className="w-full bg-[#FAF9F6] border border-[#E8E6E1] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
+                className="w-full bg-[#FAF9F6] disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
               />
             </div>
           </div>
@@ -305,10 +329,11 @@ export const VenueProfileScreen: React.FC = () => {
               <input
                 type="text"
                 required
+                disabled={isStaff}
                 value={vCity}
                 onChange={(e) => setVCity(e.target.value)}
                 placeholder="e.g. Koramangala, Bengaluru"
-                className="w-full bg-[#FAF9F6] border border-[#E8E6E1] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
+                className="w-full bg-[#FAF9F6] disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
               />
             </div>
           </div>
@@ -317,10 +342,11 @@ export const VenueProfileScreen: React.FC = () => {
             <label className="block text-[11px] font-bold text-[#777570] mb-1">Street Address</label>
             <input
               type="text"
+              disabled={isStaff}
               value={vAddress}
               onChange={(e) => setVAddress(e.target.value)}
               placeholder="Plot or building number, street name"
-              className="w-full bg-[#FAF9F6] border border-[#E8E6E1] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
+              className="w-full bg-[#FAF9F6] disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
             />
           </div>
 
@@ -329,10 +355,11 @@ export const VenueProfileScreen: React.FC = () => {
               <label className="block text-[11px] font-bold text-[#777570] mb-1">Pincode</label>
               <input
                 type="text"
+                disabled={isStaff}
                 value={vPincode}
                 onChange={(e) => setVPincode(e.target.value)}
                 placeholder="560102"
-                className="w-full bg-[#FAF9F6] border border-[#E8E6E1] rounded-2xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
+                className="w-full bg-[#FAF9F6] disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-2xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
               />
             </div>
 
@@ -340,10 +367,11 @@ export const VenueProfileScreen: React.FC = () => {
               <label className="block text-[11px] font-bold text-[#777570] mb-1">Established Year</label>
               <input
                 type="text"
+                disabled={isStaff}
                 value={vEstablished}
                 onChange={(e) => setVEstablished(e.target.value)}
                 placeholder="2023"
-                className="w-full bg-[#FAF9F6] border border-[#E8E6E1] rounded-2xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
+                className="w-full bg-[#FAF9F6] disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-2xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
               />
             </div>
           </div>
@@ -352,10 +380,11 @@ export const VenueProfileScreen: React.FC = () => {
             <label className="block text-[11px] font-bold text-[#777570] mb-1">About the Arena (Public Bio)</label>
             <textarea
               rows={3}
+              disabled={isStaff}
               value={vDescription}
               onChange={(e) => setVDescription(e.target.value)}
               placeholder="Highlight turf grade, lighting, amenities, changing rooms..."
-              className="w-full bg-[#FAF9F6] border border-[#E8E6E1] rounded-2xl p-3 text-[12.5px] font-medium text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors resize-none"
+              className="w-full bg-[#FAF9F6] disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-2xl p-3 text-[12.5px] font-medium text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors resize-none"
             />
           </div>
         </div>
@@ -381,10 +410,11 @@ export const VenueProfileScreen: React.FC = () => {
             <input
               type="text"
               required
+              disabled={isStaff}
               value={oName}
               onChange={(e) => setOName(e.target.value)}
               placeholder="Full legal name"
-              className="w-full bg-[#FAF9F6] border border-[#E8E6E1] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
+              className="w-full bg-[#FAF9F6] disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
             />
           </div>
 
@@ -395,10 +425,11 @@ export const VenueProfileScreen: React.FC = () => {
             <input
               type="tel"
               required
+              disabled={isStaff}
               value={oPhone}
               onChange={(e) => setOPhone(e.target.value)}
               placeholder="+91 98765 43210"
-              className="w-full bg-[#FAF9F6] border border-[#E8E6E1] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
+              className="w-full bg-[#FAF9F6] disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
             />
           </div>
 
@@ -406,10 +437,11 @@ export const VenueProfileScreen: React.FC = () => {
             <label className="block text-[11px] font-bold text-[#777570] mb-1">Owner Email Address</label>
             <input
               type="email"
+              disabled={isStaff}
               value={oEmail}
               onChange={(e) => setOEmail(e.target.value)}
               placeholder="owner@turftown.app"
-              className="w-full bg-[#FAF9F6] border border-[#E8E6E1] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
+              className="w-full bg-[#FAF9F6] disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
             />
           </div>
 
@@ -417,10 +449,11 @@ export const VenueProfileScreen: React.FC = () => {
             <label className="block text-[11px] font-bold text-[#777570] mb-1">PAN / Government ID</label>
             <input
               type="text"
+              disabled={isStaff}
               value={oPan}
               onChange={(e) => setOPan(e.target.value)}
               placeholder="ABCDE1234F"
-              className="w-full bg-[#FAF9F6] border border-[#E8E6E1] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#171717] uppercase focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
+              className="w-full bg-[#FAF9F6] disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#171717] uppercase focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
             />
           </div>
         </div>
@@ -439,14 +472,25 @@ export const VenueProfileScreen: React.FC = () => {
           Cancel
         </button>
 
-        <button
-          type="button"
-          onClick={handleSave}
-          className="flex-1 h-11 rounded-2xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white text-[13px] font-black flex items-center justify-center gap-2 shadow-sm active-press cursor-pointer"
-        >
-          <Save className="w-4 h-4" />
-          <span>Save Profile & Photos</span>
-        </button>
+        {isStaff ? (
+          <button
+            type="button"
+            disabled
+            className="flex-1 h-11 rounded-2xl bg-[#F1F0EC] text-[#777570] text-[12px] font-bold flex items-center justify-center gap-1.5 border border-[#E8E6E1] cursor-not-allowed"
+          >
+            <Lock className="w-3.5 h-3.5" />
+            <span>View Only (Staff)</span>
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={handleSave}
+            className="flex-1 h-11 rounded-2xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white text-[13px] font-black flex items-center justify-center gap-2 shadow-sm active-press cursor-pointer"
+          >
+            <Save className="w-4 h-4" />
+            <span>Save Profile & Photos</span>
+          </button>
+        )}
       </div>
 
       {/* ADD PHOTO MODAL */}

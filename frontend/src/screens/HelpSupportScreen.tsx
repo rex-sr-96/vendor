@@ -98,7 +98,7 @@ export const HelpSupportScreen: React.FC = () => {
   const currentPhone = ownerPhone || '9876543210';
   const currentEmail = ownerEmail || 'partner@ibooksports.com';
   const currentVenue = venueName || 'Sky Sports Arena';
-  const currentVendor = ownerName || 'Karthik Rajan';
+  const currentVendor = ownerName || 'Arena Owner';
 
   // Load Vendor Requests from Backend API
   const loadVendorRequests = useCallback(async () => {

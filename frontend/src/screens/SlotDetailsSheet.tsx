@@ -22,6 +22,7 @@ import { formatMinutesSeconds } from '../utils/feeCalculator';
 
 export const SlotDetailsSheet: React.FC = () => {
   const {
+    currentUser,
     activeModal,
     setActiveModal,
     selectedSlot,
@@ -37,6 +38,8 @@ export const SlotDetailsSheet: React.FC = () => {
     navigateTo,
   } = useApp();
 
+  const isStaff = currentUser?.type === 'staff';
+
   const [, setTick] = useState(0);
   useEffect(() => {
     const timer = setInterval(() => setTick((t) => t + 1), 1000);
@@ -50,14 +53,13 @@ export const SlotDetailsSheet: React.FC = () => {
     selectedSlot ||
     slots.find((s) => s.id === selectedSlotId) || {
       id: selectedSlotId || 'slot-temp',
-      courtId: 'court-1',
-      courtName: 'Turf 1',
-      sport: 'Football',
+      courtId: courts[0]?.id || 'court-1',
+      courtName: courts[0]?.name || 'Court 1',
+      sport: courts[0]?.sports[0] || 'Sport',
       time: '6–7 PM',
       timeFull: '06:00 PM – 07:00 PM',
-      state: 'booked',
-      price: 1000,
-      customerName: 'Rahul Kumar',
+      state: 'available',
+      price: courts[0]?.pricePerHour || 1000,
     };
 
   const court = courts.find((c) => c.id === slot.courtId) || courts[0];
@@ -161,22 +163,29 @@ export const SlotDetailsSheet: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2.5">
-                  <button
-                    onClick={handleCreateBookingForSlot}
-                    className="h-11 bg-[#FF6B2C] text-white rounded-xl font-bold text-[13px] flex items-center justify-center gap-1.5 shadow-xs hover:bg-[#e85b1e] active-press cursor-pointer"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span>Create Booking</span>
-                  </button>
-                  <button
-                    onClick={handleBlockSlotForSlot}
-                    className="h-11 bg-white text-[#171717] border border-[#E8E6E1] rounded-xl font-bold text-[13px] flex items-center justify-center gap-1.5 hover:border-[#171717] active-press cursor-pointer"
-                  >
-                    <Wrench className="w-4 h-4 text-[#777570]" />
-                    <span>Block Maint.</span>
-                  </button>
-                </div>
+                {isStaff ? (
+                  <div className="w-full h-11 bg-[#F1F0EC] border border-[#E8E6E1] text-[#777570] rounded-xl font-bold text-[12.5px] flex items-center justify-center gap-1.5 cursor-not-allowed">
+                    <Lock className="w-3.5 h-3.5 text-[#777570]" />
+                    <span>View-Only Mode (Staff)</span>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <button
+                      onClick={handleCreateBookingForSlot}
+                      className="h-11 bg-[#FF6B2C] text-white rounded-xl font-bold text-[13px] flex items-center justify-center gap-1.5 shadow-xs hover:bg-[#e85b1e] active-press cursor-pointer"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>Create Booking</span>
+                    </button>
+                    <button
+                      onClick={handleBlockSlotForSlot}
+                      className="h-11 bg-white text-[#171717] border border-[#E8E6E1] rounded-xl font-bold text-[13px] flex items-center justify-center gap-1.5 hover:border-[#171717] active-press cursor-pointer"
+                    >
+                      <Wrench className="w-4 h-4 text-[#777570]" />
+                      <span>Block Maint.</span>
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
@@ -194,8 +203,8 @@ export const SlotDetailsSheet: React.FC = () => {
 
                   <div>
                     <span className="text-[10.5px] text-[#777570] uppercase font-bold">Player Name</span>
-                    <p className="text-[16px] font-black text-[#171717]">{slot.customerName || 'Rahul Kumar'}</p>
-                    <p className="text-[11.5px] text-[#777570] mt-0.5">{slot.customerPhone || '+91 98450 12345'}</p>
+                    <p className="text-[16px] font-black text-[#171717]">{slot.customerName || 'Walk-in Player'}</p>
+                    <p className="text-[11.5px] text-[#777570] mt-0.5">{slot.customerPhone || 'Direct Reservation'}</p>
                   </div>
 
                   {isContinuous && (
@@ -242,15 +251,25 @@ export const SlotDetailsSheet: React.FC = () => {
                     <span className="text-[13.5px] font-extrabold text-[#171717]">₹{slot.price}</span>
                   </div>
                   <div>
-                    <p className="text-[14.5px] font-bold text-[#171717]">{slot.customerName || 'Vikram Sethi'}</p>
-                    <p className="text-[11.5px] text-[#777570]">{slot.customerPhone || '+91 98450 11223'}</p>
+                    <p className="text-[14.5px] font-bold text-[#171717]">{slot.customerName || 'Hold Reservation'}</p>
+                    <p className="text-[11.5px] text-[#777570]">{slot.customerPhone || 'Online Link Sent'}</p>
                   </div>
                 </div>
 
                 {(() => {
-                  const targetBookingId = slot.bookingId || 'BK10232';
+                  const targetBookingId = slot.bookingId;
+                  if (!targetBookingId) return null;
                   const isBlocked = isPaymentLinkBlocked(targetBookingId);
                   const remaining = getPaymentLinkTimeRemaining(targetBookingId);
+
+                  if (isStaff) {
+                    return (
+                      <div className="w-full h-11 rounded-xl bg-[#F1F0EC] border border-[#E8E6E1] text-[#777570] font-bold text-[12.5px] flex items-center justify-center gap-1.5 cursor-not-allowed">
+                        <Lock className="w-3.5 h-3.5 text-[#777570]" />
+                        <span>Payment Link (Owner Action)</span>
+                      </div>
+                    );
+                  }
 
                   return (
                     <button
@@ -308,16 +327,23 @@ export const SlotDetailsSheet: React.FC = () => {
                   )}
                 </div>
 
-                <button
-                  onClick={() => {
-                    unblockSlotAction(slot.id);
-                    haptics.tap();
-                  }}
-                  className="w-full h-11 bg-white text-[#171717] border border-[#E8E6E1] rounded-xl font-bold text-[13px] flex items-center justify-center gap-1.5 hover:border-[#171717] active-press cursor-pointer"
-                >
-                  <Trash2 className="w-3.5 h-3.5 text-[#777570]" />
-                  <span>Unblock Slot</span>
-                </button>
+                {isStaff ? (
+                  <div className="w-full h-11 bg-[#F1F0EC] text-[#777570] border border-[#E8E6E1] rounded-xl font-bold text-[12.5px] flex items-center justify-center gap-1.5 cursor-not-allowed">
+                    <Lock className="w-3.5 h-3.5 text-[#777570]" />
+                    <span>Unblock Restricted (Owner Only)</span>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => {
+                      unblockSlotAction(slot.id);
+                      haptics.tap();
+                    }}
+                    className="w-full h-11 bg-white text-[#171717] border border-[#E8E6E1] rounded-xl font-bold text-[13px] flex items-center justify-center gap-1.5 hover:border-[#171717] active-press cursor-pointer"
+                  >
+                    <Trash2 className="w-3.5 h-3.5 text-[#777570]" />
+                    <span>Unblock Slot</span>
+                  </button>
+                )}
               </div>
             )}
           </div>

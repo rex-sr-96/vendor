@@ -80,7 +80,7 @@ export const LoginScreen: React.FC = () => {
               }
             : {
                 type: 'owner',
-                name: ownerName || 'Karthik Rajan',
+                name: ownerName || 'Arena Owner',
                 role: 'Arena Director',
                 phone: cleanPhone,
               };

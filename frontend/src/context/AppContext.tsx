@@ -252,6 +252,74 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
+function generateLiveSlots(
+  currentCourts: Court[],
+  startTimeStr = '06:00 AM',
+  endTimeStr = '10:00 PM',
+  currentBookings: Booking[] = []
+): Slot[] {
+  if (!currentCourts || currentCourts.length === 0) return [];
+
+  const parseHour = (timeStr: string): number => {
+    const match = timeStr.match(/(\d+):?(\d+)?\s*(AM|PM)/i);
+    if (!match) return 6;
+    let h = parseInt(match[1], 10);
+    const m = match[3]?.toUpperCase();
+    if (m === 'PM' && h < 12) h += 12;
+    if (m === 'AM' && h === 12) h = 0;
+    return h;
+  };
+
+  const startHour = Math.max(0, Math.min(23, parseHour(startTimeStr)));
+  const endHour = Math.max(startHour + 1, Math.min(24, parseHour(endTimeStr)));
+
+  const formatTimeSlot = (h: number): { time: string; timeFull: string } => {
+    const formatH = (hour: number) => {
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      const displayH = hour % 12 === 0 ? 12 : hour % 12;
+      return `${displayH} ${ampm}`;
+    };
+    const formatHFull = (hour: number) => {
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      const displayH = hour % 12 === 0 ? 12 : hour % 12;
+      const pad = displayH < 10 ? `0${displayH}` : `${displayH}`;
+      return `${pad}:00 ${ampm}`;
+    };
+    return {
+      time: `${formatH(h).replace(' ', '')}–${formatH(h + 1).replace(' ', '')}`,
+      timeFull: `${formatHFull(h)} – ${formatHFull(h + 1)}`,
+    };
+  };
+
+  const generated: Slot[] = [];
+  for (const court of currentCourts) {
+    for (let h = startHour; h < endHour; h++) {
+      const { time, timeFull } = formatTimeSlot(h);
+      const slotId = `slot-${court.id}-${h}`;
+
+      const matchingBooking = currentBookings.find(
+        (b) => b.courtId === court.id && (b.timeSlot?.includes(time) || b.timeSlot?.includes(timeFull))
+      );
+
+      generated.push({
+        id: slotId,
+        courtId: court.id,
+        courtName: court.name,
+        sport: court.sports[0] || 'Cricket',
+        time,
+        timeFull,
+        state: matchingBooking ? (matchingBooking.status === 'Confirmed' ? 'booked' : 'pending') : 'available',
+        bookingId: matchingBooking?.id,
+        customerName: matchingBooking?.customerName,
+        customerPhone: matchingBooking?.customerPhone,
+        price: court.pricePerHour,
+        paidAmount: matchingBooking?.paidAmount || 0,
+      });
+    }
+  }
+  return generated;
+}
+
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [currentScreen, setCurrentScreen] = useState<ScreenType>('splash');
   const [activeTab, setActiveTab] = useState<BottomNavTab>('home');
@@ -277,35 +345,78 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     return () => window.removeEventListener('resize', checkIsDesktop);
   }, []);
 
-  const [bookings, setBookings] = useState<Booking[]>(initialBookings);
+  // Live Bookings State with LocalStorage Persistence
+  const [bookings, setBookings] = useState<Booking[]>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('turftown_bookings');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed)) return parsed;
+        }
+      } catch (e) {}
+    }
+    return [];
+  });
 
-  // Synchronize initial bookings to ensure Expired bookings are loaded into active state
-  React.useEffect(() => {
-    setBookings((prev) => {
-      const hasExpired = prev.some((b) => b.status === 'Expired');
-      if (!hasExpired) {
-        const existingMap = new Map(prev.map((b) => [b.id, b]));
-        initialBookings.forEach((ib) => {
-          if (!existingMap.has(ib.id) || ib.status === 'Expired') {
-            existingMap.set(ib.id, ib);
-          }
-        });
-        return Array.from(existingMap.values());
-      }
-      return prev;
-    });
-  }, []);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('turftown_bookings', JSON.stringify(bookings));
+      } catch (e) {}
+    }
+  }, [bookings]);
 
   const [courts, setCourts] = useState<Court[]>(initialCourts);
   const [slots, setSlots] = useState<Slot[]>(initialSlots);
   const [payments, setPayments] = useState<PaymentRecord[]>(initialPaymentRecords);
   const [settlements, setSettlements] = useState<SettlementRecord[]>(initialSettlements);
-  const [operatingHours, setOperatingHours] = useState<OperatingHourDay[]>(initialOperatingHours);
+  const [operatingHours, setOperatingHours] = useState<OperatingHourDay[]>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('turftown_operating_hours');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed;
+          }
+        }
+      } catch (e) {}
+    }
+    return initialOperatingHours;
+  });
   const [bookingSettings, setBookingSettings] = useState<BookingSettingsConfig>(initialBookingSettings);
   const [paymentSettings, setPaymentSettings] = useState<PaymentSettingsConfig>(initialPaymentSettings);
   const [supportTickets, setSupportTickets] = useState<SupportTicket[]>(initialSupportTickets);
   const [amenities, setAmenities] = useState<AmenityItem[]>(initialAmenities);
   const [cancellationPolicy, setCancellationPolicy] = useState<CancellationPolicyConfig>(initialCancellationPolicy);
+
+  // Persist operating hours whenever updated
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('turftown_operating_hours', JSON.stringify(operatingHours));
+      } catch (e) {}
+    }
+  }, [operatingHours]);
+
+  // Reactive slot regeneration from live courts, bookings, and today's actual operating hours
+  useEffect(() => {
+    if (courts.length > 0) {
+      const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const todayDayName = dayNames[new Date().getDay()];
+      const todaySchedule = operatingHours.find((d) => d.day === todayDayName) || operatingHours[0];
+
+      if (todaySchedule && !todaySchedule.isOpen) {
+        setSlots([]);
+        return;
+      }
+
+      const openTime = todaySchedule?.openTime || '06:00 AM';
+      const closeTime = todaySchedule?.closeTime || '10:00 PM';
+      setSlots(generateLiveSlots(courts, openTime, closeTime, bookings));
+    }
+  }, [courts, bookings, operatingHours]);
 
   // Staff Members State with LocalStorage Persistence
   const [staffMembers, setStaffMembers] = useState<StaffMember[]>(() => {
@@ -314,7 +425,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         const stored = localStorage.getItem('turftown_staff_members');
         if (stored) {
           const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed) && parsed.length > 0) {
+          if (Array.isArray(parsed)) {
             return parsed;
           }
         }
@@ -322,7 +433,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         console.warn('Failed to parse stored staff members', e);
       }
     }
-    return initialStaffMembers;
+    return [];
   });
 
   useEffect(() => {
@@ -369,7 +480,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const unreadNotifCount = notifications.filter((n) => !n.read).length;
 
-  const [selectedBookingId, setSelectedBookingId] = useState<string | null>('BK10231');
+  const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
   const [bookingPrefill, setBookingPrefill] = useState<{
     courtId?: string;
@@ -392,8 +503,30 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [venueName, setVenueName] = useState<string>('Sky Sports Arena');
   const [venueAddress, setVenueAddress] = useState<string>('123 Avinashi Road, Peelamedu, Coimbatore');
   const [venueCity, setVenueCity] = useState<string>('Coimbatore, Tamil Nadu');
-  const [ownerPhone, setOwnerPhone] = useState<string>('');
-  const [ownerName, setOwnerName] = useState<string>('Karthik Rajan');
+  const [ownerPhone, setOwnerPhone] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('turftown_current_user');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed?.phone) return parsed.phone;
+        }
+      } catch (e) {}
+    }
+    return '';
+  });
+  const [ownerName, setOwnerName] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('turftown_current_user');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed?.type === 'owner' && parsed?.name) return parsed.name;
+        }
+      } catch (e) {}
+    }
+    return '';
+  });
   const [ownerEmail, setOwnerEmail] = useState<string>('partner@ibooksports.com');
   const [ownerPan, setOwnerPan] = useState<string>('33ABCDE1234F1Z5');
   const [venuePincode, setVenuePincode] = useState<string>('641018');
@@ -452,6 +585,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   ]);
 
   const addVenuePhoto = (photo: { url: string; label: string }) => {
+    if (currentUser?.type === 'staff') {
+      showToast('View Only Mode', 'Only the venue owner can upload venue photos.', 'info');
+      return;
+    }
     if (venuePhotos.length >= 8) {
       showToast('Maximum Reached', 'You can upload up to 8 photos maximum.', 'info');
       return;
@@ -462,6 +599,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   const removeVenuePhoto = (id: string) => {
+    if (currentUser?.type === 'staff') {
+      showToast('View Only Mode', 'Only the venue owner can remove venue photos.', 'info');
+      return;
+    }
     if (venuePhotos.length <= 4) {
       showToast('Minimum Required', 'Minimum 4 photos required for active verification.', 'warning');
       return;
@@ -1072,6 +1213,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     notes?: string,
     date?: string
   ) => {
+    if (currentUser?.type === 'staff') {
+      showToast('View Only Mode', 'Only the venue owner can block pitch slots.', 'info');
+      return;
+    }
     const stateMap: Record<string, Slot['state']> = {
       maintenance: 'maintenance',
       coaching: 'coaching',
@@ -1100,6 +1245,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   const unblockSlotAction = (slotId: string) => {
+    if (currentUser?.type === 'staff') {
+      showToast('View Only Mode', 'Only the venue owner can unblock pitch slots.', 'info');
+      return;
+    }
     setSlots((prev) =>
       prev.map((s) =>
         s.id === slotId
@@ -1120,6 +1269,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   const addNewCourt = (newCourt: Partial<Court>) => {
+    if (currentUser?.type === 'staff') {
+      showToast('View Only Mode', 'Only the venue owner can add new pitches or courts.', 'info');
+      return;
+    }
     const court: Court = {
       id: `court-${Date.now()}`,
       name: newCourt.name || 'New Turf',
@@ -1148,6 +1301,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   const updateCourt = (courtId: string, updatedData: Partial<Court>) => {
+    if (currentUser?.type === 'staff') {
+      showToast('View Only Mode', 'Only the venue owner can modify court configurations and pricing.', 'info');
+      return;
+    }
     setCourts((prev) =>
       prev.map((c) => (c.id === courtId ? { ...c, ...updatedData } : c))
     );
@@ -1155,6 +1312,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   const addNewBooking = (newBooking: Partial<Booking>) => {
+    if (currentUser?.type === 'staff') {
+      showToast('View Only Mode', 'Only the venue owner can add new court reservations.', 'info');
+      return;
+    }
     const total = newBooking.totalAmount || 1200;
     const paid = newBooking.paidAmount !== undefined ? newBooking.paidAmount : total;
     const balance = Math.max(0, total - paid);
@@ -1243,34 +1404,58 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   const updateBookingSettings = (settings: Partial<BookingSettingsConfig>) => {
+    if (currentUser?.type === 'staff') {
+      showToast('View Only Mode', 'Only the venue owner can modify booking settings.', 'info');
+      return;
+    }
     setBookingSettings((prev) => ({ ...prev, ...settings }));
     showToast('Settings Saved', 'Booking policies updated successfully.', 'success');
   };
 
   const updatePaymentSettings = (settings: Partial<PaymentSettingsConfig>) => {
+    if (currentUser?.type === 'staff') {
+      showToast('View Only Mode', 'Only the venue owner can modify payment settings.', 'info');
+      return;
+    }
     setPaymentSettings((prev) => ({ ...prev, ...settings }));
     showToast('Settings Saved', 'Payment preferences updated.', 'success');
   };
 
   const toggleOperatingDay = (dayName: string) => {
+    if (currentUser?.type === 'staff') {
+      showToast('View Only Mode', 'Only the venue owner can toggle operating days.', 'info');
+      return;
+    }
     setOperatingHours((prev) =>
       prev.map((d) => (d.day === dayName ? { ...d, isOpen: !d.isOpen } : d))
     );
   };
 
   const updateOperatingDayHours = (dayName: string, openTime: string, closeTime: string) => {
+    if (currentUser?.type === 'staff') {
+      showToast('View Only Mode', 'Only the venue owner can modify operating hours.', 'info');
+      return;
+    }
     setOperatingHours((prev) =>
       prev.map((d) => (d.day === dayName ? { ...d, openTime, closeTime } : d))
     );
   };
 
   const toggleAmenity = (id: string) => {
+    if (currentUser?.type === 'staff') {
+      showToast('View Only Mode', 'Only the venue owner can toggle amenities.', 'info');
+      return;
+    }
     setAmenities((prev) =>
       prev.map((a) => (a.id === id ? { ...a, enabled: !a.enabled } : a))
     );
   };
 
   const addAmenity = (item: Omit<AmenityItem, 'id'>) => {
+    if (currentUser?.type === 'staff') {
+      showToast('View Only Mode', 'Only the venue owner can add amenities.', 'info');
+      return;
+    }
     const newAmenity: AmenityItem = {
       ...item,
       id: `am-${Date.now()}`,
@@ -1420,6 +1605,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   const updateOperatingHours = (hours: OperatingHourDay[]) => {
+    if (currentUser?.type === 'staff') {
+      showToast('View Only Mode', 'Only the venue owner can modify operating hours.', 'info');
+      return;
+    }
     setOperatingHours(hours);
   };
 
@@ -1439,6 +1628,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     venueEstablished?: string;
     venueDescription?: string;
   }) => {
+    if (currentUser?.type === 'staff') {
+      showToast('View Only Mode', 'Only the venue owner can modify venue profile settings.', 'info');
+      return;
+    }
     if (details.name || details.venueName) setVenueName(details.venueName || details.name || '');
     if (details.address || details.venueAddress) setVenueAddress(details.venueAddress || details.address || '');
     if (details.phone || details.ownerPhone) {
@@ -1466,16 +1659,46 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const fetchOnboardingProfile = async (phoneToQuery?: string) => {
     try {
       setIsLoadingOnboardingProfile(true);
-      const queryPhone = phoneToQuery || ownerPhone || '9876543210';
+      let queryPhone = phoneToQuery;
+      if (!queryPhone && currentUser?.phone) {
+        queryPhone = currentUser.phone;
+      }
+      if (!queryPhone && typeof window !== 'undefined') {
+        try {
+          const storedUser = localStorage.getItem('turftown_current_user');
+          if (storedUser) {
+            const parsed = JSON.parse(storedUser);
+            if (parsed?.phone) queryPhone = parsed.phone;
+          }
+        } catch (e) {}
+      }
+      if (!queryPhone) {
+        queryPhone = ownerPhone;
+      }
+      if (!queryPhone) {
+        queryPhone = '6369591821';
+      }
       const cleanPhone = queryPhone.replace(/\D/g, '').slice(-10);
       const res = await fetch(
-        `http://localhost:4000/api/v1/onboarding/vendor/profile?mobile=${cleanPhone || '9876543210'}`
+        `http://localhost:4000/api/v1/onboarding/vendor/profile?mobile=${cleanPhone}`
       );
-      if (!res.ok) return;
+      if (!res.ok) return null;
       const data = await res.json();
       if (data && data.success) {
         if (data.owner) {
-          if (data.owner.name) setOwnerName(data.owner.name);
+          if (data.owner.name) {
+            setOwnerName(data.owner.name);
+            setCurrentUser((prev) => {
+              if (prev && prev.type === 'owner') {
+                const updated = { ...prev, name: data.owner.name };
+                try {
+                  localStorage.setItem('turftown_current_user', JSON.stringify(updated));
+                } catch (e) {}
+                return updated;
+              }
+              return prev;
+            });
+          }
           if (data.owner.mobile) setOwnerPhone(`+91 ${data.owner.mobile}`);
           if (data.owner.email) setOwnerEmail(data.owner.email);
           if (data.owner.pan) setOwnerPan(data.owner.pan);
@@ -1516,6 +1739,110 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             }))
           );
         }
+
+        // Live Dynamic Courts bridged from Onboarding Configuration
+        let liveCourts: Court[] = [];
+        if (data.courts_config && Array.isArray(data.courts_config.courts) && data.courts_config.courts.length > 0) {
+          liveCourts = data.courts_config.courts.map((c: any, idx: number) => {
+            const courtId = `court-${idx + 1}`;
+            const sportsArr = Array.isArray(c.sports) && c.sports.length > 0
+              ? c.sports.map((s: string) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase())
+              : ['Cricket'];
+            return {
+              id: courtId,
+              name: c.court_name || `Turf ${idx + 1}`,
+              displayName: c.display_name || c.court_name || `Court ${idx + 1}`,
+              sports: sportsArr,
+              pricePerHour: Number(c.regular_price) || 1000,
+              minBookingDuration: c.minimum_booking_time_minutes ? `${c.minimum_booking_time_minutes} mins` : '60 mins',
+              peakHoursStart: c.peak_hours?.[0]?.start_time || '06:00 PM',
+              peakHoursEnd: c.peak_hours?.[0]?.end_time || '10:00 PM',
+              peakHoursPrice: Number(c.peak_hour_price) || Number(c.regular_price) || 1500,
+              peakDays: Array.isArray(c.peak_days) ? c.peak_days : ['Sat', 'Sun'],
+              weekendPrice: Number(c.weekend_price) || Number(c.regular_price) || 1200,
+              status: 'Approved' as const,
+              operatingHours: `${data.operating_hours?.operating_time || '06:00 AM'} – ${data.operating_hours?.closing_time || '10:00 PM'}`,
+              type: (sportsArr.some((s: string) => s.toLowerCase() === 'badminton') ? 'Indoor' : 'Outdoor') as 'Indoor' | 'Outdoor' | 'Covered',
+              cancellationWindowHours: c.cancellation_window_hours ?? 12,
+              refundPercentage: c.refund_percentage ?? 100,
+              cancellationPolicyLabel: `Free cancel up to ${c.cancellation_window_hours ?? 12}h before match (${c.refund_percentage ?? 100}% refund)`,
+            };
+          });
+          setCourts(liveCourts);
+        }
+
+        // Live Operating Hours bridged from Onboarding Schedule
+        if (data.operating_hours) {
+          const defaultOpen = data.operating_hours.open_time || data.operating_hours.operating_time || data.operating_hours.starting_time || '06:00 AM';
+          const defaultClose = data.operating_hours.close_time || data.operating_hours.closing_time || '10:00 PM';
+          const workingDays: string[] = Array.isArray(data.operating_hours.working_days)
+            ? data.operating_hours.working_days.map((d: string) => d.toUpperCase())
+            : ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
+
+          const allDays = [
+            { key: 'MONDAY', day: 'Monday', shortDay: 'Mon' },
+            { key: 'TUESDAY', day: 'Tuesday', shortDay: 'Tue' },
+            { key: 'WEDNESDAY', day: 'Wednesday', shortDay: 'Wed' },
+            { key: 'THURSDAY', day: 'Thursday', shortDay: 'Thu' },
+            { key: 'FRIDAY', day: 'Friday', shortDay: 'Fri' },
+            { key: 'SATURDAY', day: 'Saturday', shortDay: 'Sat' },
+            { key: 'SUNDAY', day: 'Sunday', shortDay: 'Sun' },
+          ];
+
+          const schedules = Array.isArray(data.operating_hours.day_schedules)
+            ? data.operating_hours.day_schedules
+            : [];
+
+          const mappedHours: OperatingHourDay[] = allDays.map((item) => {
+            const sched = schedules.find((s: any) => s.day?.toUpperCase() === item.key);
+            const isOpen = sched ? (sched.is_open ?? true) : workingDays.includes(item.key);
+            const openTime = sched?.open_time || defaultOpen;
+            const closeTime = sched?.close_time || defaultClose;
+            return {
+              day: item.day,
+              shortDay: item.shortDay,
+              isOpen,
+              openTime,
+              closeTime,
+            };
+          });
+
+          setOperatingHours(mappedHours);
+          if (typeof window !== 'undefined') {
+            try {
+              localStorage.setItem('turftown_operating_hours', JSON.stringify(mappedHours));
+            } catch (e) {}
+          }
+
+          if (liveCourts.length > 0) {
+            const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const todayDayName = dayNames[new Date().getDay()];
+            const todaySchedule = mappedHours.find((d) => d.day === todayDayName) || mappedHours[0];
+
+            if (todaySchedule && todaySchedule.isOpen) {
+              const dynamicSlots = generateLiveSlots(
+                liveCourts,
+                todaySchedule.openTime,
+                todaySchedule.closeTime,
+                bookings
+              );
+              setSlots(dynamicSlots);
+            }
+          }
+        }
+      }
+
+      // Live Staff Members from backend
+      try {
+        const staffRes = await fetch('http://localhost:4000/api/v1/staff');
+        if (staffRes.ok) {
+          const staffData = await staffRes.json();
+          if (Array.isArray(staffData)) {
+            setStaffMembers(staffData);
+          }
+        }
+      } catch (e) {
+        // Safe fallback
       }
 
       // Fetch Admin-defined standard amenities (strictly show only admin amenities)
@@ -1547,8 +1874,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       } catch (e) {
         // Fallback to initialAmenities
       }
+      return data || null;
     } catch (err) {
       console.warn('Could not auto-fetch onboarding profile from backend:', err);
+      return null;
     } finally {
       setIsLoadingOnboardingProfile(false);
     }

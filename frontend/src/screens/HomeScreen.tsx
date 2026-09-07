@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import {
   Bell,
@@ -13,7 +13,6 @@ import {
   Link2,
   Calendar,
   Layers,
-  ArrowUpRight,
   Sparkles,
   CheckCircle2,
   ShieldCheck,
@@ -34,6 +33,7 @@ interface ChartDataPoint {
 
 export const HomeScreen: React.FC = () => {
   const {
+    currentUser,
     venueName,
     navigateTo,
     setSelectedBookingId,
@@ -43,7 +43,26 @@ export const HomeScreen: React.FC = () => {
     getPaymentLinkTimeRemaining,
     showToast,
     unreadNotifCount,
+    bookings,
+    courts,
+    slots,
+    operatingHours,
+    settlements,
+    paymentSettings,
+    bankDetails,
   } = useApp();
+
+  const isStaff = currentUser?.type === 'staff';
+
+  const todayDayName = useMemo(() => {
+    return new Date().toLocaleDateString('en-US', { weekday: 'long' });
+  }, []);
+
+  const todaySchedule = useMemo(() => {
+    return operatingHours?.find(
+      (d) => d.day.toLowerCase() === todayDayName.toLowerCase() || d.shortDay.toLowerCase() === todayDayName.slice(0, 3).toLowerCase()
+    );
+  }, [operatingHours, todayDayName]);
 
   const [, setTick] = useState(0);
   useEffect(() => {
@@ -53,55 +72,127 @@ export const HomeScreen: React.FC = () => {
 
   // Active Timeframe: 'today' | 'month' | 'yearly'
   const [timeframe, setTimeframe] = useState<TimeframeType>('today');
-  const [selectedBarIdx, setSelectedBarIdx] = useState<number | null>(7); // Default to peak slot
+  const [selectedBarIdx, setSelectedBarIdx] = useState<number | null>(0);
+
+  // Currency Formatter Helpers
+  const formatK = (num: number) => {
+    if (num >= 100000) return `₹${(num / 100000).toFixed(1)}L`;
+    if (num >= 1000) return `₹${(num / 1000).toFixed(1)}k`;
+    return `₹${num}`;
+  };
+  const formatCurrency = (num: number) => `₹${num.toLocaleString('en-IN')}`;
 
   // Handle switching timeframe with default bar selection
   const handleTimeframeChange = (tf: TimeframeType) => {
     haptics.tap();
     setTimeframe(tf);
-    if (tf === 'today') setSelectedBarIdx(7);
-    else if (tf === 'month') setSelectedBarIdx(4);
-    else setSelectedBarIdx(7);
+    setSelectedBarIdx(0);
   };
 
-  // 1. TODAY'S DATA (9 hourly slots)
-  const todayHourlyData: ChartDataPoint[] = [
-    { time: '6 AM', amount: '₹1.2k', height: 28, bookings: 2 },
-    { time: '8 AM', amount: '₹3.4k', height: 50, bookings: 4 },
-    { time: '10 AM', amount: '₹2.1k', height: 35, bookings: 3 },
-    { time: '12 PM', amount: '₹1.8k', height: 30, bookings: 2 },
-    { time: '2 PM', amount: '₹2.6k', height: 42, bookings: 3 },
-    { time: '4 PM', amount: '₹4.8k', height: 68, bookings: 6 },
-    { time: '6 PM', amount: '₹8.4k', height: 92, bookings: 9, isPeak: true },
-    { time: '8 PM', amount: '₹9.6k', height: 100, bookings: 11, isPeak: true },
-    { time: '10 PM', amount: '₹6.2k', height: 75, bookings: 7 },
-  ];
+  // 1. TODAY'S DYNAMIC HOURLY DATA (Computed directly from real bookings across hourly blocks)
+  const todayHourlyData: ChartDataPoint[] = useMemo(() => {
+    const buckets = [
+      { label: '6 AM', startHour: 6, endHour: 8 },
+      { label: '8 AM', startHour: 8, endHour: 10 },
+      { label: '10 AM', startHour: 10, endHour: 12 },
+      { label: '12 PM', startHour: 12, endHour: 14 },
+      { label: '2 PM', startHour: 14, endHour: 16 },
+      { label: '4 PM', startHour: 16, endHour: 18 },
+      { label: '6 PM', startHour: 18, endHour: 20 },
+      { label: '8 PM', startHour: 20, endHour: 22 },
+      { label: '10 PM', startHour: 22, endHour: 24 },
+    ];
 
-  // 2. THIS MONTH'S DATA (6 date ranges across August)
-  const monthDailyData: ChartDataPoint[] = [
-    { time: 'Aug 1–5', amount: '₹84.5k', height: 65, bookings: 58 },
-    { time: 'Aug 6–10', amount: '₹92.0k', height: 72, bookings: 64 },
-    { time: 'Aug 11–15', amount: '₹104.2k', height: 86, bookings: 72, isPeak: true },
-    { time: 'Aug 16–20', amount: '₹98.4k', height: 78, bookings: 69 },
-    { time: 'Aug 21–25', amount: '₹112.8k', height: 100, bookings: 81, isPeak: true },
-    { time: 'Aug 26–31', amount: '₹90.6k', height: 70, bookings: 68 },
-  ];
+    const bucketStats = buckets.map((b) => {
+      const matching = bookings.filter((bk) => {
+        const timeStr = bk.timeSlot || '';
+        const match = timeStr.match(/(\d+):?(\d+)?\s*(AM|PM)/i);
+        if (!match) return false;
+        let h = parseInt(match[1], 10);
+        const ampm = match[3]?.toUpperCase();
+        if (ampm === 'PM' && h < 12) h += 12;
+        if (ampm === 'AM' && h === 12) h = 0;
+        return h >= b.startHour && h < b.endHour;
+      });
 
-  // 3. YEARLY DATA (12 Months FY 2026)
-  const yearlyMonthlyData: ChartDataPoint[] = [
-    { time: 'Jan', amount: '₹4.8L', height: 65, bookings: 340 },
-    { time: 'Feb', amount: '₹4.9L', height: 68, bookings: 355 },
-    { time: 'Mar', amount: '₹5.4L', height: 75, bookings: 390 },
-    { time: 'Apr', amount: '₹5.8L', height: 80, bookings: 410 },
-    { time: 'May', amount: '₹6.2L', height: 86, bookings: 445, isPeak: true },
-    { time: 'Jun', amount: '₹5.6L', height: 78, bookings: 395 },
-    { time: 'Jul', amount: '₹6.5L', height: 90, bookings: 460, isPeak: true },
-    { time: 'Aug', amount: '₹5.8L', height: 80, bookings: 412 },
-    { time: 'Sep', amount: '₹6.0L', height: 83, bookings: 430 },
-    { time: 'Oct', amount: '₹6.4L', height: 88, bookings: 455 },
-    { time: 'Nov', amount: '₹6.6L', height: 92, bookings: 470 },
-    { time: 'Dec', amount: '₹7.2L', height: 100, bookings: 510, isPeak: true },
-  ];
+      const amount = matching.reduce((sum, bk) => sum + (bk.paidAmount || 0), 0);
+      return {
+        time: b.label,
+        rawAmount: amount,
+        amount: formatK(amount),
+        bookings: matching.length,
+      };
+    });
+
+    const maxAmount = Math.max(...bucketStats.map((b) => b.rawAmount), 0);
+    return bucketStats.map((b) => ({
+      time: b.time,
+      amount: b.amount,
+      height: maxAmount > 0 && b.rawAmount > 0 ? Math.max(20, Math.round((b.rawAmount / maxAmount) * 100)) : 12,
+      bookings: b.bookings,
+      isPeak: maxAmount > 0 && b.rawAmount === maxAmount,
+    }));
+  }, [bookings]);
+
+  // 2. THIS MONTH'S DYNAMIC DATA (Grouped by date ranges)
+  const monthDailyData: ChartDataPoint[] = useMemo(() => {
+    const ranges = [
+      { label: 'Day 1–5', startDay: 1, endDay: 5 },
+      { label: 'Day 6–10', startDay: 6, endDay: 10 },
+      { label: 'Day 11–15', startDay: 11, endDay: 15 },
+      { label: 'Day 16–20', startDay: 16, endDay: 20 },
+      { label: 'Day 21–25', startDay: 21, endDay: 25 },
+      { label: 'Day 26–31', startDay: 26, endDay: 31 },
+    ];
+
+    const rangeStats = ranges.map((r) => {
+      const matching = bookings.filter((bk) => {
+        const parts = bk.date?.split(' ') || [];
+        const day = parseInt(parts[0], 10);
+        return !isNaN(day) && day >= r.startDay && day <= r.endDay;
+      });
+      const amount = matching.reduce((sum, bk) => sum + (bk.paidAmount || 0), 0);
+      return {
+        time: r.label,
+        rawAmount: amount,
+        amount: formatK(amount),
+        bookings: matching.length,
+      };
+    });
+
+    const maxAmount = Math.max(...rangeStats.map((r) => r.rawAmount), 0);
+    return rangeStats.map((r) => ({
+      time: r.time,
+      amount: r.amount,
+      height: maxAmount > 0 && r.rawAmount > 0 ? Math.max(20, Math.round((r.rawAmount / maxAmount) * 100)) : 12,
+      bookings: r.bookings,
+      isPeak: maxAmount > 0 && r.rawAmount === maxAmount,
+    }));
+  }, [bookings]);
+
+  // 3. YEARLY DYNAMIC DATA (Grouped by 12 Months)
+  const yearlyMonthlyData: ChartDataPoint[] = useMemo(() => {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const monthStats = months.map((m) => {
+      const matching = bookings.filter((bk) => bk.date?.includes(m));
+      const amount = matching.reduce((sum, bk) => sum + (bk.paidAmount || 0), 0);
+      return {
+        time: m,
+        rawAmount: amount,
+        amount: formatK(amount),
+        bookings: matching.length,
+      };
+    });
+
+    const maxAmount = Math.max(...monthStats.map((m) => m.rawAmount), 0);
+    return monthStats.map((m) => ({
+      time: m.time,
+      amount: m.amount,
+      height: maxAmount > 0 && m.rawAmount > 0 ? Math.max(20, Math.round((m.rawAmount / maxAmount) * 100)) : 12,
+      bookings: m.bookings,
+      isPeak: maxAmount > 0 && m.rawAmount === maxAmount,
+    }));
+  }, [bookings]);
 
   // Dynamic Chart Properties
   const activeChartData =
@@ -111,57 +202,154 @@ export const HomeScreen: React.FC = () => {
       ? monthDailyData
       : yearlyMonthlyData;
 
+  // Real Financial & Operational Metrics
+  const totalRevenue = useMemo(() => bookings.reduce((sum, b) => sum + (b.paidAmount || 0), 0), [bookings]);
+  const totalPending = useMemo(() => bookings.reduce((sum, b) => sum + (b.balanceAmount || 0), 0), [bookings]);
+  const occupiedSlots = useMemo(() => slots.filter((s) => s.state === 'booked' || s.state === 'pending'), [slots]);
+  const occupancyRate = slots.length > 0 ? Math.round((occupiedSlots.length / slots.length) * 100) : 0;
+  const totalSettled = useMemo(() => settlements.reduce((sum, s) => sum + (s.settledAmount || 0), 0), [settlements]);
+
+  const currentMonthName = useMemo(() => {
+    return new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' });
+  }, []);
+
   const chartMeta = {
     today: {
       category: "Today's Activity",
       title: 'Hourly Utilization',
-      badge: 'Peak 88% (8–10 PM)',
-      badgeColor: 'text-[#2FA66A] bg-[#2FA66A]/10',
-      legendLeft: 'Peak (6–10 PM)',
-      legendRight: '14/18 Slots Filled',
+      badge: `${occupancyRate}% Occupied`,
+      badgeColor: occupancyRate > 0 ? 'text-[#2FA66A] bg-[#2FA66A]/10' : 'text-[#777570] bg-[#F1F0EC]',
+      legendLeft: `${bookings.length} Bookings`,
+      legendRight: `${slots.length} Total Slots`,
       itemUnit: 'Slot',
     },
     month: {
-      category: 'August 2026 Velocity',
+      category: `${currentMonthName} Velocity`,
       title: 'Daily Revenue & Booking Trend',
-      badge: 'Target 94% Achieved',
-      badgeColor: 'text-[#FF6B2C] bg-[#FF6B2C]/10',
-      legendLeft: 'Weekday Avg: ₹18.2k',
-      legendRight: '28/31 Days Active',
+      badge: `${bookings.length} Bookings`,
+      badgeColor: bookings.length > 0 ? 'text-[#FF6B2C] bg-[#FF6B2C]/10' : 'text-[#777570] bg-[#F1F0EC]',
+      legendLeft: `${courts.length} Active Courts`,
+      legendRight: formatCurrency(totalRevenue),
       itemUnit: 'Period',
     },
     yearly: {
       category: 'Annual Performance',
       title: 'Month-by-Month Gross Revenue',
-      badge: '+32.5% YoY Growth',
-      badgeColor: 'text-[#2FA66A] bg-[#2FA66A]/10',
-      legendLeft: 'Run-Rate: ₹71.2L',
-      legendRight: '12 Months Tracked',
+      badge: formatCurrency(totalRevenue),
+      badgeColor: totalRevenue > 0 ? 'text-[#2FA66A] bg-[#2FA66A]/10' : 'text-[#777570] bg-[#F1F0EC]',
+      legendLeft: `${bookings.length} Total Matches`,
+      legendRight: totalSettled > 0 ? `${formatCurrency(totalSettled)} Settled` : 'Real-Time Sync',
       itemUnit: 'Month',
     },
   }[timeframe];
 
-  // Dynamic KPIs by Timeframe
+  // Dynamic KPIs by Timeframe (Computed live from actual bookings and ledger)
   const kpis = {
     today: [
-      { id: 'bookings', label: "Today's Bookings", value: '18', trend: '↑ 12% vs y’day', trendPositive: true },
-      { id: 'revenue', label: "Today's Revenue", value: '₹24,800', trend: '↑ 18% vs y’day', trendPositive: true },
-      { id: 'pending', label: 'Pending Dues', value: '₹1,500', trend: '2 bookings', trendPositive: false, isWarning: true },
-      { id: 'utilization', label: 'Court Occupancy', value: '78%', trend: '↑ 6% capacity', trendPositive: true },
+      {
+        id: 'bookings',
+        label: "Today's Bookings",
+        value: `${bookings.length}`,
+        trend: bookings.length > 0 ? `${bookings.length} confirmed` : '0 booked',
+        trendPositive: bookings.length > 0,
+      },
+      {
+        id: 'revenue',
+        label: "Today's Revenue",
+        value: formatCurrency(totalRevenue),
+        trend: totalRevenue > 0 ? 'Live ledger' : '₹0 collected',
+        trendPositive: totalRevenue > 0,
+      },
+      {
+        id: 'pending',
+        label: 'Pending Dues',
+        value: formatCurrency(totalPending),
+        trend: `${bookings.filter((b) => b.balanceAmount > 0).length} dues`,
+        trendPositive: totalPending === 0,
+        isWarning: totalPending > 0,
+      },
+      {
+        id: 'utilization',
+        label: 'Court Occupancy',
+        value: `${occupancyRate}%`,
+        trend: `${occupiedSlots.length}/${slots.length} slots`,
+        trendPositive: occupancyRate > 0,
+      },
     ],
     month: [
-      { id: 'bookings', label: 'Monthly Bookings', value: '412', trend: '↑ 15.4% vs last mo', trendPositive: true },
-      { id: 'revenue', label: 'August Gross Revenue', value: '₹5,82,500', trend: '↑ 21.8% vs last mo', trendPositive: true },
-      { id: 'pending', label: 'Pending Collections', value: '₹18,400', trend: '11 unpaid walk-ins', trendPositive: false, isWarning: true },
-      { id: 'utilization', label: 'Avg Monthly Occupancy', value: '82%', trend: 'Peak 94% on weekends', trendPositive: true },
+      {
+        id: 'bookings',
+        label: 'Monthly Bookings',
+        value: `${bookings.length}`,
+        trend: 'Month to date',
+        trendPositive: true,
+      },
+      {
+        id: 'revenue',
+        label: 'Monthly Gross Revenue',
+        value: formatCurrency(totalRevenue),
+        trend: 'Collections',
+        trendPositive: true,
+      },
+      {
+        id: 'pending',
+        label: 'Pending Collections',
+        value: formatCurrency(totalPending),
+        trend: `${bookings.filter((b) => b.balanceAmount > 0).length} walk-in dues`,
+        trendPositive: totalPending === 0,
+        isWarning: totalPending > 0,
+      },
+      {
+        id: 'utilization',
+        label: 'Avg Monthly Occupancy',
+        value: `${occupancyRate}%`,
+        trend: 'Arena capacity',
+        trendPositive: true,
+      },
     ],
     yearly: [
-      { id: 'bookings', label: 'Total Annual Bookings', value: '4,850', trend: '↑ 28% YoY', trendPositive: true },
-      { id: 'revenue', label: 'Annual Gross Revenue', value: '₹68,45,000', trend: '↑ 32.5% YoY', trendPositive: true },
-      { id: 'pending', label: 'Bank Payouts Settled', value: '₹62,10,000', trend: 'Auto-settled weekly', trendPositive: true },
-      { id: 'utilization', label: 'Annual Arena Utilization', value: '79%', trend: '+11% YoY Gain', trendPositive: true },
+      {
+        id: 'bookings',
+        label: 'Total Annual Bookings',
+        value: `${bookings.length}`,
+        trend: 'Annual count',
+        trendPositive: true,
+      },
+      {
+        id: 'revenue',
+        label: 'Annual Gross Revenue',
+        value: formatCurrency(totalRevenue),
+        trend: 'Gross receipts',
+        trendPositive: true,
+      },
+      {
+        id: 'pending',
+        label: 'Bank Payouts Settled',
+        value: formatCurrency(totalSettled),
+        trend: 'Verified transfers',
+        trendPositive: true,
+      },
+      {
+        id: 'utilization',
+        label: 'Annual Arena Utilization',
+        value: `${occupancyRate}%`,
+        trend: 'Arena overall',
+        trendPositive: true,
+      },
     ],
   }[timeframe];
+
+  // Action Required Bookings (Uncollected dues, hold expiring, payment pending)
+  const actionRequiredBookings = useMemo(() => {
+    return bookings.filter(
+      (b) => (b.balanceAmount && b.balanceAmount > 0) || b.status === 'Payment Pending'
+    );
+  }, [bookings]);
+
+  // Today's Scheduled Bookings
+  const todayScheduleBookings = useMemo(() => {
+    return bookings.slice(0, 5);
+  }, [bookings]);
 
   const handleActionRequiredPaymentLink = (e: React.MouseEvent, bookingId: string) => {
     e.stopPropagation();
@@ -229,12 +417,15 @@ export const HomeScreen: React.FC = () => {
             <span className="w-2.5 h-2.5 rounded-full bg-[#2FA66A] animate-pulse" />
             <h1 className="text-[20px] sm:text-[22px] font-black text-[#171717] tracking-tight">
               {timeframe === 'today' && "Today's Operations"}
-              {timeframe === 'month' && 'August 2026 Performance'}
-              {timeframe === 'yearly' && 'Annual Arena Analytics 2026'}
+              {timeframe === 'month' && `${currentMonthName} Performance`}
+              {timeframe === 'yearly' && 'Annual Arena Analytics'}
             </h1>
           </div>
           <p className="text-[12.5px] text-[#777570] font-medium mt-0.5">
-            {timeframe === 'today' && 'Real-time slot bookings, hourly court loads & today’s due collections.'}
+            {timeframe === 'today' &&
+              (todaySchedule
+                ? `Real-time slot bookings, hourly court loads & today's collections (${todaySchedule.isOpen ? `${todaySchedule.openTime} – ${todaySchedule.closeTime}` : 'Closed Today'}).`
+                : 'Real-time slot bookings, hourly court loads & today’s due collections.')}
             {timeframe === 'month' && 'Month-to-date revenue velocity, court load share & occupancy trends.'}
             {timeframe === 'yearly' && 'Full year gross revenue trajectory, category split & annual milestones.'}
           </p>
@@ -352,6 +543,8 @@ export const HomeScreen: React.FC = () => {
                         ? 'bg-[#FF6B2C] shadow-md ring-2 ring-[#FF6B2C]/40'
                         : item.isPeak
                         ? 'bg-[#FF854D]/75 hover:bg-[#FF6B2C]'
+                        : item.bookings > 0
+                        ? 'bg-[#2FA66A]/60 hover:bg-[#2FA66A]'
                         : 'bg-[#E8E6E1] hover:bg-[#D8D6D0]'
                     }`}
                   />
@@ -377,7 +570,7 @@ export const HomeScreen: React.FC = () => {
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-xs bg-[#E8E6E1]" />
-                <span>Regular</span>
+                <span>Available Slots</span>
               </span>
             </div>
             <span className="text-[#2FA66A] font-bold inline-flex items-center gap-1">
@@ -399,7 +592,7 @@ export const HomeScreen: React.FC = () => {
               {kpi.label}
             </span>
             <div className="mt-2 flex items-baseline justify-between gap-1">
-              <p className="text-[19px] sm:text-[21px] md:text-[23px] font-black text-[#171717] tracking-tight">
+              <p className="text-[19px] sm:text-[21px] md:text-[23px] font-black text-[#171717] tracking-tight truncate">
                 {kpi.value}
               </p>
               <span
@@ -416,37 +609,51 @@ export const HomeScreen: React.FC = () => {
 
       {/* Quick Actions Row (Mobile only) */}
       <div className="grid grid-cols-3 gap-2 md:hidden">
-        <button
-          onClick={() => {
-            haptics.tap();
-            setActiveModal('new_booking');
-          }}
-          className="h-11 bg-[#FF6B2C] text-white rounded-2xl font-bold text-[12.5px] flex items-center justify-center gap-1.5 shadow-xs hover:bg-[#e85b1e] active-press transition-all cursor-pointer"
-        >
-          <Plus className="w-4 h-4 stroke-[2.5]" />
-          <span>+ Booking</span>
-        </button>
+        {isStaff ? (
+          <div className="h-11 bg-[#F1F0EC] text-[#777570] border border-[#E8E6E1] rounded-2xl font-bold text-[12px] flex items-center justify-center gap-1.5 shadow-2xs cursor-not-allowed">
+            <Lock className="w-3.5 h-3.5 text-[#777570]" />
+            <span>View-Only</span>
+          </div>
+        ) : (
+          <button
+            onClick={() => {
+              haptics.tap();
+              setActiveModal('new_booking');
+            }}
+            className="h-11 bg-[#FF6B2C] text-white rounded-2xl font-bold text-[12.5px] flex items-center justify-center gap-1.5 shadow-xs hover:bg-[#e85b1e] active-press transition-all cursor-pointer"
+          >
+            <Plus className="w-4 h-4 stroke-[2.5]" />
+            <span>+ Booking</span>
+          </button>
+        )}
+
+        {isStaff ? (
+          <div className="h-11 bg-[#F1F0EC] text-[#777570] border border-[#E8E6E1] rounded-2xl font-bold text-[12px] flex items-center justify-center gap-1.5 shadow-2xs cursor-not-allowed">
+            <Lock className="w-3.5 h-3.5 text-[#777570]" />
+            <span>Locked</span>
+          </div>
+        ) : (
+          <button
+            onClick={() => {
+              haptics.tap();
+              setActiveModal('block_slot');
+            }}
+            className="h-11 bg-white text-[#171717] border border-[#E8E6E1] rounded-2xl font-bold text-[12.5px] flex items-center justify-center gap-1.5 shadow-xs hover:border-[#171717] active-press transition-all cursor-pointer"
+          >
+            <Ban className="w-3.5 h-3.5 text-[#777570] stroke-[2]" />
+            <span>Block Slot</span>
+          </button>
+        )}
 
         <button
           onClick={() => {
             haptics.tap();
-            setActiveModal('block_slot');
+            navigateTo('slots');
           }}
           className="h-11 bg-white text-[#171717] border border-[#E8E6E1] rounded-2xl font-bold text-[12.5px] flex items-center justify-center gap-1.5 shadow-xs hover:border-[#171717] active-press transition-all cursor-pointer"
         >
-          <Ban className="w-3.5 h-3.5 text-[#777570] stroke-[2]" />
-          <span>Block Slot</span>
-        </button>
-
-        <button
-          onClick={() => {
-            haptics.tap();
-            navigateTo('payments');
-          }}
-          className="h-11 bg-white text-[#171717] border border-[#E8E6E1] rounded-2xl font-bold text-[12.5px] flex items-center justify-center gap-1.5 shadow-xs hover:border-[#171717] active-press transition-all cursor-pointer"
-        >
-          <Wallet className="w-3.5 h-3.5 text-[#777570] stroke-[2]" />
-          <span>Payments</span>
+          <Calendar className="w-3.5 h-3.5 text-[#777570] stroke-[2]" />
+          <span>Timetable</span>
         </button>
       </div>
 
@@ -463,6 +670,11 @@ export const HomeScreen: React.FC = () => {
               <div className="flex items-center gap-2">
                 <div className="w-2.5 h-2.5 rounded-full bg-[#E7A72F]" />
                 <h2 className="text-[16px] font-bold text-[#171717]">Action Required</h2>
+                {actionRequiredBookings.length > 0 && (
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-[#E7A72F]/15 text-[#B87C0D]">
+                    {actionRequiredBookings.length}
+                  </span>
+                )}
               </div>
               <button
                 onClick={() => {
@@ -476,81 +688,97 @@ export const HomeScreen: React.FC = () => {
               </button>
             </div>
 
-            {/* Card 1: Advance Paid - Due Collection Required */}
-            <div
-              onClick={() => handleViewBooking('BK10233')}
-              className="bg-white rounded-2xl p-3.5 border border-[#FF6B2C]/40 shadow-xs active-press cursor-pointer hover:border-[#FF6B2C] transition-all"
-            >
-              <div className="flex items-start justify-between">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-[#FF6B2C]/15 text-[#E65100]">
-                      Advance Paid (50%)
-                    </span>
-                    <span className="text-[11.5px] font-semibold text-[#777570]">Turf 1</span>
-                  </div>
-                  <h3 className="text-[14.5px] font-bold text-[#171717]">Priya Menon</h3>
-                  <p className="text-[11.5px] text-[#777570]">
-                    6:00–7:00 PM · Paid ₹750 · <strong className="text-[#FF6B2C]">Due ₹750</strong>
-                  </p>
+            {actionRequiredBookings.length === 0 ? (
+              <div className="bg-white rounded-2xl p-6 border border-[#E8E6E1] text-center space-y-2 shadow-xs">
+                <div className="w-10 h-10 rounded-full bg-[#2FA66A]/10 text-[#2FA66A] flex items-center justify-center mx-auto">
+                  <CheckCircle2 className="w-5 h-5" />
                 </div>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    haptics.tap();
-                    setSelectedBookingId('BK10233');
-                    setActiveModal('payment_options');
-                  }}
-                  className="px-3 py-1.5 rounded-xl bg-[#FF6B2C] text-white text-[11.5px] font-bold flex items-center gap-1 shadow-xs hover:bg-[#e85b1e] active-press cursor-pointer"
-                >
-                  <CreditCard className="w-3 h-3" />
-                  <span>Collect ₹750</span>
-                </button>
+                <h3 className="text-[14px] font-extrabold text-[#171717]">All Caught Up</h3>
+                <p className="text-[11.5px] text-[#777570] max-w-xs mx-auto">
+                  No pending dues or expiring holds requiring counter action today.
+                </p>
+                {!isStaff && (
+                  <button
+                    onClick={() => {
+                      haptics.tap();
+                      setActiveModal('new_booking');
+                    }}
+                    className="mt-1 px-3.5 py-1.5 rounded-xl bg-[#FF6B2C] text-white text-[11.5px] font-bold inline-flex items-center gap-1.5 shadow-xs cursor-pointer active-press hover:bg-[#e85b1e]"
+                  >
+                    <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+                    <span>+ New Booking</span>
+                  </button>
+                )}
               </div>
-            </div>
+            ) : (
+              <div className="space-y-2.5">
+                {actionRequiredBookings.map((b) => {
+                  const isBlocked = isPaymentLinkBlocked(b.id);
+                  const remaining = getPaymentLinkTimeRemaining(b.id);
 
-            {/* Card 2: Hold Expiring (Payment Pending) */}
-            <div
-              onClick={() => handleViewBooking('BK10232')}
-              className="bg-white rounded-2xl p-3.5 border border-[#E7A72F]/40 shadow-xs active-press cursor-pointer hover:border-[#E7A72F] transition-all"
-            >
-              <div className="flex items-start justify-between">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-[#E7A72F]/15 text-[#B87C0D] flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      Hold Expiring (12m)
-                    </span>
-                    <span className="text-[11.5px] font-semibold text-[#777570]">Turf 2</span>
-                  </div>
-                  <h3 className="text-[14.5px] font-bold text-[#171717]">Arun Prakash · 8:00–9:00 PM</h3>
-                  <p className="text-[11.5px] text-[#D94B4B] font-semibold">
-                    Online link sent · Holds for 12 mins
-                  </p>
-                </div>
-                <button
-                  disabled={isPaymentLinkBlocked('BK10232')}
-                  onClick={(e) => handleActionRequiredPaymentLink(e, 'BK10232')}
-                  className={`px-3 py-1.5 rounded-xl text-[11.5px] font-bold flex items-center gap-1 transition-all ${
-                    isPaymentLinkBlocked('BK10232')
-                      ? 'bg-amber-100 text-amber-900 border border-amber-300 cursor-not-allowed'
-                      : 'bg-[#171717] hover:bg-[#333] text-white active-press cursor-pointer'
-                  }`}
-                >
-                  {isPaymentLinkBlocked('BK10232') ? (
-                    <>
-                      <Lock className="w-3 h-3 text-amber-700" />
-                      <span>Sent ({formatMinutesSeconds(getPaymentLinkTimeRemaining('BK10232'))})</span>
-                    </>
-                  ) : (
-                    <>
-                      <Link2 className="w-3 h-3" />
-                      <span>Send Link</span>
-                    </>
-                  )}
-                </button>
+                  return (
+                    <div
+                      key={b.id}
+                      onClick={() => handleViewBooking(b.id)}
+                      className="bg-white rounded-2xl p-3.5 border border-[#FF6B2C]/40 shadow-xs active-press cursor-pointer hover:border-[#FF6B2C] transition-all"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <span className="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-[#FF6B2C]/15 text-[#E65100]">
+                              {b.balanceAmount > 0 ? `Due ₹${b.balanceAmount}` : 'Hold Expiring'}
+                            </span>
+                            <span className="text-[11.5px] font-semibold text-[#777570]">{b.courtName}</span>
+                          </div>
+                          <h3 className="text-[14.5px] font-bold text-[#171717]">{b.customerName}</h3>
+                          <p className="text-[11.5px] text-[#777570]">
+                            {b.timeSlot} · Paid ₹{b.paidAmount || 0} ·{' '}
+                            <strong className="text-[#FF6B2C]">Due ₹{b.balanceAmount || 0}</strong>
+                          </p>
+                        </div>
+
+                        {b.balanceAmount > 0 ? (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              haptics.tap();
+                              setSelectedBookingId(b.id);
+                              setActiveModal('payment_options');
+                            }}
+                            className="px-3 py-1.5 rounded-xl bg-[#FF6B2C] text-white text-[11.5px] font-bold flex items-center gap-1 shadow-xs hover:bg-[#e85b1e] active-press cursor-pointer"
+                          >
+                            <CreditCard className="w-3 h-3" />
+                            <span>Collect ₹{b.balanceAmount}</span>
+                          </button>
+                        ) : (
+                          <button
+                            disabled={isBlocked}
+                            onClick={(e) => handleActionRequiredPaymentLink(e, b.id)}
+                            className={`px-3 py-1.5 rounded-xl text-[11.5px] font-bold flex items-center gap-1 transition-all ${
+                              isBlocked
+                                ? 'bg-amber-100 text-amber-900 border border-amber-300 cursor-not-allowed'
+                                : 'bg-[#171717] hover:bg-[#333] text-white active-press cursor-pointer'
+                            }`}
+                          >
+                            {isBlocked ? (
+                              <>
+                                <Lock className="w-3 h-3 text-amber-700" />
+                                <span>Sent ({formatMinutesSeconds(remaining)})</span>
+                              </>
+                            ) : (
+                              <>
+                                <Link2 className="w-3 h-3" />
+                                <span>Send Link</span>
+                              </>
+                            )}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-            </div>
+            )}
           </div>
 
           {/* Today's Schedule Column */}
@@ -569,70 +797,73 @@ export const HomeScreen: React.FC = () => {
               </button>
             </div>
 
-            <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-xs divide-y divide-[#F1F0EC]">
-              {/* Row 1: 07:00 Turf 1 */}
-              <div
-                onClick={() => handleViewBooking('BK10231')}
-                className="py-2.5 first:pt-0 last:pb-0 flex items-center justify-between cursor-pointer active-press group"
-              >
-                <div className="flex items-center gap-2.5">
-                  <span className="text-[12px] font-bold text-[#777570] w-11 font-mono">07:00</span>
-                  <div className="w-2 h-2 rounded-full bg-[#2FA66A]" />
-                  <div>
-                    <p className="text-[13.5px] font-bold text-[#171717] group-hover:text-[#FF6B2C] transition-colors">
-                      Turf 1 · Rahul Kumar
-                    </p>
-                    <p className="text-[10.5px] text-[#777570]">Football (7v7)</p>
-                  </div>
+            {todayScheduleBookings.length === 0 ? (
+              <div className="bg-white rounded-2xl p-6 border border-[#E8E6E1] text-center space-y-2 shadow-xs">
+                <div className="w-10 h-10 rounded-full bg-[#FAF9F6] border border-[#E8E6E1] text-[#777570] flex items-center justify-center mx-auto">
+                  <Calendar className="w-5 h-5 text-[#FF6B2C]" />
                 </div>
-                <span className="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-[#2FA66A]/15 text-[#1E774A]">
-                  Confirmed
-                </span>
-              </div>
-
-              {/* Row 2: 08:00 Turf 2 Available */}
-              <div
-                onClick={() => {
-                  haptics.tap();
-                  navigateTo('slots');
-                }}
-                className="py-2.5 flex items-center justify-between cursor-pointer active-press group"
-              >
-                <div className="flex items-center gap-2.5">
-                  <span className="text-[12px] font-bold text-[#777570] w-11 font-mono">08:00</span>
-                  <div className="w-2 h-2 rounded-full bg-[#A3A099]" />
-                  <div>
-                    <p className="text-[13.5px] font-semibold text-[#777570] group-hover:text-[#171717] transition-colors">
-                      Turf 2 · Available
-                    </p>
-                    <p className="text-[10.5px] text-[#777570]">₹800/hr · Open for walk-in</p>
-                  </div>
+                <h3 className="text-[14px] font-extrabold text-[#171717]">No Bookings Scheduled Yet</h3>
+                <p className="text-[11.5px] text-[#777570] max-w-xs mx-auto">
+                  All {courts.length || 2} courts are currently open and ready for walk-in or online bookings.
+                </p>
+                <div className="flex items-center justify-center gap-2 pt-1">
+                  <button
+                    onClick={() => {
+                      haptics.tap();
+                      navigateTo('slots');
+                    }}
+                    className="px-3 py-1.5 rounded-xl bg-white border border-[#E8E6E1] text-[#171717] text-[11.5px] font-bold cursor-pointer active-press hover:bg-[#FAF9F6]"
+                  >
+                    View Court Grid
+                  </button>
+                  <button
+                    onClick={() => {
+                      haptics.tap();
+                      setActiveModal('new_booking');
+                    }}
+                    className="px-3 py-1.5 rounded-xl bg-[#171717] text-white text-[11.5px] font-bold cursor-pointer active-press hover:bg-[#333]"
+                  >
+                    + Add Booking
+                  </button>
                 </div>
-                <span className="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-[#F1F0EC] text-[#777570]">
-                  Available
-                </span>
               </div>
-
-              {/* Row 3: 09:00 Turf 1 Arun */}
-              <div
-                onClick={() => handleViewBooking('BK10232')}
-                className="py-2.5 flex items-center justify-between cursor-pointer active-press group"
-              >
-                <div className="flex items-center gap-2.5">
-                  <span className="text-[12px] font-bold text-[#777570] w-11 font-mono">09:00</span>
-                  <div className="w-2 h-2 rounded-full bg-[#E7A72F]" />
-                  <div>
-                    <p className="text-[13.5px] font-bold text-[#171717] group-hover:text-[#FF6B2C] transition-colors">
-                      Turf 1 · Arun Prakash
-                    </p>
-                    <p className="text-[10.5px] text-[#777570]">Hold slot</p>
+            ) : (
+              <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-xs divide-y divide-[#F1F0EC]">
+                {todayScheduleBookings.map((b) => (
+                  <div
+                    key={b.id}
+                    onClick={() => handleViewBooking(b.id)}
+                    className="py-2.5 first:pt-0 last:pb-0 flex items-center justify-between cursor-pointer active-press group"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <span className="text-[12px] font-bold text-[#777570] w-14 font-mono truncate">
+                        {b.timeSlot?.split('–')[0]?.trim() || 'Slot'}
+                      </span>
+                      <div
+                        className={`w-2 h-2 rounded-full ${
+                          b.status === 'Confirmed' ? 'bg-[#2FA66A]' : b.status === 'Ongoing' ? 'bg-[#FF6B2C]' : 'bg-[#E7A72F]'
+                        }`}
+                      />
+                      <div>
+                        <p className="text-[13.5px] font-bold text-[#171717] group-hover:text-[#FF6B2C] transition-colors">
+                          {b.courtName} · {b.customerName}
+                        </p>
+                        <p className="text-[10.5px] text-[#777570]">{b.sport} match</p>
+                      </div>
+                    </div>
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-[10.5px] font-bold ${
+                        b.status === 'Confirmed'
+                          ? 'bg-[#2FA66A]/15 text-[#1E774A]'
+                          : 'bg-[#E7A72F]/15 text-[#B87C0D]'
+                      }`}
+                    >
+                      {b.status}
+                    </span>
                   </div>
-                </div>
-                <span className="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-[#E7A72F]/15 text-[#B87C0D]">
-                  Pending
-                </span>
+                ))}
               </div>
-            </div>
+            )}
           </div>
         </div>
       )}
@@ -645,7 +876,7 @@ export const HomeScreen: React.FC = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Layers className="w-4 h-4 text-[#FF6B2C]" />
-                <h2 className="text-[16px] font-bold text-[#171717]">Top Revenue Drivers (August)</h2>
+                <h2 className="text-[16px] font-bold text-[#171717]">Top Revenue Drivers ({currentMonthName})</h2>
               </div>
               <button
                 onClick={() => {
@@ -660,50 +891,41 @@ export const HomeScreen: React.FC = () => {
             </div>
 
             <div className="bg-white rounded-2xl p-4 border border-[#E8E6E1] shadow-xs space-y-4">
-              {/* Pitch 1 */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between text-[13px]">
-                  <span className="font-bold text-[#171717]">Turf 1 · Main Football (7v7)</span>
-                  <span className="font-black text-[#171717]">₹2,56,000 <span className="text-[11px] text-[#777570] font-medium">(44%)</span></span>
-                </div>
-                <div className="w-full h-2 rounded-full bg-[#F1F0EC] overflow-hidden">
-                  <div className="h-full rounded-full bg-[#FF6B2C] w-[44%]" />
-                </div>
-                <div className="flex items-center justify-between text-[11px] text-[#777570]">
-                  <span>178 slots confirmed</span>
-                  <span className="text-[#2FA66A] font-bold">↑ 14% occupancy</span>
-                </div>
-              </div>
+              {courts.length === 0 ? (
+                <p className="text-[12.5px] text-[#777570] py-4 text-center">No active courts found.</p>
+              ) : (
+                courts.map((court, i) => {
+                  const courtBookings = bookings.filter((b) => b.courtId === court.id);
+                  const courtRev = courtBookings.reduce((sum, b) => sum + (b.paidAmount || 0), 0);
+                  const pct = totalRevenue > 0 ? Math.round((courtRev / totalRevenue) * 100) : 0;
+                  const colors = ['#FF6B2C', '#2FA66A', '#4D83C4', '#E7A72F'];
+                  const barColor = colors[i % colors.length];
 
-              {/* Pitch 2 */}
-              <div className="space-y-1.5 pt-2 border-t border-[#F1F0EC]">
-                <div className="flex items-center justify-between text-[13px]">
-                  <span className="font-bold text-[#171717]">Turf 2 · Box Cricket Pitch</span>
-                  <span className="font-black text-[#171717]">₹1,98,500 <span className="text-[11px] text-[#777570] font-medium">(34%)</span></span>
-                </div>
-                <div className="w-full h-2 rounded-full bg-[#F1F0EC] overflow-hidden">
-                  <div className="h-full rounded-full bg-[#2FA66A] w-[34%]" />
-                </div>
-                <div className="flex items-center justify-between text-[11px] text-[#777570]">
-                  <span>142 slots confirmed</span>
-                  <span className="text-[#2FA66A] font-bold">↑ 22% occupancy</span>
-                </div>
-              </div>
-
-              {/* Court 3 */}
-              <div className="space-y-1.5 pt-2 border-t border-[#F1F0EC]">
-                <div className="flex items-center justify-between text-[13px]">
-                  <span className="font-bold text-[#171717]">Court 3 · Badminton Arena</span>
-                  <span className="font-black text-[#171717]">₹1,28,000 <span className="text-[11px] text-[#777570] font-medium">(22%)</span></span>
-                </div>
-                <div className="w-full h-2 rounded-full bg-[#F1F0EC] overflow-hidden">
-                  <div className="h-full rounded-full bg-[#4D83C4] w-[22%]" />
-                </div>
-                <div className="flex items-center justify-between text-[11px] text-[#777570]">
-                  <span>92 slots confirmed</span>
-                  <span className="text-[#2FA66A] font-bold">↑ 8% occupancy</span>
-                </div>
-              </div>
+                  return (
+                    <div key={court.id} className={i > 0 ? 'space-y-1.5 pt-2 border-t border-[#F1F0EC]' : 'space-y-1.5'}>
+                      <div className="flex items-center justify-between text-[13px]">
+                        <span className="font-bold text-[#171717]">
+                          {court.name} · {court.sports.join(', ')}
+                        </span>
+                        <span className="font-black text-[#171717]">
+                          {formatCurrency(courtRev)}{' '}
+                          <span className="text-[11px] text-[#777570] font-medium">({pct}%)</span>
+                        </span>
+                      </div>
+                      <div className="w-full h-2 rounded-full bg-[#F1F0EC] overflow-hidden">
+                        <div
+                          className="h-full rounded-full transition-all duration-500"
+                          style={{ width: `${Math.max(pct, courtRev > 0 ? 10 : 0)}%`, backgroundColor: barColor }}
+                        />
+                      </div>
+                      <div className="flex items-center justify-between text-[11px] text-[#777570]">
+                        <span>{courtBookings.length} slots confirmed</span>
+                        <span className="font-semibold text-[#171717]">₹{court.pricePerHour}/hr base</span>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
 
@@ -727,9 +949,9 @@ export const HomeScreen: React.FC = () => {
               <div className="flex items-center justify-between pt-1">
                 <div>
                   <p className="text-[13.5px] font-bold text-[#171717]">Total Court Hours Operated</p>
-                  <p className="text-[11.5px] text-[#777570]">Floodlights & active matches</p>
+                  <p className="text-[11.5px] text-[#777570]">Booked arena sessions</p>
                 </div>
-                <span className="font-black text-[16px] text-[#171717]">540 hrs</span>
+                <span className="font-black text-[16px] text-[#171717]">{bookings.length} hrs</span>
               </div>
 
               <div className="flex items-center justify-between pt-3">
@@ -738,29 +960,41 @@ export const HomeScreen: React.FC = () => {
                   <p className="text-[11.5px] text-[#777570]">Payment methods split</p>
                 </div>
                 <div className="text-right">
-                  <span className="font-bold text-[13px] text-[#2FA66A]">72% Online</span>
-                  <span className="text-[#777570] text-[11px] block">28% Counter Cash</span>
+                  {(() => {
+                    const cashCount = bookings.filter((b) => b.paymentMethod === 'Cash').length;
+                    const onlineCount = bookings.length - cashCount;
+                    const onlinePct = bookings.length > 0 ? Math.round((onlineCount / bookings.length) * 100) : 0;
+                    return (
+                      <>
+                        <span className="font-bold text-[13px] text-[#2FA66A]">{onlinePct}% Online</span>
+                        <span className="text-[#777570] text-[11px] block">{100 - onlinePct}% Counter Cash</span>
+                      </>
+                    );
+                  })()}
                 </div>
               </div>
 
               <div className="flex items-center justify-between pt-3">
                 <div>
-                  <p className="text-[13.5px] font-bold text-[#171717]">Repeat Teams Rate</p>
-                  <p className="text-[11.5px] text-[#777570]">Player loyalty & weekly regulars</p>
+                  <p className="text-[13.5px] font-bold text-[#171717]">Active Court Count</p>
+                  <p className="text-[11.5px] text-[#777570]">Pitches & arenas configured</p>
                 </div>
                 <span className="font-bold text-[13.5px] text-[#FF6B2C] bg-[#FFF3EC] px-2.5 py-0.5 rounded-full border border-[#FF6B2C]/20">
-                  68% Rebooked
+                  {courts.length} Live Pitches
                 </span>
               </div>
 
               <div className="flex items-center justify-between pt-3">
                 <div>
-                  <p className="text-[13.5px] font-bold text-[#171717]">Bank Settlement Status</p>
-                  <p className="text-[11.5px] text-[#777570]">HDFC Current A/C ••9012</p>
+                  <p className="text-[13.5px] font-bold text-[#171717]">Bank Settlement Account</p>
+                  <p className="text-[11.5px] text-[#777570]">
+                    {bankDetails?.bankName || 'Verified Bank'} A/C ••
+                    {bankDetails?.accountNumber?.slice(-4) || '6914'}
+                  </p>
                 </div>
                 <span className="inline-flex items-center gap-1 text-[11.5px] font-bold text-[#2FA66A] bg-[#2FA66A]/10 px-2 py-0.5 rounded-full">
                   <CheckCircle2 className="w-3.5 h-3.5" />
-                  ₹5,42,000 Settled
+                  {formatCurrency(totalSettled)} Settled
                 </span>
               </div>
             </div>
@@ -776,7 +1010,7 @@ export const HomeScreen: React.FC = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-[#FF6B2C]" />
-                <h2 className="text-[16px] font-bold text-[#171717]">Sport Category Split (FY 2026)</h2>
+                <h2 className="text-[16px] font-bold text-[#171717]">Sport Category Split</h2>
               </div>
               <button
                 onClick={() => {
@@ -791,50 +1025,40 @@ export const HomeScreen: React.FC = () => {
             </div>
 
             <div className="bg-white rounded-2xl p-4 border border-[#E8E6E1] shadow-xs space-y-4">
-              {/* Football */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between text-[13px]">
-                  <span className="font-bold text-[#171717]">⚽ 7v7 Football & Futsal</span>
-                  <span className="font-black text-[#171717]">₹32,40,000 <span className="text-[11px] text-[#777570] font-medium">(47.3%)</span></span>
-                </div>
-                <div className="w-full h-2 rounded-full bg-[#F1F0EC] overflow-hidden">
-                  <div className="h-full rounded-full bg-[#FF6B2C] w-[47.3%]" />
-                </div>
-                <div className="flex items-center justify-between text-[11px] text-[#777570]">
-                  <span>2,290 team bookings</span>
-                  <span className="text-[#2FA66A] font-bold">↑ 34% YoY</span>
-                </div>
-              </div>
+              {(() => {
+                const venueSports = Array.from(new Set(courts.flatMap((c) => c.sports)));
+                if (venueSports.length === 0) venueSports.push('Cricket', 'Football');
+                const colors = ['#FF6B2C', '#2FA66A', '#4D83C4', '#E7A72F'];
 
-              {/* Cricket */}
-              <div className="space-y-1.5 pt-2 border-t border-[#F1F0EC]">
-                <div className="flex items-center justify-between text-[13px]">
-                  <span className="font-bold text-[#171717]">🏏 Box Cricket Pitch</span>
-                  <span className="font-black text-[#171717]">₹24,60,000 <span className="text-[11px] text-[#777570] font-medium">(35.9%)</span></span>
-                </div>
-                <div className="w-full h-2 rounded-full bg-[#F1F0EC] overflow-hidden">
-                  <div className="h-full rounded-full bg-[#2FA66A] w-[35.9%]" />
-                </div>
-                <div className="flex items-center justify-between text-[11px] text-[#777570]">
-                  <span>1,740 team bookings</span>
-                  <span className="text-[#2FA66A] font-bold">↑ 29% YoY</span>
-                </div>
-              </div>
+                return venueSports.map((sport, idx) => {
+                  const sportBookings = bookings.filter((b) => b.sport === sport);
+                  const sportRev = sportBookings.reduce((sum, b) => sum + (b.paidAmount || 0), 0);
+                  const pct = totalRevenue > 0 ? Math.round((sportRev / totalRevenue) * 100) : 0;
+                  const barColor = colors[idx % colors.length];
 
-              {/* Badminton */}
-              <div className="space-y-1.5 pt-2 border-t border-[#F1F0EC]">
-                <div className="flex items-center justify-between text-[13px]">
-                  <span className="font-bold text-[#171717]">🏸 Badminton & Pickleball</span>
-                  <span className="font-black text-[#171717]">₹11,45,000 <span className="text-[11px] text-[#777570] font-medium">(16.8%)</span></span>
-                </div>
-                <div className="w-full h-2 rounded-full bg-[#F1F0EC] overflow-hidden">
-                  <div className="h-full rounded-full bg-[#4D83C4] w-[16.8%]" />
-                </div>
-                <div className="flex items-center justify-between text-[11px] text-[#777570]">
-                  <span>820 match bookings</span>
-                  <span className="text-[#2FA66A] font-bold">↑ 18% YoY</span>
-                </div>
-              </div>
+                  return (
+                    <div key={sport} className={idx > 0 ? 'space-y-1.5 pt-2 border-t border-[#F1F0EC]' : 'space-y-1.5'}>
+                      <div className="flex items-center justify-between text-[13px]">
+                        <span className="font-bold text-[#171717]">🏆 {sport}</span>
+                        <span className="font-black text-[#171717]">
+                          {formatCurrency(sportRev)}{' '}
+                          <span className="text-[11px] text-[#777570] font-medium">({pct}%)</span>
+                        </span>
+                      </div>
+                      <div className="w-full h-2 rounded-full bg-[#F1F0EC] overflow-hidden">
+                        <div
+                          className="h-full rounded-full transition-all duration-500"
+                          style={{ width: `${Math.max(pct, sportRev > 0 ? 10 : 0)}%`, backgroundColor: barColor }}
+                        />
+                      </div>
+                      <div className="flex items-center justify-between text-[11px] text-[#777570]">
+                        <span>{sportBookings.length} match bookings</span>
+                        <span className="text-[#2FA66A] font-bold">Active Venue Sport</span>
+                      </div>
+                    </div>
+                  );
+                });
+              })()}
             </div>
           </div>
 
@@ -843,7 +1067,7 @@ export const HomeScreen: React.FC = () => {
             <div className="flex items-center justify-between">
               <h2 className="text-[16px] font-bold text-[#171717]">Annual Milestones & Health</h2>
               <span className="text-[11px] font-bold text-[#2FA66A] bg-[#2FA66A]/10 px-2 py-0.5 rounded-full">
-                99.8% Uptime
+                100% Uptime
               </span>
             </div>
 
@@ -851,26 +1075,28 @@ export const HomeScreen: React.FC = () => {
               <div className="flex items-center justify-between pt-1">
                 <div>
                   <p className="text-[13.5px] font-bold text-[#171717]">Total Arena Hours Played</p>
-                  <p className="text-[11.5px] text-[#777570]">Across all 3 multi-sport pitches</p>
+                  <p className="text-[11.5px] text-[#777570]">Across all {courts.length} configured pitches</p>
                 </div>
-                <span className="font-black text-[16px] text-[#171717]">6,480 hrs</span>
+                <span className="font-black text-[16px] text-[#171717]">{bookings.length} hrs</span>
               </div>
 
               <div className="flex items-center justify-between pt-3">
                 <div>
-                  <p className="text-[13.5px] font-bold text-[#171717]">Unique Registered Teams</p>
-                  <p className="text-[11.5px] text-[#777570]">Active team captains & squads</p>
+                  <p className="text-[13.5px] font-bold text-[#171717]">Unique Registered Players</p>
+                  <p className="text-[11.5px] text-[#777570]">Active player & captain records</p>
                 </div>
-                <span className="font-black text-[16px] text-[#FF6B2C]">1,420 Teams</span>
+                <span className="font-black text-[16px] text-[#FF6B2C]">
+                  {new Set(bookings.map((b) => b.customerPhone || b.customerName)).size} Players
+                </span>
               </div>
 
               <div className="flex items-center justify-between pt-3">
                 <div>
-                  <p className="text-[13.5px] font-bold text-[#171717]">Record Peak Month</p>
-                  <p className="text-[11.5px] text-[#777570]">July 2026 Monsoon Leagues</p>
+                  <p className="text-[13.5px] font-bold text-[#171717]">Current Month Gross</p>
+                  <p className="text-[11.5px] text-[#777570]">{currentMonthName}</p>
                 </div>
                 <span className="font-bold text-[13px] text-[#2FA66A] bg-[#2FA66A]/10 px-2.5 py-0.5 rounded-full">
-                  ₹6,50,000 / mo
+                  {formatCurrency(totalRevenue)}
                 </span>
               </div>
 

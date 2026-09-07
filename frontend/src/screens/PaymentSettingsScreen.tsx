@@ -32,7 +32,7 @@ export const PaymentSettingsScreen: React.FC = () => {
       const payload = {
         request_type: 'BANK_CHANGE' as const,
         venue_name: venueName || 'Sky Sports Arena',
-        vendor_name: ownerName || 'Karthik Rajan',
+        vendor_name: ownerName || 'Arena Owner',
         vendor_email: ownerEmail || 'partner@ibooksports.com',
         vendor_phone: ownerPhone || '9876543210',
         bank_details: {

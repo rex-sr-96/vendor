@@ -11,7 +11,9 @@ export const MobileStatusBar: React.FC<MobileStatusBarProps> = ({ deviceType = '
   const [time, setTime] = useState<string>('09:41');
   const [batteryLevel] = useState<number>(92);
   const [isIslandExpanded, setIsIslandExpanded] = useState<boolean>(false);
-  const { currentScreen, selectedBooking } = useApp();
+  const { currentScreen, selectedBooking, venueName, courts, bookings } = useApp();
+  const activeBooking = bookings.find((b) => b.status === 'Ongoing' || b.status === 'Confirmed') || selectedBooking;
+  const activeCourtName = activeBooking?.courtName || courts[0]?.name || venueName || 'Arena';
 
   useEffect(() => {
     const updateTime = () => {
@@ -50,7 +52,9 @@ export const MobileStatusBar: React.FC<MobileStatusBarProps> = ({ deviceType = '
               <>
                 <div className="flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-[#2FA66A] animate-pulse" />
-                  <span className="text-[10px] font-bold text-white/90">Live Turf 1</span>
+                  <span className="text-[10px] font-bold text-white/90 truncate max-w-[70px]">
+                    {activeBooking ? `Live ${activeBooking.courtName}` : 'Arena Live'}
+                  </span>
                 </div>
                 {/* Camera lens hole */}
                 <div className="w-2.5 h-2.5 rounded-full bg-[#1A1A1A] ring-1 ring-white/10" />
@@ -62,13 +66,17 @@ export const MobileStatusBar: React.FC<MobileStatusBarProps> = ({ deviceType = '
                     TT
                   </div>
                   <div className="text-left">
-                    <p className="text-[11px] font-bold text-white leading-tight">Turf 1 · 7v7 Football</p>
-                    <p className="text-[9px] text-white/60">Rahul Kumar · 28 min left</p>
+                    <p className="text-[11px] font-bold text-white leading-tight truncate max-w-[130px]">
+                      {activeCourtName} {activeBooking?.sport ? `· ${activeBooking.sport}` : ''}
+                    </p>
+                    <p className="text-[9px] text-white/60 truncate max-w-[130px]">
+                      {activeBooking ? `${activeBooking.customerName} · ${activeBooking.timeSlot || 'Active'}` : `${venueName || 'Arena'} Online`}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="text-[10px] font-bold text-[#2FA66A] bg-[#2FA66A]/20 px-2 py-0.5 rounded-full">
-                    Active
+                    {activeBooking ? 'Active' : 'Ready'}
                   </span>
                   <div className="w-2.5 h-2.5 rounded-full bg-[#1A1A1A]" />
                 </div>

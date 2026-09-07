@@ -105,9 +105,11 @@ function parseAppDate(dateStr: string): Date {
 
 export const SlotsScreen: React.FC = () => {
   const {
+    currentUser,
     slots,
     courts,
     bookings,
+    operatingHours,
     setSelectedSlotId,
     setSelectedBookingId,
     setActiveModal,
@@ -124,6 +126,8 @@ export const SlotsScreen: React.FC = () => {
     getPaymentLinkTimeRemaining,
     setBookingPrefill,
   } = useApp();
+
+  const isStaff = currentUser?.type === 'staff';
 
   // Active approved courts
   const activeCourts = useMemo(
@@ -252,8 +256,23 @@ export const SlotsScreen: React.FC = () => {
   // -------------------------------------------------------------
   // MATRIX CELL GENERATOR (WITH CLOSED / PASSED DETECTION)
   // -------------------------------------------------------------
+  const currentDaySchedule = useMemo(() => {
+    const currentDayNameShort = DAYS_SHORT[selectedDateObj.getDay()]; // 'Sun', 'Mon', 'Tue', ...
+    return (
+      operatingHours.find(
+        (d) =>
+          d.shortDay.toLowerCase() === currentDayNameShort.toLowerCase() ||
+          d.day.toLowerCase().startsWith(currentDayNameShort.toLowerCase())
+      ) || operatingHours[0]
+    );
+  }, [operatingHours, selectedDateObj]);
+
   const matrixCells = useMemo(() => {
     const result: Record<string, MatrixCellData[]> = {};
+
+    const isFacilityClosedThisDay = currentDaySchedule ? !currentDaySchedule.isOpen : false;
+    const dayOpenMins = currentDaySchedule?.openTime ? parseTimeToMinutes(currentDaySchedule.openTime) : 6 * 60;
+    const dayCloseMins = currentDaySchedule?.closeTime ? parseTimeToMinutes(currentDaySchedule.closeTime) : 23 * 60;
 
     filteredCourts.forEach((court) => {
       const courtBookings = bookings.filter(
@@ -277,6 +296,10 @@ export const SlotsScreen: React.FC = () => {
         // Check if matching active booking exists
         const cellStart = timeDef.hour24 * 60;
         const cellEnd = (timeDef.hour24 + 1) * 60;
+
+        // Operating hours boundary:
+        // Slot is outside operating hours if facility closed today, or if slot ends <= openTime, or starts >= closeTime
+        const isOutsideOperatingHours = isFacilityClosedThisDay || cellEnd <= dayOpenMins || cellStart >= dayCloseMins;
 
         const matchedBooking = courtBookings.find((b) => {
           const range = parseBookingRangeToMinutes(b.timeSlot || '');
@@ -362,6 +385,25 @@ export const SlotsScreen: React.FC = () => {
           };
         }
 
+        // If slot is outside facility operating hours, mark as closed
+        if (isOutsideOperatingHours) {
+          return {
+            courtId: court.id,
+            courtName: court.name,
+            sport: court.sports[0],
+            timeSlot: timeDef.time,
+            displayStartTime: timeDef.start,
+            displayEndTime: timeDef.end,
+            slotIndex: idx,
+            hour24: timeDef.hour24,
+            state: 'closed',
+            isPast: false,
+            slotId: `slot-closed-${court.id}-${idx}`,
+            price,
+            isPeak,
+          };
+        }
+
         // Open available slot for future/today
         return {
           courtId: court.id,
@@ -382,7 +424,7 @@ export const SlotsScreen: React.FC = () => {
     });
 
     return result;
-  }, [filteredCourts, bookings, slots, currentDate, standardTimeSlots, isPastDate, isTodayDate]);
+  }, [filteredCourts, bookings, slots, currentDate, standardTimeSlots, isPastDate, isTodayDate, currentDaySchedule]);
 
   // Selected Court's Slots for App Slot Picker
   const selectedCourtCells = useMemo(() => {
@@ -439,8 +481,10 @@ export const SlotsScreen: React.FC = () => {
     if (cell.state === 'closed' || cell.isPast) {
       if (isPastDate) {
         showToast('Past Date (Read-Only)', 'Historical dates cannot be booked for new sessions.', 'warning');
-      } else {
+      } else if (cell.isPast) {
         showToast('Slot Closed', `The ${cell.displayStartTime} slot has already passed today.`, 'warning');
+      } else {
+        showToast('Outside Operating Hours', `The ${cell.displayStartTime} slot is outside venue operating schedule (${currentDaySchedule?.openTime || 'Open'} – ${currentDaySchedule?.closeTime || 'Close'}).`, 'info');
       }
       return;
     }
@@ -448,6 +492,12 @@ export const SlotsScreen: React.FC = () => {
     // 2. If clicking a booked or maintenance slot, open details modal
     if (cell.state !== 'available') {
       setSelectedCell(cell);
+      return;
+    }
+
+    // 2b. If staff, available slots are view-only
+    if (isStaff) {
+      showToast('View-Only Mode', 'Staff account is view-only. Adding new bookings is restricted to owners.', 'info');
       return;
     }
 
@@ -636,51 +686,64 @@ export const SlotsScreen: React.FC = () => {
           <p className="text-[11.5px] sm:text-[12px] font-medium text-[#777570] mt-0.5">
             {isPastDate
               ? 'Viewing historical records · Past dates cannot be booked.'
+              : currentDaySchedule
+              ? currentDaySchedule.isOpen
+                ? `Schedule: ${currentDaySchedule.openTime} – ${currentDaySchedule.closeTime} · Select open slots for booking.`
+                : 'Facility is marked closed on this day in operating schedule.'
               : 'Select open slots on today & upcoming dates · Continuous multi-hour booking.'}
           </p>
         </div>
 
         {/* Header Action Controls */}
         <div className="flex items-center gap-2 flex-wrap">
-          {/* Quick Book Button (Disabled on Past Dates) */}
-          <button
-            onClick={() => {
-              if (isPastDate) {
-                showToast('Past Date', 'Cannot book on past dates. Please select today or an upcoming date.', 'warning');
-                return;
-              }
-              haptics.tap();
-              setBookingPrefill({
-                courtId: selectedCourt?.id,
-                courtName: selectedCourt?.name,
-                sport: selectedCourt?.sports[0],
-                date: currentDate,
-              });
-              setRangeSelection(null);
-              setActiveModal('new_booking');
-            }}
-            disabled={isPastDate}
-            className={`h-9 px-3.5 rounded-xl font-black text-[12px] flex items-center justify-center gap-1.5 shadow-2xs active-press cursor-pointer transition-all shrink-0 ${
-              isPastDate
-                ? 'bg-[#E8E6E1] text-[#A3A099] cursor-not-allowed opacity-60'
-                : 'bg-[#FF6B2C] hover:bg-[#e85b1e] text-white'
-            }`}
-          >
-            <Plus className="w-3.5 h-3.5 stroke-[3]" />
-            <span>New Booking</span>
-          </button>
+          {isStaff ? (
+            <div className="h-9 px-3.5 rounded-xl bg-[#F1F0EC] border border-[#E8E6E1] text-[#777570] font-bold text-[12px] flex items-center justify-center gap-1.5 shadow-2xs">
+              <Lock className="w-3.5 h-3.5 text-[#777570]" />
+              <span>View-Only Mode (Staff)</span>
+            </div>
+          ) : (
+            <>
+              {/* Quick Book Button (Disabled on Past Dates) */}
+              <button
+                onClick={() => {
+                  if (isPastDate) {
+                    showToast('Past Date', 'Cannot book on past dates. Please select today or an upcoming date.', 'warning');
+                    return;
+                  }
+                  haptics.tap();
+                  setBookingPrefill({
+                    courtId: selectedCourt?.id,
+                    courtName: selectedCourt?.name,
+                    sport: selectedCourt?.sports[0],
+                    date: currentDate,
+                  });
+                  setRangeSelection(null);
+                  setActiveModal('new_booking');
+                }}
+                disabled={isPastDate}
+                className={`h-9 px-3.5 rounded-xl font-black text-[12px] flex items-center justify-center gap-1.5 shadow-2xs active-press cursor-pointer transition-all shrink-0 ${
+                  isPastDate
+                    ? 'bg-[#E8E6E1] text-[#A3A099] cursor-not-allowed opacity-60'
+                    : 'bg-[#FF6B2C] hover:bg-[#e85b1e] text-white'
+                }`}
+              >
+                <Plus className="w-3.5 h-3.5 stroke-[3]" />
+                <span>New Booking</span>
+              </button>
 
-          {/* Block Pitch Button */}
-          <button
-            onClick={() => {
-              haptics.tap();
-              setActiveModal('block_slot');
-            }}
-            className="h-9 px-3.5 rounded-xl bg-white border border-[#E8E6E1] hover:border-[#D94B4B] text-[#171717] hover:text-[#D94B4B] font-extrabold text-[12px] flex items-center justify-center gap-1.5 shadow-2xs active-press cursor-pointer transition-all shrink-0"
-          >
-            <Ban className="w-3.5 h-3.5 text-[#D94B4B]" />
-            <span>Block Pitch</span>
-          </button>
+              {/* Block Pitch Button */}
+              <button
+                onClick={() => {
+                  haptics.tap();
+                  setActiveModal('block_slot');
+                }}
+                className="h-9 px-3.5 rounded-xl bg-white border border-[#E8E6E1] hover:border-[#D94B4B] text-[#171717] hover:text-[#D94B4B] font-extrabold text-[12px] flex items-center justify-center gap-1.5 shadow-2xs active-press cursor-pointer transition-all shrink-0"
+              >
+                <Ban className="w-3.5 h-3.5 text-[#D94B4B]" />
+                <span>Block Pitch</span>
+              </button>
+            </>
+          )}
         </div>
       </div>
 
@@ -1558,164 +1621,173 @@ export const SlotsScreen: React.FC = () => {
 
 
             <div className="pt-2 space-y-2">
-              {selectedCell.booking && selectedCell.state === 'ongoing' && (
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    onClick={() => {
-                      haptics.tap();
-                      setExtensionMinutes(null);
-                      setShowExtensionModal(true);
-                    }}
-                    className="h-10 rounded-xl bg-[#171717] hover:bg-[#2e2e2e] text-white font-black text-[11.5px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
-                  >
-                    <Clock className="w-3.5 h-3.5 text-[#FF6B2C]" />
-                    <span>Extend Session</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      checkOutBooking(selectedCell.booking!.id);
-                      setSelectedCell(null);
-                    }}
-                    className="h-10 rounded-xl bg-[#2FA66A] hover:bg-[#258756] text-white font-black text-[11.5px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
-                  >
-                    <LogOut className="w-3.5 h-3.5" />
-                    <span>Check Out & Settle</span>
-                  </button>
+              {isStaff ? (
+                <div className="w-full py-2.5 px-3 rounded-xl bg-[#F1F0EC] border border-[#E8E6E1] text-[#777570] font-bold text-[12px] flex items-center justify-center gap-1.5">
+                  <Lock className="w-3.5 h-3.5 text-[#777570]" />
+                  <span>Operations View-Only (Staff Account)</span>
                 </div>
-              )}
-
-              {selectedCell.booking && selectedCell.state === 'booked' && (
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    onClick={() => {
-                      checkInBooking(selectedCell.booking!.id);
-                      setSelectedCell(null);
-                    }}
-                    className="h-10 rounded-xl bg-[#2FA66A] hover:bg-[#258756] text-white font-black text-[11.5px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
-                  >
-                    <LogIn className="w-3.5 h-3.5" />
-                    <span>Check In Players</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      setSelectedBookingId(selectedCell.booking!.id);
-                      setActiveModal('payment_options');
-                      setSelectedCell(null);
-                    }}
-                    className="h-10 rounded-xl bg-white border border-[#E8E6E1] hover:bg-[#FAF9F6] text-[#171717] font-black text-[11.5px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
-                  >
-                    <CreditCard className="w-3.5 h-3.5 text-[#FF6B2C]" />
-                    <span>Collect Payment</span>
-                  </button>
-                </div>
-              )}
-
-              {/* HOLD / PAYMENT PENDING MODAL ACTIONS (ONLY IF NOT EXPIRED) */}
-              {selectedCell.booking &&
-                (selectedCell.state === 'pending' || selectedCell.booking.status === 'Payment Pending') &&
-                selectedCell.state !== 'expired' &&
-                selectedCell.booking.status !== 'Expired' && (
-                <div className="space-y-2">
-                  <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-between text-xs">
-                    <span className="font-bold text-amber-800 flex items-center gap-1.5">
-                      <Clock className="w-4 h-4 text-amber-600" />
-                      Pending Payment (Due: ₹{selectedCell.booking.balanceAmount})
-                    </span>
-                    <span className="font-bold text-amber-700">Payment Pending</span>
-                  </div>
-                  <button
-                    disabled={isPaymentLinkBlocked(selectedCell.booking!.id)}
-                    onClick={() => {
-                      haptics.tap();
-                      if (isPaymentLinkBlocked(selectedCell.booking!.id)) {
-                        const sec = getPaymentLinkTimeRemaining(selectedCell.booking!.id);
-                        showToast('Payment Link Active', `Payment link is valid for 15 mins. Button blocked for ${formatMinutesSeconds(sec)}.`, 'info');
-                        return;
-                      }
-                      sendPaymentLink(selectedCell.booking!.id);
-                      setSelectedCell(null);
-                    }}
-                    className={`w-full h-10 rounded-xl font-black text-[12px] flex items-center justify-center gap-1.5 transition-colors shadow-2xs ${
-                      isPaymentLinkBlocked(selectedCell.booking!.id)
-                        ? 'bg-amber-100 text-amber-900 border border-amber-300 cursor-not-allowed'
-                        : 'bg-[#FF6B2C] hover:bg-[#e85b1e] text-white cursor-pointer'
-                    }`}
-                  >
-                    {isPaymentLinkBlocked(selectedCell.booking!.id) ? (
-                      <>
-                        <Lock className="w-3.5 h-3.5 text-amber-700" />
-                        <span>Link Active · Blocked for {formatMinutesSeconds(getPaymentLinkTimeRemaining(selectedCell.booking!.id))}</span>
-                      </>
-                    ) : (
-                      <>
-                        <Link2 className="w-4 h-4" />
-                        <span>Send Payment Link (15m Validity)</span>
-                      </>
-                    )}
-                  </button>
-                </div>
-              )}
-
-              {/* EXPIRED HOLD MODAL ACTIONS: RE-LOCK WITH EXTENDED DURATION */}
-              {(selectedCell.state === 'expired' || selectedCell.booking?.status === 'Expired') && selectedCell.booking && (
-                <div className="space-y-2.5">
-                  <div className="p-3 bg-red-50 border border-red-200 rounded-xl flex items-center justify-between text-xs">
-                    <span className="font-bold text-red-800 flex items-center gap-1.5">
-                      <AlertTriangle className="w-4 h-4 text-red-600" />
-                      Hold Expired (Unpaid Slot)
-                    </span>
-                    <span className="font-bold text-red-700">Expired</span>
-                  </div>
-
-                  {/* Hold Duration Increment Selector */}
-                  <div className="bg-[#FAF9F6] border border-[#E8E6E1] p-2.5 rounded-xl space-y-1.5">
-                    <span className="text-[10.5px] font-bold text-[#777570] block">
-                      Select Re-lock Hold Duration:
-                    </span>
-                    <div className="grid grid-cols-4 gap-1.5">
-                      {[15, 30, 45, 60].map((mins) => (
-                        <button
-                          key={mins}
-                          type="button"
-                          onClick={() => {
-                            haptics.tap();
-                            setRelockHoldMinutes(mins);
-                          }}
-                          className={`py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
-                            relockHoldMinutes === mins
-                              ? 'bg-[#171717] text-white shadow-2xs'
-                              : 'bg-white border border-[#E8E6E1] text-[#777570]'
-                          }`}
-                        >
-                          +{mins}m
-                        </button>
-                      ))}
+              ) : (
+                <>
+                  {selectedCell.booking && selectedCell.state === 'ongoing' && (
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => {
+                          haptics.tap();
+                          setExtensionMinutes(null);
+                          setShowExtensionModal(true);
+                        }}
+                        className="h-10 rounded-xl bg-[#171717] hover:bg-[#2e2e2e] text-white font-black text-[11.5px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+                      >
+                        <Clock className="w-3.5 h-3.5 text-[#FF6B2C]" />
+                        <span>Extend Session</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          checkOutBooking(selectedCell.booking!.id);
+                          setSelectedCell(null);
+                        }}
+                        className="h-10 rounded-xl bg-[#2FA66A] hover:bg-[#258756] text-white font-black text-[11.5px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+                      >
+                        <LogOut className="w-3.5 h-3.5" />
+                        <span>Check Out & Settle</span>
+                      </button>
                     </div>
-                  </div>
+                  )}
 
-                  <button
-                    onClick={() => {
-                      relockAndResendLink(selectedCell.booking!.id, relockHoldMinutes);
-                      setSelectedCell(null);
-                    }}
-                    className="w-full h-11 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white font-black text-[12px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
-                  >
-                    <RefreshCw className="w-3.5 h-3.5" />
-                    <span>Re-lock & Send Payment Link (+{relockHoldMinutes}m)</span>
-                  </button>
-                </div>
-              )}
+                  {selectedCell.booking && selectedCell.state === 'booked' && (
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => {
+                          checkInBooking(selectedCell.booking!.id);
+                          setSelectedCell(null);
+                        }}
+                        className="h-10 rounded-xl bg-[#2FA66A] hover:bg-[#258756] text-white font-black text-[11.5px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+                      >
+                        <LogIn className="w-3.5 h-3.5" />
+                        <span>Check In Players</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSelectedBookingId(selectedCell.booking!.id);
+                          setActiveModal('payment_options');
+                          setSelectedCell(null);
+                        }}
+                        className="h-10 rounded-xl bg-white border border-[#E8E6E1] hover:bg-[#FAF9F6] text-[#171717] font-black text-[11.5px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+                      >
+                        <CreditCard className="w-3.5 h-3.5 text-[#FF6B2C]" />
+                        <span>Collect Payment</span>
+                      </button>
+                    </div>
+                  )}
 
-              {selectedCell.state === 'maintenance' && (
-                <button
-                  onClick={() => {
-                    unblockSlotAction(selectedCell.blockId || selectedCell.slotId);
-                    setSelectedCell(null);
-                  }}
-                  className="w-full h-10 rounded-xl bg-[#D94B4B] hover:bg-[#b83535] text-white font-black text-[12px] cursor-pointer transition-colors"
-                >
-                  Unblock Pitch Now
-                </button>
+                  {/* HOLD / PAYMENT PENDING MODAL ACTIONS (ONLY IF NOT EXPIRED) */}
+                  {selectedCell.booking &&
+                    (selectedCell.state === 'pending' || selectedCell.booking.status === 'Payment Pending') &&
+                    selectedCell.state !== 'expired' &&
+                    selectedCell.booking.status !== 'Expired' && (
+                    <div className="space-y-2">
+                      <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-between text-xs">
+                        <span className="font-bold text-amber-800 flex items-center gap-1.5">
+                          <Clock className="w-4 h-4 text-amber-600" />
+                          Pending Payment (Due: ₹{selectedCell.booking.balanceAmount})
+                        </span>
+                        <span className="font-bold text-amber-700">Payment Pending</span>
+                      </div>
+                      <button
+                        disabled={isPaymentLinkBlocked(selectedCell.booking!.id)}
+                        onClick={() => {
+                          haptics.tap();
+                          if (isPaymentLinkBlocked(selectedCell.booking!.id)) {
+                            const sec = getPaymentLinkTimeRemaining(selectedCell.booking!.id);
+                            showToast('Payment Link Active', `Payment link is valid for 15 mins. Button blocked for ${formatMinutesSeconds(sec)}.`, 'info');
+                            return;
+                          }
+                          sendPaymentLink(selectedCell.booking!.id);
+                          setSelectedCell(null);
+                        }}
+                        className={`w-full h-10 rounded-xl font-black text-[12px] flex items-center justify-center gap-1.5 transition-colors shadow-2xs ${
+                          isPaymentLinkBlocked(selectedCell.booking!.id)
+                            ? 'bg-amber-100 text-amber-900 border border-amber-300 cursor-not-allowed'
+                            : 'bg-[#FF6B2C] hover:bg-[#e85b1e] text-white cursor-pointer'
+                        }`}
+                      >
+                        {isPaymentLinkBlocked(selectedCell.booking!.id) ? (
+                          <>
+                            <Lock className="w-3.5 h-3.5 text-amber-700" />
+                            <span>Link Active · Blocked for {formatMinutesSeconds(getPaymentLinkTimeRemaining(selectedCell.booking!.id))}</span>
+                          </>
+                        ) : (
+                          <>
+                            <Link2 className="w-4 h-4" />
+                            <span>Send Payment Link (15m Validity)</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  )}
+
+                  {/* EXPIRED HOLD MODAL ACTIONS: RE-LOCK WITH EXTENDED DURATION */}
+                  {(selectedCell.state === 'expired' || selectedCell.booking?.status === 'Expired') && selectedCell.booking && (
+                    <div className="space-y-2.5">
+                      <div className="p-3 bg-red-50 border border-red-200 rounded-xl flex items-center justify-between text-xs">
+                        <span className="font-bold text-red-800 flex items-center gap-1.5">
+                          <AlertTriangle className="w-4 h-4 text-red-600" />
+                          Hold Expired (Unpaid Slot)
+                        </span>
+                        <span className="font-bold text-red-700">Expired</span>
+                      </div>
+
+                      {/* Hold Duration Increment Selector */}
+                      <div className="bg-[#FAF9F6] border border-[#E8E6E1] p-2.5 rounded-xl space-y-1.5">
+                        <span className="text-[10.5px] font-bold text-[#777570] block">
+                          Select Re-lock Hold Duration:
+                        </span>
+                        <div className="grid grid-cols-4 gap-1.5">
+                          {[15, 30, 45, 60].map((mins) => (
+                            <button
+                              key={mins}
+                              type="button"
+                              onClick={() => {
+                                haptics.tap();
+                                setRelockHoldMinutes(mins);
+                              }}
+                              className={`py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                                relockHoldMinutes === mins
+                                  ? 'bg-[#171717] text-white shadow-2xs'
+                                  : 'bg-white border border-[#E8E6E1] text-[#777570]'
+                              }`}
+                            >
+                              +{mins}m
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          relockAndResendLink(selectedCell.booking!.id, relockHoldMinutes);
+                          setSelectedCell(null);
+                        }}
+                        className="w-full h-11 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white font-black text-[12px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
+                      >
+                        <RefreshCw className="w-3.5 h-3.5" />
+                        <span>Re-lock & Send Payment Link (+{relockHoldMinutes}m)</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {selectedCell.state === 'maintenance' && (
+                    <button
+                      onClick={() => {
+                        unblockSlotAction(selectedCell.blockId || selectedCell.slotId);
+                        setSelectedCell(null);
+                      }}
+                      className="w-full h-10 rounded-xl bg-[#D94B4B] hover:bg-[#b83535] text-white font-black text-[12px] cursor-pointer transition-colors"
+                    >
+                      Unblock Pitch Now
+                    </button>
+                  )}
+                </>
               )}
 
               <button

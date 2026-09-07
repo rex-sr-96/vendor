@@ -7,12 +7,29 @@
  */
 
 const API_BASE = '/api';
-const MASTER_API_BASE = 'http://localhost:4000/api/v1';
+async function fetchMasterApi(endpoint: string, options?: RequestInit): Promise<Response> {
+  // Try same-origin Next.js proxy rewrite first, then direct localhost and 127.0.0.1
+  const urls = [
+    `/api/v1${endpoint}`,
+    `http://localhost:4000/api/v1${endpoint}`,
+    `http://127.0.0.1:4000/api/v1${endpoint}`,
+  ];
+  let lastError: any = null;
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, options);
+      if (res) return res;
+    } catch (err) {
+      lastError = err;
+    }
+  }
+  throw lastError || new Error('Failed to connect to backend service. Please check your network connection.');
+}
 
 export const authApi = {
   sendLoginOtp: async (mobile_number: string) => {
     const cleanNumber = mobile_number.replace(/\D/g, '').slice(-10);
-    const response = await fetch(`${MASTER_API_BASE}/onboarding/auth/send-otp`, {
+    const response = await fetchMasterApi('/onboarding/auth/send-otp', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ mobile_number: cleanNumber }),
@@ -33,7 +50,7 @@ export const authApi = {
   login: async (mobile_number: string, otp: string, verification_id?: string) => {
     const cleanNumber = mobile_number.replace(/\D/g, '').slice(-10);
     const cleanOtp = otp.replace(/\D/g, '');
-    const response = await fetch(`${MASTER_API_BASE}/onboarding/auth/login`, {
+    const response = await fetchMasterApi('/onboarding/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -177,7 +194,7 @@ export interface VendorRequestItem {
 export const vendorRequestsApi = {
   getRequests: async (phone: string): Promise<VendorRequestItem[]> => {
     const cleanPhone = phone.replace(/\D/g, '').slice(-10);
-    const res = await fetch(`${MASTER_API_BASE}/requests/vendor/${cleanPhone}`);
+    const res = await fetchMasterApi(`/requests/vendor/${cleanPhone}`);
     if (!res.ok) {
       throw new Error('Failed to load support requests');
     }
@@ -218,7 +235,7 @@ export const vendorRequestsApi = {
   },
 
   createRequest: async (payload: CreateVendorRequestPayload): Promise<{ success: boolean; request_id: string; message: string }> => {
-    const res = await fetch(`${MASTER_API_BASE}/requests/vendor`, {
+    const res = await fetchMasterApi('/requests/vendor', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),

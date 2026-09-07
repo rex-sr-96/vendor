@@ -115,21 +115,21 @@ export const OtpScreen: React.FC = () => {
         } else {
           resolvedUser = {
             type: 'owner',
-            name: ownerName || 'Karthik Rajan',
+            name: ownerName || 'Arena Owner',
             role: 'Arena Director',
             phone: cleanPhone,
           };
         }
       }
 
-      setCurrentUser(resolvedUser);
-
-      // Refresh vendor profile from backend
+      // Refresh vendor profile from backend FIRST to ensure real owner name and venue details
       try {
         await refreshFromOnboarding(cleanPhone);
       } catch (e) {
         console.warn('Profile refresh fallback:', e);
       }
+
+      setCurrentUser(resolvedUser);
 
       const welcomeMsg =
         resolvedUser.type === 'staff'

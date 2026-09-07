@@ -31,6 +31,7 @@ export const DesktopNavbar: React.FC = () => {
     venueName,
     venueCity,
     ownerName,
+    currentUser,
     unreadNotifCount,
     notifications,
     markAllNotificationsAsRead,
@@ -448,10 +449,10 @@ export const DesktopNavbar: React.FC = () => {
               className="flex items-center gap-2 p-1 pr-2 rounded-xl bg-white border border-[#E8E6E1] hover:bg-[#F7F7F5] active-press cursor-pointer transition-all shadow-2xs"
             >
               <div className="w-7 h-7 rounded-lg bg-[#171717] text-white flex items-center justify-center font-bold text-[11px] shadow-xs">
-                TT
+                {((currentUser?.name || ownerName || 'TT').trim().slice(0, 2)).toUpperCase()}
               </div>
               <div className="text-left hidden lg:block">
-                <p className="text-[12px] font-extrabold text-[#171717] leading-none">{ownerName}</p>
+                <p className="text-[12px] font-extrabold text-[#171717] leading-none">{currentUser?.name || ownerName || 'Arena Director'}</p>
               </div>
               <ChevronDown
                 className={`w-3 h-3 text-[#777570] transition-transform duration-200 ${
@@ -471,8 +472,8 @@ export const DesktopNavbar: React.FC = () => {
                   className="absolute right-0 top-full mt-2 w-60 bg-white rounded-2xl border border-[#E8E6E1] shadow-2xl p-2 z-50 overflow-hidden"
                 >
                   <div className="px-3 py-2 border-b border-[#F1F0EC]">
-                    <p className="text-[12.5px] font-extrabold text-[#171717]">{ownerName}</p>
-                    <p className="text-[10.5px] text-[#777570]">{ownerPhone || '+91 98765 43210'}</p>
+                    <p className="text-[12.5px] font-extrabold text-[#171717]">{currentUser?.name || ownerName || 'Arena Director'}</p>
+                    <p className="text-[10.5px] text-[#777570]">{currentUser?.phone ? `+91 ${currentUser.phone}` : (ownerPhone || '+91 98765 43210')}</p>
                   </div>
 
                   <div className="py-1 space-y-0.5 text-[12px] font-bold text-[#171717]">
