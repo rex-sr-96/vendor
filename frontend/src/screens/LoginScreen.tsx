@@ -87,13 +87,17 @@ export const LoginScreen: React.FC = () => {
         sessionStorage.setItem('turftown_pending_user', JSON.stringify(pendingUser));
       }
 
-      setVenueDetails({
-        name: venueName,
-        address: venueAddress,
-        city: venueCity,
-        phone: cleanPhone,
-        ownerPhone: cleanPhone,
-      });
+      // Only update ownerPhone in context if the user logging in is an owner
+      // (never overwrite ownerPhone with a staff member's phone)
+      if (access.userType === 'owner') {
+        setVenueDetails({
+          name: venueName,
+          address: venueAddress,
+          city: venueCity,
+          phone: cleanPhone,
+          ownerPhone: cleanPhone,
+        });
+      }
 
       const roleBadge = access.userType === 'staff' ? ` (${access.staff?.role})` : ' (Owner)';
       showToast('OTP Dispatched', `6-digit verification code sent to +91 ${cleanPhone}${roleBadge} via MSG91 SMS.`, 'success');

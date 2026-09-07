@@ -1384,8 +1384,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       };
     }
 
-    // 3. Fallback hardcoded owner numbers (demo / second owner)
-    const fallbackOwnerNumbers = ['6369591821', '9876543210'];
+    // 3. Fallback hardcoded owner numbers — real owner phone + demo account
+    const fallbackOwnerNumbers = ['6381239140', '9876543210'];
     if (fallbackOwnerNumbers.includes(clean)) {
       return { allowed: true, userType: 'owner' as const };
     }
