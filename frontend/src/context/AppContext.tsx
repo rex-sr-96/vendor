@@ -1836,6 +1836,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             status: 'Verified & Active',
             branchName: data.bank.branch_name || 'Peelamedu',
           });
+          setPaymentSettings((prev) => ({
+            ...prev,
+            bankName: data.bank.bank_name || prev.bankName,
+            accountNumberMasked: accNum ? `•••• •••• •••• ${accNum.slice(-4)}` : prev.accountNumberMasked,
+            ifscCode: data.bank.ifsc_code || prev.ifscCode,
+          }));
         }
         if (data.court_photos && Array.isArray(data.court_photos) && data.court_photos.length > 0) {
           setVenuePhotos(
