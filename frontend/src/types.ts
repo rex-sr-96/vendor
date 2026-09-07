@@ -191,7 +191,7 @@ export interface PaymentSettingsConfig {
 export interface AmenityItem {
   id: string;
   name: string;
-  category: 'facilities' | 'equipment' | 'comfort' | 'safety';
+  category: string;
   enabled: boolean;
   price?: number; // 0 for included free, >0 for rental
   description?: string;
@@ -275,4 +275,16 @@ export interface ToastMessage {
   title: string;
   description?: string;
   type?: 'success' | 'warning' | 'info' | 'error';
+}
+
+export interface BankDetails {
+  bankName: string;
+  accountHolder: string;
+  accountNumber: string;
+  maskedNumber: string;
+  ifsc: string;
+  accountType: string;
+  payoutSchedule: string;
+  status: string;
+  branchName?: string;
 }

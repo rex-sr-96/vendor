@@ -15,26 +15,31 @@ import {
   ShieldCheck,
   BatteryCharging,
   Sparkles,
+  SunMedium,
+  DoorOpen,
+  Armchair,
 } from 'lucide-react';
 import { haptics } from '../utils/haptics';
 
 export const AmenitiesScreen: React.FC = () => {
   const { amenities, toggleAmenity, goBack } = useApp();
-  const [filter, setFilter] = useState<'all' | 'facilities' | 'equipment' | 'comfort' | 'safety'>('all');
+  const [filter, setFilter] = useState<string>('all');
 
   const activeCount = amenities.filter((a) => a.enabled).length;
 
   const filteredAmenities = amenities.filter((a) => {
     if (filter === 'all') return true;
-    return a.category === filter;
+    return a.category.toLowerCase() === filter.toLowerCase();
   });
 
   const getAmenityIcon = (iconName: string) => {
     switch (iconName) {
+      case 'SunMedium':
       case 'Zap':
-        return <Zap className="w-4 h-4 text-[#FF6B2C]" />;
+        return <SunMedium className="w-4 h-4 text-[#FF6B2C]" />;
+      case 'DoorOpen':
       case 'ShowerHead':
-        return <ShowerHead className="w-4 h-4 text-[#2FA66A]" />;
+        return <DoorOpen className="w-4 h-4 text-[#2FA66A]" />;
       case 'Droplets':
         return <Droplets className="w-4 h-4 text-[#3B82F6]" />;
       case 'Car':
@@ -45,14 +50,16 @@ export const AmenitiesScreen: React.FC = () => {
         return <Trophy className="w-4 h-4 text-[#E7A72F]" />;
       case 'HeartPulse':
         return <HeartPulse className="w-4 h-4 text-[#EF4444]" />;
-      case 'Users':
-        return <Users className="w-4 h-4 text-[#10B981]" />;
       case 'Coffee':
         return <Coffee className="w-4 h-4 text-[#F59E0B]" />;
-      case 'Wifi':
-        return <Wifi className="w-4 h-4 text-[#06B6D4]" />;
       case 'ShieldCheck':
         return <ShieldCheck className="w-4 h-4 text-[#6366F1]" />;
+      case 'Armchair':
+        return <Armchair className="w-4 h-4 text-[#EC4899]" />;
+      case 'Users':
+        return <Users className="w-4 h-4 text-[#10B981]" />;
+      case 'Wifi':
+        return <Wifi className="w-4 h-4 text-[#06B6D4]" />;
       case 'BatteryCharging':
         return <BatteryCharging className="w-4 h-4 text-[#84CC16]" />;
       default:
@@ -106,11 +113,12 @@ export const AmenitiesScreen: React.FC = () => {
       {/* Category Filter Pills */}
       <div className="flex gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
         {[
-          { id: 'all', label: 'All' },
-          { id: 'facilities', label: 'Facilities' },
-          { id: 'equipment', label: 'Equipment' },
-          { id: 'comfort', label: 'Comfort' },
-          { id: 'safety', label: 'Safety' },
+          { id: 'all', label: 'All Amenities' },
+          { id: 'Lighting', label: 'Lighting' },
+          { id: 'Facility', label: 'Facilities' },
+          { id: 'Refreshment', label: 'Refreshments' },
+          { id: 'Safety', label: 'Safety & First Aid' },
+          { id: 'Equipment', label: 'Equipment' },
         ].map((tab) => (
           <button
             key={tab.id}

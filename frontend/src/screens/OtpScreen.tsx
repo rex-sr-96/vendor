@@ -1,12 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
-import { ChevronLeft, ArrowRight } from 'lucide-react';
+import { ChevronLeft, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
+import { authApi } from '../lib/api';
 
 export const OtpScreen: React.FC = () => {
-  const { navigateTo, ownerPhone } = useApp();
+  const { navigateTo, ownerPhone, verificationId, setVerificationId, refreshFromOnboarding, showToast } = useApp();
+  const cleanPhone = (ownerPhone || '9876543210').replace(/\D/g, '').slice(-10);
   const [otp, setOtp] = useState<string[]>(['', '', '', '', '', '']);
-  const [countdown, setCountdown] = useState<number>(28);
+  const [countdown, setCountdown] = useState<number>(60);
   const [activeIdx, setActiveIdx] = useState<number>(0);
+  const [isVerifying, setIsVerifying] = useState<boolean>(false);
+  const [isResending, setIsResending] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
@@ -20,6 +25,7 @@ export const OtpScreen: React.FC = () => {
   const handleChange = (index: number, val: string) => {
     const cleanVal = val.replace(/\D/g, '');
     const newOtp = [...otp];
+    if (errorMessage) setErrorMessage(null);
     
     if (cleanVal.length > 1) {
       // Pasted full OTP
@@ -52,17 +58,58 @@ export const OtpScreen: React.FC = () => {
 
   const isComplete = otp.every((digit) => digit.length === 1);
 
-  const handleVerify = (e?: React.FormEvent) => {
+  const handleVerify = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if (!isComplete) return;
-    // Navigate straight to main dashboard
-    navigateTo('home');
+    if (!isComplete || isVerifying) return;
+
+    setErrorMessage(null);
+    setIsVerifying(true);
+
+    const enteredOtp = otp.join('');
+    const cleanPhone = (ownerPhone || '9876543210').replace(/\D/g, '').slice(-10);
+
+    try {
+      const res = await authApi.login(cleanPhone, enteredOtp, verificationId || undefined);
+      if (res.onboarding_token) {
+        localStorage.setItem('ibooksports_vendor_token', res.onboarding_token);
+        localStorage.setItem('ibooksports_onboarding_token', res.onboarding_token);
+      }
+      localStorage.setItem('ibooksports_partner_mobile', cleanPhone);
+
+      // Refresh vendor profile from backend
+      try {
+        await refreshFromOnboarding(cleanPhone);
+      } catch (e) {
+        console.warn('Profile refresh fallback:', e);
+      }
+
+      showToast('Authentication Successful', 'Logged in to vendor control center.', 'success');
+      navigateTo('home');
+    } catch (err: any) {
+      setErrorMessage(err.message || 'Invalid or expired verification code. Please check and try again.');
+    } finally {
+      setIsVerifying(false);
+    }
   };
 
-  const handleAutoFill = () => {
-    const demoCode = ['5', '4', '9', '2', '1', '0'];
-    setOtp(demoCode);
-    setActiveIdx(5);
+  const handleResend = async () => {
+    if (countdown > 0 || isResending) return;
+    setIsResending(true);
+    setErrorMessage(null);
+    const cleanPhone = (ownerPhone || '9876543210').replace(/\D/g, '').slice(-10);
+
+    try {
+      const res = await authApi.sendLoginOtp(cleanPhone);
+      if (res.verification_id || res.reqId) {
+        setVerificationId(res.verification_id || res.reqId || null);
+      }
+      setCountdown(60);
+      showToast('OTP Resent', `A fresh 6-digit passcode was sent to +91 ${cleanPhone} via MSG91 SMS.`, 'success');
+    } catch (err: any) {
+      setErrorMessage(err.message || 'Failed to resend code via MSG91. Please try again.');
+    } finally {
+      setIsResending(false);
+    }
   };
 
   return (
@@ -78,9 +125,6 @@ export const OtpScreen: React.FC = () => {
             <ChevronLeft className="w-4 h-4" />
             <span>Back</span>
           </button>
-          <span className="text-[11px] font-bold uppercase tracking-wider text-[#FF6B2C] bg-[#FF6B2C]/10 px-2.5 py-0.5 rounded-full border border-[#FF6B2C]/20">
-            Step 2 of 2
-          </span>
         </div>
 
         {/* Centered Heading */}
@@ -89,7 +133,7 @@ export const OtpScreen: React.FC = () => {
             Enter 6-digit code
           </h1>
           <div className="flex items-center justify-center gap-1.5 text-[13.5px] text-[#777570] mt-1.5">
-            <span>Sent to +91 {ownerPhone || '98765 43210'}</span>
+            <span>Sent to +91 {cleanPhone.length === 10 ? `${cleanPhone.slice(0, 5)} ${cleanPhone.slice(5)}` : '98765 43210'} via SMS</span>
             <span>•</span>
             <button
               onClick={() => navigateTo('login')}
@@ -125,29 +169,31 @@ export const OtpScreen: React.FC = () => {
           ))}
         </div>
 
-        {/* Resend Timer & Auto-fill */}
+        {/* Error Message Alert */}
+        {errorMessage && (
+          <div className="mb-3 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-[12px] flex items-start gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+            <span>{errorMessage}</span>
+          </div>
+        )}
+
+        {/* Resend Timer */}
         <div className="flex flex-col gap-2.5 pt-1">
-          <div className="flex items-center justify-between text-[12.5px] font-medium text-[#777570] px-1">
+          <div className="flex items-center justify-center text-[13px] font-medium text-[#777570] px-1">
             {countdown > 0 ? (
               <span>
                 Resend code in <span className="font-bold text-[#171717]">00:{countdown < 10 ? `0${countdown}` : countdown}</span>
               </span>
             ) : (
               <button
-                onClick={() => setCountdown(30)}
+                type="button"
+                onClick={handleResend}
+                disabled={isResending}
                 className="text-[#FF6B2C] font-bold hover:underline cursor-pointer"
               >
-                Resend code
+                {isResending ? 'Sending...' : 'Resend code'}
               </button>
             )}
-
-            <button
-              type="button"
-              onClick={handleAutoFill}
-              className="text-[12px] text-[#FF6B2C] font-semibold hover:underline cursor-pointer flex items-center gap-1"
-            >
-              <span>Demo code (549210)</span>
-            </button>
           </div>
 
           {/* Verification CTA */}
@@ -156,19 +202,28 @@ export const OtpScreen: React.FC = () => {
               id="btn-verify-otp"
               type="button"
               onClick={() => handleVerify()}
-              disabled={!isComplete}
+              disabled={!isComplete || isVerifying}
               className={`w-full h-12 rounded-2xl font-bold text-[15px] flex items-center justify-center gap-2 transition-all active:scale-[0.99] ${
-                isComplete
+                isComplete && !isVerifying
                   ? 'bg-[#FF6B2C] text-white shadow-md shadow-[#FF6B2C]/25 hover:bg-[#e85b1e] cursor-pointer'
                   : 'bg-[#E8E6E1] text-[#A3A099] cursor-not-allowed'
               }`}
             >
-              <span>Verify & Continue</span>
-              <ArrowRight className="w-4 h-4" />
+              {isVerifying ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Verifying with MSG91...</span>
+                </>
+              ) : (
+                <>
+                  <span>Verify & Continue</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </button>
 
             <p className="text-[11.5px] text-center text-[#8E8B85]">
-              Didn't receive code? Check spam or click resend code.
+              Didn't receive code? Check SMS or click resend code.
             </p>
           </div>
         </div>

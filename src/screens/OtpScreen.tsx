@@ -59,12 +59,6 @@ export const OtpScreen: React.FC = () => {
     navigateTo('home');
   };
 
-  const handleAutoFill = () => {
-    const demoCode = ['5', '4', '9', '2', '1', '0'];
-    setOtp(demoCode);
-    setActiveIdx(5);
-  };
-
   return (
     <div className="min-h-screen bg-[#F6F5F2] flex flex-col justify-between p-5 pt-8 pb-safe">
       {/* Top Section with Back */}
@@ -129,14 +123,6 @@ export const OtpScreen: React.FC = () => {
               Resend OTP
             </button>
           )}
-
-          <button
-            type="button"
-            onClick={handleAutoFill}
-            className="text-[12px] text-[#4D83C4] font-semibold hover:underline"
-          >
-            Auto-fill demo (549210)
-          </button>
         </div>
       </div>
 

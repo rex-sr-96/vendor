@@ -16,23 +16,52 @@ import { haptics } from '../utils/haptics';
 import { motion, AnimatePresence } from 'motion/react';
 
 export const PaymentSettingsScreen: React.FC = () => {
-  const { paymentSettings, updatePaymentSettings, goBack, showToast } = useApp();
+  const { paymentSettings, updatePaymentSettings, goBack, showToast, venueName, ownerName, ownerPhone, ownerEmail, navigateTo } = useApp();
   const [showBankModal, setShowBankModal] = useState(false);
   const [newBankName, setNewBankName] = useState(paymentSettings.bankName);
+  const [newAccHolder, setNewAccHolder] = useState(ownerName || 'Sky Sports Private Limited');
   const [newAccNum, setNewAccNum] = useState('50100492814321');
   const [newIfsc, setNewIfsc] = useState(paymentSettings.ifscCode);
+  const [changeReason, setChangeReason] = useState('Upgrading to primary current account for higher daily transaction volume.');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSaveBank = (e: React.FormEvent) => {
+  const handleSaveBank = async (e: React.FormEvent) => {
     e.preventDefault();
-    haptics.success();
-    updatePaymentSettings({
-      bankName: newBankName,
-      accountNumberMasked: `•••• ${newAccNum.slice(-4)}`,
-      ifscCode: newIfsc,
-      isVerified: true,
-    });
-    setShowBankModal(false);
-    showToast('Bank Account Updated', 'New payout account verified successfully.', 'success');
+    setIsSubmitting(true);
+    try {
+      const payload = {
+        request_type: 'BANK_CHANGE' as const,
+        venue_name: venueName || 'Sky Sports Arena',
+        vendor_name: ownerName || 'Karthik Rajan',
+        vendor_email: ownerEmail || 'partner@ibooksports.com',
+        vendor_phone: ownerPhone || '9876543210',
+        bank_details: {
+          bank_name: newBankName.trim(),
+          account_holder_name: newAccHolder.trim(),
+          account_number: newAccNum.trim(),
+          ifsc_code: newIfsc.trim().toUpperCase(),
+          account_type: 'Current Commercial Account',
+          reason_for_change: changeReason.trim(),
+        },
+      };
+
+      const res = await fetch('http://localhost:4000/api/v1/requests/vendor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Submission failed');
+
+      haptics.success();
+      setShowBankModal(false);
+      showToast('Change Request Created', `Request ${data.request_id} submitted for compliance review.`, 'success');
+    } catch (err: unknown) {
+      const e = err as Error;
+      showToast('Failed', e.message || 'Could not submit bank request', 'warning');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -265,6 +294,11 @@ export const PaymentSettingsScreen: React.FC = () => {
               </div>
 
               <form onSubmit={handleSaveBank} className="space-y-3.5">
+                <div className="bg-[#FAF9F6] border border-[#E8E6E1] rounded-xl p-3 text-[11.5px] text-[#55534E] leading-relaxed">
+                  <strong className="text-[#171717] font-bold block mb-0.5">Compliance Verification</strong>
+                  Submitting a bank change creates a formal audited request ticket. Existing payouts continue uninterrupted until verified.
+                </div>
+
                 <div>
                   <label className="text-[11.5px] font-bold text-[#777570] block mb-1">Bank Name</label>
                   <input
@@ -273,7 +307,19 @@ export const PaymentSettingsScreen: React.FC = () => {
                     value={newBankName}
                     onChange={(e) => setNewBankName(e.target.value)}
                     placeholder="e.g. HDFC Bank"
-                    className="w-full h-11 px-3.5 rounded-xl bg-[#FAF9F6] border border-[#E8E6E1] text-[13px] font-bold text-[#171717] focus:outline-none focus:border-[#FF6B2C]"
+                    className="w-full h-11 px-3.5 rounded-xl bg-[#FAF9F6] border border-[#E8E6E1] text-[13px] font-bold text-[#171717] focus:outline-none focus:border-[#171717]"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[11.5px] font-bold text-[#777570] block mb-1">Account Holder Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={newAccHolder}
+                    onChange={(e) => setNewAccHolder(e.target.value)}
+                    placeholder="e.g. Sky Sports Private Limited"
+                    className="w-full h-11 px-3.5 rounded-xl bg-[#FAF9F6] border border-[#E8E6E1] text-[13px] font-bold text-[#171717] focus:outline-none focus:border-[#171717]"
                   />
                 </div>
 
@@ -285,7 +331,7 @@ export const PaymentSettingsScreen: React.FC = () => {
                     value={newAccNum}
                     onChange={(e) => setNewAccNum(e.target.value)}
                     placeholder="50100492814321"
-                    className="w-full h-11 px-3.5 rounded-xl bg-[#FAF9F6] border border-[#E8E6E1] text-[13px] font-bold text-[#171717] focus:outline-none focus:border-[#FF6B2C]"
+                    className="w-full h-11 px-3.5 rounded-xl bg-[#FAF9F6] border border-[#E8E6E1] text-[13px] font-mono font-bold text-[#171717] focus:outline-none focus:border-[#171717]"
                   />
                 </div>
 
@@ -297,15 +343,28 @@ export const PaymentSettingsScreen: React.FC = () => {
                     value={newIfsc}
                     onChange={(e) => setNewIfsc(e.target.value.toUpperCase())}
                     placeholder="HDFC0001234"
-                    className="w-full h-11 px-3.5 rounded-xl bg-[#FAF9F6] border border-[#E8E6E1] text-[13px] font-bold text-[#171717] focus:outline-none focus:border-[#FF6B2C]"
+                    className="w-full h-11 px-3.5 rounded-xl bg-[#FAF9F6] border border-[#E8E6E1] text-[13px] font-mono font-bold text-[#171717] focus:outline-none focus:border-[#171717]"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[11.5px] font-bold text-[#777570] block mb-1">Reason for Bank Change</label>
+                  <input
+                    type="text"
+                    required
+                    value={changeReason}
+                    onChange={(e) => setChangeReason(e.target.value)}
+                    placeholder="e.g. Upgrading corporate current account"
+                    className="w-full h-11 px-3.5 rounded-xl bg-[#FAF9F6] border border-[#E8E6E1] text-[12.5px] font-medium text-[#171717] focus:outline-none focus:border-[#171717]"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full h-11 mt-2 rounded-xl bg-gradient-to-r from-[#FF6B2C] to-[#FF5410] hover:from-[#e85b1e] hover:to-[#db4a0b] text-white font-extrabold text-[13px] shadow-sm active-press cursor-pointer transition-all"
+                  disabled={isSubmitting}
+                  className="w-full h-11 mt-2 rounded-xl bg-[#171717] hover:bg-black text-white font-extrabold text-[13px] shadow-sm active-press cursor-pointer transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                  Verify & Save Bank Account
+                  <span>{isSubmitting ? 'Submitting Request...' : 'Submit Bank Change Request'}</span>
                 </button>
               </form>
             </motion.div>

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import {
   ScreenType,
   BottomNavTab,
@@ -17,6 +17,7 @@ import {
   StaffMember,
   NotificationPreferencesConfig,
   NotificationItem,
+  BankDetails,
 } from '../types';
 import {
   initialBookings,
@@ -203,6 +204,16 @@ interface AppContextType {
     venueEstablished?: string;
     venueDescription?: string;
   }) => void;
+
+  // Onboarding Data Bridge & Bank Details
+  bankDetails: BankDetails;
+  updateBankDetails: (details: Partial<BankDetails>) => void;
+  syncVendorProfileToBackend: (profileData?: any) => Promise<boolean>;
+  syncBankChangeToBackend: (bankData: any) => Promise<boolean>;
+  isLoadingOnboardingProfile: boolean;
+  refreshFromOnboarding: (phone?: string) => Promise<void>;
+  verificationId: string | null;
+  setVerificationId: (id: string | null) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -278,18 +289,34 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [isPhoneFrame, setIsPhoneFrame] = useState<boolean>(true);
 
   // Venue Info
-  const [venueName, setVenueName] = useState<string>('TurfTown Arena');
-  const [venueAddress, setVenueAddress] = useState<string>('Plot 42, Sector 5, Outer Ring Road, HSR Layout');
-  const [venueCity, setVenueCity] = useState<string>('Koramangala, Bengaluru');
-  const [ownerPhone, setOwnerPhone] = useState<string>('+91 98765 43210');
-  const [ownerName, setOwnerName] = useState<string>('Dhanush Kumar');
-  const [ownerEmail, setOwnerEmail] = useState<string>('owner@turftown.app');
-  const [ownerPan, setOwnerPan] = useState<string>('ABCDE1234F');
-  const [venuePincode, setVenuePincode] = useState<string>('560102');
+  const [venueName, setVenueName] = useState<string>('Sky Sports Arena');
+  const [venueAddress, setVenueAddress] = useState<string>('123 Avinashi Road, Peelamedu, Coimbatore');
+  const [venueCity, setVenueCity] = useState<string>('Coimbatore, Tamil Nadu');
+  const [ownerPhone, setOwnerPhone] = useState<string>('');
+  const [ownerName, setOwnerName] = useState<string>('Karthik Rajan');
+  const [ownerEmail, setOwnerEmail] = useState<string>('partner@ibooksports.com');
+  const [ownerPan, setOwnerPan] = useState<string>('33ABCDE1234F1Z5');
+  const [venuePincode, setVenuePincode] = useState<string>('641018');
   const [venueEstablished, setVenueEstablished] = useState<string>('2023');
   const [venueDescription, setVenueDescription] = useState<string>(
     'Premier FIFA-grade synthetic turf and BWF-standard badminton courts with locker rooms, LED floodlights, and player lounge.'
   );
+
+  // Bank details state
+  const [bankDetails, setBankDetails] = useState<BankDetails>({
+    bankName: 'HDFC Bank',
+    accountHolder: 'Sky Sports Private Limited',
+    accountNumber: '50200012345678',
+    maskedNumber: '•••• •••• •••• 5678',
+    ifsc: 'HDFC0001234',
+    accountType: 'Current Commercial Account',
+    payoutSchedule: 'T+0 Auto IMPS Midnight Direct Settlement',
+    status: 'Verified & Active',
+    branchName: 'Peelamedu',
+  });
+
+  const [isLoadingOnboardingProfile, setIsLoadingOnboardingProfile] = useState<boolean>(false);
+  const [verificationId, setVerificationId] = useState<string | null>(null);
 
   const [venuePhotos, setVenuePhotos] = useState<{ id: string; url: string; label: string }[]>([
     {
@@ -1171,14 +1198,208 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   }) => {
     if (details.name || details.venueName) setVenueName(details.venueName || details.name || '');
     if (details.address || details.venueAddress) setVenueAddress(details.venueAddress || details.address || '');
-    if (details.city || details.venueCity) setVenueCity(details.venueCity || details.city || '');
-    if (details.phone || details.ownerPhone) setOwnerPhone(details.ownerPhone || details.phone || '');
-    if (details.ownerName) setOwnerName(details.ownerName);
+    if (details.phone || details.ownerPhone) {
+      const raw = details.ownerPhone || details.phone || '';
+      const clean = raw.replace(/\D/g, '').slice(-10);
+      setOwnerPhone(clean || raw);
+    }
     if (details.ownerEmail) setOwnerEmail(details.ownerEmail);
     if (details.ownerPan) setOwnerPan(details.ownerPan);
     if (details.venuePincode) setVenuePincode(details.venuePincode);
     if (details.venueEstablished) setVenueEstablished(details.venueEstablished);
     if (details.venueDescription) setVenueDescription(details.venueDescription);
+  };
+
+  const updateBankDetails = (details: Partial<BankDetails>) => {
+    setBankDetails((prev) => ({
+      ...prev,
+      ...details,
+      maskedNumber: details.accountNumber
+        ? `•••• •••• •••• ${details.accountNumber.slice(-4)}`
+        : prev.maskedNumber,
+    }));
+  };
+
+  const fetchOnboardingProfile = async (phoneToQuery?: string) => {
+    try {
+      setIsLoadingOnboardingProfile(true);
+      const queryPhone = phoneToQuery || ownerPhone || '9876543210';
+      const cleanPhone = queryPhone.replace(/\D/g, '').slice(-10);
+      const res = await fetch(
+        `http://localhost:4000/api/v1/onboarding/vendor/profile?mobile=${cleanPhone || '9876543210'}`
+      );
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data && data.success) {
+        if (data.owner) {
+          if (data.owner.name) setOwnerName(data.owner.name);
+          if (data.owner.mobile) setOwnerPhone(`+91 ${data.owner.mobile}`);
+          if (data.owner.email) setOwnerEmail(data.owner.email);
+          if (data.owner.pan) setOwnerPan(data.owner.pan);
+          if (data.owner.pincode) setVenuePincode(data.owner.pincode);
+        }
+        if (data.venue) {
+          if (data.venue.name) setVenueName(data.venue.name);
+          if (data.venue.address) setVenueAddress(data.venue.address);
+          if (data.venue.city) setVenueCity(data.venue.city);
+          if (data.venue.pincode) setVenuePincode(data.venue.pincode);
+          if (data.venue.gst_number && !data.owner?.pan) setOwnerPan(data.venue.gst_number);
+        }
+        if (data.bank) {
+          const accNum = data.bank.account_number || '50200012345678';
+          setBankDetails({
+            bankName: data.bank.bank_name || 'HDFC Bank',
+            accountHolder: data.bank.account_holder_name || data.owner?.name || 'Sky Sports Private Limited',
+            accountNumber: accNum,
+            maskedNumber: accNum ? `•••• •••• •••• ${accNum.slice(-4)}` : '•••• •••• •••• 5678',
+            ifsc: data.bank.ifsc_code || 'HDFC0001234',
+            accountType: data.bank.account_type
+              ? `${data.bank.account_type} Commercial Account`
+              : 'Current Commercial Account',
+            payoutSchedule: 'T+0 Auto IMPS Midnight Direct Settlement',
+            status: 'Verified & Active',
+            branchName: data.bank.branch_name || 'Peelamedu',
+          });
+        }
+        if (data.court_photos && Array.isArray(data.court_photos) && data.court_photos.length > 0) {
+          setVenuePhotos(
+            data.court_photos.map((id: string, idx: number) => ({
+              id: id,
+              url:
+                id.startsWith('http') || id.startsWith('/')
+                  ? id
+                  : `http://localhost:4000/api/v1/onboarding/documents/${id}/view`,
+              label: `Verified Court Photo ${idx + 1}`,
+            }))
+          );
+        }
+      }
+
+      // Fetch Admin-defined standard amenities (strictly show only admin amenities)
+      try {
+        const amnRes = await fetch('http://localhost:4000/api/v1/sports/amenities');
+        if (amnRes.ok) {
+          const adminAmns = await amnRes.json();
+          if (Array.isArray(adminAmns) && adminAmns.length > 0) {
+            setAmenities((prev) => {
+              return adminAmns.map((a: any) => {
+                const existing = prev.find(
+                  (p) => p.id === a.amenity_id || p.name.toLowerCase() === a.name.toLowerCase()
+                );
+                return {
+                  id: a.amenity_id,
+                  name: a.name,
+                  category: a.category || 'Facility',
+                  enabled: existing ? existing.enabled : true,
+                  price: existing ? existing.price || 0 : a.amenity_id === 'AMN_GEAR' ? 100 : 0,
+                  description: existing?.description || `Standard venue amenity: ${a.name}`,
+                  iconName: a.icon || 'Sparkles',
+                  icon: a.icon || 'Sparkles',
+                  details: existing?.details || `${a.category || 'Facility'} standard amenity`,
+                };
+              });
+            });
+          }
+        }
+      } catch (e) {
+        // Fallback to initialAmenities
+      }
+    } catch (err) {
+      console.warn('Could not auto-fetch onboarding profile from backend:', err);
+    } finally {
+      setIsLoadingOnboardingProfile(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOnboardingProfile();
+  }, []);
+
+  const syncVendorProfileToBackend = async (profileData?: any): Promise<boolean> => {
+    try {
+      const cleanPhone = (ownerPhone || '9876543210').replace(/\D/g, '').slice(-10);
+      const payload = profileData || {
+        owner: {
+          name: ownerName,
+          mobile: cleanPhone,
+          email: ownerEmail,
+          pan: ownerPan,
+          address: venueAddress,
+          pincode: venuePincode,
+        },
+        venue: {
+          name: venueName,
+          address: venueAddress,
+          city: venueCity,
+          pincode: venuePincode,
+          gst_number: ownerPan,
+        },
+        bank: {
+          bank_name: bankDetails.bankName,
+          account_holder_name: bankDetails.accountHolder,
+          account_number: bankDetails.accountNumber,
+          ifsc_code: bankDetails.ifsc,
+          branch_name: bankDetails.branchName,
+          account_type: bankDetails.accountType.replace(/ commercial account/i, '').trim(),
+        },
+      };
+
+      const res = await fetch(
+        `http://localhost:4000/api/v1/onboarding/vendor/profile?mobile=${cleanPhone || '9876543210'}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+      return res.ok;
+    } catch (err) {
+      console.error('Error syncing vendor profile to onboarding:', err);
+      return false;
+    }
+  };
+
+  const syncBankChangeToBackend = async (bankData: any): Promise<boolean> => {
+    try {
+      const cleanPhone = (ownerPhone || '9876543210').replace(/\D/g, '').slice(-10);
+      const payload = {
+        bank: {
+          bank_name: bankData.bankName,
+          account_holder_name: bankData.accountHolder || ownerName,
+          account_number: bankData.accountNumber,
+          ifsc_code: bankData.ifsc,
+          branch_name: bankData.branchName || 'Main Branch',
+          account_type: bankData.accountType || 'CURRENT',
+        },
+      };
+
+      const res = await fetch(
+        `http://localhost:4000/api/v1/onboarding/vendor/profile?mobile=${cleanPhone || '9876543210'}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+      if (res.ok) {
+        setBankDetails((prev) => ({
+          ...prev,
+          bankName: bankData.bankName,
+          accountNumber: bankData.accountNumber,
+          maskedNumber: `•••• •••• •••• ${bankData.accountNumber.slice(-4)}`,
+          ifsc: bankData.ifsc,
+          accountType: bankData.accountType ? `${bankData.accountType} Commercial Account` : prev.accountType,
+        }));
+      }
+      return res.ok;
+    } catch (err) {
+      console.error('Error submitting bank change to backend:', err);
+      return false;
+    }
   };
 
   return (
@@ -1274,6 +1495,14 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         removeVenuePhoto,
         setVenuePhotos,
         setVenueDetails,
+        bankDetails,
+        updateBankDetails,
+        syncVendorProfileToBackend,
+        syncBankChangeToBackend,
+        isLoadingOnboardingProfile,
+        refreshFromOnboarding: fetchOnboardingProfile,
+        verificationId,
+        setVerificationId,
       }}
     >
       {children}

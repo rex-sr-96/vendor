@@ -16,34 +16,40 @@ import {
   Sparkles,
   Check,
   ChevronLeft,
+  SunMedium,
+  DoorOpen,
+  Armchair,
 } from 'lucide-react';
 import { haptics } from '../utils/haptics';
 
 export const AmenitiesScreen: React.FC = () => {
   const { amenities, toggleAmenity, goBack, showToast } = useApp();
-  const [filter, setFilter] = useState<'all' | 'facilities' | 'equipment' | 'comfort' | 'safety'>('all');
+  const [filter, setFilter] = useState<string>('all');
 
   const activeCount = amenities.filter((a) => a.enabled).length;
 
   const categories = [
     { id: 'all', label: 'All Amenities' },
-    { id: 'facilities', label: 'Facilities' },
-    { id: 'equipment', label: 'Equipment & Gear' },
-    { id: 'comfort', label: 'Comfort & Lounge' },
-    { id: 'safety', label: 'Safety & First Aid' },
+    { id: 'Lighting', label: 'Lighting' },
+    { id: 'Facility', label: 'Facilities' },
+    { id: 'Refreshment', label: 'Refreshments' },
+    { id: 'Safety', label: 'Safety & First Aid' },
+    { id: 'Equipment', label: 'Equipment' },
   ];
 
   const filteredAmenities = amenities.filter((a) => {
     if (filter === 'all') return true;
-    return a.category === filter;
+    return a.category.toLowerCase() === filter.toLowerCase();
   });
 
   const getAmenityIcon = (iconName: string) => {
     switch (iconName) {
+      case 'SunMedium':
       case 'Zap':
-        return <Zap className="w-5 h-5 text-[#FF6B2C]" />;
+        return <SunMedium className="w-5 h-5 text-[#FF6B2C]" />;
+      case 'DoorOpen':
       case 'ShowerHead':
-        return <ShowerHead className="w-5 h-5 text-[#2FA66A]" />;
+        return <DoorOpen className="w-5 h-5 text-[#2FA66A]" />;
       case 'Droplets':
         return <Droplets className="w-5 h-5 text-[#3B82F6]" />;
       case 'Car':
@@ -54,14 +60,16 @@ export const AmenitiesScreen: React.FC = () => {
         return <Trophy className="w-5 h-5 text-[#E7A72F]" />;
       case 'HeartPulse':
         return <HeartPulse className="w-5 h-5 text-[#EF4444]" />;
-      case 'Users':
-        return <Users className="w-5 h-5 text-[#10B981]" />;
       case 'Coffee':
         return <Coffee className="w-5 h-5 text-[#F59E0B]" />;
-      case 'Wifi':
-        return <Wifi className="w-5 h-5 text-[#06B6D4]" />;
       case 'ShieldCheck':
         return <ShieldCheck className="w-5 h-5 text-[#6366F1]" />;
+      case 'Armchair':
+        return <Armchair className="w-5 h-5 text-[#EC4899]" />;
+      case 'Users':
+        return <Users className="w-5 h-5 text-[#10B981]" />;
+      case 'Wifi':
+        return <Wifi className="w-5 h-5 text-[#06B6D4]" />;
       case 'BatteryCharging':
         return <BatteryCharging className="w-5 h-5 text-[#84CC16]" />;
       default:
@@ -88,12 +96,15 @@ export const AmenitiesScreen: React.FC = () => {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-[24px] font-black text-[#171717] tracking-tight">Venue Amenities</h1>
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-[#2FA66A]/10 text-[#2FA66A]">
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-[#2FA66A]/10 text-[#2FA66A] border border-[#2FA66A]/20">
+              Admin Standardized
+            </span>
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#FAF9F6] text-[#777570] border border-[#E8E6E1]">
               {activeCount} of {amenities.length} Active on App
             </span>
           </div>
           <p className="text-[12.5px] font-medium text-[#777570]">
-            Select which facility amenities are highlighted to players during online booking
+            Only verified admin-defined amenities are shown. Select which facility amenities are highlighted to players during online booking.
           </p>
         </div>
       </div>
@@ -147,7 +158,7 @@ export const AmenitiesScreen: React.FC = () => {
                   {amenity.name}
                 </h3>
                 <p className="text-[12px] text-[#777570] mt-0.5 leading-relaxed line-clamp-2">
-                  {amenity.description}
+                  {amenity.description || amenity.details}
                 </p>
                 <span className="inline-block mt-2 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-[#F1F0EC] text-[#777570]">
                   {amenity.category}

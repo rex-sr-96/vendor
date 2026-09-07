@@ -2,11 +2,32 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { ShieldCheck, ArrowRight } from 'lucide-react';
 
+// Helper to extract clean 10-digit Indian phone number
+const extract10DigitPhone = (raw: string): string => {
+  if (!raw) return '';
+  let cleaned = raw.trim();
+  if (cleaned.startsWith('+91')) {
+    cleaned = cleaned.slice(3);
+  } else if (cleaned.startsWith('+')) {
+    cleaned = cleaned.slice(1);
+  }
+  let digits = cleaned.replace(/\D/g, '');
+  if (digits.length === 12 && digits.startsWith('91')) {
+    digits = digits.slice(2);
+  } else if (digits.length === 11 && digits.startsWith('0')) {
+    digits = digits.slice(1);
+  } else if (digits.length > 10 && digits.startsWith('91')) {
+    digits = digits.slice(2);
+  }
+  return digits.slice(0, 10);
+};
+
 export const LoginScreen: React.FC = () => {
   const { navigateTo, ownerPhone, setVenueDetails, venueName, venueAddress, venueCity } = useApp();
-  const [phoneNumber, setPhoneNumber] = useState(ownerPhone || '9876543210');
+  const [phoneNumber, setPhoneNumber] = useState(() => extract10DigitPhone(ownerPhone || '9876543210'));
 
-  const isValidPhone = phoneNumber.replace(/\D/g, '').length === 10;
+  const cleanPhone = extract10DigitPhone(phoneNumber);
+  const isValidPhone = cleanPhone.length === 10;
 
   const handleContinue = (e: React.FormEvent) => {
     e.preventDefault();
@@ -15,7 +36,7 @@ export const LoginScreen: React.FC = () => {
       name: venueName,
       address: venueAddress,
       city: venueCity,
-      phone: phoneNumber,
+      phone: cleanPhone,
     });
     navigateTo('otp');
   };
@@ -58,10 +79,15 @@ export const LoginScreen: React.FC = () => {
               <input
                 id="mobile-input"
                 type="tel"
-                maxLength={10}
+                maxLength={15}
                 placeholder="98765 43210"
                 value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
+                onChange={(e) => setPhoneNumber(extract10DigitPhone(e.target.value))}
+                onPaste={(e) => {
+                  e.preventDefault();
+                  const pasted = e.clipboardData.getData('text');
+                  setPhoneNumber(extract10DigitPhone(pasted));
+                }}
                 className="w-full px-4 py-3.5 text-[16px] font-semibold text-[#171717] bg-transparent placeholder-[#A3A099] focus:outline-none tracking-wide"
               />
             </div>
@@ -70,15 +96,6 @@ export const LoginScreen: React.FC = () => {
               We'll send a 6-digit one-time code to verify your number.
             </p>
           </div>
-
-          {/* Quick Demo Pre-fill */}
-          <button
-            type="button"
-            onClick={() => setPhoneNumber('9876543210')}
-            className="text-[12px] font-semibold text-[#FF6B2C] hover:underline"
-          >
-            Demo auto-fill: +91 98765 43210
-          </button>
         </form>
       </div>
 

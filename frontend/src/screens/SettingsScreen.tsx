@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import {
   Grid3X3,
@@ -22,6 +22,10 @@ import {
   Shirt,
   Trophy,
   HeartPulse,
+  SunMedium,
+  DoorOpen,
+  Armchair,
+  ShieldCheck,
   Save,
   Bell,
   Mail,
@@ -66,6 +70,12 @@ export const SettingsScreen: React.FC = () => {
     venuePhotos,
     setVenuePhotos,
     setVenueDetails,
+    bankDetails,
+    updateBankDetails,
+    syncVendorProfileToBackend,
+    syncBankChangeToBackend,
+    isLoadingOnboardingProfile,
+    refreshFromOnboarding,
     amenities,
     toggleAmenity,
     addAmenity,
@@ -87,24 +97,39 @@ export const SettingsScreen: React.FC = () => {
 
   const [activeTab, setActiveTab] = useState<SettingsTab>('general');
   const [isMobileGeneralOpen, setIsMobileGeneralOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   // ==========================================
   // VENUE & OWNER PROFILE STATE
   // ==========================================
-  const [vName, setVName] = useState(venueName || 'TurfTown Arena');
-  const [vCity, setVCity] = useState(venueCity || 'Koramangala, Bengaluru');
-  const [vAddress, setVAddress] = useState(venueAddress || 'Plot 42, Sector 5, Outer Ring Road, HSR Layout');
-  const [vPincode, setVPincode] = useState(venuePincode || '560102');
+  const [vName, setVName] = useState(venueName || 'Sky Sports Arena');
+  const [vCity, setVCity] = useState(venueCity || 'Coimbatore, Tamil Nadu');
+  const [vAddress, setVAddress] = useState(venueAddress || '123 Avinashi Road, Peelamedu, Coimbatore');
+  const [vPincode, setVPincode] = useState(venuePincode || '641018');
   const [vEstablished, setVEstablished] = useState(venueEstablished || '2023');
   const [vDescription, setVDescription] = useState(
-    venueDescription || 'Premier FIFA-grade synthetic turf and BWF-standard badminton courts with locker rooms, LED floodlights, and player lounge.'
+    venueDescription || 'Premier synthetic turf and multi-sport arena with verified lighting and player amenities.'
   );
 
   // Owner details
-  const [oName, setOName] = useState(ownerName || 'Dhanush Kumar');
+  const [oName, setOName] = useState(ownerName || 'Karthik Rajan');
   const [oPhone, setOPhone] = useState(ownerPhone || '+91 98765 43210');
-  const [oEmail, setOEmail] = useState(ownerEmail || 'owner@turftown.app');
-  const [oPan, setOPan] = useState(ownerPan || 'ABCDE1234F');
+  const [oEmail, setOEmail] = useState(ownerEmail || 'partner@ibooksports.com');
+  const [oPan, setOPan] = useState(ownerPan || '33ABCDE1234F1Z5');
+
+  // Sync state whenever AppContext updates from backend onboarding
+  useEffect(() => {
+    if (venueName) setVName(venueName);
+    if (venueCity) setVCity(venueCity);
+    if (venueAddress) setVAddress(venueAddress);
+    if (venuePincode) setVPincode(venuePincode);
+    if (ownerName) setOName(ownerName);
+    if (ownerPhone) setOPhone(ownerPhone);
+    if (ownerEmail) setOEmail(ownerEmail);
+    if (ownerPan) setOPan(ownerPan);
+    if (venueEstablished) setVEstablished(venueEstablished);
+    if (venueDescription) setVDescription(venueDescription);
+  }, [venueName, venueCity, venueAddress, venuePincode, ownerName, ownerPhone, ownerEmail, ownerPan, venueEstablished, venueDescription]);
 
   const [newPhotoLabel, setNewPhotoLabel] = useState('');
   const [isAddPhotoOpen, setIsAddPhotoOpen] = useState(false);
@@ -146,43 +171,71 @@ export const SettingsScreen: React.FC = () => {
   const [amenityFilter, setAmenityFilter] = useState<string>('all');
   const activeAmenitiesCount = amenities.filter((a) => a.enabled).length;
 
-  const [isAddAmenityOpen, setIsAddAmenityOpen] = useState(false);
-  const [newAmenityName, setNewAmenityName] = useState('');
-  const [newAmenityCategory, setNewAmenityCategory] = useState<'facilities' | 'equipment' | 'comfort' | 'safety'>('facilities');
-  const [newAmenityDetails, setNewAmenityDetails] = useState('');
 
-  const handleCreateAmenity = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newAmenityName.trim()) return;
-    haptics.success();
-    addAmenity({
-      name: newAmenityName.trim(),
-      category: newAmenityCategory,
-      details: newAmenityDetails.trim() || 'Available across arena grounds',
-      icon: newAmenityCategory === 'safety' ? 'HeartPulse' : newAmenityCategory === 'comfort' ? 'Shirt' : newAmenityCategory === 'equipment' ? 'Trophy' : 'Zap',
-      enabled: true,
-    });
-    setNewAmenityName('');
-    setNewAmenityDetails('');
-    setIsAddAmenityOpen(false);
-  };
 
-  // Handle Venue Profile Save
-  const handleSaveVenueProfile = (e: React.FormEvent) => {
+  // Handle Venue Profile Save & Sync to Onboarding Database
+  const handleSaveVenueProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (venuePhotos.length < 4) {
       showToast('Photos Required', 'Please maintain at least 4 photos for verification.', 'warning');
       return;
     }
-    haptics.success();
-    setVenueDetails({
+    setIsSaving(true);
+    haptics.tap();
+
+    const updated = {
       venueName: vName.trim(),
       venueCity: vCity.trim(),
       venueAddress: vAddress.trim(),
+      venuePincode: vPincode.trim(),
       ownerPhone: oPhone.trim(),
       ownerName: oName.trim(),
+      ownerEmail: oEmail.trim(),
+      ownerPan: oPan.trim(),
+      venueEstablished: vEstablished.trim(),
+      venueDescription: vDescription.trim(),
+    };
+
+    setVenueDetails(updated);
+
+    const cleanPhone = oPhone.replace(/\D/g, '').slice(-10);
+    const success = await syncVendorProfileToBackend({
+      owner: {
+        name: oName.trim(),
+        mobile: cleanPhone,
+        email: oEmail.trim(),
+        pan: oPan.trim(),
+        address: vAddress.trim(),
+        pincode: vPincode.trim(),
+      },
+      venue: {
+        name: vName.trim(),
+        address: vAddress.trim(),
+        city: vCity.trim(),
+        pincode: vPincode.trim(),
+        gst_number: oPan.trim(),
+      },
+      bank: {
+        bank_name: bankDetails.bankName,
+        account_holder_name: bankDetails.accountHolder,
+        account_number: bankDetails.accountNumber,
+        ifsc_code: bankDetails.ifsc,
+        branch_name: bankDetails.branchName,
+        account_type: bankDetails.accountType.replace(/ commercial account/i, '').trim(),
+      },
     });
-    showToast('Venue Profile Saved', 'Owner details, facility info, and photos updated.', 'success');
+
+    setIsSaving(false);
+    haptics.success();
+    if (success) {
+      showToast(
+        'Profile Synchronized',
+        'Owner details, venue info & photos updated and saved to onboarding records.',
+        'success'
+      );
+    } else {
+      showToast('Profile Saved Locally', 'Details updated locally in vendor system.', 'info');
+    }
   };
 
   // Add Photo Handler
@@ -219,7 +272,7 @@ export const SettingsScreen: React.FC = () => {
   };
 
   // Handle Bank Change Request
-  const handleSubmitBankChange = (e: React.FormEvent) => {
+  const handleSubmitBankChange = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newAccountNumber !== confirmAccountNumber) {
       showToast('Account Mismatch', 'Account numbers do not match.', 'warning');
@@ -230,11 +283,22 @@ export const SettingsScreen: React.FC = () => {
       return;
     }
 
-    haptics.success();
+    haptics.tap();
     const masked = `•••• •••• •••• ${newAccountNumber.slice(-4)}`;
+    const reqId = `REQ-BNK-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    await syncBankChangeToBackend({
+      bankName: newBankName,
+      accountHolder: newHolderName || oName,
+      accountNumber: newAccountNumber,
+      ifsc: newIfsc.toUpperCase(),
+      branchName: 'Main Branch',
+      accountType: newAccountType,
+    });
+
     setBankChangeRequest({
       pending: true,
-      requestId: `REQ-BNK-${Math.floor(1000 + Math.random() * 9000)}`,
+      requestId: reqId,
       newBankName,
       newAccountMasked: masked,
       newIfsc: newIfsc.toUpperCase(),
@@ -242,7 +306,8 @@ export const SettingsScreen: React.FC = () => {
     });
 
     setIsBankChangeModalOpen(false);
-    showToast('Change Request Submitted', 'Sent to TurfTown Admin. Approvals take up to 24h.', 'success');
+    haptics.success();
+    showToast('Change Request Submitted', 'Sent to admin and synced to onboarding records.', 'success');
   };
 
   // Nav menu items (Staff Management and Cancellation & Refunds REMOVED)
@@ -259,14 +324,26 @@ export const SettingsScreen: React.FC = () => {
 
   const getAmenityIcon = (iconName: string) => {
     switch (iconName) {
-      case 'Zap': return <Zap className="w-4 h-4 text-[#FF6B2C]" />;
-      case 'ShowerHead': return <ShowerHead className="w-4 h-4 text-[#2FA66A]" />;
-      case 'Droplets': return <Droplets className="w-4 h-4 text-[#3B82F6]" />;
-      case 'Car': return <Car className="w-4 h-4 text-[#8B5CF6]" />;
-      case 'Shirt': return <Shirt className="w-4 h-4 text-[#EC4899]" />;
-      case 'Trophy': return <Trophy className="w-4 h-4 text-[#E7A72F]" />;
-      case 'HeartPulse': return <HeartPulse className="w-4 h-4 text-[#EF4444]" />;
-      default: return <Coffee className="w-4 h-4 text-[#777570]" />;
+      case 'SunMedium':
+      case 'Zap':
+        return <SunMedium className="w-4 h-4 text-[#FF6B2C]" />;
+      case 'ShowerHead':
+      case 'DoorOpen':
+        return <DoorOpen className="w-4 h-4 text-[#2FA66A]" />;
+      case 'Droplets':
+        return <Droplets className="w-4 h-4 text-[#3B82F6]" />;
+      case 'Car':
+        return <Car className="w-4 h-4 text-[#8B5CF6]" />;
+      case 'ShieldCheck':
+        return <ShieldCheck className="w-4 h-4 text-[#6366F1]" />;
+      case 'Armchair':
+        return <Armchair className="w-4 h-4 text-[#EC4899]" />;
+      case 'HeartPulse':
+        return <HeartPulse className="w-4 h-4 text-[#EF4444]" />;
+      case 'Coffee':
+        return <Coffee className="w-4 h-4 text-[#F59E0B]" />;
+      default:
+        return <CheckCircle2 className="w-4 h-4 text-[#777570]" />;
     }
   };
 
@@ -328,7 +405,7 @@ export const SettingsScreen: React.FC = () => {
           {[
             { id: 'general', title: 'Venue Profile & Photos', caption: `Owner details & ${venuePhotos.length} photos`, icon: Building2, screen: 'venue_profile' as const },
             { id: 'payment_settings', title: 'Payment & Bank Details', caption: 'HDFC verified payout · Change request form', icon: Wallet, screen: 'payment_settings' as const },
-            { id: 'amenities', title: 'Amenities', caption: `${activeAmenitiesCount} active (Lighting, showers, parking)`, icon: Coffee, screen: 'amenities' as const },
+            { id: 'amenities', title: 'Amenities', caption: `${activeAmenitiesCount} active · Admin verified amenities`, icon: Coffee, screen: 'amenities' as const },
             { id: 'operating_hours', title: 'Operating Hours', caption: '06:00 AM – 11:00 PM (Daily schedule)', icon: Clock, screen: 'operating_hours' as const },
             { id: 'booking_settings', title: 'Booking Settings', caption: 'Advance reservation & slot duration', icon: SlidersHorizontal, screen: 'booking_settings' as const },
             { id: 'notifications', title: 'Notification Settings', caption: 'WhatsApp & SMS alerts on/off toggles', icon: Bell, screen: 'notification_settings' as const },
@@ -742,32 +819,32 @@ export const SettingsScreen: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
                   <div>
                     <span className="text-[10.5px] font-bold text-[#777570] block">Bank Name</span>
-                    <span className="text-[14px] font-black text-[#171717]">{activeBankDetails.bankName}</span>
+                    <span className="text-[14px] font-black text-[#171717]">{bankDetails.bankName}</span>
                   </div>
 
                   <div>
                     <span className="text-[10.5px] font-bold text-[#777570] block">Account Number</span>
-                    <span className="text-[14px] font-mono font-black text-[#171717]">{activeBankDetails.maskedNumber}</span>
+                    <span className="text-[14px] font-mono font-black text-[#171717]">{bankDetails.maskedNumber}</span>
                   </div>
 
                   <div>
                     <span className="text-[10.5px] font-bold text-[#777570] block">IFSC Code</span>
-                    <span className="text-[14px] font-mono font-black text-[#171717]">{activeBankDetails.ifsc}</span>
+                    <span className="text-[14px] font-mono font-black text-[#171717]">{bankDetails.ifsc}</span>
                   </div>
 
                   <div>
                     <span className="text-[10.5px] font-bold text-[#777570] block">Account Holder</span>
-                    <span className="text-[13px] font-bold text-[#171717]">{activeBankDetails.accountHolder}</span>
+                    <span className="text-[13px] font-bold text-[#171717]">{bankDetails.accountHolder}</span>
                   </div>
 
                   <div>
                     <span className="text-[10.5px] font-bold text-[#777570] block">Account Type</span>
-                    <span className="text-[13px] font-bold text-[#171717]">{activeBankDetails.accountType}</span>
+                    <span className="text-[13px] font-bold text-[#171717]">{bankDetails.accountType}</span>
                   </div>
 
                   <div>
                     <span className="text-[10.5px] font-bold text-[#777570] block">Daily Settlement</span>
-                    <span className="text-[12px] font-bold text-[#2FA66A]">{activeBankDetails.payoutSchedule}</span>
+                    <span className="text-[12px] font-bold text-[#2FA66A]">{bankDetails.payoutSchedule}</span>
                   </div>
                 </div>
 
@@ -880,29 +957,27 @@ export const SettingsScreen: React.FC = () => {
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#F1F0EC]">
                 <div>
-                  <h3 className="text-[17px] font-black text-[#171717]">Venue Amenities</h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-[17px] font-black text-[#171717]">Venue Amenities</h3>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#2FA66A]/10 text-[#2FA66A] border border-[#2FA66A]/20">
+                      Admin Standardized
+                    </span>
+                  </div>
                   <p className="text-[11.5px] text-[#777570]">
-                    Manage player facilities, lighting, lockers, and comfort gear ({activeAmenitiesCount} Active)
+                    Admin-defined amenities available for your facility. Toggle on/off to reflect on player booking app ({activeAmenitiesCount} Active)
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setIsAddAmenityOpen(true)}
-                  className="h-8.5 px-3.5 rounded-xl bg-[#171717] hover:bg-[#2b2b2b] text-white text-[12px] font-bold flex items-center gap-1.5 shadow-xs active-press cursor-pointer transition-colors self-start sm:self-auto"
-                >
-                  <Plus className="w-3.5 h-3.5 text-[#FF6B2C]" />
-                  <span>Add Amenity</span>
-                </button>
               </div>
 
               {/* Filter Pills */}
               <div className="flex flex-wrap gap-1.5">
                 {[
                   { id: 'all', label: 'All Amenities' },
-                  { id: 'facilities', label: 'Facilities' },
-                  { id: 'equipment', label: 'Equipment & Gear' },
-                  { id: 'comfort', label: 'Comfort & Lounge' },
-                  { id: 'safety', label: 'Safety & Medical' },
+                  { id: 'Lighting', label: 'Lighting' },
+                  { id: 'Facility', label: 'Facilities' },
+                  { id: 'Refreshment', label: 'Refreshments' },
+                  { id: 'Safety', label: 'Safety' },
+                  { id: 'Equipment', label: 'Equipment' },
                 ].map((cat) => (
                   <button
                     key={cat.id}
@@ -922,7 +997,7 @@ export const SettingsScreen: React.FC = () => {
               {/* Amenities Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3 pt-1">
                 {amenities
-                  .filter((a) => amenityFilter === 'all' || a.category === amenityFilter)
+                  .filter((a) => amenityFilter === 'all' || a.category.toLowerCase() === amenityFilter.toLowerCase())
                   .map((amenity) => (
                     <div
                       key={amenity.id}
@@ -1554,94 +1629,7 @@ export const SettingsScreen: React.FC = () => {
           </div>
         )}
       </AnimatePresence>
-      {/* ========================================================================= */}
-      {/* MODAL: ADD AMENITY                                                        */}
-      {/* ========================================================================= */}
-      <AnimatePresence>
-        {isAddAmenityOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs select-none">
-            <div className="absolute inset-0" onClick={() => setIsAddAmenityOpen(false)} />
 
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-sm bg-white rounded-3xl p-5 border border-[#E8E6E1] shadow-2xl space-y-4"
-            >
-              <div className="flex items-center justify-between pb-2 border-b border-[#F1F0EC]">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-xl bg-[#2FA66A]/10 text-[#2FA66A] flex items-center justify-center">
-                    <Coffee className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h3 className="text-[15px] font-black text-[#171717]">Add Venue Amenity</h3>
-                    <p className="text-[11px] text-[#777570]">Register facilities for players</p>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setIsAddAmenityOpen(false)}
-                  className="w-7 h-7 rounded-full bg-[#F1F0EC] flex items-center justify-center text-[#777570] hover:text-[#171717] cursor-pointer"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
-              <form onSubmit={handleCreateAmenity} className="space-y-3">
-                <div>
-                  <label className="block text-[11px] font-bold text-[#777570] mb-1">
-                    Amenity Name <span className="text-[#FF6B2C]">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Power Backup / Generator"
-                    value={newAmenityName}
-                    onChange={(e) => setNewAmenityName(e.target.value)}
-                    className="w-full bg-[#FAF9F6] border border-[#E8E6E1] rounded-xl px-3 py-2 text-[12.5px] font-bold text-[#171717] focus:outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-bold text-[#777570] mb-1">Category</label>
-                  <select
-                    value={newAmenityCategory}
-                    onChange={(e) => setNewAmenityCategory(e.target.value as any)}
-                    className="w-full bg-[#FAF9F6] border border-[#E8E6E1] rounded-xl px-2.5 py-2 text-[12px] font-bold text-[#171717] focus:outline-none"
-                  >
-                    <option value="facilities">Facilities (Lighting, Showers, Parking)</option>
-                    <option value="equipment">Equipment & Gear (Bibs, Balls, Rackets)</option>
-                    <option value="comfort">Comfort & Lounge (Seating, Drinks, Lockers)</option>
-                    <option value="safety">Safety & Medical (First Aid, AED, Security)</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-bold text-[#777570] mb-1">Specification / Details</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. 100% silent diesel backup with instant cut-in"
-                    value={newAmenityDetails}
-                    onChange={(e) => setNewAmenityDetails(e.target.value)}
-                    className="w-full bg-[#FAF9F6] border border-[#E8E6E1] rounded-xl px-3 py-2 text-[12.5px] font-medium text-[#171717] focus:outline-none"
-                  />
-                </div>
-
-                <div className="pt-2">
-                  <button
-                    type="submit"
-                    className="w-full h-10 rounded-xl bg-[#171717] hover:bg-[#2b2b2b] text-white font-black text-[13px] flex items-center justify-center gap-1.5 shadow-sm active-press cursor-pointer transition-colors"
-                  >
-                    <Plus className="w-4 h-4 text-[#FF6B2C]" />
-                    <span>Save Amenity</span>
-                  </button>
-                </div>
-              </form>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };

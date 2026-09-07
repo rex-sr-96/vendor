@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import {
   ScreenType,
   BottomNavTab,
@@ -168,6 +168,40 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [paymentSettings, setPaymentSettings] = useState<PaymentSettingsConfig>(initialPaymentSettings);
   const [supportTickets, setSupportTickets] = useState<SupportTicket[]>(initialSupportTickets);
   const [amenities, setAmenities] = useState<AmenityItem[]>(initialAmenities);
+
+  useEffect(() => {
+    async function loadAdminAmenities() {
+      try {
+        const res = await fetch('http://localhost:4000/api/v1/sports/amenities');
+        if (res.ok) {
+          const adminAmns = await res.json();
+          if (Array.isArray(adminAmns) && adminAmns.length > 0) {
+            setAmenities((prev) =>
+              adminAmns.map((a: any) => {
+                const existing = prev.find(
+                  (p) => p.id === a.amenity_id || p.name.toLowerCase() === a.name.toLowerCase()
+                );
+                return {
+                  id: a.amenity_id,
+                  name: a.name,
+                  category: a.category || 'Facility',
+                  enabled: existing ? existing.enabled : true,
+                  price: existing ? existing.price || 0 : a.amenity_id === 'AMN_GEAR' ? 100 : 0,
+                  description: existing?.description || `Standard venue amenity: ${a.name}`,
+                  iconName: a.icon || 'Sparkles',
+                  icon: a.icon || 'Sparkles',
+                  details: existing?.details || `${a.category || 'Facility'} standard amenity`,
+                };
+              })
+            );
+          }
+        }
+      } catch (err) {
+        // Fallback to initialAmenities
+      }
+    }
+    loadAdminAmenities();
+  }, []);
   const [cancellationPolicy, setCancellationPolicy] = useState<CancellationPolicyConfig>(initialCancellationPolicy);
   const [staffMembers, setStaffMembers] = useState<StaffMember[]>(initialStaffMembers);
   const [notificationPreferences, setNotificationPreferences] = useState<NotificationPreferencesConfig>(initialNotificationPreferences);

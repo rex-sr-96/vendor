@@ -161,11 +161,13 @@ export interface PaymentSettingsConfig {
 export interface AmenityItem {
   id: string;
   name: string;
-  category: 'facilities' | 'equipment' | 'comfort' | 'safety';
+  category: string;
   enabled: boolean;
   price: number; // 0 for included free, >0 for rental
   description: string;
   iconName: string;
+  icon?: string;
+  details?: string;
 }
 
 export interface CancellationPolicyConfig {

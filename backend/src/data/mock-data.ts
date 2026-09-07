@@ -215,13 +215,14 @@ export const initialSupportTickets: SupportTicket[] = [
 ];
 
 export const initialAmenities: AmenityItem[] = [
-  { id: 'am-1', name: 'Floodlights (500 Lux)', category: 'facilities', enabled: true, price: 0, description: 'Day-light grade LED towers for night games', iconName: 'Zap' },
-  { id: 'am-2', name: 'Changing Rooms & Showers', category: 'facilities', enabled: true, price: 0, description: 'Clean hygiene stalls with hot water and mirrors', iconName: 'ShowerHead' },
-  { id: 'am-3', name: 'RO Drinking Water Dispenser', category: 'comfort', enabled: true, price: 0, description: 'Chilled & ambient purified water station', iconName: 'Droplets' },
-  { id: 'am-4', name: 'Customer Car & Bike Parking', category: 'facilities', enabled: true, price: 0, description: 'Dedicated 30-vehicle secured parking bay', iconName: 'Car' },
-  { id: 'am-5', name: 'Bibs & Training Cones', category: 'equipment', enabled: true, price: 0, description: 'Set of 14 fluorescent bibs (Neon / Orange)', iconName: 'Shirt' },
-  { id: 'am-6', name: 'Match Footballs & Bats Rental', category: 'equipment', enabled: true, price: 100, description: 'FIFA Pro footballs and Kashmir Willow bats', iconName: 'Trophy' },
-  { id: 'am-7', name: 'First Aid Kit & Ice Packs', category: 'safety', enabled: true, price: 0, description: 'Crepe bandages, sprays, instant ice and basic medical kit', iconName: 'HeartPulse' },
+  { id: 'AMN_LIGHTS', name: 'LED Floodlights', category: 'Lighting', enabled: true, price: 0, description: 'Day-light grade LED towers for night games & match broadcasts', iconName: 'SunMedium', icon: 'SunMedium', details: '500 Lux professional floodlighting' },
+  { id: 'AMN_PARKING', name: 'Car & Bike Parking', category: 'Facility', enabled: true, price: 0, description: 'Dedicated parking bays for four-wheelers and two-wheelers', iconName: 'Car', icon: 'Car', details: 'Covered and secure parking' },
+  { id: 'AMN_CHANGE', name: 'Changing Rooms & Showers', category: 'Facility', enabled: true, price: 0, description: 'Clean hygiene stalls with hot water and shower cabins', iconName: 'DoorOpen', icon: 'DoorOpen', details: 'Male and female separate changing rooms' },
+  { id: 'AMN_WATER', name: 'Purified Drinking Water', category: 'Refreshment', enabled: true, price: 0, description: 'Chilled & ambient RO purified drinking water station', iconName: 'Droplets', icon: 'Droplets', details: 'Free continuous hydration' },
+  { id: 'AMN_FIRSTAID', name: 'First Aid Kit', category: 'Safety', enabled: true, price: 0, description: 'Crepe bandages, pain relief spray, instant ice, and emergency medical kit', iconName: 'HeartPulse', icon: 'HeartPulse', details: 'On-site medical safety kit' },
+  { id: 'AMN_CAFE', name: 'Snacks & Cafeteria', category: 'Refreshment', enabled: true, price: 0, description: 'Sports snack bar, cold drinks, energy bars, and hydration lounge', iconName: 'Coffee', icon: 'Coffee', details: 'Snack bar & hydration lounge' },
+  { id: 'AMN_GEAR', name: 'Equipment Rental', category: 'Equipment', enabled: true, price: 100, description: 'Match footballs, cricket bats, badminton racquets, and bibs', iconName: 'ShieldCheck', icon: 'ShieldCheck', details: 'Pro sport gear rental at counter' },
+  { id: 'AMN_SEATING', name: 'Spectator Seating / Gallery', category: 'Facility', enabled: true, price: 0, description: 'Covered tiered seating stands and dugouts for viewers and squads', iconName: 'Armchair', icon: 'Armchair', details: 'Covered spectator stand' },
 ];
 
 export const initialCancellationPolicy: CancellationPolicyConfig = {

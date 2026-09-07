@@ -41,7 +41,7 @@ export const SettingsScreen: React.FC = () => {
     {
       id: 'amenities',
       title: 'Amenities',
-      caption: `${activeAmenitiesCount} of ${amenities.length} active (Lighting, showers, parking)`,
+      caption: `${activeAmenitiesCount} of ${amenities.length} active (Admin standard facilities)`,
       icon: Coffee,
       screen: 'amenities' as const,
     },

@@ -1,23 +1,61 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { ShieldCheck, ArrowRight, Sparkles } from 'lucide-react';
+import { ShieldCheck, ArrowRight, Sparkles, Loader2, AlertCircle } from 'lucide-react';
+import { authApi } from '../lib/api';
+
+// Helper to extract clean 10-digit Indian phone number
+const extract10DigitPhone = (raw: string): string => {
+  if (!raw) return '';
+  let cleaned = raw.trim();
+  if (cleaned.startsWith('+91')) {
+    cleaned = cleaned.slice(3);
+  } else if (cleaned.startsWith('+')) {
+    cleaned = cleaned.slice(1);
+  }
+  let digits = cleaned.replace(/\D/g, '');
+  if (digits.length === 12 && digits.startsWith('91')) {
+    digits = digits.slice(2);
+  } else if (digits.length === 11 && digits.startsWith('0')) {
+    digits = digits.slice(1);
+  } else if (digits.length > 10 && digits.startsWith('91')) {
+    digits = digits.slice(2);
+  }
+  return digits.slice(0, 10);
+};
 
 export const LoginScreen: React.FC = () => {
-  const { navigateTo, ownerPhone, setVenueDetails, venueName, venueAddress, venueCity } = useApp();
-  const [phoneNumber, setPhoneNumber] = useState(ownerPhone || '9876543210');
+  const { navigateTo, ownerPhone, setVenueDetails, venueName, venueAddress, venueCity, setVerificationId, showToast } = useApp();
+  const [phoneNumber, setPhoneNumber] = useState(() => extract10DigitPhone(ownerPhone || ''));
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const isValidPhone = phoneNumber.replace(/\D/g, '').length === 10;
+  const cleanPhone = extract10DigitPhone(phoneNumber);
+  const isValidPhone = cleanPhone.length === 10;
 
-  const handleContinue = (e: React.FormEvent) => {
+  const handleContinue = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isValidPhone) return;
-    setVenueDetails({
-      name: venueName,
-      address: venueAddress,
-      city: venueCity,
-      phone: phoneNumber,
-    });
-    navigateTo('otp');
+    if (!isValidPhone || isLoading) return;
+
+    setErrorMessage(null);
+    setIsLoading(true);
+
+    try {
+      const res = await authApi.sendLoginOtp(cleanPhone);
+      setVerificationId(res.verification_id || res.reqId || null);
+      setVenueDetails({
+        name: venueName,
+        address: venueAddress,
+        city: venueCity,
+        phone: cleanPhone,
+        ownerPhone: cleanPhone,
+      });
+      showToast('OTP Dispatched', `6-digit verification code sent to +91 ${cleanPhone} via MSG91 SMS.`, 'success');
+      navigateTo('otp');
+    } catch (err: any) {
+      setErrorMessage(err.message || 'Unable to dispatch verification code via MSG91. Please verify your mobile number.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -58,10 +96,21 @@ export const LoginScreen: React.FC = () => {
               <input
                 id="mobile-input"
                 type="tel"
-                maxLength={10}
+                maxLength={15}
                 placeholder="98765 43210"
                 value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
+                onChange={(e) => {
+                  const cleaned = extract10DigitPhone(e.target.value);
+                  setPhoneNumber(cleaned);
+                  if (errorMessage) setErrorMessage(null);
+                }}
+                onPaste={(e) => {
+                  e.preventDefault();
+                  const pasted = e.clipboardData.getData('text');
+                  const cleaned = extract10DigitPhone(pasted);
+                  setPhoneNumber(cleaned);
+                  if (errorMessage) setErrorMessage(null);
+                }}
                 className="w-full px-4 py-3.5 text-[16px] font-semibold text-[#171717] bg-transparent placeholder-[#A3A099] focus:outline-none tracking-wide"
                 autoFocus
               />
@@ -72,35 +121,37 @@ export const LoginScreen: React.FC = () => {
             </p>
           </div>
 
-          {/* Quick Demo Pre-fill Button */}
-          <button
-            type="button"
-            onClick={() => setPhoneNumber('9876543210')}
-            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-[#FFF6F0] border border-[#FF6B2C]/25 text-[#FF6B2C] hover:bg-[#FFEDE0] transition-colors text-[12px] font-semibold cursor-pointer group"
-          >
-            <span className="flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-[#FF6B2C]" />
-              <span>Demo Quick Sign-In</span>
-            </span>
-            <span className="font-mono font-bold text-[11.5px] bg-white text-[#FF6B2C] px-2 py-0.5 rounded-md border border-[#FF6B2C]/20 shadow-xs">
-              +91 98765 43210
-            </span>
-          </button>
+          {/* Error Message Alert */}
+          {errorMessage && (
+            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-[12px] flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+              <span>{errorMessage}</span>
+            </div>
+          )}
 
           {/* Submit Action */}
           <div className="pt-2 space-y-3">
             <button
               id="btn-login-continue"
               type="submit"
-              disabled={!isValidPhone}
+              disabled={!isValidPhone || isLoading}
               className={`w-full h-12 rounded-2xl font-bold text-[15px] flex items-center justify-center gap-2 transition-all active:scale-[0.99] ${
-                isValidPhone
+                isValidPhone && !isLoading
                   ? 'bg-[#FF6B2C] text-white shadow-md shadow-[#FF6B2C]/25 hover:bg-[#e85b1e] cursor-pointer'
                   : 'bg-[#E8E6E1] text-[#A3A099] cursor-not-allowed'
               }`}
             >
-              <span>Continue</span>
-              <ArrowRight className="w-4 h-4" />
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Sending Code via MSG91...</span>
+                </>
+              ) : (
+                <>
+                  <span>Continue</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </button>
 
             <p className="text-[11.5px] text-center text-[#8E8B85] leading-normal px-2">
