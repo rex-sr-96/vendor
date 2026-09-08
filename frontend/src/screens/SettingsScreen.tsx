@@ -48,6 +48,7 @@ import {
   Loader2,
   Landmark,
   User,
+  Pencil,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { haptics } from '../utils/haptics';
@@ -1179,51 +1180,95 @@ export const SettingsScreen: React.FC = () => {
                 </p>
               </div>
 
-              {/* ACTIVE SETTLEMENT BANK ACCOUNT */}
-              <div className="bg-[#171717] rounded-3xl p-5 border border-[#171717] space-y-4 shadow-md">
-                {/* Header */}
+              {/* ACTIVE SETTLEMENT BANK ACCOUNT (FIRST IMAGE) */}
+              <div className="bg-[#171717] rounded-3xl p-5 shadow-sm space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center shrink-0">
-                      <Building className="w-5 h-5 text-white" />
+                    <div className="w-11 h-11 rounded-2xl bg-white/10 flex items-center justify-center">
+                      <Building2 className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <span className="text-[10.5px] font-bold uppercase tracking-wider text-[#A3A099] block">Settlement Account</span>
-                      <span className="text-[17px] font-black text-white tracking-tight">{paymentSettings.bankName}</span>
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-[#A3A099]">
+                        Settlement Bank Account
+                      </span>
+                      <h3 className="text-[17px] font-black tracking-tight text-white">
+                        {paymentSettings.bankName}
+                      </h3>
                     </div>
                   </div>
-                  <span className="text-[10px] font-bold bg-[#2FA66A]/20 text-[#2FA66A] border border-[#2FA66A]/30 px-2.5 py-1 rounded-full flex items-center gap-1 shrink-0">
-                    <CheckCircle2 className="w-3 h-3" />
-                    Verified & Active
-                  </span>
-                </div>
-
-                {/* Details grid */}
-                <div className="grid grid-cols-3 gap-3 bg-white/8 rounded-2xl p-3.5">
-                  <div>
-                    <span className="text-[10px] font-bold block text-[#A3A099] mb-0.5">Account No.</span>
-                    <span className="text-[13px] font-mono font-black text-white">{paymentSettings.accountNumberMasked}</span>
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-bold block text-[#A3A099] mb-0.5">IFSC</span>
-                    <span className="text-[13px] font-mono font-black text-white">{paymentSettings.ifscCode}</span>
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-bold block text-[#A3A099] mb-0.5">Type</span>
-                    <span className="text-[12px] font-bold text-white">Current A/C</span>
-                  </div>
-                  <div className="col-span-3 border-t border-white/10 pt-2.5 mt-0.5">
-                    <span className="text-[10px] font-bold block text-[#A3A099] mb-0.5">Account Holder</span>
-                    <span className="text-[12.5px] font-bold text-white">Dhanush Kumar (TurfTown Arena)</span>
-                  </div>
-                </div>
-
-                {/* Settlement info */}
-                <div className="flex items-center justify-between pt-1 border-t border-white/10">
-                  <span className="text-[11px] font-bold text-[#2FA66A] flex items-center gap-1.5">
+                  <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#2FA66A]/20 text-[#2FA66A] border border-[#2FA66A]/30 flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    T+0 Auto IMPS · Midnight Direct Settlement
+                    Verified
                   </span>
+                </div>
+
+                {/* Details */}
+                <div className="grid grid-cols-2 gap-2.5 bg-white/8 rounded-2xl p-3 text-[11.5px]">
+                  <div>
+                    <span className="block font-bold text-[#A3A099]">Account Number</span>
+                    <span className="font-mono font-black text-white">{paymentSettings.accountNumberMasked}</span>
+                  </div>
+                  <div>
+                    <span className="block font-bold text-[#A3A099]">IFSC Code</span>
+                    <span className="font-mono font-black text-white">{paymentSettings.ifscCode}</span>
+                  </div>
+                  <div>
+                    <span className="block font-bold text-[#A3A099]">Account Holder</span>
+                    <span className="font-bold text-white">Dhanush Kumar (TurfTown Arena)</span>
+                  </div>
+                  <div>
+                    <span className="block font-bold text-[#A3A099]">Account Type</span>
+                    <span className="font-bold text-white">Current Commercial</span>
+                  </div>
+                </div>
+
+                {/* Cancelled Cheque / Passbook Proof */}
+                <div className="flex items-center justify-between p-2.5 rounded-2xl bg-white/6 border border-white/10 text-[11.5px]">
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <div className="w-7 h-7 rounded-xl bg-white/10 flex items-center justify-center text-[#2FA66A] shrink-0">
+                      <FileText className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <span className="block font-bold text-[#A3A099] text-[9.5px] uppercase">Cancelled Cheque / Passbook</span>
+                      <span className="font-mono text-white text-[11.5px] font-bold truncate block">
+                        {bankBranchProofDocId || 'doc_bank_proof_1788778055198'}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      haptics.tap();
+                      setPreviewDoc({
+                        title: 'Cancelled Cheque / Passbook',
+                        docId: bankBranchProofDocId || 'doc_bank_proof_1788778055198',
+                        url: bankCancelledChequeUrl || `http://localhost:4000/api/v1/onboarding/documents/${bankBranchProofDocId || 'doc_bank_proof_1788778055198'}/view`,
+                        type: 'doc',
+                      });
+                    }}
+                    className="px-2.5 py-1 rounded-xl bg-white/10 hover:bg-white/20 text-white text-[11px] font-bold flex items-center gap-1 cursor-pointer shrink-0 transition-colors"
+                  >
+                    <Eye className="w-3 h-3 text-[#A3A099]" />
+                    <span>View</span>
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-between pt-3 border-t border-white/10">
+                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#2FA66A]">
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>T+0 Auto IMPS Midnight Direct Settlement</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      haptics.tap();
+                      setIsBankChangeModalOpen(true);
+                    }}
+                    className="h-8 px-3 rounded-xl bg-white/10 hover:bg-white/20 text-white text-[12px] font-bold flex items-center gap-1.5 cursor-pointer active-press transition-all"
+                  >
+                    <Pencil className="w-3.5 h-3.5" />
+                    Change
+                  </button>
                 </div>
               </div>
 
