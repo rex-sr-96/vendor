@@ -5,6 +5,7 @@ import {
   BottomNavTab,
   Booking,
   Court,
+  CourtStatus,
   Slot,
   PaymentRecord,
   SettlementRecord,
@@ -156,6 +157,7 @@ interface AppContextType {
   unblockSlotAction: (slotId: string) => void;
   addNewCourt: (newCourt: Partial<Court>) => void;
   updateCourt: (courtId: string, updatedData: Partial<Court>) => void;
+  resubmitCourt: (courtId: string, updatedData: Partial<Court>) => void;
   toggleCourtActive: (courtId: string) => void;
   deleteCourt: (courtId: string) => void;
   addNewBooking: (newBooking: Partial<Booking>) => void;
@@ -1276,11 +1278,56 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setActiveModal(null);
   };
 
-  const addNewCourt = (newCourt: Partial<Court>) => {
+  const addNewCourt = async (newCourt: Partial<Court>) => {
     if (currentUser?.type === 'staff') {
       showToast('View Only Mode', 'Only the venue owner can add new pitches or courts.', 'info');
       return;
     }
+
+    const cleanPhone = (ownerPhone || '6369591821').replace(/\D/g, '').slice(-10);
+    let generatedRequestId = `CRQ-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    try {
+      const payload = {
+        court_name: newCourt.name || 'New Turf',
+        display_name: newCourt.displayName || undefined,
+        sports: newCourt.sports && newCourt.sports.length > 0 ? newCourt.sports : ['Football'],
+        price_per_hour: Number(newCourt.pricePerHour) || 1000,
+        min_booking_duration: newCourt.minBookingDuration || '60 mins',
+        peak_hours_start: newCourt.peakHoursStart || '06:00 PM',
+        peak_hours_end: newCourt.peakHoursEnd || '10:00 PM',
+        peak_hours_price: Number(newCourt.peakHoursPrice) || undefined,
+        peak_days: newCourt.peakDays || ['Sat', 'Sun'],
+        weekend_price: Number(newCourt.weekendPrice) || undefined,
+        type: newCourt.type || 'Outdoor',
+        same_physical_sports: newCourt.samePhysicalSports ?? false,
+        parent_court_id: newCourt.parentCourtId,
+        parent_court_name: newCourt.parentCourtName,
+        cancellation_window_hours: newCourt.cancellationWindowHours ?? 12,
+        refund_percentage: newCourt.refundPercentage ?? 100,
+        cancellation_policy_label: newCourt.cancellationPolicyLabel,
+        venue_name: venueName || 'Sky Sports Arena',
+        venue_city: venueCity || 'Coimbatore',
+        vendor_mobile: cleanPhone,
+        vendor_name: ownerName || 'Vendor Owner',
+      };
+
+      const res = await fetch('http://localhost:4000/api/v1/court-requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        const createdReq = await res.json();
+        if (createdReq?.id) {
+          generatedRequestId = createdReq.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Backend court-requests POST failed, using fallback ID:', e);
+    }
+
     const court: Court = {
       id: `court-${Date.now()}`,
       name: newCourt.name || 'New Turf',
@@ -1296,17 +1343,79 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       peakDays: newCourt.peakDays,
       peakHoursPrice: newCourt.peakHoursPrice,
       weekendPrice: newCourt.weekendPrice,
-      status: 'Approved',
-      isActive: true,
-      statusDetails: newCourt.statusDetails || 'Operational · Standard facility pitch',
+      status: 'Pending Approval',
+      isActive: false,
+      statusDetails: `Awaiting Admin Approval · Request ID: ${generatedRequestId}`,
       operatingHours: newCourt.operatingHours || '06:00 AM – 11:00 PM',
       type: newCourt.type || 'Outdoor',
       cancellationWindowHours: newCourt.cancellationWindowHours ?? 12,
       refundPercentage: newCourt.refundPercentage ?? 100,
       cancellationPolicyLabel: newCourt.cancellationPolicyLabel,
+      requestId: generatedRequestId,
     };
     setCourts((prev) => [...prev, court]);
-    showToast('Court Added', `${court.name} added successfully and is now active for bookings.`, 'success');
+    showToast(
+      'Court Request Submitted',
+      `${court.name} (${generatedRequestId}) submitted for admin approval. Once approved, it will be active for bookings.`,
+      'success'
+    );
+  };
+
+  const resubmitCourt = async (courtId: string, updatedData: Partial<Court>) => {
+    if (currentUser?.type === 'staff') {
+      showToast('View Only Mode', 'Only the venue owner can resubmit court requests.', 'info');
+      return;
+    }
+
+    const court = courts.find((c) => c.id === courtId);
+    const reqId = court?.requestId;
+
+    if (reqId) {
+      try {
+        const payload = {
+          court_name: updatedData.name || court?.name,
+          display_name: updatedData.displayName || court?.displayName,
+          sports: updatedData.sports || court?.sports,
+          price_per_hour: Number(updatedData.pricePerHour) || court?.pricePerHour,
+          min_booking_duration: updatedData.minBookingDuration || court?.minBookingDuration,
+          peak_hours_start: updatedData.peakHoursStart || court?.peakHoursStart,
+          peak_hours_end: updatedData.peakHoursEnd || court?.peakHoursEnd,
+          peak_hours_price: Number(updatedData.peakHoursPrice) || court?.peakHoursPrice,
+          peak_days: updatedData.peakDays || court?.peakDays,
+          weekend_price: Number(updatedData.weekendPrice) || court?.weekendPrice,
+          type: updatedData.type || court?.type,
+        };
+
+        await fetch(`http://localhost:4000/api/v1/court-requests/${reqId}/resubmit`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+      } catch (e) {
+        console.warn('Backend court-requests resubmit PUT failed:', e);
+      }
+    }
+
+    setCourts((prev) =>
+      prev.map((c) =>
+        c.id === courtId
+          ? {
+              ...c,
+              ...updatedData,
+              status: 'Pending Approval',
+              isActive: false,
+              rejectionReason: undefined,
+              statusDetails: `Awaiting Admin Approval · Request ID: ${c.requestId || reqId}`,
+            }
+          : c
+      )
+    );
+
+    showToast(
+      'Court Resubmitted',
+      `${updatedData.name || court?.name} corrections submitted to admin. Awaiting review.`,
+      'success'
+    );
   };
 
   const updateCourt = (courtId: string, updatedData: Partial<Court>) => {
@@ -1990,6 +2099,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       } catch (e) {
         // Fallback to initialAmenities
       }
+
+      // Sync court requests for this vendor from backend
+      await syncCourtRequests();
+
       return data || null;
     } catch (err) {
       console.warn('Could not auto-fetch onboarding profile from backend:', err);
@@ -1999,8 +2112,89 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
+  const syncCourtRequests = async () => {
+    try {
+      const cleanPhone = (ownerPhone || '6369591821').replace(/\D/g, '').slice(-10);
+      const res = await fetch(`http://localhost:4000/api/v1/court-requests?mobile=${cleanPhone}`);
+      if (!res.ok) return;
+      const crqData = await res.json();
+      if (!Array.isArray(crqData)) return;
+
+      setCourts((currentCourts) => {
+        const updated = [...currentCourts];
+        let changed = false;
+
+        for (const req of crqData) {
+          const isApproved = req.status === 'APPROVED';
+          const isPending = req.status === 'PENDING';
+          const isRejected = req.status === 'REJECTED';
+          const targetStatus: CourtStatus = isApproved ? 'Approved' : isPending ? 'Pending Approval' : 'Rejected';
+
+          const idx = updated.findIndex(
+            (c) => c.requestId === req.id || c.name.toLowerCase() === req.court_name.toLowerCase()
+          );
+
+          if (idx >= 0) {
+            const current = updated[idx];
+            if (
+              current.status !== targetStatus ||
+              current.rejectionReason !== req.rejection_reason ||
+              current.requestId !== req.id ||
+              current.isActive !== isApproved
+            ) {
+              changed = true;
+              updated[idx] = {
+                ...current,
+                requestId: req.id,
+                status: targetStatus,
+                isActive: isApproved,
+                rejectionReason: req.rejection_reason,
+                statusDetails: isPending
+                  ? `Awaiting Admin Approval · Request ID: ${req.id}`
+                  : isRejected
+                  ? `Rejected: ${req.rejection_reason || 'Requires correction'}`
+                  : current.statusDetails || 'Operational · Approved by Admin',
+              };
+            }
+          } else {
+            changed = true;
+            updated.push({
+              id: `court-req-${req.id}`,
+              name: req.court_name,
+              displayName: req.display_name || req.court_name,
+              sports: Array.isArray(req.sports) ? req.sports : ['Football'],
+              pricePerHour: Number(req.price_per_hour) || 1000,
+              minBookingDuration: req.min_booking_duration || '60 mins',
+              peakHoursStart: req.peak_hours_start || '06:00 PM',
+              peakHoursEnd: req.peak_hours_end || '10:00 PM',
+              peakHoursPrice: Number(req.peak_hours_price) || 1400,
+              peakDays: Array.isArray(req.peak_days) ? req.peak_days : ['Sat', 'Sun'],
+              weekendPrice: Number(req.weekend_price) || 1500,
+              status: targetStatus,
+              isActive: isApproved,
+              operatingHours: '06:00 AM – 11:00 PM',
+              type: (req.type || 'Outdoor') as any,
+              requestId: req.id,
+              rejectionReason: req.rejection_reason,
+              statusDetails: isPending
+                ? `Awaiting Admin Approval · Request ID: ${req.id}`
+                : isRejected
+                ? `Rejected: ${req.rejection_reason || 'Requires correction'}`
+                : 'Operational · Approved by Admin',
+            });
+          }
+        }
+        return changed ? updated : currentCourts;
+      });
+    } catch (e) {
+      // Ignore background sync error
+    }
+  };
+
   useEffect(() => {
     fetchOnboardingProfile();
+    const interval = setInterval(syncCourtRequests, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   const syncVendorProfileToBackend = async (profileData?: any): Promise<boolean> => {
@@ -2143,6 +2337,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         unblockSlotAction,
         addNewCourt,
         updateCourt,
+        resubmitCourt,
         toggleCourtActive,
         deleteCourt,
         addNewBooking,

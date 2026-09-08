@@ -85,6 +85,8 @@ export interface Court {
   cancellationWindowHours?: number; // e.g. 2, 4, 12, 24, 0 (no cancellation)
   refundPercentage?: number; // e.g. 50, 75, 90, 100, 0
   cancellationPolicyLabel?: string; // e.g. "Free cancel up to 12h before match (100% refund)"
+  requestId?: string; // e.g. "CRQ-2026-1021"
+  rejectionReason?: string; // Admin feedback note if rejected
 }
 
 export type SlotState =

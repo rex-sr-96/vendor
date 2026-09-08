@@ -206,45 +206,101 @@ export const CourtsScreen: React.FC = () => {
                       )}
                     </div>
 
-                    {/* Active / Inactive Status Badge */}
+                    {/* Active / Inactive / Pending / Rejected Status Badge */}
                     <div className="flex items-center gap-1.5 shrink-0">
-                      <span className={`px-2 py-0.5 rounded-full text-[10.5px] font-extrabold flex items-center gap-1 ${
-                        isActive
-                          ? 'bg-[#2FA66A]/15 text-[#1E774A]'
-                          : 'bg-[#E7A72F]/15 text-[#B87C0D]'
-                      }`}>
-                        <CheckCircle2 className="w-3 h-3" />
-                        {isActive ? 'Active' : 'Inactive'}
-                      </span>
+                      {court.status === 'Pending Approval' ? (
+                        <span className="px-2 py-0.5 rounded-full text-[10.5px] font-extrabold flex items-center gap-1 bg-amber-500/15 text-amber-700 border border-amber-500/20">
+                          <Clock className="w-3 h-3" />
+                          Pending Review
+                        </span>
+                      ) : court.status === 'Rejected' ? (
+                        <span className="px-2 py-0.5 rounded-full text-[10.5px] font-extrabold flex items-center gap-1 bg-rose-500/15 text-rose-700 border border-rose-500/20">
+                          <X className="w-3 h-3" />
+                          Rejected
+                        </span>
+                      ) : (
+                        <span className={`px-2 py-0.5 rounded-full text-[10.5px] font-extrabold flex items-center gap-1 ${
+                          isActive
+                            ? 'bg-[#2FA66A]/15 text-[#1E774A]'
+                            : 'bg-[#E7A72F]/15 text-[#B87C0D]'
+                        }`}>
+                          <CheckCircle2 className="w-3 h-3" />
+                          {isActive ? 'Active' : 'Inactive'}
+                        </span>
+                      )}
                     </div>
                   </div>
 
-                  {/* Active / Inactive Toggle */}
-                  <div className="mt-3 flex items-center justify-between bg-[#F7F7F5] rounded-xl px-3.5 py-2.5 border border-[#E8E6E1]">
-                    <div className="flex items-center gap-2">
-                      <Power className={`w-3.5 h-3.5 ${isActive ? 'text-[#2FA66A]' : 'text-[#A3A099]'}`} />
-                      <span className="text-[12px] font-bold text-[#171717]">
-                        {isActive ? 'Court is Active' : 'Court is Inactive'}
+                  {/* Active / Inactive Toggle or Pending / Rejected Notification */}
+                  {court.status === 'Pending Approval' ? (
+                    <div className="mt-3 flex items-center justify-between bg-amber-50/70 rounded-xl px-3.5 py-2.5 border border-amber-200/80">
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                        <div>
+                          <span className="text-[12px] font-bold text-amber-900 block leading-tight">
+                            Awaiting Admin Approval
+                          </span>
+                          {court.requestId && (
+                            <span className="text-[10px] text-amber-700 font-mono font-semibold">
+                              Request: {court.requestId}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <span className="text-[10.5px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-300/60">
+                        Under Review
                       </span>
                     </div>
-                    {/* Toggle Switch */}
-                    <button
-                      id={`toggle-court-active-${court.id}`}
-                      disabled={isStaff}
-                      onClick={() => toggleCourtActive(court.id)}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 cursor-pointer focus:outline-none disabled:cursor-not-allowed ${
-                        isActive ? 'bg-[#2FA66A]' : 'bg-[#D1CFCA]'
-                      }`}
-                      aria-label={isActive ? 'Deactivate court' : 'Activate court'}
-                    >
-                      <span
-                        className={`inline-block h-4.5 w-4.5 transform rounded-full bg-white shadow-md transition-transform duration-200 ${
-                          isActive ? 'translate-x-6' : 'translate-x-1'
+                  ) : court.status === 'Rejected' ? (
+                    <div className="mt-3 space-y-2">
+                      <div className="flex items-start gap-2 bg-rose-50 rounded-xl p-3 border border-rose-200">
+                        <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                        <div className="flex-1 min-w-0 text-[11px]">
+                          <p className="font-bold text-rose-900">Request Rejected by Admin</p>
+                          <p className="text-rose-700 mt-0.5 leading-relaxed">
+                            {court.rejectionReason || 'Court details need correction before activation.'}
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          haptics.tap();
+                          setEditingCourt(court);
+                        }}
+                        className="w-full py-2 px-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-[11.5px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs active-press"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                        <span>Edit &amp; Resubmit for Approval</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="mt-3 flex items-center justify-between bg-[#F7F7F5] rounded-xl px-3.5 py-2.5 border border-[#E8E6E1]">
+                      <div className="flex items-center gap-2">
+                        <Power className={`w-3.5 h-3.5 ${isActive ? 'text-[#2FA66A]' : 'text-[#A3A099]'}`} />
+                        <span className="text-[12px] font-bold text-[#171717]">
+                          {isActive ? 'Court is Active' : 'Court is Inactive'}
+                        </span>
+                      </div>
+                      {/* Toggle Switch */}
+                      <button
+                        id={`toggle-court-active-${court.id}`}
+                        disabled={isStaff}
+                        onClick={() => toggleCourtActive(court.id)}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 cursor-pointer focus:outline-none disabled:cursor-not-allowed ${
+                          isActive ? 'bg-[#2FA66A]' : 'bg-[#D1CFCA]'
                         }`}
-                        style={{ width: '18px', height: '18px' }}
-                      />
-                    </button>
-                  </div>
+                        aria-label={isActive ? 'Deactivate court' : 'Activate court'}
+                      >
+                        <span
+                          className={`inline-block h-4.5 w-4.5 transform rounded-full bg-white shadow-md transition-transform duration-200 ${
+                            isActive ? 'translate-x-6' : 'translate-x-1'
+                          }`}
+                          style={{ width: '18px', height: '18px' }}
+                        />
+                      </button>
+                    </div>
+                  )}
 
                   {/* Sports & Spec Badges */}
                   <div className="flex flex-wrap items-center gap-1.5 mt-2.5">

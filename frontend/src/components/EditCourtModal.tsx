@@ -11,6 +11,7 @@ import {
   Sparkles,
   ShieldCheck,
   ChevronDown,
+  AlertTriangle,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { haptics } from '../utils/haptics';
@@ -43,7 +44,7 @@ interface EditCourtModalProps {
 }
 
 export const EditCourtModal: React.FC<EditCourtModalProps> = ({ court, isOpen, onClose }) => {
-  const { updateCourt, showToast } = useApp();
+  const { updateCourt, resubmitCourt, showToast } = useApp();
 
   const [courtName, setCourtName] = useState('');
   const [displayName, setDisplayName] = useState('');
@@ -116,6 +117,29 @@ export const EditCourtModal: React.FC<EditCourtModalProps> = ({ court, isOpen, o
     const policyLabel = `Free cancel up to ${cancellationNoticeHours} before kickoff (${refundPercentage} refund)`;
 
     haptics.success();
+
+    if (court.status === 'Rejected') {
+      resubmitCourt(court.id, {
+        name: courtName.trim(),
+        displayName: displayName.trim() || undefined,
+        sports: selectedSports,
+        minBookingDuration,
+        pricePerHour: parseInt(pricePerHour, 10) || 1000,
+        peakHoursStart,
+        peakHoursEnd,
+        peakHoursPrice: parseInt(peakHoursPrice, 10) || 1400,
+        weekendPrice: parseInt(weekendPrice, 10) || 1500,
+        peakDays,
+        operatingHours,
+        statusDetails: statusDetails.trim() || undefined,
+        cancellationWindowHours: windowHoursNum,
+        refundPercentage: refundPercentNum,
+        cancellationPolicyLabel: policyLabel,
+      });
+      onClose();
+      return;
+    }
+
     updateCourt(court.id, {
       name: courtName.trim(),
       displayName: displayName.trim() || undefined,
@@ -137,6 +161,8 @@ export const EditCourtModal: React.FC<EditCourtModalProps> = ({ court, isOpen, o
     onClose();
   };
 
+  const isRejected = court.status === 'Rejected';
+
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 bg-black/60 backdrop-blur-xs select-none">
@@ -152,11 +178,20 @@ export const EditCourtModal: React.FC<EditCourtModalProps> = ({ court, isOpen, o
           {/* Modal Header */}
           <div className="flex items-center justify-between pb-3 border-b border-[#F1F0EC]">
             <div>
-              <h2 className="text-[18px] font-black text-[#171717] tracking-tight">
-                Edit Court: {court.name}
-              </h2>
-              <p className="text-[11.5px] text-[#777570] font-medium">
-                Update rates, duration, peak schedules & cancellation policy
+              <div className="flex items-center gap-2">
+                <h2 className="text-[18px] font-black text-[#171717] tracking-tight">
+                  {isRejected ? `Edit & Resubmit Court: ${court.name}` : `Edit Court: ${court.name}`}
+                </h2>
+                {isRejected && (
+                  <span className="px-2 py-0.5 rounded-md text-[10px] font-black bg-rose-100 text-rose-700 border border-rose-200">
+                    Resubmission
+                  </span>
+                )}
+              </div>
+              <p className="text-[11.5px] text-[#777570] font-medium mt-0.5">
+                {isRejected
+                  ? 'Update rejected court details and resubmit for admin approval'
+                  : 'Update rates, duration, peak schedules & cancellation policy'}
               </p>
             </div>
             <button
@@ -166,6 +201,17 @@ export const EditCourtModal: React.FC<EditCourtModalProps> = ({ court, isOpen, o
               <X className="w-4 h-4" />
             </button>
           </div>
+
+          {/* Rejection reason banner */}
+          {isRejected && court.rejectionReason && (
+            <div className="mt-3 p-3 rounded-xl bg-rose-50 border border-rose-200 text-[11.5px] text-rose-800 flex items-start gap-2.5">
+              <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+              <div>
+                <strong className="font-bold text-rose-900 block">Admin Feedback for Rejection:</strong>
+                <p className="text-rose-700 mt-0.5 leading-relaxed">{court.rejectionReason}</p>
+              </div>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="py-3 space-y-3.5">
             {/* 1. Court Name & Display Name */}
@@ -403,7 +449,7 @@ export const EditCourtModal: React.FC<EditCourtModalProps> = ({ court, isOpen, o
                 className="w-full h-11 bg-[#FF6B2C] hover:bg-[#e85b1e] text-white font-black text-[13.5px] rounded-xl flex items-center justify-center gap-1.5 shadow-sm active-press cursor-pointer transition-all"
               >
                 <Sparkles className="w-4 h-4" />
-                <span>Save Changes</span>
+                <span>{isRejected ? 'Resubmit Court for Admin Approval' : 'Save Changes'}</span>
               </button>
             </div>
           </form>
