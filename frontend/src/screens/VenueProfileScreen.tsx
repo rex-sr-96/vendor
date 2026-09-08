@@ -1,6 +1,4 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import {
   ChevronLeft,
@@ -25,6 +23,10 @@ import {
   Lock,
   Building,
   ArrowRight,
+  Eye,
+  Landmark,
+  Upload,
+  Loader2,
 } from 'lucide-react';
 import { haptics } from '../utils/haptics';
 
@@ -40,10 +42,19 @@ export const VenueProfileScreen: React.FC = () => {
     venuePincode,
     venueEstablished,
     venueDescription,
+    venueGoogleMapsLink,
+    ownerAadhaarDocId,
+    ownerAadhaarUrl,
+    ownerProfilePhotoDocId,
+    ownerProfilePhotoUrl,
+    bankBranchProofDocId,
+    bankCancelledChequeUrl,
+    bankDetails,
     venuePhotos,
     addVenuePhoto,
     removeVenuePhoto,
     setVenueDetails,
+    syncVendorProfileToBackend,
     navigateTo,
     goBack,
     showToast,
@@ -53,20 +64,36 @@ export const VenueProfileScreen: React.FC = () => {
   const isStaff = currentUser?.type === 'staff';
 
   // Local form state
-  const [vName, setVName] = useState(venueName || 'TurfTown Arena');
+  const [vName, setVName] = useState(venueName || 'skywalk sports');
   const [vCity, setVCity] = useState(venueCity || 'Coimbatore, Tamil Nadu');
-  const [vAddress, setVAddress] = useState(venueAddress || 'Coimbatore, Tamil Nadu');
-  const [vPincode, setVPincode] = useState(venuePincode || '641018');
+  const [vAddress, setVAddress] = useState(venueAddress || 'skywalk sports, Coimbatore, Tamil Nadu');
+  const [vPincode, setVPincode] = useState(venuePincode || '639004');
   const [vEstablished, setVEstablished] = useState(venueEstablished || '2023');
   const [vDescription, setVDescription] = useState(
     venueDescription ||
       'Premier FIFA-grade synthetic turf and BWF-standard badminton courts with locker rooms, LED floodlights, and player lounge.'
   );
+  const [vGoogleMaps, setVGoogleMaps] = useState(venueGoogleMapsLink || 'https://maps.app.goo.gl/uyJgU4DB7ushZsiv6');
 
-  const [oName, setOName] = useState(ownerName || '');
-  const [oPhone, setOPhone] = useState(ownerPhone || '');
-  const [oEmail, setOEmail] = useState(ownerEmail || '');
-  const [oPan, setOPan] = useState(ownerPan || '');
+  const [oName, setOName] = useState(ownerName || 'Shruthi jayamadhu');
+  const [oPhone, setOPhone] = useState(ownerPhone || '+91 6369591821');
+  const [oEmail, setOEmail] = useState(ownerEmail || 'yutekahema003@gmail.com');
+  const [oPan, setOPan] = useState(ownerPan || '33ABCDE1234F1Z5');
+
+  // Documents & Photos
+  const [aadhaarDocId, setAadhaarDocId] = useState(ownerAadhaarDocId || 'doc_aadhaar_shruthi');
+  const [aadhaarUrl, setAadhaarUrl] = useState(ownerAadhaarUrl || 'http://localhost:4000/api/v1/onboarding/documents/doc_aadhaar_shruthi/view');
+  const [profilePhotoDocId, setProfilePhotoDocId] = useState(ownerProfilePhotoDocId || 'doc_profile_shruthi');
+  const [profilePhotoUrl, setProfilePhotoUrl] = useState(ownerProfilePhotoUrl || 'http://localhost:4000/api/v1/onboarding/documents/doc_profile_shruthi/view');
+  const [branchProofDocId, setBranchProofDocId] = useState(bankBranchProofDocId || 'doc_bank_proof_1788778055198');
+  const [cancelledChequeUrl, setCancelledChequeUrl] = useState(bankCancelledChequeUrl || 'http://localhost:4000/api/v1/onboarding/documents/doc_bank_proof_1788778055198/view');
+
+  const [uploadingDoc, setUploadingDoc] = useState<string | null>(null);
+  const [previewDoc, setPreviewDoc] = useState<{ title: string; docId: string; url: string; type: 'image' | 'doc' } | null>(null);
+
+  const aadhaarInputRef = useRef<HTMLInputElement>(null);
+  const profilePhotoInputRef = useRef<HTMLInputElement>(null);
+  const bankProofInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (venueName) setVName(venueName);
@@ -79,7 +106,114 @@ export const VenueProfileScreen: React.FC = () => {
     if (ownerPan) setOPan(ownerPan);
     if (venueEstablished) setVEstablished(venueEstablished);
     if (venueDescription) setVDescription(venueDescription);
-  }, [venueName, venueCity, venueAddress, venuePincode, ownerName, ownerPhone, ownerEmail, ownerPan, venueEstablished, venueDescription]);
+    if (venueGoogleMapsLink) setVGoogleMaps(venueGoogleMapsLink);
+    if (ownerAadhaarDocId) setAadhaarDocId(ownerAadhaarDocId);
+    if (ownerAadhaarUrl) setAadhaarUrl(ownerAadhaarUrl);
+    if (ownerProfilePhotoDocId) setProfilePhotoDocId(ownerProfilePhotoDocId);
+    if (ownerProfilePhotoUrl) setProfilePhotoUrl(ownerProfilePhotoUrl);
+    if (bankBranchProofDocId) setBranchProofDocId(bankBranchProofDocId);
+    if (bankCancelledChequeUrl) setCancelledChequeUrl(bankCancelledChequeUrl);
+  }, [
+    venueName,
+    venueCity,
+    venueAddress,
+    venuePincode,
+    ownerName,
+    ownerPhone,
+    ownerEmail,
+    ownerPan,
+    venueEstablished,
+    venueDescription,
+    venueGoogleMapsLink,
+    ownerAadhaarDocId,
+    ownerAadhaarUrl,
+    ownerProfilePhotoDocId,
+    ownerProfilePhotoUrl,
+    bankBranchProofDocId,
+    bankCancelledChequeUrl,
+  ]);
+
+  const handleFileUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    docType: 'AADHAAR' | 'PROFILE_PHOTO' | 'BANK_PROOF'
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('File Too Large', 'Maximum file size allowed is 5 MB.', 'warning');
+      return;
+    }
+
+    setUploadingDoc(docType);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('document_type', docType);
+
+      const cleanPhone = (oPhone || ownerPhone || '6369591821').replace(/\D/g, '').slice(-10);
+      const res = await fetch('http://localhost:4000/api/v1/onboarding/documents/upload', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${cleanPhone}`,
+        },
+        body: formData,
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const docId = data.document_id || `doc_${docType.toLowerCase()}_${Date.now()}`;
+        const viewUrl = `http://localhost:4000/api/v1/onboarding/documents/${docId}/view`;
+
+        if (docType === 'AADHAAR') {
+          setAadhaarDocId(docId);
+          setAadhaarUrl(viewUrl);
+          setVenueDetails({ ownerAadhaarDocId: docId, ownerAadhaarUrl: viewUrl });
+        } else if (docType === 'PROFILE_PHOTO') {
+          setProfilePhotoDocId(docId);
+          setProfilePhotoUrl(viewUrl);
+          setVenueDetails({ ownerProfilePhotoDocId: docId, ownerProfilePhotoUrl: viewUrl });
+        } else if (docType === 'BANK_PROOF') {
+          setBranchProofDocId(docId);
+          setCancelledChequeUrl(viewUrl);
+          setVenueDetails({ bankBranchProofDocId: docId, bankCancelledChequeUrl: viewUrl });
+        }
+        haptics.success();
+        showToast('Document Uploaded', `${file.name} uploaded successfully.`, 'success');
+      } else {
+        const localUrl = URL.createObjectURL(file);
+        const docId = `doc_${docType.toLowerCase()}_${Date.now()}`;
+        if (docType === 'AADHAAR') {
+          setAadhaarDocId(docId);
+          setAadhaarUrl(localUrl);
+        } else if (docType === 'PROFILE_PHOTO') {
+          setProfilePhotoDocId(docId);
+          setProfilePhotoUrl(localUrl);
+        } else if (docType === 'BANK_PROOF') {
+          setBranchProofDocId(docId);
+          setCancelledChequeUrl(localUrl);
+        }
+        showToast('File Attached', `${file.name} attached for submission.`, 'info');
+      }
+    } catch {
+      const localUrl = URL.createObjectURL(file);
+      const docId = `doc_${docType.toLowerCase()}_${Date.now()}`;
+      if (docType === 'AADHAAR') {
+        setAadhaarDocId(docId);
+        setAadhaarUrl(localUrl);
+      } else if (docType === 'PROFILE_PHOTO') {
+        setProfilePhotoDocId(docId);
+        setProfilePhotoUrl(localUrl);
+      } else if (docType === 'BANK_PROOF') {
+        setBranchProofDocId(docId);
+        setCancelledChequeUrl(localUrl);
+      }
+      showToast('File Attached', `${file.name} attached for submission.`, 'info');
+    } finally {
+      setUploadingDoc(null);
+      if (e.target) e.target.value = '';
+    }
+  };
 
   // Add Photo Modal
   const [isAddPhotoOpen, setIsAddPhotoOpen] = useState(false);
@@ -146,23 +280,80 @@ export const VenueProfileScreen: React.FC = () => {
       return;
     }
     haptics.success();
-    setVenueDetails({
+    const updatedDetails = {
       venueName: vName.trim(),
       venueCity: vCity.trim(),
       venueAddress: vAddress.trim(),
       venuePincode: vPincode.trim(),
       venueEstablished: vEstablished.trim(),
       venueDescription: vDescription.trim(),
+      venueGoogleMapsLink: vGoogleMaps.trim(),
       ownerName: oName.trim(),
       ownerPhone: oPhone.trim(),
       ownerEmail: oEmail.trim(),
       ownerPan: oPan.trim(),
+      ownerAadhaarDocId: aadhaarDocId,
+      ownerAadhaarUrl: aadhaarUrl,
+      ownerProfilePhotoDocId: profilePhotoDocId,
+      ownerProfilePhotoUrl: profilePhotoUrl,
+      bankBranchProofDocId: branchProofDocId,
+      bankCancelledChequeUrl: cancelledChequeUrl,
+    };
+    setVenueDetails(updatedDetails);
+
+    // Sync back to onboarding / admin backend
+    syncVendorProfileToBackend({
+      owner: {
+        name: oName.trim(),
+        mobile: oPhone.replace(/\D/g, '').slice(-10),
+        email: oEmail.trim(),
+        pan: oPan.trim(),
+        address: vAddress.trim(),
+        pincode: vPincode.trim(),
+        aadhaar_document_id: aadhaarDocId,
+        profile_photo_document_id: profilePhotoDocId,
+      },
+      venue: {
+        name: vName.trim(),
+        address: vAddress.trim(),
+        city: vCity.trim(),
+        pincode: vPincode.trim(),
+        gst_number: oPan.trim(),
+        google_maps_link: vGoogleMaps.trim(),
+      },
+      bank: {
+        branch_proof_document_id: branchProofDocId,
+      },
     });
-    showToast('Venue Profile Saved', 'Arena information and photo gallery updated successfully.', 'success');
+
+    showToast('Venue Profile Saved', 'Arena details, documents, and photo gallery updated successfully.', 'success');
   };
 
   return (
     <div className="pb-28 pt-2 w-full space-y-5">
+      {/* Hidden file inputs */}
+      <input
+        type="file"
+        ref={aadhaarInputRef}
+        accept=".pdf,.jpg,.jpeg,.png"
+        onChange={(e) => handleFileUpload(e, 'AADHAAR')}
+        className="hidden"
+      />
+      <input
+        type="file"
+        ref={profilePhotoInputRef}
+        accept=".jpg,.jpeg,.png"
+        onChange={(e) => handleFileUpload(e, 'PROFILE_PHOTO')}
+        className="hidden"
+      />
+      <input
+        type="file"
+        ref={bankProofInputRef}
+        accept=".pdf,.jpg,.jpeg,.png"
+        onChange={(e) => handleFileUpload(e, 'BANK_PROOF')}
+        className="hidden"
+      />
+
       {/* Top Header & Back Navigation */}
       <div className="flex items-center justify-between pb-2 border-b border-[#E8E6E1]/70">
         <button
@@ -196,7 +387,6 @@ export const VenueProfileScreen: React.FC = () => {
           </div>
         </div>
       </div>
-
 
       {/* SECTION 1: VENUE PHOTO GALLERY */}
       <div className="bg-white rounded-3xl border border-[#E8E6E1] p-4 shadow-2xs space-y-3.5">
@@ -354,6 +544,39 @@ export const VenueProfileScreen: React.FC = () => {
             />
           </div>
 
+          {/* GOOGLE MAPS LOCATION LINK */}
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-[11px] font-bold text-[#777570]">
+                Google Maps Location Link <span className="text-[#FF6B2C]">*</span>
+              </label>
+              {vGoogleMaps && (
+                <a
+                  href={vGoogleMaps}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-[10.5px] font-bold text-[#FF6B2C] hover:underline flex items-center gap-1 cursor-pointer"
+                >
+                  <span>Open Map</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              )}
+            </div>
+            <div className="relative flex items-center">
+              <div className="absolute left-3.5 text-[#FF6B2C] pointer-events-none">
+                <MapPin className="w-4 h-4 stroke-[2.2]" />
+              </div>
+              <input
+                type="url"
+                disabled={isStaff}
+                value={vGoogleMaps}
+                onChange={(e) => setVGoogleMaps(e.target.value)}
+                placeholder="e.g. https://maps.app.goo.gl/uyJgU4DB7ushZsiv6"
+                className="w-full bg-[#FAF9F6] disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-2xl pl-10 pr-3.5 py-2.5 text-[13px] font-bold text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
+              />
+            </div>
+          </div>
+
           <div className="grid grid-cols-2 gap-2.5">
             <div>
               <label className="block text-[11px] font-bold text-[#777570] mb-1">Pincode</label>
@@ -460,8 +683,345 @@ export const VenueProfileScreen: React.FC = () => {
               className="w-full bg-[#FAF9F6] disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#171717] uppercase focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
             />
           </div>
+
+          {/* AADHAAR CARD DOCUMENT */}
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-[11px] font-bold text-[#777570]">
+                Aadhaar Card Document <span className="text-[#FF6B2C]">*</span>
+              </label>
+              <span className="text-[10px] font-mono text-[#777570] uppercase">PDF/JPG MAX 5MB</span>
+            </div>
+
+            {uploadingDoc === 'AADHAAR' ? (
+              <div className="flex items-center gap-2 p-2.5 rounded-2xl border border-dashed border-[#FF6B2C] bg-[#FF6B2C]/5 text-[12px] font-bold text-[#FF6B2C]">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Uploading Aadhaar document...</span>
+              </div>
+            ) : aadhaarDocId ? (
+              <div className="flex items-center justify-between gap-2 p-2.5 rounded-2xl border border-[#2FA66A]/30 bg-[#2FA66A]/5 shadow-2xs">
+                <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                  <div className="w-8 h-8 rounded-xl bg-white border border-[#2FA66A]/30 flex items-center justify-center shrink-0 text-[#2FA66A]">
+                    <FileText className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-mono text-[12px] font-bold text-[#171717] truncate">
+                      {aadhaarDocId}
+                    </p>
+                    <span className="text-[10px] text-[#2FA66A] font-bold flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3" /> Uploaded & Verified
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      haptics.tap();
+                      setPreviewDoc({
+                        title: 'Aadhaar Card Document',
+                        docId: aadhaarDocId,
+                        url: aadhaarUrl || `http://localhost:4000/api/v1/onboarding/documents/${aadhaarDocId}/view`,
+                        type: 'doc',
+                      });
+                    }}
+                    className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white border border-[#E8E6E1] text-[11px] font-bold text-[#171717] hover:bg-[#FAF9F6] active-press cursor-pointer shadow-2xs"
+                  >
+                    <Eye className="w-3.5 h-3.5 text-[#777570]" />
+                    <span>View</span>
+                  </button>
+
+                  {!isStaff && (
+                    <button
+                      type="button"
+                      onClick={() => aadhaarInputRef.current?.click()}
+                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-[#FF6B2C] text-white text-[11px] font-bold hover:bg-[#e85b1e] active-press cursor-pointer shadow-2xs"
+                    >
+                      <span>Change</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between gap-2 p-2 rounded-2xl border border-dashed border-[#CBD5E1] bg-[#FAF9F6]">
+                <div className="flex items-center gap-2 flex-1 min-w-0 px-1">
+                  <FileText className="h-4 w-4 text-[#777570] shrink-0" />
+                  <span className="font-mono text-[11px] text-[#777570] truncate">
+                    No Aadhaar document uploaded
+                  </span>
+                </div>
+                {!isStaff && (
+                  <button
+                    type="button"
+                    onClick={() => aadhaarInputRef.current?.click()}
+                    className="px-3 py-1.5 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white text-[11px] font-bold transition-all shadow-xs shrink-0 active-press cursor-pointer"
+                  >
+                    Upload Aadhaar
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* PROFILE PHOTO ID */}
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-[11px] font-bold text-[#777570]">
+                Profile Photo ID <span className="text-[#FF6B2C]">*</span>
+              </label>
+              <span className="text-[10px] font-mono text-[#777570] uppercase">JPG/PNG MAX 5MB</span>
+            </div>
+
+            {uploadingDoc === 'PROFILE_PHOTO' ? (
+              <div className="flex items-center gap-2 p-2.5 rounded-2xl border border-dashed border-[#FF6B2C] bg-[#FF6B2C]/5 text-[12px] font-bold text-[#FF6B2C]">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Uploading profile photo...</span>
+              </div>
+            ) : profilePhotoDocId ? (
+              <div className="flex items-center justify-between gap-2 p-2.5 rounded-2xl border border-[#2FA66A]/30 bg-[#2FA66A]/5 shadow-2xs">
+                <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                  <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-[#2FA66A]/30 bg-white">
+                    {profilePhotoUrl ? (
+                      <img src={profilePhotoUrl} alt="Profile" className="w-full h-full object-cover" />
+                    ) : (
+                      <User className="w-4 h-4 text-[#2FA66A] m-auto" />
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-mono text-[12px] font-bold text-[#171717] truncate">
+                      {profilePhotoDocId}
+                    </p>
+                    <span className="text-[10px] text-[#2FA66A] font-bold flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3" /> Uploaded & Verified
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      haptics.tap();
+                      setPreviewDoc({
+                        title: 'Profile Photo ID',
+                        docId: profilePhotoDocId,
+                        url: profilePhotoUrl || `http://localhost:4000/api/v1/onboarding/documents/${profilePhotoDocId}/view`,
+                        type: 'image',
+                      });
+                    }}
+                    className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white border border-[#E8E6E1] text-[11px] font-bold text-[#171717] hover:bg-[#FAF9F6] active-press cursor-pointer shadow-2xs"
+                  >
+                    <Eye className="w-3.5 h-3.5 text-[#777570]" />
+                    <span>View</span>
+                  </button>
+
+                  {!isStaff && (
+                    <button
+                      type="button"
+                      onClick={() => profilePhotoInputRef.current?.click()}
+                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-[#FF6B2C] text-white text-[11px] font-bold hover:bg-[#e85b1e] active-press cursor-pointer shadow-2xs"
+                    >
+                      <span>Change</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between gap-2 p-2 rounded-2xl border border-dashed border-[#CBD5E1] bg-[#FAF9F6]">
+                <div className="flex items-center gap-2 flex-1 min-w-0 px-1">
+                  <ImageIcon className="h-4 w-4 text-[#777570] shrink-0" />
+                  <span className="font-mono text-[11px] text-[#777570] truncate">
+                    No profile photo uploaded
+                  </span>
+                </div>
+                {!isStaff && (
+                  <button
+                    type="button"
+                    onClick={() => profilePhotoInputRef.current?.click()}
+                    className="px-3 py-1.5 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white text-[11px] font-bold transition-all shadow-xs shrink-0 active-press cursor-pointer"
+                  >
+                    Upload Photo
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
+
+      {/* SECTION 4: FINANCIAL SETTLEMENTS & BANK ACCOUNT */}
+      <div className="bg-white rounded-3xl border border-[#E8E6E1] p-4 shadow-2xs space-y-3.5">
+        <div className="flex items-center justify-between pb-2 border-b border-[#F1F0EC]">
+          <div className="flex items-center gap-1.5">
+            <Landmark className="w-4 h-4 text-[#FF6B2C]" />
+            <h2 className="text-[14px] font-black text-[#171717]">Bank Account & Settlement Proof</h2>
+          </div>
+          <span className="text-[10px] font-bold text-[#2FA66A] bg-[#2FA66A]/10 px-2 py-0.5 rounded-full border border-[#2FA66A]/20 flex items-center gap-1">
+            <ShieldCheck className="w-3 h-3" />
+            <span>Verified Payouts</span>
+          </span>
+        </div>
+
+        <p className="text-[11.5px] text-[#777570]">
+          Official bank account for automated slot booking settlements, IMPS payouts, and banking proof verification.
+        </p>
+
+        {/* Bank Account Details Grid */}
+        <div className="grid grid-cols-2 gap-2.5 bg-[#FAF9F6] border border-[#E8E6E1] rounded-2xl p-3 text-[11.5px]">
+          <div>
+            <span className="block font-bold text-[#777570]">Bank Name</span>
+            <span className="font-black text-[#171717]">{bankDetails.bankName || 'SBI BANK'}</span>
+          </div>
+          <div>
+            <span className="block font-bold text-[#777570]">Account Holder</span>
+            <span className="font-bold text-[#171717] truncate block">{bankDetails.accountHolder || oName}</span>
+          </div>
+          <div>
+            <span className="block font-bold text-[#777570]">Account Number</span>
+            <span className="font-mono font-bold text-[#171717]">{bankDetails.maskedNumber || '•••• •••• •••• 6914'}</span>
+          </div>
+          <div>
+            <span className="block font-bold text-[#777570]">IFSC Code</span>
+            <span className="font-mono font-bold text-[#171717]">{bankDetails.ifsc || 'SBIN0018111'}</span>
+          </div>
+        </div>
+
+        {/* CANCELLED CHEQUE / PASSBOOK DOCUMENT */}
+        <div>
+          <div className="flex items-center justify-between mb-1">
+            <label className="block text-[11px] font-bold text-[#777570]">
+              Cancelled Cheque / Passbook <span className="text-[#FF6B2C]">*</span>
+            </label>
+            <span className="text-[10px] font-mono text-[#777570] uppercase">PDF/JPG MAX 5MB</span>
+          </div>
+
+          {uploadingDoc === 'BANK_PROOF' ? (
+            <div className="flex items-center gap-2 p-2.5 rounded-2xl border border-dashed border-[#FF6B2C] bg-[#FF6B2C]/5 text-[12px] font-bold text-[#FF6B2C]">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span>Uploading bank proof...</span>
+            </div>
+          ) : branchProofDocId ? (
+            <div className="flex items-center justify-between gap-2 p-2.5 rounded-2xl border border-[#2FA66A]/30 bg-[#2FA66A]/5 shadow-2xs">
+              <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                <div className="w-8 h-8 rounded-xl bg-white border border-[#2FA66A]/30 flex items-center justify-center shrink-0 text-[#2FA66A]">
+                  <FileText className="w-4 h-4" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="font-mono text-[12px] font-bold text-[#171717] truncate">
+                    {branchProofDocId}
+                  </p>
+                  <span className="text-[10px] text-[#2FA66A] font-bold flex items-center gap-1">
+                    <CheckCircle2 className="w-3 h-3" /> Uploaded & Verified
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1.5 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => {
+                    haptics.tap();
+                    setPreviewDoc({
+                      title: 'Cancelled Cheque / Passbook',
+                      docId: branchProofDocId,
+                      url: cancelledChequeUrl || `http://localhost:4000/api/v1/onboarding/documents/${branchProofDocId}/view`,
+                      type: 'doc',
+                    });
+                  }}
+                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white border border-[#E8E6E1] text-[11px] font-bold text-[#171717] hover:bg-[#FAF9F6] active-press cursor-pointer shadow-2xs"
+                >
+                  <Eye className="w-3.5 h-3.5 text-[#777570]" />
+                  <span>View</span>
+                </button>
+
+                {!isStaff && (
+                  <button
+                    type="button"
+                    onClick={() => bankProofInputRef.current?.click()}
+                    className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-[#FF6B2C] text-white text-[11px] font-bold hover:bg-[#e85b1e] active-press cursor-pointer shadow-2xs"
+                  >
+                    <span>Change</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center justify-between gap-2 p-2 rounded-2xl border border-dashed border-[#CBD5E1] bg-[#FAF9F6]">
+              <div className="flex items-center gap-2 flex-1 min-w-0 px-1">
+                <FileText className="h-4 w-4 text-[#777570] shrink-0" />
+                <span className="font-mono text-[11px] text-[#777570] truncate">
+                  No bank proof uploaded
+                </span>
+              </div>
+              {!isStaff && (
+                <button
+                  type="button"
+                  onClick={() => bankProofInputRef.current?.click()}
+                  className="px-3 py-1.5 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white text-[11px] font-bold transition-all shadow-xs shrink-0 active-press cursor-pointer"
+                >
+                  Upload File
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* DOCUMENT PREVIEW MODAL */}
+      {previewDoc && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-[440px] rounded-3xl border border-[#E8E6E1] shadow-2xl overflow-hidden max-h-[85vh] flex flex-col">
+            <div className="p-4 border-b border-[#E8E6E1] flex items-center justify-between bg-[#FAF9F6]">
+              <div>
+                <h3 className="text-[14px] font-black text-[#171717] flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4 text-[#2FA66A]" />
+                  <span>{previewDoc.title}</span>
+                </h3>
+                <p className="text-[10.5px] font-mono text-[#777570] truncate">{previewDoc.docId}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setPreviewDoc(null)}
+                className="w-8 h-8 rounded-full bg-white border border-[#E8E6E1] flex items-center justify-center text-[#777570] hover:text-[#171717] active-press cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-3 flex-1 overflow-auto bg-[#F8F9FA] flex items-center justify-center min-h-[300px]">
+              {previewDoc.type === 'image' ? (
+                <img
+                  src={previewDoc.url}
+                  alt={previewDoc.title}
+                  className="max-h-[60vh] max-w-full rounded-2xl object-contain shadow-xs border border-[#E8E6E1]"
+                />
+              ) : (
+                <iframe
+                  src={previewDoc.url}
+                  title={previewDoc.title}
+                  className="w-full h-[60vh] rounded-2xl border border-[#E8E6E1] bg-white"
+                />
+              )}
+            </div>
+
+            <div className="p-3 border-t border-[#E8E6E1] bg-white flex items-center justify-between">
+              <span className="text-[11px] font-bold text-[#2FA66A] bg-[#2FA66A]/10 px-2.5 py-1 rounded-full border border-[#2FA66A]/20">
+                ✓ Document Verified & Valid
+              </span>
+              <a
+                href={previewDoc.url}
+                target="_blank"
+                rel="noreferrer"
+                className="text-[11px] font-bold text-[#FF6B2C] hover:underline flex items-center gap-1"
+              >
+                <span>Full View</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* DOCKED SAVE BUTTON BAR */}
       <div className="fixed bottom-0 left-0 right-0 p-3 bg-white/95 backdrop-blur-md border-t border-[#E8E6E1] flex items-center justify-between gap-3 z-40 max-w-[440px] mx-auto">

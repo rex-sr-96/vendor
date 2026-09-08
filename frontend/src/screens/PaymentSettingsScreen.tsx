@@ -11,12 +11,26 @@ import {
   ChevronLeft,
   BadgeCheck,
   Pencil,
+  FileText,
+  Eye,
 } from 'lucide-react';
 import { haptics } from '../utils/haptics';
 import { motion, AnimatePresence } from 'motion/react';
 
 export const PaymentSettingsScreen: React.FC = () => {
-  const { paymentSettings, updatePaymentSettings, goBack, showToast, venueName, ownerName, ownerPhone, ownerEmail, navigateTo } = useApp();
+  const {
+    paymentSettings,
+    updatePaymentSettings,
+    goBack,
+    showToast,
+    venueName,
+    ownerName,
+    ownerPhone,
+    ownerEmail,
+    navigateTo,
+    bankBranchProofDocId,
+    bankCancelledChequeUrl,
+  } = useApp();
 
   // ── Change Bank modal ──────────────────────────────────────────────────────
   const [showBankModal, setShowBankModal] = useState(false);
@@ -135,6 +149,30 @@ export const PaymentSettingsScreen: React.FC = () => {
                 <span className="block font-bold text-[#A3A099]">Account Type</span>
                 <span className="font-bold text-white">Current Commercial</span>
               </div>
+            </div>
+
+            {/* Cancelled Cheque / Passbook Proof */}
+            <div className="flex items-center justify-between p-2.5 rounded-2xl bg-white/6 border border-white/10 text-[11.5px]">
+              <div className="flex items-center gap-2 min-w-0 flex-1">
+                <div className="w-7 h-7 rounded-xl bg-white/10 flex items-center justify-center text-[#2FA66A] shrink-0">
+                  <FileText className="w-3.5 h-3.5" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <span className="block font-bold text-[#A3A099] text-[9.5px] uppercase">Cancelled Cheque / Passbook</span>
+                  <span className="font-mono text-white text-[11.5px] font-bold truncate block">
+                    {bankBranchProofDocId || 'doc_bank_proof_1788778055198'}
+                  </span>
+                </div>
+              </div>
+              <a
+                href={bankCancelledChequeUrl || `http://localhost:4000/api/v1/onboarding/documents/${bankBranchProofDocId || 'doc_bank_proof_1788778055198'}/view`}
+                target="_blank"
+                rel="noreferrer"
+                className="px-2.5 py-1 rounded-xl bg-white/10 hover:bg-white/20 text-white text-[11px] font-bold flex items-center gap-1 cursor-pointer shrink-0 transition-colors"
+              >
+                <Eye className="w-3 h-3 text-[#A3A099]" />
+                <span>View</span>
+              </a>
             </div>
 
             <div className="flex items-center justify-between pt-3 border-t border-white/10">

@@ -216,6 +216,20 @@ interface AppContextType {
   venuePincode: string;
   venueEstablished: string;
   venueDescription: string;
+  venueGoogleMapsLink: string;
+  setVenueGoogleMapsLink: React.Dispatch<React.SetStateAction<string>>;
+  ownerAadhaarDocId: string;
+  setOwnerAadhaarDocId: React.Dispatch<React.SetStateAction<string>>;
+  ownerAadhaarUrl: string;
+  setOwnerAadhaarUrl: React.Dispatch<React.SetStateAction<string>>;
+  ownerProfilePhotoDocId: string;
+  setOwnerProfilePhotoDocId: React.Dispatch<React.SetStateAction<string>>;
+  ownerProfilePhotoUrl: string;
+  setOwnerProfilePhotoUrl: React.Dispatch<React.SetStateAction<string>>;
+  bankBranchProofDocId: string;
+  setBankBranchProofDocId: React.Dispatch<React.SetStateAction<string>>;
+  bankCancelledChequeUrl: string;
+  setBankCancelledChequeUrl: React.Dispatch<React.SetStateAction<string>>;
   venuePhotos: { id: string; url: string; label: string }[];
   addVenuePhoto: (photo: { url: string; label: string }) => void;
   removeVenuePhoto: (id: string) => void;
@@ -235,6 +249,13 @@ interface AppContextType {
     venuePincode?: string;
     venueEstablished?: string;
     venueDescription?: string;
+    venueGoogleMapsLink?: string;
+    ownerAadhaarDocId?: string;
+    ownerAadhaarUrl?: string;
+    ownerProfilePhotoDocId?: string;
+    ownerProfilePhotoUrl?: string;
+    bankBranchProofDocId?: string;
+    bankCancelledChequeUrl?: string;
   }) => void;
 
   // Onboarding Data Bridge & Bank Details
@@ -542,6 +563,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [venueDescription, setVenueDescription] = useState<string>(
     'Premier FIFA-grade synthetic turf and BWF-standard badminton courts with locker rooms, LED floodlights, and player lounge.'
   );
+  const [venueGoogleMapsLink, setVenueGoogleMapsLink] = useState<string>('https://maps.app.goo.gl/uyJgU4DB7ushZsiv6');
+  const [ownerAadhaarDocId, setOwnerAadhaarDocId] = useState<string>('doc_aadhaar_shruthi');
+  const [ownerAadhaarUrl, setOwnerAadhaarUrl] = useState<string>('http://localhost:4000/api/v1/onboarding/documents/doc_aadhaar_shruthi/view');
+  const [ownerProfilePhotoDocId, setOwnerProfilePhotoDocId] = useState<string>('doc_profile_shruthi');
+  const [ownerProfilePhotoUrl, setOwnerProfilePhotoUrl] = useState<string>('http://localhost:4000/api/v1/onboarding/documents/doc_profile_shruthi/view');
+  const [bankBranchProofDocId, setBankBranchProofDocId] = useState<string>('doc_bank_proof_1788778055198');
+  const [bankCancelledChequeUrl, setBankCancelledChequeUrl] = useState<string>('http://localhost:4000/api/v1/onboarding/documents/doc_bank_proof_1788778055198/view');
 
   // Bank details state
   const [bankDetails, setBankDetails] = useState<BankDetails>({
@@ -1846,6 +1874,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     venuePincode?: string;
     venueEstablished?: string;
     venueDescription?: string;
+    venueGoogleMapsLink?: string;
+    ownerAadhaarDocId?: string;
+    ownerAadhaarUrl?: string;
+    ownerProfilePhotoDocId?: string;
+    ownerProfilePhotoUrl?: string;
+    bankBranchProofDocId?: string;
+    bankCancelledChequeUrl?: string;
   }) => {
     if (currentUser?.type === 'staff') {
       showToast('View Only Mode', 'Only the venue owner can modify venue profile settings.', 'info');
@@ -1863,6 +1898,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     if (details.venuePincode) setVenuePincode(details.venuePincode);
     if (details.venueEstablished) setVenueEstablished(details.venueEstablished);
     if (details.venueDescription) setVenueDescription(details.venueDescription);
+    if (details.venueGoogleMapsLink !== undefined) setVenueGoogleMapsLink(details.venueGoogleMapsLink);
+    if (details.ownerAadhaarDocId !== undefined) setOwnerAadhaarDocId(details.ownerAadhaarDocId);
+    if (details.ownerAadhaarUrl !== undefined) setOwnerAadhaarUrl(details.ownerAadhaarUrl);
+    if (details.ownerProfilePhotoDocId !== undefined) setOwnerProfilePhotoDocId(details.ownerProfilePhotoDocId);
+    if (details.ownerProfilePhotoUrl !== undefined) setOwnerProfilePhotoUrl(details.ownerProfilePhotoUrl);
+    if (details.bankBranchProofDocId !== undefined) setBankBranchProofDocId(details.bankBranchProofDocId);
+    if (details.bankCancelledChequeUrl !== undefined) setBankCancelledChequeUrl(details.bankCancelledChequeUrl);
   };
 
   const updateBankDetails = (details: Partial<BankDetails>) => {
@@ -1922,6 +1964,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
           if (data.owner.email) setOwnerEmail(data.owner.email);
           if (data.owner.pan) setOwnerPan(data.owner.pan);
           if (data.owner.pincode) setVenuePincode(data.owner.pincode);
+          if (data.owner.aadhaar_document_id) setOwnerAadhaarDocId(data.owner.aadhaar_document_id);
+          if (data.owner.aadhaar_document_url) setOwnerAadhaarUrl(data.owner.aadhaar_document_url);
+          if (data.owner.profile_photo_document_id) setOwnerProfilePhotoDocId(data.owner.profile_photo_document_id);
+          if (data.owner.profile_photo_url) setOwnerProfilePhotoUrl(data.owner.profile_photo_url);
         }
         if (data.venue) {
           if (data.venue.name) setVenueName(data.venue.name);
@@ -1929,6 +1975,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
           if (data.venue.city) setVenueCity(data.venue.city);
           if (data.venue.pincode) setVenuePincode(data.venue.pincode);
           if (data.venue.gst_number && !data.owner?.pan) setOwnerPan(data.venue.gst_number);
+          if (data.venue.google_maps_link) setVenueGoogleMapsLink(data.venue.google_maps_link);
         }
         if (data.bank) {
           const accNum = data.bank.account_number || '50200012345678';
@@ -1945,6 +1992,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             status: 'Verified & Active',
             branchName: data.bank.branch_name || 'Peelamedu',
           });
+          if (data.bank.branch_proof_document_id || data.bank.cancelled_cheque_document_id) {
+            setBankBranchProofDocId(data.bank.branch_proof_document_id || data.bank.cancelled_cheque_document_id);
+          }
+          if (data.bank.cancelled_cheque_url) {
+            setBankCancelledChequeUrl(data.bank.cancelled_cheque_url);
+          }
           setPaymentSettings((prev) => ({
             ...prev,
             bankName: data.bank.bank_name || prev.bankName,
@@ -2208,6 +2261,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
           pan: ownerPan,
           address: venueAddress,
           pincode: venuePincode,
+          aadhaar_document_id: ownerAadhaarDocId,
+          profile_photo_document_id: ownerProfilePhotoDocId,
         },
         venue: {
           name: venueName,
@@ -2215,6 +2270,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
           city: venueCity,
           pincode: venuePincode,
           gst_number: ownerPan,
+          google_maps_link: venueGoogleMapsLink,
         },
         bank: {
           bank_name: bankDetails.bankName,
@@ -2223,6 +2279,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
           ifsc_code: bankDetails.ifsc,
           branch_name: bankDetails.branchName,
           account_type: bankDetails.accountType.replace(/ commercial account/i, '').trim(),
+          branch_proof_document_id: bankBranchProofDocId,
         },
       };
 
@@ -2382,6 +2439,20 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         venuePincode,
         venueEstablished,
         venueDescription,
+        venueGoogleMapsLink,
+        setVenueGoogleMapsLink,
+        ownerAadhaarDocId,
+        setOwnerAadhaarDocId,
+        ownerAadhaarUrl,
+        setOwnerAadhaarUrl,
+        ownerProfilePhotoDocId,
+        setOwnerProfilePhotoDocId,
+        ownerProfilePhotoUrl,
+        setOwnerProfilePhotoUrl,
+        bankBranchProofDocId,
+        setBankBranchProofDocId,
+        bankCancelledChequeUrl,
+        setBankCancelledChequeUrl,
         venuePhotos,
         addVenuePhoto,
         removeVenuePhoto,
