@@ -49,15 +49,18 @@ import {
   Landmark,
   User,
   Pencil,
+  RotateCcw,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { haptics } from '../utils/haptics';
+import { CancellationRefundScreen } from './CancellationRefundScreen';
+import { CustomSelect } from '../components/CustomSelect';
 
 type SettingsTab =
   | 'general'
   | 'amenities'
   | 'operating_hours'
-  | 'booking_settings'
+  | 'cancellation'
   | 'payment_settings'
   | 'notifications'
   | 'privacy'
@@ -485,7 +488,7 @@ export const SettingsScreen: React.FC = () => {
     ...(!isStaff ? [{ id: 'payment_settings' as SettingsTab, label: 'Payment Settings', icon: Wallet, badge: bankChangeRequest?.pending ? 'Pending' : 'Bank Verified' }] : []),
     { id: 'amenities', label: 'Amenities', icon: Coffee, badge: `${activeAmenitiesCount} on` },
     { id: 'operating_hours', label: 'Operating Hours', icon: Clock, badge: 'Daily' },
-    { id: 'booking_settings', label: 'Booking Settings', icon: SlidersHorizontal },
+    { id: 'cancellation', label: 'Refund & Policies', icon: RotateCcw },
     { id: 'notifications', label: 'Notification Settings', icon: Bell, badge: 'On/Off' },
     { id: 'privacy', label: 'Privacy Policy', icon: Shield },
     { id: 'terms', label: 'Terms & Conditions', icon: FileText },
@@ -495,10 +498,10 @@ export const SettingsScreen: React.FC = () => {
     switch (iconName) {
       case 'SunMedium':
       case 'Zap':
-        return <SunMedium className="w-4 h-4 text-[#FF6B2C]" />;
+        return <SunMedium className="w-4 h-4 text-[#F94001]" />;
       case 'ShowerHead':
       case 'DoorOpen':
-        return <DoorOpen className="w-4 h-4 text-[#2FA66A]" />;
+        return <DoorOpen className="w-4 h-4 text-[#16A34A]" />;
       case 'Droplets':
         return <Droplets className="w-4 h-4 text-[#3B82F6]" />;
       case 'Car':
@@ -512,20 +515,20 @@ export const SettingsScreen: React.FC = () => {
       case 'Coffee':
         return <Coffee className="w-4 h-4 text-[#F59E0B]" />;
       default:
-        return <CheckCircle2 className="w-4 h-4 text-[#777570]" />;
+        return <CheckCircle2 className="w-4 h-4 text-[#5F6368]" />;
     }
   };
 
   return (
     <div className="pb-20 pt-1 w-full space-y-4 select-none">
       {/* Top Header */}
-      <div className="flex items-center justify-between pb-2 border-b border-[#E8E6E1]">
+      <div className="flex items-center justify-between pb-2 border-b border-[#E5E7EB]">
         <div>
-          <h1 className="text-[21px] font-black text-[#171717] tracking-tight">
+          <h1 className="text-[21px] font-black text-[#021526] tracking-tight">
             Settings & Operations
           </h1>
-          <p className="text-[12px] font-medium text-[#777570]">
-            Venue profile, verified bank accounts, amenities & booking rules
+          <p className="text-[12px] font-medium text-[#5F6368]">
+            Venue profile, verified bank accounts, amenities & refund policies
           </p>
         </div>
 
@@ -535,9 +538,9 @@ export const SettingsScreen: React.FC = () => {
               haptics.tap();
               navigateTo('courts');
             }}
-            className="h-8.5 px-3.5 rounded-xl bg-white border border-[#E8E6E1] text-[12px] font-bold text-[#171717] hover:bg-[#F7F7F5] active-press cursor-pointer flex items-center gap-1.5 shadow-2xs"
+            className="h-8.5 px-3.5 rounded-xl bg-white border border-[#E5E7EB] text-[12px] font-bold text-[#021526] hover:bg-[#F3F4F4] active-press cursor-pointer flex items-center gap-1.5 shadow-2xs"
           >
-            <Grid3X3 className="w-3.5 h-3.5 text-[#FF6B2C]" />
+            <Grid3X3 className="w-3.5 h-3.5 text-[#F94001]" />
             <span>Manage Courts</span>
           </button>
         </div>
@@ -548,14 +551,14 @@ export const SettingsScreen: React.FC = () => {
       {/* ========================================================================= */}
       <div className="block md:hidden space-y-3">
         {/* Venue Owner Mini Card */}
-        <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-2xs flex items-center justify-between">
+        <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-2xs flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#FF6B2C] text-white font-extrabold text-base flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-[#F94001] text-white font-extrabold text-base flex items-center justify-center">
               TT
             </div>
             <div>
-              <h2 className="text-[15px] font-bold text-[#171717]">{venueName}</h2>
-              <p className="text-[11px] text-[#777570]">{venueCity} · Owner: {oName}</p>
+              <h2 className="text-[15px] font-bold text-[#021526]">{venueName}</h2>
+              <p className="text-[11px] text-[#5F6368]">{venueCity} · Owner: {oName}</p>
             </div>
           </div>
           <button
@@ -563,7 +566,7 @@ export const SettingsScreen: React.FC = () => {
               haptics.tap();
               navigateTo('courts');
             }}
-            className="text-[11px] font-bold text-[#FF6B2C] bg-[#FF6B2C]/10 px-2.5 py-1 rounded-lg"
+            className="text-[11px] font-bold text-[#F94001] bg-[#F94001]/10 px-2.5 py-1 rounded-lg"
           >
             Courts
           </button>
@@ -576,7 +579,7 @@ export const SettingsScreen: React.FC = () => {
             ...(!isStaff ? [{ id: 'payment_settings', title: 'Payment & Bank Details', caption: 'HDFC verified payout · Change request form', icon: Wallet, screen: 'payment_settings' as const }] : []),
             { id: 'amenities', title: 'Amenities', caption: `${activeAmenitiesCount} active · Admin verified amenities`, icon: Coffee, screen: 'amenities' as const },
             { id: 'operating_hours', title: 'Operating Hours', caption: `${operatingHours.filter((d) => d.isOpen).length}/7 Days Open · Onboarding Schedule`, icon: Clock, screen: 'operating_hours' as const },
-            { id: 'booking_settings', title: 'Booking Settings', caption: 'Advance reservation & slot duration', icon: SlidersHorizontal, screen: 'booking_settings' as const },
+            { id: 'cancellation', title: 'Refund & Policies', caption: 'Court cancellation buffer, refunds & hold timers', icon: RotateCcw, screen: 'cancellation_settings' as const },
             { id: 'notifications', title: 'Notification Settings', caption: 'WhatsApp & SMS alerts on/off toggles', icon: Bell, screen: 'notification_settings' as const },
             { id: 'privacy', title: 'Privacy Policy', caption: 'Rich text data protection & compliance', icon: Shield, screen: 'privacy_policy' as const },
             { id: 'terms', title: 'Terms & Conditions', caption: 'Platform rules & rights', icon: FileText, screen: 'terms_conditions' as const },
@@ -592,18 +595,18 @@ export const SettingsScreen: React.FC = () => {
                   haptics.tap();
                   navigateTo(item.screen);
                 }}
-                className="p-3.5 bg-white rounded-2xl border border-[#E8E6E1] shadow-2xs flex items-center justify-between active-press cursor-pointer hover:bg-[#FAF9F6] transition-colors"
+                className="p-3.5 bg-white rounded-2xl border border-[#E5E7EB] shadow-2xs flex items-center justify-between active-press cursor-pointer hover:bg-[#F3F4F4] transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-[#FAF9F6] text-[#171717] flex items-center justify-center border border-[#E8E6E1]">
+                  <div className="w-8 h-8 rounded-xl bg-[#F3F4F4] text-[#021526] flex items-center justify-center border border-[#E5E7EB]">
                     <Icon className="w-4 h-4 stroke-[2]" />
                   </div>
                   <div>
-                    <h3 className="text-[13px] font-bold text-[#171717]">{item.title}</h3>
-                    <p className="text-[11px] text-[#777570]">{item.caption}</p>
+                    <h3 className="text-[13px] font-bold text-[#021526]">{item.title}</h3>
+                    <p className="text-[11px] text-[#5F6368]">{item.caption}</p>
                   </div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-[#777570]" />
+                <ChevronRight className="w-4 h-4 text-[#5F6368]" />
               </div>
             );
           })}
@@ -615,7 +618,7 @@ export const SettingsScreen: React.FC = () => {
             haptics.tap();
             setActiveModal('logout_confirm');
           }}
-          className="w-full py-2.5 bg-white text-[#D94B4B] border border-[#E8E6E1] rounded-2xl font-bold text-[12.5px] flex items-center justify-center gap-1.5 active-press cursor-pointer"
+          className="w-full py-2.5 bg-white text-[#DC2626] border border-[#E5E7EB] rounded-2xl font-bold text-[12.5px] flex items-center justify-center gap-1.5 active-press cursor-pointer"
         >
           <LogOut className="w-4 h-4" />
           <span>Switch Account / Sign Out</span>
@@ -626,21 +629,21 @@ export const SettingsScreen: React.FC = () => {
       {/* 2. DESKTOP VIEW (hidden md:flex): Nav-Based State-of-the-Art SaaS Layout */}
       {/* ========================================================================= */}
       <div className="hidden md:flex gap-5 items-start">
-        {/* Left Navigation Sidebar */}
-        <div className="w-64 shrink-0 space-y-2">
+        {/* Left Navigation Sidebar - Sticky */}
+        <div className="w-64 shrink-0 space-y-2 sticky top-20 self-start">
           {/* Venue Info Card */}
-          <div className="bg-white rounded-2xl p-3 border border-[#E8E6E1] shadow-2xs flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#FF6B2C] text-white font-extrabold text-sm flex items-center justify-center shrink-0">
+          <div className="bg-white rounded-2xl p-3 border border-[#E5E7EB] shadow-2xs flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-[#F94001] text-white font-extrabold text-sm flex items-center justify-center shrink-0">
               TT
             </div>
             <div className="min-w-0">
-              <h2 className="text-[13.5px] font-bold text-[#171717] truncate">{venueName}</h2>
-              <p className="text-[10.5px] text-[#777570] truncate">{venueCity} · Owner: {oName}</p>
+              <h2 className="text-[13.5px] font-bold text-[#021526] truncate">{venueName}</h2>
+              <p className="text-[10.5px] text-[#5F6368] truncate">{venueCity} · Owner: {oName}</p>
             </div>
           </div>
 
           {/* Navigation Tabs List (Staff & Cancellation REMOVED) */}
-          <div className="bg-white rounded-2xl p-2 border border-[#E8E6E1] shadow-2xs space-y-1">
+          <div className="bg-white rounded-2xl p-2 border border-[#E5E7EB] shadow-2xs space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -654,22 +657,22 @@ export const SettingsScreen: React.FC = () => {
                   }}
                   className={`w-full px-3 py-2 rounded-xl text-[12.5px] font-bold flex items-center justify-between transition-all cursor-pointer ${
                     isActive
-                      ? 'bg-[#171717] text-white shadow-xs'
-                      : 'text-[#55534E] hover:bg-[#FAF9F6] hover:text-[#171717]'
+                      ? 'bg-[#021526] text-white shadow-sm'
+                      : 'text-[#5F6368] hover:bg-[#F3F4F4] hover:text-[#021526]'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <Icon className={`w-4 h-4 ${isActive ? 'text-[#FF6B2C]' : 'text-[#777570]'}`} />
+                    <Icon className={`w-4 h-4 ${isActive ? 'text-[#F94001]' : 'text-[#5F6368]'}`} />
                     <span>{item.label}</span>
                   </div>
                   {item.badge && (
                     <span
                       className={`text-[9.5px] px-1.5 py-0.5 rounded-full font-bold ${
                         isActive
-                          ? 'bg-white/20 text-white'
+                          ? 'bg-[#F94001] text-white'
                           : item.badge === 'Pending'
-                          ? 'bg-[#E7A72F]/15 text-[#B87C0D]'
-                          : 'bg-[#FAF9F6] text-[#777570] border border-[#E8E6E1]'
+                          ? 'bg-[#F59E0B]/15 text-[#B87C0D]'
+                          : 'bg-[#F3F4F4] text-[#5F6368] border border-[#E5E7EB]'
                       }`}
                     >
                       {item.badge}
@@ -686,15 +689,15 @@ export const SettingsScreen: React.FC = () => {
               haptics.tap();
               setActiveModal('logout_confirm');
             }}
-            className="w-full py-2 bg-white text-[#D94B4B] hover:bg-[#D94B4B]/10 border border-[#E8E6E1] rounded-xl font-bold text-[11.5px] flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+            className="w-full py-2 bg-white text-[#DC2626] hover:bg-[#DC2626]/10 border border-[#E5E7EB] rounded-xl font-bold text-[11.5px] flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
           >
             <LogOut className="w-3.5 h-3.5" />
             <span>Sign Out</span>
           </button>
         </div>
 
-        {/* Right Active Content Panel */}
-        <div className="flex-1 min-w-0 bg-white rounded-2xl p-5 border border-[#E8E6E1] shadow-2xs">
+        {/* Right Active Content Panel - Independently Scrollable without visible scrollbar */}
+        <div className="flex-1 min-w-0 bg-white rounded-2xl p-5 border border-[#E5E7EB] shadow-2xs md:max-h-[calc(100vh-10.5rem)] md:overflow-y-auto no-scrollbar [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           {/* Hidden File Inputs for Document Verification Updates */}
           <input
             type="file"
@@ -723,23 +726,23 @@ export const SettingsScreen: React.FC = () => {
           {/* ===================================================================== */}
           {activeTab === 'general' && (
             <form onSubmit={handleSaveVenueProfile} className="space-y-6">
-              <div className="flex items-center justify-between pb-2 border-b border-[#F1F0EC]">
+              <div className="flex items-center justify-between pb-2 border-b border-[#F3F4F4]">
                 <div>
-                  <h3 className="text-[17px] font-black text-[#171717]">Venue & Owner Profile</h3>
-                  <p className="text-[11.5px] text-[#777570]">
+                  <h3 className="text-[17px] font-black text-[#021526]">Venue & Owner Profile</h3>
+                  <p className="text-[11.5px] text-[#5F6368]">
                     Verified owner credentials, business details & verified photo gallery
                   </p>
                 </div>
 
                 {isStaff ? (
-                  <div className="h-8.5 px-3.5 rounded-xl bg-[#F1F0EC] text-[#777570] font-bold text-[12px] flex items-center gap-1.5 border border-[#E8E6E1]">
+                  <div className="h-8.5 px-3.5 rounded-xl bg-[#F3F4F4] text-[#5F6368] font-bold text-[12px] flex items-center gap-1.5 border border-[#E5E7EB]">
                     <Lock className="w-3.5 h-3.5" />
                     <span>View Only (Staff)</span>
                   </div>
                 ) : (
                   <button
                     type="submit"
-                    className="h-8.5 px-4 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white font-bold text-[12px] flex items-center gap-1.5 shadow-sm active-press cursor-pointer"
+                    className="h-8.5 px-4 rounded-xl bg-[#F94001] hover:bg-[#D93600] text-white font-bold text-[12px] flex items-center gap-1.5 shadow-sm active-press cursor-pointer"
                   >
                     <Save className="w-3.5 h-3.5" />
                     <span>Save All Changes</span>
@@ -748,21 +751,21 @@ export const SettingsScreen: React.FC = () => {
               </div>
 
               {/* SECTION A: OWNER DETAILS */}
-              <div className="bg-[#FAF9F6] rounded-2xl p-4 border border-[#E8E6E1] space-y-3">
-                <div className="flex items-center justify-between pb-1 border-b border-[#E8E6E1]/70">
-                  <h4 className="text-[13px] font-black text-[#171717] uppercase tracking-wider flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#2FA66A]" />
+              <div className="bg-[#F3F4F4] rounded-2xl p-4 border border-[#E5E7EB] space-y-3">
+                <div className="flex items-center justify-between pb-1 border-b border-[#E5E7EB]/70">
+                  <h4 className="text-[13px] font-black text-[#021526] uppercase tracking-wider flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#16A34A]" />
                     <span>Owner / Licensee Details</span>
                   </h4>
-                  <span className="text-[10px] font-bold text-[#2FA66A] bg-[#2FA66A]/10 px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] font-bold text-[#16A34A] bg-[#16A34A]/10 px-2 py-0.5 rounded-full">
                     KYC Verified
                   </span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] font-bold text-[#777570] mb-1">
-                      Owner Full Name <span className="text-[#FF6B2C]">*</span>
+                    <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                      Owner Full Name <span className="text-[#F94001]">*</span>
                     </label>
                     <input
                       type="text"
@@ -770,13 +773,13 @@ export const SettingsScreen: React.FC = () => {
                       disabled={isStaff}
                       value={oName}
                       onChange={(e) => setOName(e.target.value)}
-                      className="w-full bg-white disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none"
+                      className="w-full bg-white disabled:bg-[#F3F4F4] disabled:text-[#5F6368] disabled:cursor-not-allowed border border-[#E5E7EB] rounded-xl px-3 py-2 text-[13px] font-bold text-[#021526] focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-[#777570] mb-1">
-                      Registered Mobile Phone <span className="text-[#FF6B2C]">*</span>
+                    <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                      Registered Mobile Phone <span className="text-[#F94001]">*</span>
                     </label>
                     <input
                       type="text"
@@ -784,58 +787,58 @@ export const SettingsScreen: React.FC = () => {
                       disabled={isStaff}
                       value={oPhone}
                       onChange={(e) => setOPhone(e.target.value)}
-                      className="w-full bg-white disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none"
+                      className="w-full bg-white disabled:bg-[#F3F4F4] disabled:text-[#5F6368] disabled:cursor-not-allowed border border-[#E5E7EB] rounded-xl px-3 py-2 text-[13px] font-bold text-[#021526] focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-[#777570] mb-1">Owner Email Address</label>
+                    <label className="block text-[11px] font-bold text-[#5F6368] mb-1">Owner Email Address</label>
                     <input
                       type="email"
                       required
                       disabled={isStaff}
                       value={oEmail}
                       onChange={(e) => setOEmail(e.target.value)}
-                      className="w-full bg-white disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none"
+                      className="w-full bg-white disabled:bg-[#F3F4F4] disabled:text-[#5F6368] disabled:cursor-not-allowed border border-[#E5E7EB] rounded-xl px-3 py-2 text-[13px] font-bold text-[#021526] focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-[#777570] mb-1">PAN / Government ID</label>
+                    <label className="block text-[11px] font-bold text-[#5F6368] mb-1">PAN / Government ID</label>
                     <input
                       type="text"
                       disabled={isStaff}
                       value={oPan}
                       onChange={(e) => setOPan(e.target.value)}
-                      className="w-full bg-white disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none uppercase"
+                      className="w-full bg-white disabled:bg-[#F3F4F4] disabled:text-[#5F6368] disabled:cursor-not-allowed border border-[#E5E7EB] rounded-xl px-3 py-2 text-[13px] font-bold text-[#021526] focus:outline-none uppercase"
                     />
                   </div>
 
                   {/* AADHAAR CARD DOCUMENT */}
                   <div className="sm:col-span-1">
                     <div className="flex items-center justify-between mb-1">
-                      <label className="block text-[11px] font-bold text-[#777570]">
-                        Aadhaar Card Document <span className="text-[#FF6B2C]">*</span>
+                      <label className="block text-[11px] font-bold text-[#5F6368]">
+                        Aadhaar Card Document <span className="text-[#F94001]">*</span>
                       </label>
-                      <span className="text-[9.5px] font-mono text-[#777570] uppercase">PDF/JPG MAX 5MB</span>
+                      <span className="text-[9.5px] font-mono text-[#5F6368] uppercase">PDF/JPG MAX 5MB</span>
                     </div>
 
                     {uploadingDoc === 'AADHAAR' ? (
-                      <div className="flex items-center gap-2 p-2 rounded-xl border border-dashed border-[#FF6B2C] bg-[#FF6B2C]/5 text-[11.5px] font-bold text-[#FF6B2C]">
+                      <div className="flex items-center gap-2 p-2 rounded-xl border border-dashed border-[#F94001] bg-[#F94001]/5 text-[11.5px] font-bold text-[#F94001]">
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
                         <span>Uploading Aadhaar document...</span>
                       </div>
                     ) : aadhaarDocId ? (
-                      <div className="flex items-center justify-between gap-2 p-2 rounded-xl border border-[#2FA66A]/30 bg-white shadow-2xs">
+                      <div className="flex items-center justify-between gap-2 p-2 rounded-xl border border-[#16A34A]/30 bg-white shadow-2xs">
                         <div className="flex items-center gap-2 min-w-0 flex-1">
-                          <div className="w-7 h-7 rounded-lg bg-[#2FA66A]/10 border border-[#2FA66A]/20 flex items-center justify-center shrink-0 text-[#2FA66A]">
+                          <div className="w-7 h-7 rounded-lg bg-[#16A34A]/10 border border-[#16A34A]/20 flex items-center justify-center shrink-0 text-[#16A34A]">
                             <FileText className="w-3.5 h-3.5" />
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="font-mono text-[11.5px] font-bold text-[#171717] truncate">
+                            <p className="font-mono text-[11.5px] font-bold text-[#021526] truncate">
                               {aadhaarDocId}
                             </p>
-                            <span className="text-[9.5px] text-[#2FA66A] font-bold flex items-center gap-0.5">
+                            <span className="text-[9.5px] text-[#16A34A] font-bold flex items-center gap-0.5">
                               <CheckCircle2 className="w-2.5 h-2.5" /> Uploaded & Verified
                             </span>
                           </div>
@@ -853,9 +856,9 @@ export const SettingsScreen: React.FC = () => {
                                 type: 'doc',
                               });
                             }}
-                            className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[#FAF9F6] border border-[#E8E6E1] text-[10.5px] font-bold text-[#171717] hover:bg-[#F1F0EC] active-press cursor-pointer"
+                            className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[#F3F4F4] border border-[#E5E7EB] text-[10.5px] font-bold text-[#021526] hover:bg-[#F3F4F4] active-press cursor-pointer"
                           >
-                            <Eye className="w-3 h-3 text-[#777570]" />
+                            <Eye className="w-3 h-3 text-[#5F6368]" />
                             <span>View</span>
                           </button>
 
@@ -863,7 +866,7 @@ export const SettingsScreen: React.FC = () => {
                             <button
                               type="button"
                               onClick={() => aadhaarInputRef.current?.click()}
-                              className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[#FF6B2C] text-white text-[10.5px] font-bold hover:bg-[#e85b1e] active-press cursor-pointer"
+                              className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[#F94001] text-white text-[10.5px] font-bold hover:bg-[#D93600] active-press cursor-pointer"
                             >
                               <span>Change</span>
                             </button>
@@ -873,14 +876,14 @@ export const SettingsScreen: React.FC = () => {
                     ) : (
                       <div className="flex items-center justify-between gap-2 p-2 rounded-xl border border-dashed border-[#CBD5E1] bg-white">
                         <div className="flex items-center gap-1.5 flex-1 min-w-0 px-1">
-                          <FileText className="h-3.5 w-3.5 text-[#777570] shrink-0" />
-                          <span className="font-mono text-[11px] text-[#777570] truncate">No Aadhaar attached</span>
+                          <FileText className="h-3.5 w-3.5 text-[#5F6368] shrink-0" />
+                          <span className="font-mono text-[11px] text-[#5F6368] truncate">No Aadhaar attached</span>
                         </div>
                         {!isStaff && (
                           <button
                             type="button"
                             onClick={() => aadhaarInputRef.current?.click()}
-                            className="px-2.5 py-1 rounded-lg bg-[#FF6B2C] hover:bg-[#e85b1e] text-white text-[10.5px] font-bold transition-all shadow-xs shrink-0 active-press cursor-pointer"
+                            className="px-2.5 py-1 rounded-lg bg-[#F94001] hover:bg-[#D93600] text-white text-[10.5px] font-bold transition-all shadow-xs shrink-0 active-press cursor-pointer"
                           >
                             Upload
                           </button>
@@ -892,32 +895,32 @@ export const SettingsScreen: React.FC = () => {
                   {/* PROFILE PHOTO ID */}
                   <div className="sm:col-span-1">
                     <div className="flex items-center justify-between mb-1">
-                      <label className="block text-[11px] font-bold text-[#777570]">
-                        Profile Photo ID <span className="text-[#FF6B2C]">*</span>
+                      <label className="block text-[11px] font-bold text-[#5F6368]">
+                        Profile Photo ID <span className="text-[#F94001]">*</span>
                       </label>
-                      <span className="text-[9.5px] font-mono text-[#777570] uppercase">JPG/PNG MAX 5MB</span>
+                      <span className="text-[9.5px] font-mono text-[#5F6368] uppercase">JPG/PNG MAX 5MB</span>
                     </div>
 
                     {uploadingDoc === 'PROFILE_PHOTO' ? (
-                      <div className="flex items-center gap-2 p-2 rounded-xl border border-dashed border-[#FF6B2C] bg-[#FF6B2C]/5 text-[11.5px] font-bold text-[#FF6B2C]">
+                      <div className="flex items-center gap-2 p-2 rounded-xl border border-dashed border-[#F94001] bg-[#F94001]/5 text-[11.5px] font-bold text-[#F94001]">
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
                         <span>Uploading profile photo...</span>
                       </div>
                     ) : profilePhotoDocId ? (
-                      <div className="flex items-center justify-between gap-2 p-2 rounded-xl border border-[#2FA66A]/30 bg-white shadow-2xs">
+                      <div className="flex items-center justify-between gap-2 p-2 rounded-xl border border-[#16A34A]/30 bg-white shadow-2xs">
                         <div className="flex items-center gap-2 min-w-0 flex-1">
-                          <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 border border-[#2FA66A]/30 bg-white">
+                          <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 border border-[#16A34A]/30 bg-white">
                             {profilePhotoUrl ? (
                               <img src={profilePhotoUrl} alt="Profile" className="w-full h-full object-cover" />
                             ) : (
-                              <User className="w-3.5 h-3.5 text-[#2FA66A] m-auto" />
+                              <User className="w-3.5 h-3.5 text-[#16A34A] m-auto" />
                             )}
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="font-mono text-[11.5px] font-bold text-[#171717] truncate">
+                            <p className="font-mono text-[11.5px] font-bold text-[#021526] truncate">
                               {profilePhotoDocId}
                             </p>
-                            <span className="text-[9.5px] text-[#2FA66A] font-bold flex items-center gap-0.5">
+                            <span className="text-[9.5px] text-[#16A34A] font-bold flex items-center gap-0.5">
                               <CheckCircle2 className="w-2.5 h-2.5" /> Uploaded & Verified
                             </span>
                           </div>
@@ -935,9 +938,9 @@ export const SettingsScreen: React.FC = () => {
                                 type: 'image',
                               });
                             }}
-                            className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[#FAF9F6] border border-[#E8E6E1] text-[10.5px] font-bold text-[#171717] hover:bg-[#F1F0EC] active-press cursor-pointer"
+                            className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[#F3F4F4] border border-[#E5E7EB] text-[10.5px] font-bold text-[#021526] hover:bg-[#F3F4F4] active-press cursor-pointer"
                           >
-                            <Eye className="w-3 h-3 text-[#777570]" />
+                            <Eye className="w-3 h-3 text-[#5F6368]" />
                             <span>View</span>
                           </button>
 
@@ -945,7 +948,7 @@ export const SettingsScreen: React.FC = () => {
                             <button
                               type="button"
                               onClick={() => profilePhotoInputRef.current?.click()}
-                              className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[#FF6B2C] text-white text-[10.5px] font-bold hover:bg-[#e85b1e] active-press cursor-pointer"
+                              className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[#F94001] text-white text-[10.5px] font-bold hover:bg-[#D93600] active-press cursor-pointer"
                             >
                               <span>Change</span>
                             </button>
@@ -955,14 +958,14 @@ export const SettingsScreen: React.FC = () => {
                     ) : (
                       <div className="flex items-center justify-between gap-2 p-2 rounded-xl border border-dashed border-[#CBD5E1] bg-white">
                         <div className="flex items-center gap-1.5 flex-1 min-w-0 px-1">
-                          <ImageIcon className="h-3.5 w-3.5 text-[#777570] shrink-0" />
-                          <span className="font-mono text-[11px] text-[#777570] truncate">No photo attached</span>
+                          <ImageIcon className="h-3.5 w-3.5 text-[#5F6368] shrink-0" />
+                          <span className="font-mono text-[11px] text-[#5F6368] truncate">No photo attached</span>
                         </div>
                         {!isStaff && (
                           <button
                             type="button"
                             onClick={() => profilePhotoInputRef.current?.click()}
-                            className="px-2.5 py-1 rounded-lg bg-[#FF6B2C] hover:bg-[#e85b1e] text-white text-[10.5px] font-bold transition-all shadow-xs shrink-0 active-press cursor-pointer"
+                            className="px-2.5 py-1 rounded-lg bg-[#F94001] hover:bg-[#D93600] text-white text-[10.5px] font-bold transition-all shadow-xs shrink-0 active-press cursor-pointer"
                           >
                             Upload
                           </button>
@@ -974,21 +977,21 @@ export const SettingsScreen: React.FC = () => {
               </div>
 
               {/* SECTION B: VENUE DETAILS */}
-              <div className="bg-[#FAF9F6] rounded-2xl p-4 border border-[#E8E6E1] space-y-3">
-                <div className="flex items-center justify-between pb-1 border-b border-[#E8E6E1]/70">
-                  <h4 className="text-[13px] font-black text-[#171717] uppercase tracking-wider flex items-center gap-1.5">
-                    <Building className="w-3.5 h-3.5 text-[#FF6B2C]" />
+              <div className="bg-[#F3F4F4] rounded-2xl p-4 border border-[#E5E7EB] space-y-3">
+                <div className="flex items-center justify-between pb-1 border-b border-[#E5E7EB]/70">
+                  <h4 className="text-[13px] font-black text-[#021526] uppercase tracking-wider flex items-center gap-1.5">
+                    <Building className="w-3.5 h-3.5 text-[#F94001]" />
                     <span>Venue & Arena Information</span>
                   </h4>
-                  <span className="text-[10px] font-bold text-[#FF6B2C] bg-[#FF6B2C]/10 px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] font-bold text-[#F94001] bg-[#F94001]/10 px-2 py-0.5 rounded-full">
                     Customer-Facing
                   </span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] font-bold text-[#777570] mb-1">
-                      Venue Name <span className="text-[#FF6B2C]">*</span>
+                    <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                      Venue Name <span className="text-[#F94001]">*</span>
                     </label>
                     <input
                       type="text"
@@ -996,46 +999,46 @@ export const SettingsScreen: React.FC = () => {
                       disabled={isStaff}
                       value={vName}
                       onChange={(e) => setVName(e.target.value)}
-                      className="w-full bg-white disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none"
+                      className="w-full bg-white disabled:bg-[#F3F4F4] disabled:text-[#5F6368] disabled:cursor-not-allowed border border-[#E5E7EB] rounded-xl px-3 py-2 text-[13px] font-bold text-[#021526] focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-[#777570] mb-1">City / Region</label>
+                    <label className="block text-[11px] font-bold text-[#5F6368] mb-1">City / Region</label>
                     <input
                       type="text"
                       required
                       disabled={isStaff}
                       value={vCity}
                       onChange={(e) => setVCity(e.target.value)}
-                      className="w-full bg-white disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none"
+                      className="w-full bg-white disabled:bg-[#F3F4F4] disabled:text-[#5F6368] disabled:cursor-not-allowed border border-[#E5E7EB] rounded-xl px-3 py-2 text-[13px] font-bold text-[#021526] focus:outline-none"
                     />
                   </div>
 
                   <div className="sm:col-span-2">
-                    <label className="block text-[11px] font-bold text-[#777570] mb-1">Physical Address</label>
+                    <label className="block text-[11px] font-bold text-[#5F6368] mb-1">Physical Address</label>
                     <input
                       type="text"
                       required
                       disabled={isStaff}
                       value={vAddress}
                       onChange={(e) => setVAddress(e.target.value)}
-                      className="w-full bg-white disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none"
+                      className="w-full bg-white disabled:bg-[#F3F4F4] disabled:text-[#5F6368] disabled:cursor-not-allowed border border-[#E5E7EB] rounded-xl px-3 py-2 text-[13px] font-bold text-[#021526] focus:outline-none"
                     />
                   </div>
 
                   {/* GOOGLE MAPS LOCATION LINK */}
                   <div className="sm:col-span-2">
                     <div className="flex items-center justify-between mb-1">
-                      <label className="block text-[11px] font-bold text-[#777570]">
-                        Google Maps Location Link <span className="text-[#FF6B2C]">*</span>
+                      <label className="block text-[11px] font-bold text-[#5F6368]">
+                        Google Maps Location Link <span className="text-[#F94001]">*</span>
                       </label>
                       {vGoogleMaps && (
                         <a
                           href={vGoogleMaps}
                           target="_blank"
                           rel="noreferrer"
-                          className="text-[10.5px] font-bold text-[#FF6B2C] hover:underline flex items-center gap-1 cursor-pointer"
+                          className="text-[10.5px] font-bold text-[#F94001] hover:underline flex items-center gap-1 cursor-pointer"
                         >
                           <span>Open Map</span>
                           <ExternalLink className="w-3 h-3" />
@@ -1043,7 +1046,7 @@ export const SettingsScreen: React.FC = () => {
                       )}
                     </div>
                     <div className="relative flex items-center">
-                      <div className="absolute left-3 text-[#FF6B2C] pointer-events-none">
+                      <div className="absolute left-3 text-[#F94001] pointer-events-none">
                         <MapPin className="w-4 h-4 stroke-[2.2]" />
                       </div>
                       <input
@@ -1052,34 +1055,34 @@ export const SettingsScreen: React.FC = () => {
                         value={vGoogleMaps}
                         onChange={(e) => setVGoogleMaps(e.target.value)}
                         placeholder="https://maps.app.goo.gl/..."
-                        className="w-full bg-white disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-xl pl-9 pr-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none"
+                        className="w-full bg-white disabled:bg-[#F3F4F4] disabled:text-[#5F6368] disabled:cursor-not-allowed border border-[#E5E7EB] rounded-xl pl-9 pr-3 py-2 text-[13px] font-bold text-[#021526] focus:outline-none"
                       />
                     </div>
                   </div>
 
                   <div className="sm:col-span-2">
-                    <label className="block text-[11px] font-bold text-[#777570] mb-1">About the Arena (Public Bio)</label>
+                    <label className="block text-[11px] font-bold text-[#5F6368] mb-1">About the Arena (Public Bio)</label>
                     <textarea
                       rows={2}
                       disabled={isStaff}
                       value={vDescription}
                       onChange={(e) => setVDescription(e.target.value)}
-                      className="w-full bg-white disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-xl p-2.5 text-[12.5px] font-medium text-[#171717] focus:outline-none resize-none"
+                      className="w-full bg-white disabled:bg-[#F3F4F4] disabled:text-[#5F6368] disabled:cursor-not-allowed border border-[#E5E7EB] rounded-xl p-2.5 text-[12.5px] font-medium text-[#021526] focus:outline-none resize-none"
                     />
                   </div>
                 </div>
               </div>
 
               {/* SECTION C: VENUE PHOTOS GALLERY (MIN 4, MAX 8) */}
-              <div className="bg-white rounded-2xl p-4 border border-[#E8E6E1] space-y-3">
-                <div className="flex items-center justify-between pb-1 border-b border-[#F1F0EC]">
+              <div className="bg-white rounded-2xl p-4 border border-[#E5E7EB] space-y-3">
+                <div className="flex items-center justify-between pb-1 border-b border-[#F3F4F4]">
                   <div>
-                    <h4 className="text-[14px] font-black text-[#171717] flex items-center gap-1.5">
-                      <ImageIcon className="w-4 h-4 text-[#FF6B2C]" />
+                    <h4 className="text-[14px] font-black text-[#021526] flex items-center gap-1.5">
+                      <ImageIcon className="w-4 h-4 text-[#F94001]" />
                       <span>Venue Photo Gallery</span>
-                      <span className="text-[11px] font-normal text-[#777570]">(Min 4, Max 8 Photos)</span>
+                      <span className="text-[11px] font-normal text-[#5F6368]">(Min 4, Max 8 Photos)</span>
                     </h4>
-                    <p className="text-[11px] text-[#777570]">
+                    <p className="text-[11px] text-[#5F6368]">
                       High-resolution photos displayed to players on the TurfTown public booking app
                     </p>
                   </div>
@@ -1088,8 +1091,8 @@ export const SettingsScreen: React.FC = () => {
                     <span
                       className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${
                         venuePhotos.length >= 4 && venuePhotos.length <= 8
-                          ? 'bg-[#2FA66A]/10 text-[#2FA66A]'
-                          : 'bg-[#E7A72F]/15 text-[#B87C0D]'
+                          ? 'bg-[#16A34A]/10 text-[#16A34A]'
+                          : 'bg-[#F59E0B]/15 text-[#B87C0D]'
                       }`}
                     >
                       {venuePhotos.length} / 8 Photos Uploaded
@@ -1099,7 +1102,7 @@ export const SettingsScreen: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setIsAddPhotoOpen(true)}
-                        className="h-7 px-2.5 rounded-lg bg-[#171717] text-white text-[11px] font-bold flex items-center gap-1 cursor-pointer"
+                        className="h-7 px-2.5 rounded-lg bg-[#021526] text-white text-[11px] font-bold flex items-center gap-1 cursor-pointer"
                       >
                         <Plus className="w-3.5 h-3.5" />
                         <span>Add Photo</span>
@@ -1113,7 +1116,7 @@ export const SettingsScreen: React.FC = () => {
                   {venuePhotos.map((p, idx) => (
                     <div
                       key={p.id}
-                      className="group relative rounded-xl overflow-hidden border border-[#E8E6E1] bg-[#FAF9F6] aspect-4/3 flex flex-col justify-end"
+                      className="group relative rounded-xl overflow-hidden border border-[#E5E7EB] bg-[#F3F4F4] aspect-4/3 flex flex-col justify-end"
                     >
                       <img
                         src={p.url}
@@ -1133,7 +1136,7 @@ export const SettingsScreen: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => handleRemovePhoto(p.id)}
-                          className="absolute top-1.5 right-1.5 z-20 w-6 h-6 rounded-full bg-black/60 hover:bg-[#D94B4B] text-white flex items-center justify-center transition-colors cursor-pointer"
+                          className="absolute top-1.5 right-1.5 z-20 w-6 h-6 rounded-full bg-black/60 hover:bg-[#DC2626] text-white flex items-center justify-center transition-colors cursor-pointer"
                           title="Remove Photo"
                         >
                           <X className="w-3.5 h-3.5" />
@@ -1147,22 +1150,22 @@ export const SettingsScreen: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setIsAddPhotoOpen(true)}
-                      className="rounded-xl border-2 border-dashed border-[#E8E6E1] hover:border-[#FF6B2C] bg-[#FAF9F6] hover:bg-white aspect-4/3 flex flex-col items-center justify-center gap-1 transition-all cursor-pointer text-[#777570] hover:text-[#FF6B2C]"
+                      className="rounded-xl border-2 border-dashed border-[#E5E7EB] hover:border-[#F94001] bg-[#F3F4F4] hover:bg-white aspect-4/3 flex flex-col items-center justify-center gap-1 transition-all cursor-pointer text-[#5F6368] hover:text-[#F94001]"
                     >
                       <Plus className="w-5 h-5" />
                       <span className="text-[11px] font-bold">Add Photo</span>
-                      <span className="text-[9px] text-[#A3A099]">Up to 8 max</span>
+                      <span className="text-[9px] text-[#5F6368]">Up to 8 max</span>
                     </button>
                   )}
                 </div>
 
                 {/* Validation Notice */}
-                <div className="pt-1 flex items-center justify-between text-[11px] text-[#777570]">
+                <div className="pt-1 flex items-center justify-between text-[11px] text-[#5F6368]">
                   <span className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#2FA66A]" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#16A34A]" />
                     <span>Photos are checked against ground markings and floodlight standards.</span>
                   </span>
-                  <span className="font-bold text-[#171717]">Min: 4 · Max: 8</span>
+                  <span className="font-bold text-[#021526]">Min: 4 · Max: 8</span>
                 </div>
               </div>
             </form>
@@ -1173,22 +1176,22 @@ export const SettingsScreen: React.FC = () => {
           {/* ===================================================================== */}
           {activeTab === 'payment_settings' && (
             <div className="space-y-5">
-              <div className="pb-2 border-b border-[#F1F0EC]">
-                <h3 className="text-[17px] font-black text-[#171717]">Payment Methods & Bank Settlement</h3>
-                <p className="text-[11.5px] text-[#777570]">
+              <div className="pb-2 border-b border-[#F3F4F4]">
+                <h3 className="text-[17px] font-black text-[#021526]">Payment Methods & Bank Settlement</h3>
+                <p className="text-[11.5px] text-[#5F6368]">
                   Verified settlement bank account, payout switch, UPI QR & cash collections
                 </p>
               </div>
 
               {/* ACTIVE SETTLEMENT BANK ACCOUNT (FIRST IMAGE) */}
-              <div className="bg-[#171717] rounded-3xl p-5 shadow-sm space-y-4">
+              <div className="bg-[#021526] rounded-3xl p-5 shadow-sm space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-11 h-11 rounded-2xl bg-white/10 flex items-center justify-center">
                       <Building2 className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-[#A3A099]">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F6368]">
                         Settlement Bank Account
                       </span>
                       <h3 className="text-[17px] font-black tracking-tight text-white">
@@ -1196,7 +1199,7 @@ export const SettingsScreen: React.FC = () => {
                       </h3>
                     </div>
                   </div>
-                  <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#2FA66A]/20 text-[#2FA66A] border border-[#2FA66A]/30 flex items-center gap-1">
+                  <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#16A34A]/20 text-[#16A34A] border border-[#16A34A]/30 flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5" />
                     Verified
                   </span>
@@ -1205,19 +1208,19 @@ export const SettingsScreen: React.FC = () => {
                 {/* Details */}
                 <div className="grid grid-cols-2 gap-2.5 bg-white/8 rounded-2xl p-3 text-[11.5px]">
                   <div>
-                    <span className="block font-bold text-[#A3A099]">Account Number</span>
+                    <span className="block font-bold text-[#5F6368]">Account Number</span>
                     <span className="font-mono font-black text-white">{paymentSettings.accountNumberMasked}</span>
                   </div>
                   <div>
-                    <span className="block font-bold text-[#A3A099]">IFSC Code</span>
+                    <span className="block font-bold text-[#5F6368]">IFSC Code</span>
                     <span className="font-mono font-black text-white">{paymentSettings.ifscCode}</span>
                   </div>
                   <div>
-                    <span className="block font-bold text-[#A3A099]">Account Holder</span>
+                    <span className="block font-bold text-[#5F6368]">Account Holder</span>
                     <span className="font-bold text-white">Dhanush Kumar (TurfTown Arena)</span>
                   </div>
                   <div>
-                    <span className="block font-bold text-[#A3A099]">Account Type</span>
+                    <span className="block font-bold text-[#5F6368]">Account Type</span>
                     <span className="font-bold text-white">Current Commercial</span>
                   </div>
                 </div>
@@ -1225,11 +1228,11 @@ export const SettingsScreen: React.FC = () => {
                 {/* Cancelled Cheque / Passbook Proof */}
                 <div className="flex items-center justify-between p-2.5 rounded-2xl bg-white/6 border border-white/10 text-[11.5px]">
                   <div className="flex items-center gap-2 min-w-0 flex-1">
-                    <div className="w-7 h-7 rounded-xl bg-white/10 flex items-center justify-center text-[#2FA66A] shrink-0">
+                    <div className="w-7 h-7 rounded-xl bg-white/10 flex items-center justify-center text-[#16A34A] shrink-0">
                       <FileText className="w-3.5 h-3.5" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <span className="block font-bold text-[#A3A099] text-[9.5px] uppercase">Cancelled Cheque / Passbook</span>
+                      <span className="block font-bold text-[#5F6368] text-[9.5px] uppercase">Cancelled Cheque / Passbook</span>
                       <span className="font-mono text-white text-[11.5px] font-bold truncate block">
                         {bankBranchProofDocId || 'doc_bank_proof_1788778055198'}
                       </span>
@@ -1248,13 +1251,13 @@ export const SettingsScreen: React.FC = () => {
                     }}
                     className="px-2.5 py-1 rounded-xl bg-white/10 hover:bg-white/20 text-white text-[11px] font-bold flex items-center gap-1 cursor-pointer shrink-0 transition-colors"
                   >
-                    <Eye className="w-3 h-3 text-[#A3A099]" />
+                    <Eye className="w-3 h-3 text-[#5F6368]" />
                     <span>View</span>
                   </button>
                 </div>
 
                 <div className="flex items-center justify-between pt-3 border-t border-white/10">
-                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#2FA66A]">
+                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#16A34A]">
                     <CheckCircle2 className="w-4 h-4" />
                     <span>T+0 Auto IMPS Midnight Direct Settlement</span>
                   </div>
@@ -1280,15 +1283,15 @@ export const SettingsScreen: React.FC = () => {
           {/* ===================================================================== */}
           {activeTab === 'amenities' && (
             <div className="space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#F1F0EC]">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#F3F4F4]">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="text-[17px] font-black text-[#171717]">Venue Amenities</h3>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#2FA66A]/10 text-[#2FA66A] border border-[#2FA66A]/20">
+                    <h3 className="text-[17px] font-black text-[#021526]">Venue Amenities</h3>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#16A34A]/10 text-[#16A34A] border border-[#16A34A]/20">
                       Admin Standardized
                     </span>
                   </div>
-                  <p className="text-[11.5px] text-[#777570]">
+                  <p className="text-[11.5px] text-[#5F6368]">
                     Admin-defined amenities available for your facility. Toggle on/off to reflect on player booking app ({activeAmenitiesCount} Active)
                   </p>
                 </div>
@@ -1310,8 +1313,8 @@ export const SettingsScreen: React.FC = () => {
                     onClick={() => setAmenityFilter(cat.id)}
                     className={`h-7.5 px-3 rounded-lg text-[11px] font-bold transition-all border cursor-pointer ${
                       amenityFilter === cat.id
-                        ? 'bg-[#171717] text-white border-[#171717]'
-                        : 'bg-[#FAF9F6] text-[#777570] border-[#E8E6E1] hover:text-[#171717]'
+                        ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 font-black shadow-2xs'
+                        : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:text-[#021526]'
                     }`}
                   >
                     {cat.label}
@@ -1329,28 +1332,28 @@ export const SettingsScreen: React.FC = () => {
                       onClick={() => toggleAmenity(amenity.id)}
                       className={`p-3.5 rounded-2xl border flex items-center justify-between cursor-pointer transition-all ${
                         amenity.enabled
-                          ? 'bg-[#FAF9F6] border-[#171717]/20 shadow-xs'
-                          : 'bg-white border-[#E8E6E1] opacity-65'
+                          ? 'bg-[#F3F4F4] border-[#021526]/20 shadow-xs'
+                          : 'bg-white border-[#E5E7EB] opacity-65'
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-white border border-[#E8E6E1] flex items-center justify-center shrink-0">
+                        <div className="w-9 h-9 rounded-xl bg-white border border-[#E5E7EB] flex items-center justify-center shrink-0">
                           {getAmenityIcon(amenity.icon)}
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <h4 className="text-[13px] font-bold text-[#171717]">{amenity.name}</h4>
-                            <span className="text-[9px] font-bold uppercase text-[#777570] bg-white border border-[#E8E6E1] px-1.5 py-0.2 rounded">
+                            <h4 className="text-[13px] font-bold text-[#021526]">{amenity.name}</h4>
+                            <span className="text-[9px] font-bold uppercase text-[#5F6368] bg-white border border-[#E5E7EB] px-1.5 py-0.2 rounded">
                               {amenity.category}
                             </span>
                           </div>
-                          <p className="text-[10.5px] text-[#777570] mt-0.5">{amenity.details}</p>
+                          <p className="text-[10.5px] text-[#5F6368] mt-0.5">{amenity.details}</p>
                         </div>
                       </div>
 
                       <div
                         className={`w-10 h-5.5 rounded-full p-0.5 transition-colors shrink-0 ${
-                          amenity.enabled ? 'bg-[#2FA66A]' : 'bg-[#D1CFCA]'
+                          amenity.enabled ? 'bg-[#16A34A]' : 'bg-[#E5E7EB]'
                         }`}
                       >
                         <div
@@ -1370,15 +1373,15 @@ export const SettingsScreen: React.FC = () => {
           {/* ===================================================================== */}
           {activeTab === 'operating_hours' && (
             <div className="space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#F1F0EC]">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#F3F4F4]">
                 <div>
-                  <h3 className="text-[17px] font-black text-[#171717]">Operating Schedule</h3>
-                  <p className="text-[11.5px] text-[#777570]">
+                  <h3 className="text-[17px] font-black text-[#021526]">Operating Schedule</h3>
+                  <p className="text-[11.5px] text-[#5F6368]">
                     Configure daily facility opening & closing hours, slot availability and closed days
                   </p>
                 </div>
                 {isStaff ? (
-                  <span className="text-[11px] font-bold text-[#777570] bg-[#FAF9F6] px-3 py-1.5 rounded-xl border border-[#E8E6E1] self-start sm:self-auto flex items-center gap-1.5">
+                  <span className="text-[11px] font-bold text-[#5F6368] bg-[#F3F4F4] px-3 py-1.5 rounded-xl border border-[#E5E7EB] self-start sm:self-auto flex items-center gap-1.5">
                     <Lock className="w-3.5 h-3.5" />
                     <span>View Only (Staff)</span>
                   </span>
@@ -1390,7 +1393,7 @@ export const SettingsScreen: React.FC = () => {
                       await refreshFromOnboarding();
                       showToast('Operating Hours Synced', 'Schedule synchronized with verified onboarding records.', 'success');
                     }}
-                    className="text-[11px] font-bold text-[#FF6B2C] bg-[#FF6B2C]/10 hover:bg-[#FF6B2C]/20 px-3 py-1.5 rounded-xl transition-colors cursor-pointer self-start sm:self-auto"
+                    className="text-[11px] font-bold text-[#F94001] bg-[#F94001]/10 hover:bg-[#F94001]/20 px-3 py-1.5 rounded-xl transition-colors cursor-pointer self-start sm:self-auto"
                   >
                     ⚡ Sync Onboarding Schedule
                   </button>
@@ -1404,60 +1407,56 @@ export const SettingsScreen: React.FC = () => {
                     key={day.day}
                     className={`p-3 rounded-2xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
                       day.isOpen
-                        ? 'bg-[#FAF9F6] border-[#E8E6E1]'
-                        : 'bg-white border-[#E8E6E1] opacity-60'
+                        ? 'bg-[#F3F4F4] border-[#E5E7EB]'
+                        : 'bg-white border-[#E5E7EB] opacity-60'
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-white border border-[#E8E6E1] flex items-center justify-center font-black text-[13px] text-[#171717] shrink-0">
+                      <div className="w-10 h-10 rounded-xl bg-white border border-[#E5E7EB] flex items-center justify-center font-black text-[13px] text-[#021526] shrink-0">
                         {day.day.slice(0, 3)}
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <h4 className="text-[13.5px] font-black text-[#171717]">{day.day}</h4>
+                          <h4 className="text-[13.5px] font-black text-[#021526]">{day.day}</h4>
                           <span
                             className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                               day.isOpen
-                                ? 'bg-[#2FA66A]/10 text-[#2FA66A]'
+                                ? 'bg-[#16A34A]/10 text-[#16A34A]'
                                 : 'bg-[#EF4444]/10 text-[#EF4444]'
                             }`}
                           >
                             {day.isOpen ? 'Open for Bookings' : 'Facility Closed'}
                           </span>
                         </div>
-                        <p className="text-[10.5px] text-[#777570] mt-0.5">
+                        <p className="text-[10.5px] text-[#5F6368] mt-0.5">
                           {day.isOpen ? 'Active booking slots generated' : 'All court slots locked'}
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-[#E8E6E1]/60">
+                    <div className="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-[#E5E7EB]/60">
                       {day.isOpen ? (
                         <div className="flex items-center gap-1.5">
-                          <select
+                          <CustomSelect
                             disabled={isStaff}
                             value={day.openTime}
-                            onChange={(e) => updateOperatingDayHours(day.day, e.target.value, day.closeTime)}
-                            className="bg-white disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-xl px-2.5 py-1.5 text-[11.5px] font-bold text-[#171717] focus:outline-none cursor-pointer"
-                          >
-                            {Array.from(new Set([day.openTime, ...SETTINGS_TIME_OPTIONS])).map((t) => (
-                              <option key={t} value={t}>{t}</option>
-                            ))}
-                          </select>
-                          <span className="text-[11px] font-bold text-[#777570]">to</span>
-                          <select
+                            onChange={(val) => updateOperatingDayHours(day.day, val, day.closeTime)}
+                            options={Array.from(new Set([day.openTime, ...SETTINGS_TIME_OPTIONS]))}
+                            className="bg-white rounded-xl px-2.5 py-1.5 text-[11.5px] font-bold border border-[#E5E7EB]"
+                            menuClassName="w-32"
+                          />
+                          <span className="text-[11px] font-bold text-[#5F6368]">to</span>
+                          <CustomSelect
                             disabled={isStaff}
                             value={day.closeTime}
-                            onChange={(e) => updateOperatingDayHours(day.day, day.openTime, e.target.value)}
-                            className="bg-white disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-xl px-2.5 py-1.5 text-[11.5px] font-bold text-[#171717] focus:outline-none cursor-pointer"
-                          >
-                            {Array.from(new Set([day.closeTime, ...SETTINGS_TIME_OPTIONS])).map((t) => (
-                              <option key={t} value={t}>{t}</option>
-                            ))}
-                          </select>
+                            onChange={(val) => updateOperatingDayHours(day.day, day.openTime, val)}
+                            options={Array.from(new Set([day.closeTime, ...SETTINGS_TIME_OPTIONS]))}
+                            className="bg-white rounded-xl px-2.5 py-1.5 text-[11.5px] font-bold border border-[#E5E7EB]"
+                            menuClassName="w-32"
+                          />
                         </div>
                       ) : (
-                        <span className="text-[12px] font-bold text-[#A3A099]">Closed All Day</span>
+                        <span className="text-[12px] font-bold text-[#5F6368]">Closed All Day</span>
                       )}
 
                       <button
@@ -1473,7 +1472,7 @@ export const SettingsScreen: React.FC = () => {
                         }}
                         className={`w-10 h-5.5 rounded-full p-0.5 transition-colors shrink-0 ${
                           isStaff ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'
-                        } ${day.isOpen ? 'bg-[#171717]' : 'bg-[#D1CFCA]'}`}
+                        } ${day.isOpen ? 'bg-[#F94001]' : 'bg-[#E5E7EB]'}`}
                       >
                         <div
                           className={`w-4.5 h-4.5 rounded-full bg-white transition-transform ${
@@ -1489,79 +1488,10 @@ export const SettingsScreen: React.FC = () => {
           )}
 
           {/* ===================================================================== */}
-          {/* TAB 5: BOOKING SETTINGS                                               */}
+          {/* TAB 5: REFUND & POLICIES                                              */}
           {/* ===================================================================== */}
-          {activeTab === 'booking_settings' && (
-            <div className="space-y-4">
-              <div className="pb-2 border-b border-[#F1F0EC]">
-                <h3 className="text-[17px] font-black text-[#171717]">Booking Policy & Rules</h3>
-                <p className="text-[11.5px] text-[#777570]">
-                  Advance reservation windows, player hold timers & minimum booking notice limits
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="p-3.5 bg-[#FAF9F6] rounded-xl border border-[#E8E6E1] space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[12.5px] font-bold text-[#171717]">Advance Booking Window</span>
-                    <span className="text-[12px] font-black text-[#FF6B2C]">
-                      {bookingSettings.advanceBookingDays} Days
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-4 gap-1.5">
-                    {[7, 14, 30, 60].map((days) => (
-                      <button
-                        key={days}
-                        type="button"
-                        onClick={() => updateBookingSettings({ advanceBookingDays: days })}
-                        className={`py-1.5 rounded-lg text-[11.5px] font-bold border cursor-pointer ${
-                          bookingSettings.advanceBookingDays === days
-                            ? 'bg-[#171717] text-white border-[#171717]'
-                            : 'bg-white text-[#777570] border-[#E8E6E1]'
-                        }`}
-                      >
-                        {days}d
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="p-3.5 bg-[#FAF9F6] rounded-xl border border-[#E8E6E1] space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[12.5px] font-bold text-[#171717]">Online Hold Expiry Timer</span>
-                    <span className="text-[12px] font-black text-[#2FA66A]">
-                      {cancellationPolicy.autoReleaseHoldMinutes || 15} Mins
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-1.5">
-                    {[5, 10, 15].map((mins) => (
-                      <button
-                        key={mins}
-                        type="button"
-                        onClick={() => updateCancellationPolicy({ autoReleaseHoldMinutes: mins })}
-                        className={`py-1.5 rounded-lg text-[11.5px] font-bold border cursor-pointer ${
-                          cancellationPolicy.autoReleaseHoldMinutes === mins
-                            ? 'bg-[#171717] text-white border-[#171717]'
-                            : 'bg-white text-[#777570] border-[#E8E6E1]'
-                        }`}
-                      >
-                        {mins} Mins
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-3.5 bg-[#FAF9F6] rounded-xl border border-[#E8E6E1] flex items-center justify-between">
-                <div>
-                  <h4 className="text-[13px] font-bold text-[#171717]">Allow Multi-Court Consecutive Bookings</h4>
-                  <p className="text-[11px] text-[#777570]">Permit single customers to reserve adjacent slots across grounds</p>
-                </div>
-                <div className="w-9 h-5 rounded-full p-0.5 bg-[#2FA66A]">
-                  <div className="w-4 h-4 rounded-full bg-white translate-x-4" />
-                </div>
-              </div>
-            </div>
+          {activeTab === 'cancellation' && (
+            <CancellationRefundScreen isEmbedded={true} />
           )}
 
           {/* ===================================================================== */}
@@ -1569,9 +1499,9 @@ export const SettingsScreen: React.FC = () => {
           {/* ===================================================================== */}
           {activeTab === 'notifications' && (
             <div className="space-y-4">
-              <div className="pb-2 border-b border-[#F1F0EC]">
-                <h3 className="text-[17px] font-black text-[#171717]">Notification Settings (On / Off Toggles)</h3>
-                <p className="text-[11.5px] text-[#777570]">
+              <div className="pb-2 border-b border-[#F3F4F4]">
+                <h3 className="text-[17px] font-black text-[#021526]">Notification Settings (On / Off Toggles)</h3>
+                <p className="text-[11.5px] text-[#5F6368]">
                   Directly toggle automated alert dispatch channels and venue operator notifications
                 </p>
               </div>
@@ -1605,11 +1535,11 @@ export const SettingsScreen: React.FC = () => {
                 ].map((notif) => (
                   <div
                     key={notif.key}
-                    className="p-3.5 bg-[#FAF9F6] rounded-xl border border-[#E8E6E1] flex items-center justify-between"
+                    className="p-3.5 bg-[#F3F4F4] rounded-xl border border-[#E5E7EB] flex items-center justify-between"
                   >
                     <div>
-                      <h4 className="text-[13px] font-bold text-[#171717]">{notif.title}</h4>
-                      <p className="text-[11px] text-[#777570]">{notif.caption}</p>
+                      <h4 className="text-[13px] font-bold text-[#021526]">{notif.title}</h4>
+                      <p className="text-[11px] text-[#5F6368]">{notif.caption}</p>
                     </div>
 
                     <button
@@ -1626,7 +1556,7 @@ export const SettingsScreen: React.FC = () => {
                         );
                       }}
                       className={`w-10 h-5.5 rounded-full p-0.5 transition-colors cursor-pointer ${
-                        notif.enabled ? 'bg-[#2FA66A]' : 'bg-[#D1CFCA]'
+                        notif.enabled ? 'bg-[#16A34A]' : 'bg-[#E5E7EB]'
                       }`}
                     >
                       <div
@@ -1646,40 +1576,40 @@ export const SettingsScreen: React.FC = () => {
           {/* ===================================================================== */}
           {activeTab === 'privacy' && (
             <div className="space-y-5 text-[#262524] text-[13px] leading-relaxed">
-              <div className="border-b border-[#F1F0EC] pb-3">
-                <span className="text-[10.5px] font-bold text-[#2FA66A] bg-[#2FA66A]/10 px-2 py-0.5 rounded-full inline-flex items-center gap-1 mb-1">
+              <div className="border-b border-[#F3F4F4] pb-3">
+                <span className="text-[10.5px] font-bold text-[#16A34A] bg-[#16A34A]/10 px-2 py-0.5 rounded-full inline-flex items-center gap-1 mb-1">
                   <Shield className="w-3 h-3" />
                   <span>Official Privacy Policy · Version 2.4</span>
                 </span>
-                <h3 className="text-[20px] font-black text-[#171717] tracking-tight">
+                <h3 className="text-[20px] font-black text-[#021526] tracking-tight">
                   Venue & Player Data Protection Policy
                 </h3>
-                <p className="text-[11.5px] text-[#777570]">
+                <p className="text-[11.5px] text-[#5F6368]">
                   Effective: 1 August 2026 · Governing operations for {venueName}
                 </p>
               </div>
 
-              <div className="bg-[#FAF9F6] border-l-3 border-[#FF6B2C] p-3.5 rounded-r-xl text-[12.5px] text-[#403E3B]">
+              <div className="bg-[#F3F4F4] border-l-3 border-[#F94001] p-3.5 rounded-r-xl text-[12.5px] text-[#403E3B]">
                 TurfTown ensures bank-grade 256-bit encryption for all booking transactions, customer phone numbers, and IMPS bank settlements. Data is never sold or utilized for third-party ad targeting.
               </div>
 
               <div className="space-y-1.5">
-                <h4 className="text-[15px] font-black text-[#171717]">1. Data Collection & Processing</h4>
-                <p className="text-[#55534E]">
+                <h4 className="text-[15px] font-black text-[#021526]">1. Data Collection & Processing</h4>
+                <p className="text-[#5F6368]">
                   We gather necessary venue records, staff credentials, player names, and phone numbers exclusively to facilitate ground bookings, prevent double-scheduling, and automate dynamic UPI QR payments.
                 </p>
               </div>
 
               <div className="space-y-1.5">
-                <h4 className="text-[15px] font-black text-[#171717]">2. Financial Reconciliations & Security</h4>
-                <p className="text-[#55534E]">
+                <h4 className="text-[15px] font-black text-[#021526]">2. Financial Reconciliations & Security</h4>
+                <p className="text-[#5F6368]">
                   Payment metadata, UPI reference strings, and settlement audit trails are processed under RBI-compliant gateway standards with automatic midnight T+0 IMPS direct payout.
                 </p>
               </div>
 
               <div className="space-y-1.5">
-                <h4 className="text-[15px] font-black text-[#171717]">3. Data Retention & Operator Rights</h4>
-                <p className="text-[#55534E]">
+                <h4 className="text-[15px] font-black text-[#021526]">3. Data Retention & Operator Rights</h4>
+                <p className="text-[#5F6368]">
                   Venue owners retain full ownership of customer transaction records and may download comprehensive Excel, CSV, or PDF statements at any time via the Export Reports tool.
                 </p>
               </div>
@@ -1691,29 +1621,29 @@ export const SettingsScreen: React.FC = () => {
           {/* ===================================================================== */}
           {activeTab === 'terms' && (
             <div className="space-y-5 text-[#262524] text-[13px] leading-relaxed">
-              <div className="border-b border-[#F1F0EC] pb-3">
-                <span className="text-[10.5px] font-bold text-[#FF6B2C] bg-[#FF6B2C]/10 px-2 py-0.5 rounded-full inline-flex items-center gap-1 mb-1">
+              <div className="border-b border-[#F3F4F4] pb-3">
+                <span className="text-[10.5px] font-bold text-[#F94001] bg-[#F94001]/10 px-2 py-0.5 rounded-full inline-flex items-center gap-1 mb-1">
                   <FileText className="w-3 h-3" />
                   <span>Platform Terms of Service · Version 2.4</span>
                 </span>
-                <h3 className="text-[20px] font-black text-[#171717] tracking-tight">
+                <h3 className="text-[20px] font-black text-[#021526] tracking-tight">
                   TurfTown Partner Terms & Conditions
                 </h3>
-                <p className="text-[11.5px] text-[#777570]">
+                <p className="text-[11.5px] text-[#5F6368]">
                   Operating agreement between TurfTown and {venueName}
                 </p>
               </div>
 
               <div className="space-y-1.5">
-                <h4 className="text-[15px] font-black text-[#171717]">1. Booking Honor System</h4>
-                <p className="text-[#55534E]">
+                <h4 className="text-[15px] font-black text-[#021526]">1. Booking Honor System</h4>
+                <p className="text-[#5F6368]">
                   All confirmed player reservations placed online or manually entered at the ground must be honored during reserved timeframes. Emergency court closures must be initiated with reasonable notice.
                 </p>
               </div>
 
               <div className="space-y-1.5">
-                <h4 className="text-[15px] font-black text-[#171717]">2. Cancellation Rules</h4>
-                <p className="text-[#55534E]">
+                <h4 className="text-[15px] font-black text-[#021526]">2. Cancellation Rules</h4>
+                <p className="text-[#5F6368]">
                   Refunds and cancellations are governed strictly by the court-specific buffer hours and payout percentages configured in your Cancellation Settings panel.
                 </p>
               </div>
@@ -1734,38 +1664,38 @@ export const SettingsScreen: React.FC = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-md bg-white rounded-3xl p-5 border border-[#E8E6E1] shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto no-scrollbar"
+              className="relative w-full max-w-md bg-white rounded-3xl p-5 border border-[#E5E7EB] shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto no-scrollbar"
             >
               {/* Header */}
-              <div className="flex items-center justify-between pb-2 border-b border-[#F1F0EC]">
+              <div className="flex items-center justify-between pb-2 border-b border-[#F3F4F4]">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-xl bg-[#FF6B2C]/10 text-[#FF6B2C] flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-xl bg-[#F94001]/10 text-[#F94001] flex items-center justify-center">
                     <Building className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="text-[15px] font-black text-[#171717]">Request Bank Account Change</h3>
-                    <p className="text-[11px] text-[#777570]">Subject to TurfTown Admin Verification</p>
+                    <h3 className="text-[15px] font-black text-[#021526]">Request Bank Account Change</h3>
+                    <p className="text-[11px] text-[#5F6368]">Subject to TurfTown Admin Verification</p>
                   </div>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setIsBankChangeModalOpen(false)}
-                  className="w-7 h-7 rounded-full bg-[#F1F0EC] flex items-center justify-center text-[#777570] hover:text-[#171717] cursor-pointer"
+                  className="w-7 h-7 rounded-full bg-[#F3F4F4] flex items-center justify-center text-[#5F6368] hover:text-[#021526] cursor-pointer"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
               </div>
 
               <form onSubmit={handleSubmitBankChange} className="space-y-3">
-                <div className="p-2.5 bg-[#FAF9F6] rounded-xl border border-[#E8E6E1] text-[11px] text-[#777570] flex items-center gap-1.5">
-                  <AlertCircle className="w-3.5 h-3.5 text-[#FF6B2C] shrink-0" />
+                <div className="p-2.5 bg-[#F3F4F4] rounded-xl border border-[#E5E7EB] text-[11px] text-[#5F6368] flex items-center gap-1.5">
+                  <AlertCircle className="w-3.5 h-3.5 text-[#F94001] shrink-0" />
                   <span>Existing HDFC payouts will continue until this request is approved by admin.</span>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-[#777570] mb-1">
-                    New Bank Name <span className="text-[#FF6B2C]">*</span>
+                  <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                    New Bank Name <span className="text-[#F94001]">*</span>
                   </label>
                   <input
                     type="text"
@@ -1773,13 +1703,13 @@ export const SettingsScreen: React.FC = () => {
                     placeholder="e.g. ICICI Bank, State Bank of India"
                     value={newBankName}
                     onChange={(e) => setNewBankName(e.target.value)}
-                    className="w-full bg-[#FAF9F6] border border-[#E8E6E1] rounded-xl px-3 py-2 text-[12.5px] font-bold text-[#171717] focus:outline-none"
+                    className="w-full bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-3 py-2 text-[12.5px] font-bold text-[#021526] focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-[#777570] mb-1">
-                    Account Holder Name <span className="text-[#FF6B2C]">*</span>
+                  <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                    Account Holder Name <span className="text-[#F94001]">*</span>
                   </label>
                   <input
                     type="text"
@@ -1787,14 +1717,14 @@ export const SettingsScreen: React.FC = () => {
                     placeholder="Must match GSTIN / Business Name"
                     value={newHolderName}
                     onChange={(e) => setNewHolderName(e.target.value)}
-                    className="w-full bg-[#FAF9F6] border border-[#E8E6E1] rounded-xl px-3 py-2 text-[12.5px] font-bold text-[#171717] focus:outline-none"
+                    className="w-full bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-3 py-2 text-[12.5px] font-bold text-[#021526] focus:outline-none"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-[11px] font-bold text-[#777570] mb-1">
-                      Account Number <span className="text-[#FF6B2C]">*</span>
+                    <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                      Account Number <span className="text-[#F94001]">*</span>
                     </label>
                     <input
                       type="password"
@@ -1802,13 +1732,13 @@ export const SettingsScreen: React.FC = () => {
                       placeholder="Account number"
                       value={newAccountNumber}
                       onChange={(e) => setNewAccountNumber(e.target.value)}
-                      className="w-full bg-[#FAF9F6] border border-[#E8E6E1] rounded-xl px-3 py-2 text-[12.5px] font-bold text-[#171717] focus:outline-none"
+                      className="w-full bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-3 py-2 text-[12.5px] font-bold text-[#021526] focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-[#777570] mb-1">
-                      Confirm Account <span className="text-[#FF6B2C]">*</span>
+                    <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                      Confirm Account <span className="text-[#F94001]">*</span>
                     </label>
                     <input
                       type="text"
@@ -1816,15 +1746,15 @@ export const SettingsScreen: React.FC = () => {
                       placeholder="Re-enter number"
                       value={confirmAccountNumber}
                       onChange={(e) => setConfirmAccountNumber(e.target.value)}
-                      className="w-full bg-[#FAF9F6] border border-[#E8E6E1] rounded-xl px-3 py-2 text-[12.5px] font-bold text-[#171717] focus:outline-none"
+                      className="w-full bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-3 py-2 text-[12.5px] font-bold text-[#021526] focus:outline-none"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-[11px] font-bold text-[#777570] mb-1">
-                      IFSC Code <span className="text-[#FF6B2C]">*</span>
+                    <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                      IFSC Code <span className="text-[#F94001]">*</span>
                     </label>
                     <input
                       type="text"
@@ -1832,26 +1762,27 @@ export const SettingsScreen: React.FC = () => {
                       placeholder="e.g. ICIC0001234"
                       value={newIfsc}
                       onChange={(e) => setNewIfsc(e.target.value.toUpperCase())}
-                      className="w-full bg-[#FAF9F6] border border-[#E8E6E1] rounded-xl px-3 py-2 text-[12.5px] font-bold text-[#171717] focus:outline-none uppercase"
+                      className="w-full bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-3 py-2 text-[12.5px] font-bold text-[#021526] focus:outline-none uppercase"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-[#777570] mb-1">Account Type</label>
-                    <select
+                    <label className="block text-[11px] font-bold text-[#5F6368] mb-1">Account Type</label>
+                    <CustomSelect
                       value={newAccountType}
-                      onChange={(e) => setNewAccountType(e.target.value)}
-                      className="w-full bg-[#FAF9F6] border border-[#E8E6E1] rounded-xl px-2.5 py-2 text-[12px] font-bold text-[#171717] focus:outline-none"
-                    >
-                      <option value="Current Commercial">Current Commercial</option>
-                      <option value="Savings">Savings Account</option>
-                    </select>
+                      onChange={(val) => setNewAccountType(val)}
+                      options={[
+                        { value: 'Current Commercial', label: 'Current Commercial' },
+                        { value: 'Savings', label: 'Savings Account' },
+                      ]}
+                      className="w-full bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-2.5 py-2 text-[12px] font-bold text-[#021526] focus:outline-none"
+                    />
                   </div>
                 </div>
 
                 {/* Cancelled Cheque upload mock */}
                 <div>
-                  <label className="block text-[11px] font-bold text-[#777570] mb-1">
+                  <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
                     Proof of Account (Cancelled Cheque / Bank Passbook)
                   </label>
                   <button
@@ -1863,8 +1794,8 @@ export const SettingsScreen: React.FC = () => {
                     }}
                     className={`w-full py-2.5 rounded-xl border-2 border-dashed flex items-center justify-center gap-1.5 text-[12px] font-bold transition-all cursor-pointer ${
                       hasChequeAttached
-                        ? 'border-[#2FA66A] bg-[#2FA66A]/10 text-[#2FA66A]'
-                        : 'border-[#E8E6E1] bg-[#FAF9F6] text-[#777570] hover:border-[#171717]'
+                        ? 'border-[#16A34A] bg-[#16A34A]/10 text-[#16A34A]'
+                        : 'border-[#E5E7EB] bg-[#F3F4F4] text-[#5F6368] hover:border-[#021526]'
                     }`}
                   >
                     <Upload className="w-3.5 h-3.5" />
@@ -1873,20 +1804,20 @@ export const SettingsScreen: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-[#777570] mb-1">Reason for Change</label>
+                  <label className="block text-[11px] font-bold text-[#5F6368] mb-1">Reason for Change</label>
                   <input
                     type="text"
                     placeholder="e.g. Migrating to new business corporate branch"
                     value={changeReason}
                     onChange={(e) => setChangeReason(e.target.value)}
-                    className="w-full bg-[#FAF9F6] border border-[#E8E6E1] rounded-xl px-3 py-2 text-[12.5px] font-medium text-[#171717] focus:outline-none"
+                    className="w-full bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-3 py-2 text-[12.5px] font-medium text-[#021526] focus:outline-none"
                   />
                 </div>
 
                 <div className="pt-2">
                   <button
                     type="submit"
-                    className="w-full h-10 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white font-black text-[13px] flex items-center justify-center gap-1.5 shadow-sm active-press cursor-pointer"
+                    className="w-full h-10 rounded-xl bg-[#F94001] hover:bg-[#D93600] text-white font-black text-[13px] flex items-center justify-center gap-1.5 shadow-sm active-press cursor-pointer"
                   >
                     <span>Submit Request to Admin</span>
                   </button>
@@ -1909,23 +1840,23 @@ export const SettingsScreen: React.FC = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-sm bg-white rounded-3xl p-5 border border-[#E8E6E1] shadow-2xl space-y-4"
+              className="relative w-full max-w-sm bg-white rounded-3xl p-5 border border-[#E5E7EB] shadow-2xl space-y-4"
             >
-              <div className="flex items-center justify-between pb-2 border-b border-[#F1F0EC]">
+              <div className="flex items-center justify-between pb-2 border-b border-[#F3F4F4]">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-xl bg-[#FF6B2C]/10 text-[#FF6B2C] flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-xl bg-[#F94001]/10 text-[#F94001] flex items-center justify-center">
                     <ImageIcon className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="text-[15px] font-black text-[#171717]">Add Venue Photo</h3>
-                    <p className="text-[11px] text-[#777570]">{venuePhotos.length} of 8 uploaded</p>
+                    <h3 className="text-[15px] font-black text-[#021526]">Add Venue Photo</h3>
+                    <p className="text-[11px] text-[#5F6368]">{venuePhotos.length} of 8 uploaded</p>
                   </div>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setIsAddPhotoOpen(false)}
-                  className="w-7 h-7 rounded-full bg-[#F1F0EC] flex items-center justify-center text-[#777570] hover:text-[#171717] cursor-pointer"
+                  className="w-7 h-7 rounded-full bg-[#F3F4F4] flex items-center justify-center text-[#5F6368] hover:text-[#021526] cursor-pointer"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -1933,7 +1864,7 @@ export const SettingsScreen: React.FC = () => {
 
               <div className="space-y-3">
                 <div>
-                  <label className="block text-[11px] font-bold text-[#777570] mb-1">
+                  <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
                     Photo Title / Area Description
                   </label>
                   <input
@@ -1941,20 +1872,20 @@ export const SettingsScreen: React.FC = () => {
                     placeholder="e.g. Floodlit Goalpost View 1"
                     value={newPhotoLabel}
                     onChange={(e) => setNewPhotoLabel(e.target.value)}
-                    className="w-full bg-[#FAF9F6] border border-[#E8E6E1] rounded-xl px-3 py-2 text-[12.5px] font-bold text-[#171717] focus:outline-none"
+                    className="w-full bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-3 py-2 text-[12.5px] font-bold text-[#021526] focus:outline-none"
                   />
                 </div>
 
-                <div className="p-3 bg-[#FAF9F6] rounded-xl border border-[#E8E6E1] flex items-center justify-center flex-col gap-2 py-6">
-                  <Upload className="w-6 h-6 text-[#FF6B2C]" />
-                  <span className="text-[12px] font-bold text-[#171717]">Select high-res arena image</span>
-                  <span className="text-[10px] text-[#777570]">JPG, PNG up to 10MB</span>
+                <div className="p-3 bg-[#F3F4F4] rounded-xl border border-[#E5E7EB] flex items-center justify-center flex-col gap-2 py-6">
+                  <Upload className="w-6 h-6 text-[#F94001]" />
+                  <span className="text-[12px] font-bold text-[#021526]">Select high-res arena image</span>
+                  <span className="text-[10px] text-[#5F6368]">JPG, PNG up to 10MB</span>
                 </div>
 
                 <button
                   type="button"
                   onClick={handleAddPhoto}
-                  className="w-full h-10 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white font-black text-[13px] flex items-center justify-center gap-1.5 shadow-sm active-press cursor-pointer"
+                  className="w-full h-10 rounded-xl bg-[#F94001] hover:bg-[#D93600] text-white font-black text-[13px] flex items-center justify-center gap-1.5 shadow-sm active-press cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Add Photo to Gallery</span>
@@ -1969,46 +1900,46 @@ export const SettingsScreen: React.FC = () => {
       {previewDoc && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs select-none">
           <div className="absolute inset-0" onClick={() => setPreviewDoc(null)} />
-          <div className="relative bg-white w-full max-w-lg rounded-3xl border border-[#E8E6E1] shadow-2xl overflow-hidden flex flex-col z-10 max-h-[85vh]">
-            <div className="p-4 border-b border-[#E8E6E1] flex items-center justify-between bg-[#FAF9F6]">
+          <div className="relative bg-white w-full max-w-lg rounded-3xl border border-[#E5E7EB] shadow-2xl overflow-hidden flex flex-col z-10 max-h-[85vh]">
+            <div className="p-4 border-b border-[#E5E7EB] flex items-center justify-between bg-[#F3F4F4]">
               <div>
-                <h3 className="text-[15px] font-black text-[#171717]">{previewDoc.title}</h3>
-                <p className="text-[11px] font-mono text-[#777570]">{previewDoc.docId}</p>
+                <h3 className="text-[15px] font-black text-[#021526]">{previewDoc.title}</h3>
+                <p className="text-[11px] font-mono text-[#5F6368]">{previewDoc.docId}</p>
               </div>
               <button
                 type="button"
                 onClick={() => setPreviewDoc(null)}
-                className="w-8 h-8 rounded-full bg-white border border-[#E8E6E1] flex items-center justify-center text-[#777570] hover:text-[#171717] active-press cursor-pointer"
+                className="w-8 h-8 rounded-full bg-white border border-[#E5E7EB] flex items-center justify-center text-[#5F6368] hover:text-[#021526] active-press cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="p-4 overflow-auto flex-1 flex items-center justify-center bg-[#FAF9F6] min-h-[280px]">
+            <div className="p-4 overflow-auto flex-1 flex items-center justify-center bg-[#F3F4F4] min-h-[280px]">
               {previewDoc.type === 'image' || previewDoc.url.match(/\.(jpeg|jpg|png|webp)($|\?)/i) ? (
                 <img
                   src={previewDoc.url}
                   alt={previewDoc.title}
-                  className="max-h-[55vh] max-w-full rounded-xl object-contain shadow-sm border border-[#E8E6E1]"
+                  className="max-h-[55vh] max-w-full rounded-xl object-contain shadow-sm border border-[#E5E7EB]"
                 />
               ) : (
                 <iframe
                   src={previewDoc.url}
                   title={previewDoc.title}
-                  className="w-full h-[55vh] rounded-xl border border-[#E8E6E1] bg-white"
+                  className="w-full h-[55vh] rounded-xl border border-[#E5E7EB] bg-white"
                 />
               )}
             </div>
 
-            <div className="p-3 border-t border-[#E8E6E1] bg-white flex items-center justify-between">
-              <span className="text-[11px] font-bold text-[#2FA66A] bg-[#2FA66A]/10 px-2.5 py-1 rounded-full border border-[#2FA66A]/20">
+            <div className="p-3 border-t border-[#E5E7EB] bg-white flex items-center justify-between">
+              <span className="text-[11px] font-bold text-[#16A34A] bg-[#16A34A]/10 px-2.5 py-1 rounded-full border border-[#16A34A]/20">
                 ✓ Document Verified & Valid
               </span>
               <a
                 href={previewDoc.url}
                 target="_blank"
                 rel="noreferrer"
-                className="text-[11px] font-bold text-[#FF6B2C] hover:underline flex items-center gap-1"
+                className="text-[11px] font-bold text-[#F94001] hover:underline flex items-center gap-1"
               >
                 <span>Full View</span>
                 <ExternalLink className="w-3 h-3" />

@@ -666,15 +666,15 @@ export const SlotsScreen: React.FC = () => {
       {/* --------------------------------------------------------- */}
       {/* 2. TOP HEADER STRIP                                       */}
       {/* --------------------------------------------------------- */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#E8E6E1]/80">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#E5E7EB]/80">
         <div>
           <div className="flex items-center gap-2 flex-wrap">
-            <h1 className="text-[20px] sm:text-[22px] font-black text-[#171717] tracking-tight">Time Track Matrix</h1>
-            <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-black bg-[#2FA66A]/15 text-[#1E774A] border border-[#2FA66A]/30 flex items-center gap-1.5 shadow-2xs">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#2FA66A] animate-pulse" />
+            <h1 className="text-[20px] sm:text-[22px] font-black text-[#021526] tracking-tight">Time Track Matrix</h1>
+            <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-black bg-[#16A34A]/15 text-[#15803D] border border-[#16A34A]/30 flex items-center gap-1.5 shadow-2xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A] animate-pulse" />
               <span>{kpis.ongoingMatches > 0 ? `${kpis.ongoingMatches} In Play Now` : `${kpis.occupancyRate}% Occupied`}</span>
             </span>
-            <span className="text-[10.5px] font-bold text-[#777570] bg-[#FAF9F6] px-2 py-0.5 rounded border border-[#E8E6E1]">
+            <span className="text-[10.5px] font-bold text-[#5F6368] bg-[#F3F4F4] px-2 py-0.5 rounded border border-[#E5E7EB]">
               {filteredCourts.length} {filteredCourts.length === 1 ? 'Pitch' : 'Pitches'}
             </span>
             {isPastDate && (
@@ -683,22 +683,22 @@ export const SlotsScreen: React.FC = () => {
               </span>
             )}
           </div>
-          <p className="text-[11.5px] sm:text-[12px] font-medium text-[#777570] mt-0.5">
+          <p className="text-[11.5px] sm:text-[12px] font-medium text-[#5F6368] mt-0.5">
             {isPastDate
               ? 'Viewing historical records · Past dates cannot be booked.'
               : currentDaySchedule
-              ? currentDaySchedule.isOpen
-                ? `Schedule: ${currentDaySchedule.openTime} – ${currentDaySchedule.closeTime} · Select open slots for booking.`
-                : 'Facility is marked closed on this day in operating schedule.'
-              : 'Select open slots on today & upcoming dates · Continuous multi-hour booking.'}
+                ? currentDaySchedule.isOpen
+                  ? `Schedule: ${currentDaySchedule.openTime} – ${currentDaySchedule.closeTime} · Select open slots for booking.`
+                  : 'Facility is marked closed on this day in operating schedule.'
+                : 'Select open slots on today & upcoming dates · Continuous multi-hour booking.'}
           </p>
         </div>
 
         {/* Header Action Controls */}
         <div className="flex items-center gap-2 flex-wrap">
           {isStaff ? (
-            <div className="h-9 px-3.5 rounded-xl bg-[#F1F0EC] border border-[#E8E6E1] text-[#777570] font-bold text-[12px] flex items-center justify-center gap-1.5 shadow-2xs">
-              <Lock className="w-3.5 h-3.5 text-[#777570]" />
+            <div className="h-9 px-3.5 rounded-xl bg-[#F3F4F4] border border-[#E5E7EB] text-[#5F6368] font-bold text-[12px] flex items-center justify-center gap-1.5 shadow-2xs">
+              <Lock className="w-3.5 h-3.5 text-[#5F6368]" />
               <span>View-Only Mode (Staff)</span>
             </div>
           ) : (
@@ -721,11 +721,10 @@ export const SlotsScreen: React.FC = () => {
                   setActiveModal('new_booking');
                 }}
                 disabled={isPastDate}
-                className={`h-9 px-3.5 rounded-xl font-black text-[12px] flex items-center justify-center gap-1.5 shadow-2xs active-press cursor-pointer transition-all shrink-0 ${
-                  isPastDate
-                    ? 'bg-[#E8E6E1] text-[#A3A099] cursor-not-allowed opacity-60'
-                    : 'bg-[#FF6B2C] hover:bg-[#e85b1e] text-white'
-                }`}
+                className={`h-9 px-3.5 rounded-xl font-black text-[12px] flex items-center justify-center gap-1.5 shadow-2xs active-press cursor-pointer transition-all shrink-0 ${isPastDate
+                    ? 'bg-[#E5E7EB] text-[#5F6368] cursor-not-allowed opacity-60'
+                    : 'bg-[#F94001] hover:bg-[#D93600] text-white'
+                  }`}
               >
                 <Plus className="w-3.5 h-3.5 stroke-[3]" />
                 <span>New Booking</span>
@@ -737,9 +736,9 @@ export const SlotsScreen: React.FC = () => {
                   haptics.tap();
                   setActiveModal('block_slot');
                 }}
-                className="h-9 px-3.5 rounded-xl bg-white border border-[#E8E6E1] hover:border-[#D94B4B] text-[#171717] hover:text-[#D94B4B] font-extrabold text-[12px] flex items-center justify-center gap-1.5 shadow-2xs active-press cursor-pointer transition-all shrink-0"
+                className="h-9 px-3.5 rounded-xl bg-white border border-[#E5E7EB] hover:border-[#DC2626] text-[#021526] hover:text-[#DC2626] font-extrabold text-[12px] flex items-center justify-center gap-1.5 shadow-2xs active-press cursor-pointer transition-all shrink-0"
               >
-                <Ban className="w-3.5 h-3.5 text-[#D94B4B]" />
+                <Ban className="w-3.5 h-3.5 text-[#DC2626]" />
                 <span>Block Pitch</span>
               </button>
             </>
@@ -748,19 +747,18 @@ export const SlotsScreen: React.FC = () => {
       </div>
 
       {/* Mobile View Mode Switcher: App Slot Picker (Default) vs Timeline Matrix */}
-      <div className="flex md:hidden items-center bg-[#F1F0EC] p-1 rounded-2xl border border-[#E4E2DC] shadow-2xs">
+      <div className="flex md:hidden items-center bg-[#F3F4F4] p-1 rounded-2xl border border-[#E4E2DC] shadow-2xs">
         <button
           onClick={() => {
             haptics.tap();
             setMobileSlotsMode('picker');
           }}
-          className={`flex-1 py-2 rounded-xl text-[12px] font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer active-press ${
-            mobileSlotsMode === 'picker'
-              ? 'bg-white text-[#171717] shadow-xs'
-              : 'text-[#777570] hover:text-[#171717]'
-          }`}
+          className={`flex-1 py-2 rounded-xl text-[12px] font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer active-press ${mobileSlotsMode === 'picker'
+              ? 'bg-white text-[#021526] shadow-xs'
+              : 'text-[#5F6368] hover:text-[#021526]'
+            }`}
         >
-          <Zap className="w-3.5 h-3.5 text-[#FF6B2C]" />
+          <Zap className="w-3.5 h-3.5 text-[#F94001]" />
           <span>App Slot Picker</span>
         </button>
         <button
@@ -768,11 +766,10 @@ export const SlotsScreen: React.FC = () => {
             haptics.tap();
             setMobileSlotsMode('matrix');
           }}
-          className={`flex-1 py-2 rounded-xl text-[12px] font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer active-press ${
-            mobileSlotsMode === 'matrix'
-              ? 'bg-white text-[#171717] shadow-xs'
-              : 'text-[#777570] hover:text-[#171717]'
-          }`}
+          className={`flex-1 py-2 rounded-xl text-[12px] font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer active-press ${mobileSlotsMode === 'matrix'
+              ? 'bg-white text-[#021526] shadow-xs'
+              : 'text-[#5F6368] hover:text-[#021526]'
+            }`}
         >
           <Sliders className="w-3.5 h-3.5" />
           <span>Timeline Matrix</span>
@@ -782,7 +779,7 @@ export const SlotsScreen: React.FC = () => {
       {/* --------------------------------------------------------- */}
       {/* 3. DYNAMIC DATE CAROUSEL (CONTINUOUS MONTH NAVIGATION)    */}
       {/* --------------------------------------------------------- */}
-      <div className="bg-white rounded-2xl p-3 border border-[#E8E6E1] shadow-2xs relative flex flex-col lg:flex-row items-center justify-between gap-3 min-h-[58px]">
+      <div className="bg-white rounded-2xl p-3 border border-[#E5E7EB] shadow-2xs relative flex flex-col lg:flex-row items-center justify-between gap-3 min-h-[58px]">
         {/* Left: Quick Jump / Today status */}
         <div className="hidden lg:flex items-center z-10">
           <button
@@ -791,13 +788,12 @@ export const SlotsScreen: React.FC = () => {
               setSelectedDateObj(new Date(TODAY_BASELINE));
               setRangeSelection(null);
             }}
-            className={`px-3 py-1.5 rounded-xl text-[11px] font-black transition-all cursor-pointer flex items-center gap-1.5 ${
-              isTodayDate
-                ? 'bg-[#171717] text-white shadow-2xs'
-                : 'bg-[#FAF9F6] border border-[#E8E6E1] text-[#777570] hover:text-[#171717] hover:border-[#171717]/30'
-            }`}
+            className={`px-3 py-1.5 rounded-xl text-[11px] font-black transition-all cursor-pointer flex items-center gap-1.5 ${isTodayDate
+                ? 'bg-[#021526] text-white shadow-xs'
+                : 'bg-[#F3F4F4] border border-[#E5E7EB] text-[#5F6368] hover:text-[#021526] hover:border-[#021526]/30'
+              }`}
           >
-            <Sparkles className="w-3 h-3 text-[#FF6B2C]" />
+
             <span>Jump to Today</span>
           </button>
         </div>
@@ -813,7 +809,7 @@ export const SlotsScreen: React.FC = () => {
               setSelectedDateObj(prev);
               setRangeSelection(null);
             }}
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-[#171717] hover:bg-[#F7F7F5] cursor-pointer shrink-0"
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-[#021526] hover:bg-[#F3F4F4] cursor-pointer shrink-0"
             title="Previous Day (Rolls across months)"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -830,18 +826,17 @@ export const SlotsScreen: React.FC = () => {
                     setSelectedDateObj(d.dateObj);
                     setRangeSelection(null);
                   }}
-                  className={`py-1.5 px-3.5 rounded-xl text-center transition-all cursor-pointer min-w-16 ${
-                    d.isSelected
-                      ? 'bg-[#171717] text-white shadow-2xs scale-105'
-                      : 'bg-[#FAF9F6] border border-[#E8E6E1] text-[#777570] hover:text-[#171717] hover:border-[#171717]/30'
-                  }`}
+                  className={`py-1.5 px-3.5 rounded-xl text-center transition-all cursor-pointer min-w-16 ${d.isSelected
+                      ? 'bg-[#021526] text-white shadow-sm scale-105'
+                      : 'bg-[#F3F4F4] border border-[#E5E7EB] text-[#5F6368] hover:text-[#021526] hover:border-[#021526]/30'
+                    }`}
                 >
                   <p className="text-[9px] font-black uppercase tracking-wider">
                     {d.dayName} {d.monthShort}
                   </p>
                   <p className="text-[14px] font-black leading-tight mt-0.5">{d.dateNum}</p>
                   {d.isToday && (
-                    <span className={`block text-[8px] font-black tracking-widest ${d.isSelected ? 'text-[#FF6B2C]' : 'text-[#2FA66A]'}`}>
+                    <span className={`block text-[8px] font-black tracking-widest ${d.isSelected ? 'text-[#F94001]' : 'text-[#16A34A]'}`}>
                       TODAY
                     </span>
                   )}
@@ -859,7 +854,7 @@ export const SlotsScreen: React.FC = () => {
               setSelectedDateObj(next);
               setRangeSelection(null);
             }}
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-[#171717] hover:bg-[#F7F7F5] cursor-pointer shrink-0"
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-[#021526] hover:bg-[#F3F4F4] cursor-pointer shrink-0"
             title="Next Day (Rolls into next month)"
           >
             <ChevronRight className="w-4 h-4" />
@@ -867,17 +862,17 @@ export const SlotsScreen: React.FC = () => {
         </div>
 
         {/* Right: Date Picker Button */}
-        <div className="flex items-center gap-2 w-full lg:w-auto justify-end border-t lg:border-t-0 pt-2 lg:pt-0 border-[#F1F0EC] z-10 ml-auto">
+        <div className="flex items-center gap-2 w-full lg:w-auto justify-end border-t lg:border-t-0 pt-2 lg:pt-0 border-[#F3F4F4] z-10 ml-auto">
           <button
             onClick={() => {
               haptics.tap();
               setIsAdvanceDatePickerOpen(true);
             }}
-            className="px-3.5 py-2 rounded-xl border border-[#E8E6E1] hover:border-[#FF6B2C] bg-white text-[#171717] text-[12px] font-black flex items-center gap-2 shadow-2xs transition-all cursor-pointer"
+            className="px-3.5 py-2 rounded-xl border border-[#E5E7EB] hover:border-[#F94001] bg-white text-[#021526] text-[12px] font-black flex items-center gap-2 shadow-2xs transition-all cursor-pointer"
           >
-            <CalendarIcon className="w-4 h-4 text-[#FF6B2C]" />
+            <CalendarIcon className="w-4 h-4 text-[#F94001]" />
             <span>{currentDate}</span>
-            <ChevronDown className="w-3.5 h-3.5 text-[#777570]" />
+            <ChevronDown className="w-3.5 h-3.5 text-[#5F6368]" />
           </button>
         </div>
       </div>
@@ -886,43 +881,43 @@ export const SlotsScreen: React.FC = () => {
       {/* 4. FINANCIAL & OCCUPANCY KPIS STRIP                       */}
       {/* --------------------------------------------------------- */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-2xs">
-          <span className="text-[10px] font-black uppercase tracking-wider text-[#777570] block">Day Occupancy</span>
-          <p className="text-[20px] font-black text-[#171717] mt-0.5">{kpis.occupancyRate}%</p>
-          <p className="text-[11px] text-[#2FA66A] font-bold mt-0.5 flex items-center gap-1">
+        <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-2xs">
+          <span className="text-[10px] font-black uppercase tracking-wider text-[#5F6368] block">Day Occupancy</span>
+          <p className="text-[20px] font-black text-[#021526] mt-0.5">{kpis.occupancyRate}%</p>
+          <p className="text-[11px] text-[#16A34A] font-bold mt-0.5 flex items-center gap-1">
             <CheckCircle2 className="w-3 h-3" />
             <span>{kpis.bookedSlots} booked sessions</span>
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-2xs">
-          <span className="text-[10px] font-black uppercase tracking-wider text-[#777570] block">Revenue On Date</span>
-          <p className="text-[20px] font-black text-[#2FA66A] mt-0.5">₹{kpis.totalRevenue.toLocaleString('en-IN')}</p>
-          <p className="text-[11px] text-[#777570] font-medium mt-0.5">Estimated gross slot value</p>
+        <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-2xs">
+          <span className="text-[10px] font-black uppercase tracking-wider text-[#5F6368] block">Revenue On Date</span>
+          <p className="text-[20px] font-black text-[#16A34A] mt-0.5">₹{kpis.totalRevenue.toLocaleString('en-IN')}</p>
+          <p className="text-[11px] text-[#5F6368] font-medium mt-0.5">Estimated gross slot value</p>
         </div>
 
-        <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-2xs">
-          <span className="text-[10px] font-black uppercase tracking-wider text-[#777570] block">Open Available Slots</span>
-          <p className="text-[20px] font-black text-[#171717] mt-0.5">{isPastDate ? 0 : kpis.availableSlots}</p>
-          <p className="text-[11px] text-[#FF6B2C] font-bold mt-0.5">
+        <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-2xs">
+          <span className="text-[10px] font-black uppercase tracking-wider text-[#5F6368] block">Open Available Slots</span>
+          <p className="text-[20px] font-black text-[#021526] mt-0.5">{isPastDate ? 0 : kpis.availableSlots}</p>
+          <p className="text-[11px] text-[#F94001] font-bold mt-0.5">
             {isPastDate ? 'Historical record (Closed)' : 'Ready for continuous booking'}
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-2xs">
-          <span className="text-[10px] font-black uppercase tracking-wider text-[#777570] block">Maintenance Blocks</span>
-          <p className="text-[20px] font-black text-[#D94B4B] mt-0.5">{kpis.maintenanceSlots}</p>
-          <p className="text-[11px] text-[#777570] font-medium mt-0.5">Reserved for pitch servicing</p>
+        <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-2xs">
+          <span className="text-[10px] font-black uppercase tracking-wider text-[#5F6368] block">Maintenance Blocks</span>
+          <p className="text-[20px] font-black text-[#DC2626] mt-0.5">{kpis.maintenanceSlots}</p>
+          <p className="text-[11px] text-[#5F6368] font-medium mt-0.5">Reserved for pitch servicing</p>
         </div>
       </div>
 
       {/* --------------------------------------------------------- */}
       {/* 5. SPORT FILTER STRIP & LEGEND                            */}
       {/* --------------------------------------------------------- */}
-      <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-3 flex-wrap">
+      <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-3 flex-wrap">
         {/* Sports Pills */}
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-          <span className="text-[11px] font-black text-[#777570] uppercase mr-1 shrink-0">Sport:</span>
+          <span className="text-[11px] font-black text-[#5F6368] uppercase mr-1 shrink-0">Sport:</span>
           {availableSports.map((sport) => {
             const isSelected = selectedSportFilter === sport;
             return (
@@ -933,11 +928,10 @@ export const SlotsScreen: React.FC = () => {
                   setSelectedSportFilter(sport);
                   setRangeSelection(null);
                 }}
-                className={`px-3 py-1 rounded-xl text-[11px] font-black transition-all cursor-pointer whitespace-nowrap ${
-                  isSelected
-                    ? 'bg-[#FF6B2C] text-white shadow-2xs'
-                    : 'bg-[#FAF9F6] border border-[#E8E6E1] text-[#777570] hover:text-[#171717]'
-                }`}
+                className={`px-3 py-1 rounded-xl text-[11px] font-black transition-all cursor-pointer whitespace-nowrap ${isSelected
+                    ? 'bg-[#F94001] text-white shadow-2xs'
+                    : 'bg-[#F3F4F4] border border-[#E5E7EB] text-[#5F6368] hover:text-[#021526]'
+                  }`}
               >
                 {sport}
               </button>
@@ -946,30 +940,30 @@ export const SlotsScreen: React.FC = () => {
         </div>
 
         {/* Legend */}
-        <div className="flex items-center gap-3 text-[11.5px] font-bold text-[#777570] flex-wrap">
+        <div className="flex items-center gap-3 text-[11.5px] font-bold text-[#5F6368] flex-wrap">
           <span className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-[#FF6B2C] shadow-2xs ring-2 ring-[#FF6B2C]/20" />
-            <span className="text-[#171717]">Selected Range</span>
+            <span className="w-3 h-3 rounded-full bg-[#F94001] shadow-2xs ring-2 ring-[#F94001]/20" />
+            <span className="text-[#021526]">Selected Range</span>
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-[#2FA66A] shadow-2xs" />
-            <span className="text-[#171717]">In Play (Live)</span>
+            <span className="w-3 h-3 rounded-full bg-[#16A34A] shadow-2xs" />
+            <span className="text-[#021526]">In Play (Live)</span>
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-[#171717] shadow-2xs" />
-            <span className="text-[#171717]">Confirmed</span>
+            <span className="w-3 h-3 rounded-full bg-[#021526] shadow-2xs" />
+            <span className="text-[#021526]">Confirmed</span>
           </span>
           <span className="flex items-center gap-1.5">
             <span className="w-3 h-3 rounded-full bg-[#FEF3C7] border border-[#FCD34D]" />
-            <span className="text-[#D97706]">Hold Active</span>
+            <span className="text-[#F59E0B]">Hold Active</span>
           </span>
           <span className="flex items-center gap-1.5">
             <span className="w-3 h-3 rounded-full bg-[#CBD5E1]" />
-            <span className="text-[#777570]">Closed / Passed</span>
+            <span className="text-[#5F6368]">Closed / Passed</span>
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full border border-[#E8E6E1] bg-[#FAF9F6]" />
-            <span className="text-[#171717]">Available (₹ Price)</span>
+            <span className="w-3 h-3 rounded-full border border-[#E5E7EB] bg-[#F3F4F4]" />
+            <span className="text-[#021526]">Available (₹ Price)</span>
           </span>
         </div>
       </div>
@@ -982,10 +976,10 @@ export const SlotsScreen: React.FC = () => {
           {/* Pitch Horizontal Swipeable Cards */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between px-0.5">
-              <span className="text-[11px] font-black uppercase tracking-wider text-[#777570]">
+              <span className="text-[11px] font-black uppercase tracking-wider text-[#5F6368]">
                 Select Pitch ({filteredCourts.length})
               </span>
-              <span className="text-[10.5px] font-bold text-[#FF6B2C]">
+              <span className="text-[10.5px] font-bold text-[#F94001]">
                 {courtStats[selectedCourt?.id]?.available || 0} Open Today
               </span>
             </div>
@@ -1004,29 +998,27 @@ export const SlotsScreen: React.FC = () => {
                         setRangeSelection(null);
                       }
                     }}
-                    className={`shrink-0 min-w-[145px] p-2.5 rounded-2xl text-left border transition-all cursor-pointer active:scale-[0.98] ${
-                      isCourtActive
-                        ? 'bg-[#171717] text-white border-[#171717] shadow-sm ring-2 ring-[#FF6B2C]/40'
-                        : 'bg-white border-[#E8E6E1] text-[#171717] hover:border-[#D0CECB]'
-                    }`}
+                    className={`shrink-0 min-w-[145px] p-2.5 rounded-2xl text-left border transition-all cursor-pointer active:scale-[0.98] ${isCourtActive
+                        ? 'bg-[#FFF1EC] text-[#021526] border-2 border-[#F94001] shadow-xs'
+                        : 'bg-white border-[#E5E7EB] text-[#021526] hover:border-[#D0CECB]'
+                      }`}
                   >
                     <div className="flex items-center justify-between gap-1.5 mb-1">
                       <span className="text-[13px] font-black truncate">{court.name}</span>
                       <span
-                        className={`text-[9.5px] font-extrabold px-1.5 py-0.5 rounded-md ${
-                          isCourtActive
+                        className={`text-[9.5px] font-extrabold px-1.5 py-0.5 rounded-md ${isCourtActive
                             ? 'bg-white/20 text-white'
-                            : 'bg-[#FAF9F6] text-[#777570] border border-[#E8E6E1]'
-                        }`}
+                            : 'bg-[#F3F4F4] text-[#5F6368] border border-[#E5E7EB]'
+                          }`}
                       >
                         {court.sports[0] || 'Sport'}
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-[11px] font-medium">
-                      <span className={isCourtActive ? 'text-[#FF9D66] font-bold' : 'text-[#777570]'}>
+                      <span className={isCourtActive ? 'text-[#F94001] font-bold' : 'text-[#5F6368]'}>
                         ₹{court.pricePerHour || 1000}/h
                       </span>
-                      <span className={`font-bold text-[10.5px] ${isCourtActive ? 'text-[#34D399]' : 'text-[#2FA66A]'}`}>
+                      <span className={`font-bold text-[10.5px] ${isCourtActive ? 'text-[#34D399]' : 'text-[#16A34A]'}`}>
                         {stats.available} Free
                       </span>
                     </div>
@@ -1037,16 +1029,16 @@ export const SlotsScreen: React.FC = () => {
           </div>
 
           {/* Quick Selection Guide Micro-Banner */}
-          <div className="bg-gradient-to-r from-[#FAF9F6] to-white rounded-2xl p-3 border border-[#E8E6E1] flex items-center justify-between gap-2 shadow-2xs">
+          <div className="bg-gradient-to-r from-[#F3F4F4] to-white rounded-2xl p-3 border border-[#E5E7EB] flex items-center justify-between gap-2 shadow-2xs">
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-8 h-8 rounded-xl bg-[#FF6B2C]/10 border border-[#FF6B2C]/30 text-[#FF6B2C] flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-xl bg-[#F94001]/10 border border-[#F94001]/30 text-[#F94001] flex items-center justify-center shrink-0">
                 <Sparkles className="w-4 h-4" />
               </div>
               <div className="min-w-0">
-                <p className="text-[12px] font-black text-[#171717] truncate">
+                <p className="text-[12px] font-black text-[#021526] truncate">
                   {selectedCourt?.name || 'Pitch'} · {currentDate}
                 </p>
-                <p className="text-[10.5px] text-[#777570] font-medium truncate">
+                <p className="text-[10.5px] text-[#5F6368] font-medium truncate">
                   {rangeSelection && rangeSelection.courtId === selectedCourt?.id
                     ? `${rangeSelection.slotsCount} slot selected (${rangeSelection.startTime} – ${rangeSelection.endTime})`
                     : 'Tap open slot to start · Tap 2nd slot for range'}
@@ -1059,7 +1051,7 @@ export const SlotsScreen: React.FC = () => {
                   haptics.tap();
                   setRangeSelection(null);
                 }}
-                className="text-[10.5px] font-bold text-[#D94B4B] bg-[#D94B4B]/10 px-2 py-1 rounded-lg shrink-0 cursor-pointer active-press"
+                className="text-[10.5px] font-bold text-[#DC2626] bg-[#DC2626]/10 px-2 py-1 rounded-lg shrink-0 cursor-pointer active-press"
               >
                 Reset
               </button>
@@ -1075,30 +1067,29 @@ export const SlotsScreen: React.FC = () => {
               return (
                 <div
                   key={block.id}
-                  className="bg-white rounded-2xl p-3 border border-[#E8E6E1] shadow-2xs space-y-2.5"
+                  className="bg-white rounded-2xl p-3 border border-[#E5E7EB] shadow-2xs space-y-2.5"
                 >
                   {/* Block Header */}
-                  <div className="flex items-center justify-between pb-1.5 border-b border-[#F1F0EC]">
+                  <div className="flex items-center justify-between pb-1.5 border-b border-[#F3F4F4]">
                     <div className="flex items-center gap-2">
                       <span className="text-[15px] leading-none">{block.icon}</span>
                       <div>
                         <div className="flex items-center gap-1.5">
-                          <h3 className="text-[12.5px] font-black text-[#171717]">{block.label}</h3>
+                          <h3 className="text-[12.5px] font-black text-[#021526]">{block.label}</h3>
                           {block.isPeak && (
-                            <span className="text-[8.5px] font-black px-1.5 py-0.2 rounded bg-[#FF6B2C]/10 text-[#FF6B2C] border border-[#FF6B2C]/25 uppercase tracking-wide">
+                            <span className="text-[8.5px] font-black px-1.5 py-0.2 rounded bg-[#F94001]/10 text-[#F94001] border border-[#F94001]/25 uppercase tracking-wide">
                               Peak
                             </span>
                           )}
                         </div>
-                        <p className="text-[10px] font-medium text-[#777570]">{block.time}</p>
+                        <p className="text-[10px] font-medium text-[#5F6368]">{block.time}</p>
                       </div>
                     </div>
                     <span
-                      className={`text-[9.5px] font-black px-2 py-0.5 rounded-full ${
-                        availableInBlock > 0
-                          ? 'bg-[#2FA66A]/10 text-[#1E774A] border border-[#2FA66A]/20'
-                          : 'bg-[#F1F0EC] text-[#777570]'
-                      }`}
+                      className={`text-[9.5px] font-black px-2 py-0.5 rounded-full ${availableInBlock > 0
+                          ? 'bg-[#16A34A]/10 text-[#15803D] border border-[#16A34A]/20'
+                          : 'bg-[#F3F4F4] text-[#5F6368]'
+                        }`}
                     >
                       {availableInBlock} Open
                     </span>
@@ -1130,21 +1121,20 @@ export const SlotsScreen: React.FC = () => {
                           key={`mobile-cell-${cell.courtId}-${cell.slotIndex}`}
                           onClick={() => handleSlotTrackClick(cell)}
                           disabled={isClosed}
-                          className={`p-2.5 rounded-xl text-left transition-all relative flex flex-col justify-between min-h-[64px] select-none ${
-                            isSelectedSlot
-                              ? 'bg-gradient-to-br from-[#FF6B2C] to-[#FA5A14] text-white shadow-md shadow-[#FF6B2C]/30 ring-2 ring-[#FF6B2C] cursor-pointer active:scale-[0.98]'
+                          className={`p-2.5 rounded-xl text-left transition-all relative flex flex-col justify-between min-h-[64px] select-none ${isSelectedSlot
+                              ? 'bg-gradient-to-br from-[#F94001] to-[#D93600] text-white shadow-md shadow-[#F94001]/30 ring-2 ring-[#F94001] cursor-pointer active:scale-[0.98]'
                               : isOngoing
-                              ? 'bg-[#2FA66A]/10 border border-[#2FA66A]/30 text-[#1E774A] hover:bg-[#2FA66A]/15 cursor-pointer active:scale-[0.98]'
-                              : isBooked
-                              ? 'bg-[#171717]/5 border border-[#171717]/15 text-[#171717] hover:bg-[#171717]/10 cursor-pointer active:scale-[0.98]'
-                              : isPending
-                              ? 'bg-[#FEF3C7] border border-[#FCD34D] text-[#D97706] hover:bg-[#FDE68A] cursor-pointer active:scale-[0.98]'
-                              : isMaintenance
-                              ? 'bg-[#F1F5F9] border border-[#CBD5E1] text-[#475569] cursor-pointer active:scale-[0.98]'
-                              : isClosed
-                              ? 'bg-[#F8F7F5] border border-[#E8E6E1]/60 text-[#A3A099] opacity-50 cursor-not-allowed'
-                              : 'bg-[#FAF9F6] border border-[#E8E6E1] hover:border-[#FF6B2C]/40 text-[#171717] hover:bg-white shadow-2xs cursor-pointer active:scale-[0.98]'
-                          }`}
+                                ? 'bg-[#16A34A]/10 border border-[#16A34A]/30 text-[#15803D] hover:bg-[#16A34A]/15 cursor-pointer active:scale-[0.98]'
+                                : isBooked
+                                  ? 'bg-[#021526]/5 border border-[#021526]/15 text-[#021526] hover:bg-[#021526]/10 cursor-pointer active:scale-[0.98]'
+                                  : isPending
+                                    ? 'bg-[#FEF3C7] border border-[#FCD34D] text-[#F59E0B] hover:bg-[#FDE68A] cursor-pointer active:scale-[0.98]'
+                                    : isMaintenance
+                                      ? 'bg-[#F1F5F9] border border-[#CBD5E1] text-[#475569] cursor-pointer active:scale-[0.98]'
+                                      : isClosed
+                                        ? 'bg-[#F3F4F4] border border-[#E5E7EB]/60 text-[#5F6368] opacity-50 cursor-not-allowed'
+                                        : 'bg-[#F3F4F4] border border-[#E5E7EB] hover:border-[#F94001]/40 text-[#021526] hover:bg-white shadow-2xs cursor-pointer active:scale-[0.98]'
+                            }`}
                         >
                           {/* Top Row: Time & State Badge */}
                           <div className="flex items-center justify-between gap-1 w-full">
@@ -1158,54 +1148,53 @@ export const SlotsScreen: React.FC = () => {
                                 <span>{isSingle ? 'Selected' : isSelectionStart ? 'Start' : isSelectionEnd ? 'End' : 'In'}</span>
                               </span>
                             ) : isOngoing ? (
-                              <span className="w-2 h-2 rounded-full bg-[#2FA66A] animate-ping" />
+                              <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-ping" />
                             ) : isBooked ? (
-                              <span className="text-[8.5px] font-bold text-[#777570] bg-white px-1 py-0.2 rounded border border-[#E8E6E1]">
+                              <span className="text-[8.5px] font-bold text-[#5F6368] bg-white px-1 py-0.2 rounded border border-[#E5E7EB]">
                                 Booked
                               </span>
                             ) : isPending ? (
-                              <span className="text-[8.5px] font-bold text-[#D97706] bg-white/70 px-1 py-0.2 rounded">
+                              <span className="text-[8.5px] font-bold text-[#F59E0B] bg-white/70 px-1 py-0.2 rounded">
                                 Hold
                               </span>
                             ) : isMaintenance ? (
-                              <Ban className="w-3 h-3 text-[#D94B4B]" />
+                              <Ban className="w-3 h-3 text-[#DC2626]" />
                             ) : isClosed ? (
-                              <span className="text-[8.5px] font-medium text-[#A3A099]">
+                              <span className="text-[8.5px] font-medium text-[#5F6368]">
                                 Passed
                               </span>
                             ) : (
-                              <span className="w-1.5 h-1.5 rounded-full bg-[#2FA66A]" />
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A]" />
                             )}
                           </div>
 
                           {/* Bottom Row: Detail Label / Price */}
                           <div className="flex items-center justify-between gap-1 w-full mt-1.5 pt-1 border-t border-black/5">
-                            <span className={`text-[9.5px] font-medium truncate ${isSelectedSlot ? 'text-white/85' : 'text-[#777570]'}`}>
+                            <span className={`text-[9.5px] font-medium truncate ${isSelectedSlot ? 'text-white/85' : 'text-[#5F6368]'}`}>
                               {isSelectedSlot
                                 ? `${cell.displayStartTime}–${cell.displayEndTime}`
                                 : isOngoing
-                                ? (cell.booking?.customerName ? `Live · ${cell.booking.customerName.split(' ')[0]}` : 'Live Match')
-                                : isBooked
-                                ? (cell.booking?.customerName ? cell.booking.customerName.split(' ')[0] : 'Reserved')
-                                : isPending
-                                ? 'Payment Due'
-                                : isMaintenance
-                                ? 'Maintenance'
-                                : isClosed
-                                ? 'Closed'
-                                : '1h Slot'}
+                                  ? (cell.booking?.customerName ? `Live · ${cell.booking.customerName.split(' ')[0]}` : 'Live Match')
+                                  : isBooked
+                                    ? (cell.booking?.customerName ? cell.booking.customerName.split(' ')[0] : 'Reserved')
+                                    : isPending
+                                      ? 'Payment Due'
+                                      : isMaintenance
+                                        ? 'Maintenance'
+                                        : isClosed
+                                          ? 'Closed'
+                                          : '1h Slot'}
                             </span>
 
                             <span
-                              className={`text-[11px] font-black shrink-0 ${
-                                isSelectedSlot
+                              className={`text-[11px] font-black shrink-0 ${isSelectedSlot
                                   ? 'text-white'
                                   : isOngoing || isBooked
-                                  ? 'text-[#777570]'
-                                  : isClosed
-                                  ? 'text-[#A3A099]'
-                                  : 'text-[#171717]'
-                              }`}
+                                    ? 'text-[#5F6368]'
+                                    : isClosed
+                                      ? 'text-[#5F6368]'
+                                      : 'text-[#021526]'
+                                }`}
                             >
                               ₹{cell.price}
                             </span>
@@ -1225,21 +1214,20 @@ export const SlotsScreen: React.FC = () => {
       {/* 6B. CONTINUOUS TIME TRACK (STICKY COURT NAMES + ONLY TIME SCROLLS) */}
       {/* --------------------------------------------------------- */}
       <div
-        className={`bg-white rounded-3xl p-6 border border-[#E8E6E1] shadow-2xs space-y-6 overflow-hidden text-[#171717] ${
-          mobileSlotsMode === 'picker' ? 'hidden md:block' : 'block'
-        }`}
+        className={`bg-white rounded-3xl p-6 border border-[#E5E7EB] shadow-2xs space-y-6 overflow-hidden text-[#021526] ${mobileSlotsMode === 'picker' ? 'hidden md:block' : 'block'
+          }`}
       >
         {/* Instructions Banner */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#E8E6E1] flex-wrap gap-2">
+        <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB] flex-wrap gap-2">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl flex items-center justify-center bg-[#2563EB]/10 border border-[#2563EB]/30 text-[#2563EB]">
               <Sliders className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-[14.5px] font-black tracking-tight text-[#171717]">
+              <h2 className="text-[14.5px] font-black tracking-tight text-[#021526]">
                 {currentDate} · Pitch Time Tracks
               </h2>
-              <p className="text-[11.5px] font-medium text-[#777570]">
+              <p className="text-[11.5px] font-medium text-[#5F6368]">
                 {isPastDate
                   ? 'Historical Date · Slots are closed for booking'
                   : 'Court names stay fixed on left · Scroll right across hours · Tap start & end to book'}
@@ -1249,11 +1237,10 @@ export const SlotsScreen: React.FC = () => {
 
           <div className="flex items-center gap-2">
             <span
-              className={`text-[11px] font-bold px-2.5 py-1 rounded-lg border ${
-                isPastDate
+              className={`text-[11px] font-bold px-2.5 py-1 rounded-lg border ${isPastDate
                   ? 'text-[#DC2626] bg-[#FEE2E2] border-[#FCA5A5]'
-                  : 'text-[#777570] bg-[#FAF9F6] border-[#E8E6E1]'
-              }`}
+                  : 'text-[#5F6368] bg-[#F3F4F4] border-[#E5E7EB]'
+                }`}
             >
               {isPastDate ? 'Read-Only Historical View' : 'Standard 1-Hour Intervals'}
             </span>
@@ -1264,13 +1251,13 @@ export const SlotsScreen: React.FC = () => {
         <div className="overflow-x-auto pb-4">
           <div className="min-w-[1100px]">
             {/* Timeline Row Header */}
-            <div className="flex items-center pb-3 border-b border-[#E8E6E1]">
+            <div className="flex items-center pb-3 border-b border-[#E5E7EB]">
               {/* STICKY Court Header Column (DOES NOT SCROLL) */}
-              <div className="w-[115px] min-w-[115px] sm:w-[240px] sm:min-w-[240px] shrink-0 sticky left-0 z-30 px-2 sm:px-3.5 py-1.5 border-r border-[#E8E6E1] bg-white flex items-center justify-between shadow-[4px_0_12px_-4px_rgba(0,0,0,0.06)]">
-                <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-[#777570]">
+              <div className="w-[115px] min-w-[115px] sm:w-[240px] sm:min-w-[240px] shrink-0 sticky left-0 z-30 px-2 sm:px-3.5 py-1.5 border-r border-[#E5E7EB] bg-white flex items-center justify-between shadow-[4px_0_12px_-4px_rgba(0,0,0,0.06)]">
+                <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-[#5F6368]">
                   Courts
                 </span>
-                <span className="text-[9.5px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-[#FAF9F6] border border-[#E8E6E1] text-[#777570]">
+                <span className="text-[9.5px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-[#F3F4F4] border border-[#E5E7EB] text-[#5F6368]">
                   {filteredCourts.length}
                 </span>
               </div>
@@ -1282,11 +1269,11 @@ export const SlotsScreen: React.FC = () => {
               >
                 {standardTimeSlots.map((timeDef, idx) => (
                   <div key={timeDef.time} className="flex items-center justify-center text-center">
-                    <span className="text-[12px] font-black tracking-tight whitespace-nowrap text-[#171717]">
+                    <span className="text-[12px] font-black tracking-tight whitespace-nowrap text-[#021526]">
                       {timeDef.label}
                     </span>
                     {idx < standardTimeSlots.length - 1 && (
-                      <span className="text-[10px] mx-1 select-none text-[#A3A099]">
+                      <span className="text-[10px] mx-1 select-none text-[#5F6368]">
                         ·
                       </span>
                     )}
@@ -1296,7 +1283,7 @@ export const SlotsScreen: React.FC = () => {
             </div>
 
             {/* Court Tracks List */}
-            <div className="divide-y divide-[#F1F0EC] pt-2">
+            <div className="divide-y divide-[#F3F4F4] pt-2">
               {filteredCourts.map((court) => {
                 const cells = matrixCells[court.id] || [];
                 const isCourtSelected = rangeSelection?.courtId === court.id;
@@ -1306,21 +1293,21 @@ export const SlotsScreen: React.FC = () => {
                 return (
                   <div
                     key={court.id}
-                    className="flex items-center py-3.5 hover:bg-[#FAF9F6]/60 transition-colors"
+                    className="flex items-center py-3.5 hover:bg-[#F3F4F4]/60 transition-colors"
                   >
                     {/* STICKY Court Info Column: Compact on mobile, 240px on desktop (DOES NOT SCROLL) */}
-                    <div className="w-[115px] min-w-[115px] sm:w-[240px] sm:min-w-[240px] shrink-0 sticky left-0 z-30 px-2 sm:px-3.5 py-2 sm:py-2.5 border-r border-[#E8E6E1] bg-white shadow-[4px_0_12px_-4px_rgba(0,0,0,0.06)] flex flex-col justify-center gap-1">
+                    <div className="w-[115px] min-w-[115px] sm:w-[240px] sm:min-w-[240px] shrink-0 sticky left-0 z-30 px-2 sm:px-3.5 py-2 sm:py-2.5 border-r border-[#E5E7EB] bg-white shadow-[4px_0_12px_-4px_rgba(0,0,0,0.06)] flex flex-col justify-center gap-1">
                       {/* Row 1: Court Avatar + Name + Sport Badge */}
                       <div className="flex items-center justify-between gap-1">
                         <div className="flex items-center gap-1.5 min-w-0">
-                          <span className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-[#171717] text-white flex items-center justify-center font-black text-[10px] sm:text-[11px] shrink-0 shadow-2xs">
+                          <span className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-[#021526] text-white flex items-center justify-center font-black text-[10px] sm:text-[11px] shrink-0 shadow-2xs">
                             {court.name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()}
                           </span>
-                          <h3 className="text-[11.5px] sm:text-[13.5px] font-black tracking-tight truncate text-[#171717]">
+                          <h3 className="text-[11.5px] sm:text-[13.5px] font-black tracking-tight truncate text-[#021526]">
                             {court.name}
                           </h3>
                         </div>
-                        <span className="hidden sm:inline-block text-[9.5px] font-bold px-2 py-0.5 rounded-full bg-[#FAF9F6] border border-[#E8E6E1] text-[#777570] shrink-0">
+                        <span className="hidden sm:inline-block text-[9.5px] font-bold px-2 py-0.5 rounded-full bg-[#F3F4F4] border border-[#E5E7EB] text-[#5F6368] shrink-0">
                           {court.sports[0] === 'Football' ? '⚽ Football' : court.sports[0] === 'Badminton' ? '🏸 Badminton' : court.sports[0] === 'Pickleball' ? '🏓 Pickleball' : court.sports[0] === 'Cricket' ? '🏏 Cricket' : court.sports[0]}
                         </span>
                       </div>
@@ -1328,19 +1315,19 @@ export const SlotsScreen: React.FC = () => {
                       {/* Row 2: Price / hr + Occupancy Indicator */}
                       <div className="flex items-center justify-between gap-1 text-[10px] sm:text-[11px]">
                         <div className="flex items-center gap-0.5 sm:gap-1">
-                          <span className="font-extrabold text-[#171717]">
+                          <span className="font-extrabold text-[#021526]">
                             ₹{court.pricePerHour}
                           </span>
-                          <span className="text-[9px] sm:text-[10px] text-[#A3A099]">/hr</span>
+                          <span className="text-[9px] sm:text-[10px] text-[#5F6368]">/hr</span>
                         </div>
                         <div>
                           {occPct > 0 ? (
-                            <span className="flex items-center gap-0.5 sm:gap-1 text-[9px] sm:text-[10.5px] font-black text-[#2FA66A] bg-[#2FA66A]/10 px-1.5 sm:px-2 py-0.5 rounded-full border border-[#2FA66A]/20">
-                              <span className="w-1.5 h-1.5 rounded-full bg-[#2FA66A] animate-pulse" />
+                            <span className="flex items-center gap-0.5 sm:gap-1 text-[9px] sm:text-[10.5px] font-black text-[#16A34A] bg-[#16A34A]/10 px-1.5 sm:px-2 py-0.5 rounded-full border border-[#16A34A]/20">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A] animate-pulse" />
                               <span>{occPct}%</span>
                             </span>
                           ) : (
-                            <span className="flex items-center gap-0.5 sm:gap-1 text-[9px] sm:text-[10.5px] font-bold text-[#777570] bg-[#FAF9F6] px-1.5 sm:px-2 py-0.5 rounded-full border border-[#E8E6E1]">
+                            <span className="flex items-center gap-0.5 sm:gap-1 text-[9px] sm:text-[10.5px] font-bold text-[#5F6368] bg-[#F3F4F4] px-1.5 sm:px-2 py-0.5 rounded-full border border-[#E5E7EB]">
                               <span className="w-1.5 h-1.5 rounded-full bg-[#D4D2CD]" />
                               <span className="hidden sm:inline">Available</span>
                               <span className="sm:hidden">Open</span>
@@ -1353,7 +1340,7 @@ export const SlotsScreen: React.FC = () => {
                     {/* Right Track: Continuous Segmented Pill Bar (SCROLLS HORIZONTALLY) */}
                     <div className="flex-1 pl-3">
                       <div
-                        className="grid h-12 rounded-full p-1 relative shadow-inner bg-[#FAF9F6] border border-[#E8E6E1]"
+                        className="grid h-12 rounded-full p-1 relative shadow-inner bg-[#F3F4F4] border border-[#E5E7EB]"
                         style={{ gridTemplateColumns: `repeat(${standardTimeSlots.length}, minmax(58px, 1fr))` }}
                       >
                         {cells.map((cell, idx) => {
@@ -1391,27 +1378,26 @@ export const SlotsScreen: React.FC = () => {
                               className={`h-full relative transition-all flex items-center justify-center select-none ${
                                 /* 1. ACTIVE CONTINUOUS SELECTION (PERFECT THEME-BASED ORANGE) */
                                 isSelectedSlot
-                                  ? `bg-gradient-to-r from-[#FF6B2C] to-[#FA5A14] text-white z-10 ${
-                                      isSelectionStart ? 'rounded-l-full' : ''
-                                    } ${isSelectionEnd ? 'rounded-r-full' : ''} shadow-[0_3px_10px_rgba(255,107,44,0.35)] ring-1 ring-[#FF6B2C] cursor-pointer`
+                                  ? `bg-gradient-to-r from-[#F94001] to-[#D93600] text-white z-10 ${isSelectionStart ? 'rounded-l-full' : ''
+                                  } ${isSelectionEnd ? 'rounded-r-full' : ''} shadow-[0_3px_10px_rgba(255,107,44,0.35)] ring-1 ring-[#F94001] cursor-pointer`
                                   : /* 2. ONGOING MATCH (LIVE) */
                                   isOngoing
-                                  ? 'bg-[#2FA66A] text-white shadow-xs cursor-pointer'
-                                  : /* 3. CONFIRMED BOOKING */
-                                  isBooked
-                                  ? 'bg-[#171717] text-white border-r border-neutral-700 cursor-pointer hover:bg-black transition-colors'
-                                  : /* 4. HOLD / PAYMENT LINK PENDING */
-                                  isPending
-                                  ? 'bg-[#FEF3C7] text-[#D97706] border border-[#FCD34D] cursor-pointer hover:bg-[#FDE68A] transition-colors'
-                                  : /* 5. MAINTENANCE */
-                                  isMaintenance
-                                  ? 'bg-[#F1F5F9] text-[#475569] border border-[#CBD5E1] cursor-pointer'
-                                  : /* 6. CLOSED / PASSED SLOTS (NOT CLICKABLE FOR BOOKING) */
-                                  isClosed
-                                  ? `bg-[#ECEAE4]/50 border-r border-[#E8E6E1] last:border-r-0 cursor-not-allowed opacity-50 ${roundedClass}`
-                                  : /* 7. AVAILABLE OPEN SLOTS (CLICKABLE FOR BOOKING) */
-                                  `bg-transparent hover:bg-white border-r border-[#E8E6E1] last:border-r-0 text-[#777570] hover:text-[#171717] hover:shadow-2xs cursor-pointer ${roundedClass}`
-                              }`}
+                                    ? 'bg-[#16A34A] text-white shadow-xs cursor-pointer'
+                                    : /* 3. CONFIRMED BOOKING */
+                                    isBooked
+                                      ? 'bg-[#021526] text-white border-r border-neutral-700 cursor-pointer hover:bg-black transition-colors'
+                                      : /* 4. HOLD / PAYMENT LINK PENDING */
+                                      isPending
+                                        ? 'bg-[#FEF3C7] text-[#F59E0B] border border-[#FCD34D] cursor-pointer hover:bg-[#FDE68A] transition-colors'
+                                        : /* 5. MAINTENANCE */
+                                        isMaintenance
+                                          ? 'bg-[#F1F5F9] text-[#475569] border border-[#CBD5E1] cursor-pointer'
+                                          : /* 6. CLOSED / PASSED SLOTS (NOT CLICKABLE FOR BOOKING) */
+                                          isClosed
+                                            ? `bg-[#E5E7EB]/50 border-r border-[#E5E7EB] last:border-r-0 cursor-not-allowed opacity-50 ${roundedClass}`
+                                            : /* 7. AVAILABLE OPEN SLOTS (CLICKABLE FOR BOOKING) */
+                                            `bg-transparent hover:bg-white border-r border-[#E5E7EB] last:border-r-0 text-[#5F6368] hover:text-[#021526] hover:shadow-2xs cursor-pointer ${roundedClass}`
+                                }`}
                             >
                               {/* Content inside segment */}
                               {isSelectedSlot ? (
@@ -1441,19 +1427,19 @@ export const SlotsScreen: React.FC = () => {
                                 </span>
                               ) : isPending ? (
                                 <div className="flex items-center gap-1 px-1">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-[#D97706] animate-pulse" />
-                                  <span className="text-[9.5px] font-black truncate text-[#D97706]">Hold</span>
+                                  <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] animate-pulse" />
+                                  <span className="text-[9.5px] font-black truncate text-[#F59E0B]">Hold</span>
                                 </div>
                               ) : isMaintenance ? (
                                 <span className="text-[9.5px] font-bold truncate px-1">
                                   Blocked
                                 </span>
                               ) : isClosed ? (
-                                <span className="text-[9px] font-bold text-[#A3A099] select-none">
+                                <span className="text-[9px] font-bold text-[#5F6368] select-none">
                                   Closed
                                 </span>
                               ) : (
-                                <span className="text-[10.5px] font-bold text-[#777570] hover:text-[#171717] transition-colors">
+                                <span className="text-[10.5px] font-bold text-[#5F6368] hover:text-[#021526] transition-colors">
                                   ₹{cell.price}
                                 </span>
                               )}
@@ -1481,9 +1467,9 @@ export const SlotsScreen: React.FC = () => {
             exit={{ opacity: 0, y: 30 }}
             className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-40 w-full max-w-2xl px-4"
           >
-            <div className="bg-[#171717] text-white p-3 sm:p-4 rounded-2xl shadow-2xl border border-white/10 flex items-center justify-between gap-2.5">
+            <div className="bg-[#021526] text-white p-3 sm:p-4 rounded-2xl shadow-2xl border border-white/10 flex items-center justify-between gap-2.5">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#FF6B2C] text-white flex items-center justify-center shrink-0 font-black shadow-md shadow-[#FF6B2C]/25">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#F94001] text-white flex items-center justify-center shrink-0 font-black shadow-md shadow-[#F94001]/25">
                   <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
                 <div className="min-w-0">
@@ -1491,12 +1477,12 @@ export const SlotsScreen: React.FC = () => {
                     <h4 className="text-[13px] sm:text-[14.5px] font-black text-white truncate">
                       {rangeSelection.courtName}
                     </h4>
-                    <span className="text-[10px] sm:text-[11px] font-black bg-[#FF6B2C] text-white px-1.5 py-0.2 sm:px-2 sm:py-0.5 rounded-md shadow-2xs">
+                    <span className="text-[10px] sm:text-[11px] font-black bg-[#F94001] text-white px-1.5 py-0.2 sm:px-2 sm:py-0.5 rounded-md shadow-2xs">
                       {rangeSelection.slotsCount} {rangeSelection.slotsCount === 1 ? 'Slot' : 'Slots'} ({rangeSelection.durationMinutes / 60}h)
                     </span>
                   </div>
                   <p className="text-[11px] sm:text-[12px] text-white/70 font-medium truncate mt-0.5">
-                    {rangeSelection.startTime} – {rangeSelection.endTime} · <strong className="text-[#FF6B2C]">₹{rangeSelection.totalPrice}</strong>
+                    {rangeSelection.startTime} – {rangeSelection.endTime} · <strong className="text-[#F94001]">₹{rangeSelection.totalPrice}</strong>
                   </p>
                 </div>
               </div>
@@ -1510,7 +1496,7 @@ export const SlotsScreen: React.FC = () => {
                 </button>
                 <button
                   onClick={handleProceedBookingContinuous}
-                  className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-[#FF6B2C] to-[#e85b1e] hover:from-[#e85b1e] hover:to-[#db4a0b] text-white font-black text-[11px] sm:text-[12px] flex items-center gap-1 sm:gap-1.5 shadow-md shadow-[#FF6B2C]/30 active-press cursor-pointer transition-all whitespace-nowrap"
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-[#F94001] to-[#D93600] hover:from-[#D93600] hover:to-[#db4a0b] text-white font-black text-[11px] sm:text-[12px] flex items-center gap-1 sm:gap-1.5 shadow-md shadow-[#F94001]/30 active-press cursor-pointer transition-all whitespace-nowrap"
                 >
                   <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3]" />
                   <span>Book {rangeSelection.durationMinutes / 60}h</span>
@@ -1543,20 +1529,20 @@ export const SlotsScreen: React.FC = () => {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-full sm:max-w-lg bg-white rounded-t-[32px] sm:rounded-3xl p-5 sm:p-6 border border-[#E8E6E1] shadow-2xl space-y-4 max-h-[88vh] sm:max-h-[90vh] overflow-y-auto pb-safe animate-in slide-in-from-bottom duration-200"
+            className="w-full sm:max-w-lg bg-white rounded-t-[32px] sm:rounded-3xl p-5 sm:p-6 border border-[#E5E7EB] shadow-2xl space-y-4 max-h-[88vh] sm:max-h-[90vh] overflow-y-auto pb-safe animate-in slide-in-from-bottom duration-200"
           >
             {/* Native Mobile Drag Handle */}
             <div className="w-12 h-1.5 bg-[#E2E0D8] rounded-full mx-auto -mt-1 mb-2 sm:hidden" />
-            <div className="flex items-center justify-between pb-3 border-b border-[#F1F0EC]">
+            <div className="flex items-center justify-between pb-3 border-b border-[#F3F4F4]">
               <div className="flex items-center gap-2.5">
-                <span className="w-10 h-10 rounded-2xl bg-[#171717] text-white flex items-center justify-center font-black text-[15px]">
+                <span className="w-10 h-10 rounded-2xl bg-[#021526] text-white flex items-center justify-center font-black text-[15px]">
                   {selectedCell.courtName.slice(0, 1)}
                 </span>
                 <div>
-                  <h3 className="text-[16px] font-black text-[#171717]">
+                  <h3 className="text-[16px] font-black text-[#021526]">
                     {selectedCell.courtName} · {selectedCell.timeSlot}
                   </h3>
-                  <p className="text-[12px] text-[#777570] font-medium">
+                  <p className="text-[12px] text-[#5F6368] font-medium">
                     {currentDate} · {selectedCell.sport}
                   </p>
                 </div>
@@ -1566,53 +1552,53 @@ export const SlotsScreen: React.FC = () => {
                   setSelectedCell(null);
                   setShowExtensionModal(false);
                 }}
-                className="w-8 h-8 rounded-full bg-[#FAF9F6] flex items-center justify-center text-[#777570] hover:text-[#171717] cursor-pointer"
+                className="w-8 h-8 rounded-full bg-[#F3F4F4] flex items-center justify-center text-[#5F6368] hover:text-[#021526] cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {selectedCell.booking ? (
-              <div className="bg-[#FAF9F6] rounded-2xl p-4 border border-[#E8E6E1] space-y-3">
+              <div className="bg-[#F3F4F4] rounded-2xl p-4 border border-[#E5E7EB] space-y-3">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h4 className="text-[15px] font-black text-[#171717]">
+                    <h4 className="text-[15px] font-black text-[#021526]">
                       {selectedCell.booking.customerName}
                     </h4>
-                    <p className="text-[12px] text-[#777570] font-medium flex items-center gap-1.5 mt-0.5">
-                      <Phone className="w-3.5 h-3.5 text-[#FF6B2C]" />
+                    <p className="text-[12px] text-[#5F6368] font-medium flex items-center gap-1.5 mt-0.5">
+                      <Phone className="w-3.5 h-3.5 text-[#F94001]" />
                       <span>{selectedCell.booking.customerPhone}</span>
                     </p>
                   </div>
-                  <span className="font-mono text-[11px] font-bold text-[#777570] bg-white px-2 py-1 rounded-lg border border-[#E8E6E1]">
+                  <span className="font-mono text-[11px] font-bold text-[#5F6368] bg-white px-2 py-1 rounded-lg border border-[#E5E7EB]">
                     {selectedCell.booking.id}
                   </span>
                 </div>
 
-                <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#E8E6E1]/80 text-center">
-                  <div className="bg-white p-2 rounded-xl border border-[#E8E6E1]">
-                    <span className="text-[10px] text-[#777570] uppercase font-bold block">Total Fee</span>
-                    <span className="text-[13.5px] font-black text-[#171717]">₹{selectedCell.booking.totalAmount}</span>
+                <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#E5E7EB]/80 text-center">
+                  <div className="bg-white p-2 rounded-xl border border-[#E5E7EB]">
+                    <span className="text-[10px] text-[#5F6368] uppercase font-bold block">Total Fee</span>
+                    <span className="text-[13.5px] font-black text-[#021526]">₹{selectedCell.booking.totalAmount}</span>
                   </div>
-                  <div className="bg-white p-2 rounded-xl border border-[#E8E6E1]">
-                    <span className="text-[10px] text-[#777570] uppercase font-bold block">Paid</span>
-                    <span className="text-[13.5px] font-black text-[#2FA66A]">₹{selectedCell.booking.paidAmount}</span>
+                  <div className="bg-white p-2 rounded-xl border border-[#E5E7EB]">
+                    <span className="text-[10px] text-[#5F6368] uppercase font-bold block">Paid</span>
+                    <span className="text-[13.5px] font-black text-[#16A34A]">₹{selectedCell.booking.paidAmount}</span>
                   </div>
-                  <div className="bg-white p-2 rounded-xl border border-[#E8E6E1]">
-                    <span className="text-[10px] text-[#777570] uppercase font-bold block">Balance</span>
-                    <span className={`text-[13.5px] font-black ${selectedCell.booking.balanceAmount > 0 ? 'text-[#FF6B2C]' : 'text-[#777570]'}`}>
+                  <div className="bg-white p-2 rounded-xl border border-[#E5E7EB]">
+                    <span className="text-[10px] text-[#5F6368] uppercase font-bold block">Balance</span>
+                    <span className={`text-[13.5px] font-black ${selectedCell.booking.balanceAmount > 0 ? 'text-[#F94001]' : 'text-[#5F6368]'}`}>
                       ₹{selectedCell.booking.balanceAmount}
                     </span>
                   </div>
                 </div>
               </div>
             ) : selectedCell.state === 'maintenance' ? (
-              <div className="bg-[#D94B4B]/10 rounded-2xl p-4 border border-[#D94B4B]/25">
-                <h4 className="text-[14px] font-black text-[#D94B4B] flex items-center gap-1.5">
+              <div className="bg-[#DC2626]/10 rounded-2xl p-4 border border-[#DC2626]/25">
+                <h4 className="text-[14px] font-black text-[#DC2626] flex items-center gap-1.5">
                   <Ban className="w-4 h-4" />
                   <span>Maintenance Blocked</span>
                 </h4>
-                <p className="text-[12px] text-[#777570] mt-1">
+                <p className="text-[12px] text-[#5F6368] mt-1">
                   Reason: {selectedCell.maintenanceReason}
                 </p>
               </div>
@@ -1622,8 +1608,8 @@ export const SlotsScreen: React.FC = () => {
 
             <div className="pt-2 space-y-2">
               {isStaff ? (
-                <div className="w-full py-2.5 px-3 rounded-xl bg-[#F1F0EC] border border-[#E8E6E1] text-[#777570] font-bold text-[12px] flex items-center justify-center gap-1.5">
-                  <Lock className="w-3.5 h-3.5 text-[#777570]" />
+                <div className="w-full py-2.5 px-3 rounded-xl bg-[#F3F4F4] border border-[#E5E7EB] text-[#5F6368] font-bold text-[12px] flex items-center justify-center gap-1.5">
+                  <Lock className="w-3.5 h-3.5 text-[#5F6368]" />
                   <span>Operations View-Only (Staff Account)</span>
                 </div>
               ) : (
@@ -1636,9 +1622,9 @@ export const SlotsScreen: React.FC = () => {
                           setExtensionMinutes(null);
                           setShowExtensionModal(true);
                         }}
-                        className="h-10 rounded-xl bg-[#171717] hover:bg-[#2e2e2e] text-white font-black text-[11.5px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+                        className="h-10 rounded-xl bg-[#021526] hover:bg-[#061D33] text-white font-black text-[11.5px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
                       >
-                        <Clock className="w-3.5 h-3.5 text-[#FF6B2C]" />
+                        <Clock className="w-3.5 h-3.5 text-[#F94001]" />
                         <span>Extend Session</span>
                       </button>
                       <button
@@ -1646,7 +1632,7 @@ export const SlotsScreen: React.FC = () => {
                           checkOutBooking(selectedCell.booking!.id);
                           setSelectedCell(null);
                         }}
-                        className="h-10 rounded-xl bg-[#2FA66A] hover:bg-[#258756] text-white font-black text-[11.5px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+                        className="h-10 rounded-xl bg-[#16A34A] hover:bg-[#258756] text-white font-black text-[11.5px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
                       >
                         <LogOut className="w-3.5 h-3.5" />
                         <span>Check Out & Settle</span>
@@ -1661,7 +1647,7 @@ export const SlotsScreen: React.FC = () => {
                           checkInBooking(selectedCell.booking!.id);
                           setSelectedCell(null);
                         }}
-                        className="h-10 rounded-xl bg-[#2FA66A] hover:bg-[#258756] text-white font-black text-[11.5px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+                        className="h-10 rounded-xl bg-[#16A34A] hover:bg-[#258756] text-white font-black text-[11.5px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
                       >
                         <LogIn className="w-3.5 h-3.5" />
                         <span>Check In Players</span>
@@ -1672,9 +1658,9 @@ export const SlotsScreen: React.FC = () => {
                           setActiveModal('payment_options');
                           setSelectedCell(null);
                         }}
-                        className="h-10 rounded-xl bg-white border border-[#E8E6E1] hover:bg-[#FAF9F6] text-[#171717] font-black text-[11.5px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+                        className="h-10 rounded-xl bg-white border border-[#E5E7EB] hover:bg-[#F3F4F4] text-[#021526] font-black text-[11.5px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
                       >
-                        <CreditCard className="w-3.5 h-3.5 text-[#FF6B2C]" />
+                        <CreditCard className="w-3.5 h-3.5 text-[#F94001]" />
                         <span>Collect Payment</span>
                       </button>
                     </div>
@@ -1685,46 +1671,45 @@ export const SlotsScreen: React.FC = () => {
                     (selectedCell.state === 'pending' || selectedCell.booking.status === 'Payment Pending') &&
                     selectedCell.state !== 'expired' &&
                     selectedCell.booking.status !== 'Expired' && (
-                    <div className="space-y-2">
-                      <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-between text-xs">
-                        <span className="font-bold text-amber-800 flex items-center gap-1.5">
-                          <Clock className="w-4 h-4 text-amber-600" />
-                          Pending Payment (Due: ₹{selectedCell.booking.balanceAmount})
-                        </span>
-                        <span className="font-bold text-amber-700">Payment Pending</span>
+                      <div className="space-y-2">
+                        <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-between text-xs">
+                          <span className="font-bold text-amber-800 flex items-center gap-1.5">
+                            <Clock className="w-4 h-4 text-amber-600" />
+                            Pending Payment (Due: ₹{selectedCell.booking.balanceAmount})
+                          </span>
+                          <span className="font-bold text-amber-700">Payment Pending</span>
+                        </div>
+                        <button
+                          disabled={isPaymentLinkBlocked(selectedCell.booking!.id)}
+                          onClick={() => {
+                            haptics.tap();
+                            if (isPaymentLinkBlocked(selectedCell.booking!.id)) {
+                              const sec = getPaymentLinkTimeRemaining(selectedCell.booking!.id);
+                              showToast('Payment Link Active', `Payment link is valid for 15 mins. Button blocked for ${formatMinutesSeconds(sec)}.`, 'info');
+                              return;
+                            }
+                            sendPaymentLink(selectedCell.booking!.id);
+                            setSelectedCell(null);
+                          }}
+                          className={`w-full h-10 rounded-xl font-black text-[12px] flex items-center justify-center gap-1.5 transition-colors shadow-2xs ${isPaymentLinkBlocked(selectedCell.booking!.id)
+                              ? 'bg-amber-100 text-amber-900 border border-amber-300 cursor-not-allowed'
+                              : 'bg-[#F94001] hover:bg-[#D93600] text-white cursor-pointer'
+                            }`}
+                        >
+                          {isPaymentLinkBlocked(selectedCell.booking!.id) ? (
+                            <>
+                              <Lock className="w-3.5 h-3.5 text-amber-700" />
+                              <span>Link Active · Blocked for {formatMinutesSeconds(getPaymentLinkTimeRemaining(selectedCell.booking!.id))}</span>
+                            </>
+                          ) : (
+                            <>
+                              <Link2 className="w-4 h-4" />
+                              <span>Send Payment Link (15m Validity)</span>
+                            </>
+                          )}
+                        </button>
                       </div>
-                      <button
-                        disabled={isPaymentLinkBlocked(selectedCell.booking!.id)}
-                        onClick={() => {
-                          haptics.tap();
-                          if (isPaymentLinkBlocked(selectedCell.booking!.id)) {
-                            const sec = getPaymentLinkTimeRemaining(selectedCell.booking!.id);
-                            showToast('Payment Link Active', `Payment link is valid for 15 mins. Button blocked for ${formatMinutesSeconds(sec)}.`, 'info');
-                            return;
-                          }
-                          sendPaymentLink(selectedCell.booking!.id);
-                          setSelectedCell(null);
-                        }}
-                        className={`w-full h-10 rounded-xl font-black text-[12px] flex items-center justify-center gap-1.5 transition-colors shadow-2xs ${
-                          isPaymentLinkBlocked(selectedCell.booking!.id)
-                            ? 'bg-amber-100 text-amber-900 border border-amber-300 cursor-not-allowed'
-                            : 'bg-[#FF6B2C] hover:bg-[#e85b1e] text-white cursor-pointer'
-                        }`}
-                      >
-                        {isPaymentLinkBlocked(selectedCell.booking!.id) ? (
-                          <>
-                            <Lock className="w-3.5 h-3.5 text-amber-700" />
-                            <span>Link Active · Blocked for {formatMinutesSeconds(getPaymentLinkTimeRemaining(selectedCell.booking!.id))}</span>
-                          </>
-                        ) : (
-                          <>
-                            <Link2 className="w-4 h-4" />
-                            <span>Send Payment Link (15m Validity)</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  )}
+                    )}
 
                   {/* EXPIRED HOLD MODAL ACTIONS: RE-LOCK WITH EXTENDED DURATION */}
                   {(selectedCell.state === 'expired' || selectedCell.booking?.status === 'Expired') && selectedCell.booking && (
@@ -1738,8 +1723,8 @@ export const SlotsScreen: React.FC = () => {
                       </div>
 
                       {/* Hold Duration Increment Selector */}
-                      <div className="bg-[#FAF9F6] border border-[#E8E6E1] p-2.5 rounded-xl space-y-1.5">
-                        <span className="text-[10.5px] font-bold text-[#777570] block">
+                      <div className="bg-[#F3F4F4] border border-[#E5E7EB] p-2.5 rounded-xl space-y-1.5">
+                        <span className="text-[10.5px] font-bold text-[#5F6368] block">
                           Select Re-lock Hold Duration:
                         </span>
                         <div className="grid grid-cols-4 gap-1.5">
@@ -1751,11 +1736,10 @@ export const SlotsScreen: React.FC = () => {
                                 haptics.tap();
                                 setRelockHoldMinutes(mins);
                               }}
-                              className={`py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
-                                relockHoldMinutes === mins
-                                  ? 'bg-[#171717] text-white shadow-2xs'
-                                  : 'bg-white border border-[#E8E6E1] text-[#777570]'
-                              }`}
+                              className={`py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${relockHoldMinutes === mins
+                                  ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 font-bold'
+                                  : 'bg-white border border-[#E5E7EB] text-[#5F6368]'
+                                }`}
                             >
                               +{mins}m
                             </button>
@@ -1768,7 +1752,7 @@ export const SlotsScreen: React.FC = () => {
                           relockAndResendLink(selectedCell.booking!.id, relockHoldMinutes);
                           setSelectedCell(null);
                         }}
-                        className="w-full h-11 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white font-black text-[12px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
+                        className="w-full h-11 rounded-xl bg-[#F94001] hover:bg-[#D93600] text-white font-black text-[12px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
                       >
                         <RefreshCw className="w-3.5 h-3.5" />
                         <span>Re-lock & Send Payment Link (+{relockHoldMinutes}m)</span>
@@ -1782,7 +1766,7 @@ export const SlotsScreen: React.FC = () => {
                         unblockSlotAction(selectedCell.blockId || selectedCell.slotId);
                         setSelectedCell(null);
                       }}
-                      className="w-full h-10 rounded-xl bg-[#D94B4B] hover:bg-[#b83535] text-white font-black text-[12px] cursor-pointer transition-colors"
+                      className="w-full h-10 rounded-xl bg-[#DC2626] hover:bg-[#b83535] text-white font-black text-[12px] cursor-pointer transition-colors"
                     >
                       Unblock Pitch Now
                     </button>
@@ -1795,7 +1779,7 @@ export const SlotsScreen: React.FC = () => {
                   setSelectedCell(null);
                   setShowExtensionModal(false);
                 }}
-                className="w-full h-10 rounded-xl bg-[#FAF9F6] hover:bg-[#F1F0EC] border border-[#E8E6E1] text-[#171717] font-bold text-[12px] cursor-pointer transition-colors"
+                className="w-full h-10 rounded-xl bg-[#F3F4F4] hover:bg-[#F3F4F4] border border-[#E5E7EB] text-[#021526] font-bold text-[12px] cursor-pointer transition-colors"
               >
                 Close Window
               </button>

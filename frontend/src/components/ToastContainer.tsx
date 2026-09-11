@@ -16,27 +16,27 @@ export const ToastContainer: React.FC = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -12, scale: 0.95 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="pointer-events-auto bg-[#171717] text-white rounded-2xl p-3.5 shadow-xl flex items-start gap-3 border border-white/10 backdrop-blur-md"
+            className="pointer-events-auto bg-[#021526] text-white rounded-2xl p-3.5 shadow-xl flex items-start gap-3 border border-white/10 backdrop-blur-md"
           >
             <div className="mt-0.5 shrink-0">
-              {toast.type === 'success' && <CheckCircle2 className="w-4 h-4 text-[#2FA66A]" />}
-              {toast.type === 'warning' && <AlertCircle className="w-4 h-4 text-[#E7A72F]" />}
-              {toast.type === 'error' && <XCircle className="w-4 h-4 text-[#D94B4B]" />}
-              {toast.type === 'info' && <Info className="w-4 h-4 text-[#4D83C4]" />}
+              {toast.type === 'success' && <CheckCircle2 className="w-4 h-4 text-[#16A34A]" />}
+              {toast.type === 'warning' && <AlertCircle className="w-4 h-4 text-[#F59E0B]" />}
+              {toast.type === 'error' && <XCircle className="w-4 h-4 text-[#DC2626]" />}
+              {toast.type === 'info' && <Info className="w-4 h-4 text-[#2563EB]" />}
             </div>
             <div className="flex-1 min-w-0 pr-1">
               <p className="text-[13px] font-semibold tracking-tight text-white leading-tight">
                 {toast.title}
               </p>
               {toast.description && (
-                <p className="text-[12px] text-[#A3A099] mt-0.5 leading-snug">
+                <p className="text-[12px] text-[#5F6368] mt-0.5 leading-snug">
                   {toast.description}
                 </p>
               )}
             </div>
             <button
               onClick={() => dismissToast(toast.id)}
-              className="text-[#777570] hover:text-white p-1 transition-colors"
+              className="text-[#5F6368] hover:text-white p-1 transition-colors"
               aria-label="Close notification"
             >
               <X className="w-3.5 h-3.5" />

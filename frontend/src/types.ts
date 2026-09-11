@@ -64,6 +64,7 @@ export type CourtStatus = 'Approved' | 'Pending Approval' | 'Rejected';
 
 export interface Court {
   id: string;
+  courtId?: string;
   name: string;
   displayName?: string;
   samePhysicalSports?: boolean;
@@ -239,6 +240,7 @@ export interface StaffMember {
   name: string;
   role: 'Manager' | 'Cashier' | 'Groundkeeper' | 'Coach';
   phone: string;
+  phone_number?: string;
   email: string;
   shift: string;
   permissions: {

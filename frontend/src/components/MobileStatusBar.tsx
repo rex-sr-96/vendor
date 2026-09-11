@@ -28,10 +28,10 @@ export const MobileStatusBar: React.FC<MobileStatusBarProps> = ({ deviceType = '
   }, []);
 
   return (
-    <div className="w-full relative z-40 select-none bg-transparent pt-2.5 pb-1 px-6 flex items-center justify-between text-[#171717]">
+    <div className="w-full relative z-40 select-none bg-transparent pt-2.5 pb-1 px-6 flex items-center justify-between text-[#021526]">
       {/* Left: Live Clock */}
       <div className="flex items-center gap-1.5 w-20">
-        <span className="text-[14px] font-bold tracking-tight font-sans text-[#171717] leading-none">
+        <span className="text-[14px] font-bold tracking-tight font-sans text-[#021526] leading-none">
           {time}
         </span>
       </div>
@@ -51,7 +51,7 @@ export const MobileStatusBar: React.FC<MobileStatusBarProps> = ({ deviceType = '
             {!isIslandExpanded ? (
               <>
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-[#2FA66A] animate-pulse" />
+                  <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse" />
                   <span className="text-[10px] font-bold text-white/90 truncate max-w-[70px]">
                     {activeBooking ? `Live ${activeBooking.courtName}` : 'Arena Live'}
                   </span>
@@ -62,7 +62,7 @@ export const MobileStatusBar: React.FC<MobileStatusBarProps> = ({ deviceType = '
             ) : (
               <div className="w-full flex items-center justify-between px-1">
                 <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 rounded-full bg-[#FF6B2C] flex items-center justify-center text-[10px] font-extrabold text-white">
+                  <div className="w-5 h-5 rounded-full bg-[#F94001] flex items-center justify-center text-[10px] font-extrabold text-white">
                     TT
                   </div>
                   <div className="text-left">
@@ -75,7 +75,7 @@ export const MobileStatusBar: React.FC<MobileStatusBarProps> = ({ deviceType = '
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] font-bold text-[#2FA66A] bg-[#2FA66A]/20 px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] font-bold text-[#16A34A] bg-[#16A34A]/20 px-2 py-0.5 rounded-full">
                     {activeBooking ? 'Active' : 'Ready'}
                   </span>
                   <div className="w-2.5 h-2.5 rounded-full bg-[#1A1A1A]" />
@@ -90,30 +90,30 @@ export const MobileStatusBar: React.FC<MobileStatusBarProps> = ({ deviceType = '
       )}
 
       {/* Right: Cellular, Wi-Fi, Battery */}
-      <div className="flex items-center justify-end gap-1.5 w-20 text-[#171717]">
+      <div className="flex items-center justify-end gap-1.5 w-20 text-[#021526]">
         {/* Cellular Bars */}
         <div className="flex items-end gap-0.5 h-3">
-          <div className="w-0.5 h-1.5 bg-[#171717] rounded-xs" />
-          <div className="w-0.5 h-2 bg-[#171717] rounded-xs" />
-          <div className="w-0.5 h-2.5 bg-[#171717] rounded-xs" />
-          <div className="w-0.5 h-3 bg-[#171717] rounded-xs" />
+          <div className="w-0.5 h-1.5 bg-[#021526] rounded-xs" />
+          <div className="w-0.5 h-2 bg-[#021526] rounded-xs" />
+          <div className="w-0.5 h-2.5 bg-[#021526] rounded-xs" />
+          <div className="w-0.5 h-3 bg-[#021526] rounded-xs" />
         </div>
 
         {/* 5G Text */}
-        <span className="text-[10px] font-extrabold text-[#171717] tracking-tighter">5G</span>
+        <span className="text-[10px] font-extrabold text-[#021526] tracking-tighter">5G</span>
 
         {/* Wi-Fi */}
         <Wifi className="w-3.5 h-3.5 stroke-[2.5]" />
 
         {/* Battery Container */}
         <div className="relative flex items-center">
-          <div className="w-5 h-2.5 rounded-[4px] border border-[#171717] p-0.5 flex items-center">
+          <div className="w-5 h-2.5 rounded-[4px] border border-[#021526] p-0.5 flex items-center">
             <div
-              className="h-full rounded-[2px] bg-[#171717]"
+              className="h-full rounded-[2px] bg-[#021526]"
               style={{ width: `${batteryLevel}%` }}
             />
           </div>
-          <div className="w-0.5 h-1 bg-[#171717] rounded-r-xs -ml-px" />
+          <div className="w-0.5 h-1 bg-[#021526] rounded-r-xs -ml-px" />
         </div>
       </div>
     </div>

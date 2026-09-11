@@ -172,7 +172,7 @@ export const OtpScreen: React.FC = () => {
         <div className="flex items-center justify-between mb-4">
           <button
             onClick={() => navigateTo('login')}
-            className="flex items-center gap-1 text-[13px] font-semibold text-[#777570] hover:text-[#171717] px-2 py-1 -ml-2 rounded-lg hover:bg-[#F3F2EE] transition-colors cursor-pointer"
+            className="flex items-center gap-1 text-[13px] font-semibold text-[#5F6368] hover:text-[#021526] px-2 py-1 -ml-2 rounded-lg hover:bg-[#F3F2EE] transition-colors cursor-pointer"
             aria-label="Back to login"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -182,15 +182,15 @@ export const OtpScreen: React.FC = () => {
 
         {/* Centered Heading */}
         <div className="text-center mb-6">
-          <h1 className="text-[24px] font-bold text-[#171717] tracking-tight">
+          <h1 className="text-[24px] font-bold text-[#021526] tracking-tight">
             Enter 6-digit code
           </h1>
-          <div className="flex items-center justify-center gap-1.5 text-[13.5px] text-[#777570] mt-1.5">
+          <div className="flex items-center justify-center gap-1.5 text-[13.5px] text-[#5F6368] mt-1.5">
             <span>Sent to +91 {cleanPhone.length === 10 ? `${cleanPhone.slice(0, 5)} ${cleanPhone.slice(5)}` : '98765 43210'} via SMS</span>
             <span>•</span>
             <button
               onClick={() => navigateTo('login')}
-              className="text-[#FF6B2C] font-bold hover:underline cursor-pointer"
+              className="text-[#F94001] font-bold hover:underline cursor-pointer"
             >
               Change
             </button>
@@ -213,10 +213,10 @@ export const OtpScreen: React.FC = () => {
               onKeyDown={(e) => handleKeyDown(index, e)}
               className={`w-11 h-13 sm:w-12 sm:h-14 text-center text-[20px] sm:text-[22px] font-bold rounded-xl bg-[#F9F9F7] border transition-all focus:outline-none ${
                 activeIdx === index
-                  ? 'border-[#FF6B2C] bg-white ring-4 ring-[#FF6B2C]/15 shadow-sm'
+                  ? 'border-[#F94001] bg-white ring-4 ring-[#F94001]/15 shadow-sm'
                   : digit
-                  ? 'border-[#171717] bg-white text-[#171717]'
-                  : 'border-[#E8E6E1] text-[#171717]'
+                  ? 'border-[#021526] bg-white text-[#021526]'
+                  : 'border-[#E5E7EB] text-[#021526]'
               }`}
             />
           ))}
@@ -232,17 +232,17 @@ export const OtpScreen: React.FC = () => {
 
         {/* Resend Timer */}
         <div className="flex flex-col gap-2.5 pt-1">
-          <div className="flex items-center justify-center text-[13px] font-medium text-[#777570] px-1">
+          <div className="flex items-center justify-center text-[13px] font-medium text-[#5F6368] px-1">
             {countdown > 0 ? (
               <span>
-                Resend code in <span className="font-bold text-[#171717]">00:{countdown < 10 ? `0${countdown}` : countdown}</span>
+                Resend code in <span className="font-bold text-[#021526]">00:{countdown < 10 ? `0${countdown}` : countdown}</span>
               </span>
             ) : (
               <button
                 type="button"
                 onClick={handleResend}
                 disabled={isResending}
-                className="text-[#FF6B2C] font-bold hover:underline cursor-pointer"
+                className="text-[#F94001] font-bold hover:underline cursor-pointer"
               >
                 {isResending ? 'Sending...' : 'Resend code'}
               </button>
@@ -258,8 +258,8 @@ export const OtpScreen: React.FC = () => {
               disabled={!isComplete || isVerifying}
               className={`w-full h-12 rounded-2xl font-bold text-[15px] flex items-center justify-center gap-2 transition-all active:scale-[0.99] ${
                 isComplete && !isVerifying
-                  ? 'bg-[#FF6B2C] text-white shadow-md shadow-[#FF6B2C]/25 hover:bg-[#e85b1e] cursor-pointer'
-                  : 'bg-[#E8E6E1] text-[#A3A099] cursor-not-allowed'
+                  ? 'bg-[#F94001] text-white shadow-md shadow-[#F94001]/25 hover:bg-[#D93600] cursor-pointer'
+                  : 'bg-[#E5E7EB] text-[#5F6368] cursor-not-allowed'
               }`}
             >
               {isVerifying ? (
@@ -275,7 +275,7 @@ export const OtpScreen: React.FC = () => {
               )}
             </button>
 
-            <p className="text-[11.5px] text-center text-[#8E8B85]">
+            <p className="text-[11.5px] text-center text-[#5F6368]">
               Didn't receive code? Check SMS or click resend code.
             </p>
           </div>

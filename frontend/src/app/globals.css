@@ -2,18 +2,31 @@
 
 @layer base {
   :root {
-    --color-turf-orange: #FF6B2C;
-    --color-pitch-black: #171717;
-    --color-warm-mist: #F6F5F2;
+    /* 2.1 Core Colors */
+    --color-primary-orange: #F94001;
+    --color-primary-dark-orange: #D93600;
+    --color-primary-light-orange: #FFF1EC;
+    --color-deep-navy: #021526;
+
+    /* 2.2 Neutral Colors */
+    --color-secondary-text: #5F6368;
+    --color-page-bg: #F8F9FA;
+    --color-surface: #F3F4F4;
+    --color-border: #E5E7EB;
+
+    /* 2.3 Semantic Colors */
+    --color-success: #16A34A;
+    --color-warning: #F59E0B;
+    --color-error: #DC2626;
+    --color-info: #2563EB;
+
+    /* Backward compatibility mappings */
+    --color-turf-orange: #F94001;
+    --color-pitch-black: #021526;
+    --color-warm-mist: #F8F9FA;
     --color-surface-white: #FFFFFF;
-    --color-secondary-surface: #F1F0EC;
-    --color-input-bg: #F7F7F5;
-    --color-secondary-text: #777570;
-    --color-border: #E8E6E1;
-    --color-success: #2FA66A;
-    --color-warning: #E7A72F;
-    --color-error: #D94B4B;
-    --color-info: #4D83C4;
+    --color-secondary-surface: #F3F4F4;
+    --color-input-bg: #F3F4F4;
   }
 
   html, body {
@@ -23,8 +36,8 @@
     margin: 0;
     padding: 0;
     font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background-color: var(--color-warm-mist);
-    color: var(--color-pitch-black);
+    background-color: var(--color-page-bg);
+    color: var(--color-deep-navy);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-tap-highlight-color: transparent;
@@ -33,6 +46,37 @@
   /* Prevent iOS Safari auto-zoom on input focus */
   input, textarea, select {
     font-size: 16px;
+    accent-color: #F94001;
+  }
+
+  /* Global Orange Text and Form Selection */
+  ::selection {
+    background-color: #F94001 !important;
+    color: #FFFFFF !important;
+  }
+  ::-moz-selection {
+    background-color: #F94001 !important;
+    color: #FFFFFF !important;
+  }
+
+  /* Browser Dropdowns: Orange Selection & Accent */
+  select {
+    accent-color: #F94001;
+  }
+  select:focus {
+    border-color: #F94001 !important;
+    outline: none !important;
+  }
+  select option:checked {
+    background: #F94001 !important;
+    background-color: #F94001 !important;
+    color: #FFFFFF !important;
+  }
+  select option:hover,
+  select option:focus {
+    background: #F94001 !important;
+    background-color: #F94001 !important;
+    color: #FFFFFF !important;
   }
 
   /* Remove 300ms tap delay and optimize touch actions */
@@ -48,6 +92,26 @@
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Sleek custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #E5E7EB;
+  border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #9CA3AF;
+}
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #E5E7EB transparent;
 }
 
 /* Smooth active press feedback */

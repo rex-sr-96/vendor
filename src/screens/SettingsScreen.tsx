@@ -53,11 +53,11 @@ export const SettingsScreen: React.FC = () => {
       screen: 'operating_hours' as const,
     },
     {
-      id: 'booking_settings',
-      title: 'Booking Settings',
-      caption: 'Advance window & duration limits',
-      icon: SlidersHorizontal,
-      screen: 'booking_settings' as const,
+      id: 'cancellation',
+      title: 'Refund & Policies',
+      caption: `${cancellationPolicy.freeCancellationHours}h free window · ${cancellationPolicy.refundPercentage}% refund`,
+      icon: RotateCcw,
+      screen: 'cancellation_settings' as const,
     },
     {
       id: 'payment_settings',
@@ -65,13 +65,6 @@ export const SettingsScreen: React.FC = () => {
       caption: 'UPI QR, bank settlement & cash mode',
       icon: Wallet,
       screen: 'payment_settings' as const,
-    },
-    {
-      id: 'cancellation',
-      title: 'Cancellation & Refunds',
-      caption: `${cancellationPolicy.freeCancellationHours}h free window · ${cancellationPolicy.refundPercentage}% refund`,
-      icon: RotateCcw,
-      screen: 'cancellation_settings' as const,
     },
     {
       id: 'staff',
@@ -128,21 +121,21 @@ export const SettingsScreen: React.FC = () => {
     <div className="pb-8 pt-3 px-4 w-full space-y-3.5 select-none">
       {/* Top Heading */}
       <div className="pt-1">
-        <h1 className="text-[22px] font-extrabold text-[#171717] tracking-tight leading-none">
+        <h1 className="text-[22px] font-extrabold text-[#021526] tracking-tight leading-none">
           Settings
         </h1>
-        <p className="text-[12px] text-[#777570] mt-0.5 font-medium">Venue rules, staff & configurations</p>
+        <p className="text-[12px] text-[#5F6368] mt-0.5 font-medium">Venue rules, staff & configurations</p>
       </div>
 
       {/* Venue Owner Profile Card */}
-      <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-xs flex items-center justify-between">
+      <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-xs flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="w-11 h-11 rounded-2xl bg-[#FF6B2C] text-white font-extrabold text-base flex items-center justify-center shadow-xs">
+          <div className="w-11 h-11 rounded-2xl bg-[#F94001] text-white font-extrabold text-base flex items-center justify-center shadow-xs">
             TT
           </div>
           <div>
-            <h2 className="text-[15px] font-bold text-[#171717]">{venueName}</h2>
-            <p className="text-[11.5px] text-[#777570]">{venueCity} · Owner Admin</p>
+            <h2 className="text-[15px] font-bold text-[#021526]">{venueName}</h2>
+            <p className="text-[11.5px] text-[#5F6368]">{venueCity} · Owner Admin</p>
           </div>
         </div>
 
@@ -151,34 +144,34 @@ export const SettingsScreen: React.FC = () => {
             haptics.tap();
             navigateTo('courts');
           }}
-          className="text-[11.5px] font-bold text-[#FF6B2C] bg-[#FF6B2C]/10 px-2.5 py-1 rounded-xl hover:bg-[#FF6B2C]/20 active-press cursor-pointer"
+          className="text-[11.5px] font-bold text-[#F94001] bg-[#F94001]/10 px-2.5 py-1 rounded-xl hover:bg-[#F94001]/20 active-press cursor-pointer"
         >
           Edit Courts
         </button>
       </div>
 
       {/* Settings Row List */}
-      <div className="bg-white rounded-2xl border border-[#E8E6E1] shadow-xs divide-y divide-[#F1F0EC] overflow-hidden">
+      <div className="bg-white rounded-2xl border border-[#E5E7EB] shadow-xs divide-y divide-[#F3F4F4] overflow-hidden">
         {settingsRows.map((row) => {
           const Icon = row.icon;
           return (
             <div
               key={row.id}
               onClick={() => handleRowClick(row)}
-              className="p-3 flex items-center justify-between hover:bg-[#F7F7F5] cursor-pointer active-press transition-colors group"
+              className="p-3 flex items-center justify-between hover:bg-[#F3F4F4] cursor-pointer active-press transition-colors group"
             >
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-[#F1F0EC] text-[#171717] flex items-center justify-center group-hover:bg-[#171717] group-hover:text-white transition-colors">
+                <div className="w-8 h-8 rounded-xl bg-[#F3F4F4] text-[#021526] flex items-center justify-center group-hover:bg-[#021526] group-hover:text-white transition-colors">
                   <Icon className="w-4 h-4 stroke-[2]" />
                 </div>
                 <div>
-                  <h3 className="text-[13.5px] font-bold text-[#171717]">{row.title}</h3>
-                  <p className="text-[11px] text-[#777570]">{row.caption}</p>
+                  <h3 className="text-[13.5px] font-bold text-[#021526]">{row.title}</h3>
+                  <p className="text-[11px] text-[#5F6368]">{row.caption}</p>
                 </div>
               </div>
 
               <div className="flex items-center gap-2">
-                <ChevronRight className="w-4 h-4 text-[#777570] group-hover:text-[#171717]" />
+                <ChevronRight className="w-4 h-4 text-[#5F6368] group-hover:text-[#021526]" />
               </div>
             </div>
           );
@@ -192,7 +185,7 @@ export const SettingsScreen: React.FC = () => {
             haptics.tap();
             navigateTo('login');
           }}
-          className="w-full py-2.5 bg-white text-[#D94B4B] border border-[#E8E6E1] rounded-2xl font-bold text-[13px] flex items-center justify-center gap-1.5 hover:bg-[#D94B4B]/10 active-press transition-all cursor-pointer"
+          className="w-full py-2.5 bg-white text-[#DC2626] border border-[#E5E7EB] rounded-2xl font-bold text-[13px] flex items-center justify-center gap-1.5 hover:bg-[#DC2626]/10 active-press transition-all cursor-pointer"
         >
           <LogOut className="w-4 h-4" />
           <span>Switch Account / Sign Out</span>
@@ -201,14 +194,14 @@ export const SettingsScreen: React.FC = () => {
 
       {/* App Version & Build Information */}
       <div className="pt-2 pb-6 text-center space-y-1">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-[#E8E6E1] text-[#777570] text-[11px] font-bold shadow-2xs">
-          <span className="text-[#171717]">TurfTown Partner</span>
-          <span className="w-1 h-1 rounded-full bg-[#D1CFCA]" />
-          <span className="text-[#2FA66A] font-extrabold">v2.4.0</span>
-          <span className="w-1 h-1 rounded-full bg-[#D1CFCA]" />
-          <span className="text-[#A3A099] font-medium">Build 2026.08.29</span>
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-[#E5E7EB] text-[#5F6368] text-[11px] font-bold shadow-2xs">
+          <span className="text-[#021526]">TurfTown Partner</span>
+          <span className="w-1 h-1 rounded-full bg-[#E5E7EB]" />
+          <span className="text-[#16A34A] font-extrabold">v2.4.0</span>
+          <span className="w-1 h-1 rounded-full bg-[#E5E7EB]" />
+          <span className="text-[#5F6368] font-medium">Build 2026.08.29</span>
         </div>
-        <p className="text-[10px] text-[#A3A099]">
+        <p className="text-[10px] text-[#5F6368]">
           Ground Management & Real-time Booking Engine · Production
         </p>
       </div>

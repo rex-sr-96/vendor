@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { haptics } from '../utils/haptics';
 
-export const CancellationRefundScreen: React.FC = () => {
+export const CancellationRefundScreen: React.FC<{ isEmbedded?: boolean }> = ({ isEmbedded = false }) => {
   const {
     courts,
     updateCourt,
@@ -82,25 +82,27 @@ export const CancellationRefundScreen: React.FC = () => {
       showToast('Court Policy Updated', `${currentCourt.name} cancellation rule: ${freeHours}h notice, ${refundPercent}% refund.`, 'success');
     }
 
-    goBack();
+    if (!isEmbedded) {
+      goBack();
+    }
   };
 
   return (
-    <div className="pb-20 pt-1 w-full space-y-4 select-none">
+    <div className={isEmbedded ? 'w-full space-y-4 select-none' : 'pb-20 pt-1 w-full space-y-4 select-none'}>
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#E8E6E1]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#E5E7EB]">
         <div>
-          <h1 className="text-[21px] font-black text-[#171717] tracking-tight">
+          <h1 className="text-[21px] font-black text-[#021526] tracking-tight">
             Cancellation & Refund Policy
           </h1>
-          <p className="text-[11.5px] font-medium text-[#777570]">
+          <p className="text-[11.5px] font-medium text-[#5F6368]">
             Configure court-specific cancellation buffer, refund percentages and cart hold timers
           </p>
         </div>
 
         <button
           onClick={handleSave}
-          className="h-9 px-4 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white font-extrabold text-[12.5px] flex items-center justify-center gap-1.5 shadow-sm active-press cursor-pointer transition-all self-start sm:self-auto"
+          className="h-9 px-4 rounded-xl bg-[#F94001] hover:bg-[#D93600] text-white font-extrabold text-[12.5px] flex items-center justify-center gap-1.5 shadow-sm active-press cursor-pointer transition-all self-start sm:self-auto"
         >
           <Save className="w-4 h-4 stroke-[2.5]" />
           <span>Save Changes</span>
@@ -108,19 +110,19 @@ export const CancellationRefundScreen: React.FC = () => {
       </div>
 
       {/* Court Selector Bar */}
-      <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-2xs space-y-2.5">
-        <div className="flex items-center justify-between pb-1 border-b border-[#F1F0EC]">
-          <span className="text-[12px] font-black uppercase tracking-wider text-[#171717] flex items-center gap-1.5">
-            <Layers className="w-3.5 h-3.5 text-[#FF6B2C]" />
+      <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-2xs space-y-2.5">
+        <div className="flex items-center justify-between pb-1 border-b border-[#F3F4F4]">
+          <span className="text-[12px] font-black uppercase tracking-wider text-[#021526] flex items-center gap-1.5">
+            <Layers className="w-3.5 h-3.5 text-[#F94001]" />
             <span>Select Court to Configure ({approvedCourts.length} Courts)</span>
           </span>
 
-          <label className="flex items-center gap-2 cursor-pointer text-[11.5px] font-bold text-[#171717]">
+          <label className="flex items-center gap-2 cursor-pointer text-[11.5px] font-bold text-[#021526]">
             <input
               type="checkbox"
               checked={applyToAll}
               onChange={(e) => setApplyToAll(e.target.checked)}
-              className="rounded text-[#FF6B2C] focus:ring-[#FF6B2C] cursor-pointer"
+              className="rounded text-[#F94001] focus:ring-[#F94001] cursor-pointer"
             />
             <span>Apply rule to all courts</span>
           </label>
@@ -139,15 +141,15 @@ export const CancellationRefundScreen: React.FC = () => {
                 }}
                 className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
                   isSelected
-                    ? 'bg-[#171717] text-white border-[#171717] shadow-xs'
-                    : 'bg-[#FAF9F6] border-[#E8E6E1] text-[#171717] hover:bg-[#F1F0EC]'
+                    ? 'bg-[#FFF1EC] text-[#021526] border-2 border-[#F94001] shadow-2xs'
+                    : 'bg-[#F3F4F4] border-[#E5E7EB] text-[#021526] hover:bg-white'
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <span className="text-[13px] font-black">{court.name}</span>
-                  {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-[#FF6B2C]" />}
+                  {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-[#F94001] shadow-2xs" />}
                 </div>
-                <p className={`text-[10.5px] mt-0.5 truncate ${isSelected ? 'text-white/70' : 'text-[#777570]'}`}>
+                <p className={`text-[10.5px] mt-0.5 truncate ${isSelected ? 'text-[#021526]/70 font-semibold' : 'text-[#5F6368]'}`}>
                   {court.sports.join(', ')} · {court.cancellationWindowHours || 12}h cancel
                 </p>
               </button>
@@ -159,21 +161,21 @@ export const CancellationRefundScreen: React.FC = () => {
       {/* 2-Column Responsive Layout matching User Screenshots */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Card 1: Free Cancellation Window */}
-        <div className="bg-white rounded-2xl p-4 border border-[#E8E6E1] shadow-2xs space-y-3">
-          <div className="flex items-center gap-3 pb-1 border-b border-[#F1F0EC]">
-            <div className="w-10 h-10 rounded-2xl bg-[#FF6B2C]/10 text-[#FF6B2C] flex items-center justify-center shrink-0">
+        <div className="bg-white rounded-2xl p-4 border border-[#E5E7EB] shadow-2xs space-y-3">
+          <div className="flex items-center gap-3 pb-1 border-b border-[#F3F4F4]">
+            <div className="w-10 h-10 rounded-2xl bg-[#F94001]/10 text-[#F94001] flex items-center justify-center shrink-0">
               <Clock className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-[15px] font-black text-[#171717]">Free Cancellation Window</h2>
-              <p className="text-[11.5px] text-[#777570] font-medium">
+              <h2 className="text-[15px] font-black text-[#021526]">Free Cancellation Window</h2>
+              <p className="text-[11.5px] text-[#5F6368] font-medium">
                 Minimum notice required for full or partial refund
               </p>
             </div>
           </div>
 
           <div>
-            <label className="text-[12px] font-bold text-[#171717] block mb-2">
+            <label className="text-[12px] font-bold text-[#021526] block mb-2">
               Notice Buffer Before Match Kickoff:
             </label>
             <div className="grid grid-cols-4 gap-2">
@@ -189,8 +191,8 @@ export const CancellationRefundScreen: React.FC = () => {
                     }}
                     className={`py-2.5 rounded-xl text-[13px] font-black transition-all border cursor-pointer ${
                       isSelected
-                        ? 'bg-[#171717] text-white border-[#171717] shadow-xs'
-                        : 'bg-[#FAF9F6] border border-[#E8E6E1] text-[#171717] hover:bg-[#F1F0EC]'
+                        ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 shadow-2xs'
+                        : 'bg-[#F3F4F4] border border-[#E5E7EB] text-[#021526] hover:bg-white'
                     }`}
                   >
                     {hours} Hours
@@ -202,21 +204,21 @@ export const CancellationRefundScreen: React.FC = () => {
         </div>
 
         {/* Card 2: Unconfirmed Cart Hold Release */}
-        <div className="bg-white rounded-2xl p-4 border border-[#E8E6E1] shadow-2xs space-y-3">
-          <div className="flex items-center gap-3 pb-1 border-b border-[#F1F0EC]">
+        <div className="bg-white rounded-2xl p-4 border border-[#E5E7EB] shadow-2xs space-y-3">
+          <div className="flex items-center gap-3 pb-1 border-b border-[#F3F4F4]">
             <div className="w-10 h-10 rounded-2xl bg-[#3B82F6]/10 text-[#2563EB] flex items-center justify-center shrink-0">
               <Timer className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-[15px] font-black text-[#171717]">Unconfirmed Cart Hold Release</h2>
-              <p className="text-[11.5px] text-[#777570] font-medium">
+              <h2 className="text-[15px] font-black text-[#021526]">Unconfirmed Cart Hold Release</h2>
+              <p className="text-[11.5px] text-[#5F6368] font-medium">
                 Auto-release locked slots if player leaves checkout
               </p>
             </div>
           </div>
 
           <div>
-            <label className="text-[12px] font-bold text-[#171717] block mb-2">
+            <label className="text-[12px] font-bold text-[#021526] block mb-2">
               Lock Expiry Timer:
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -232,8 +234,8 @@ export const CancellationRefundScreen: React.FC = () => {
                     }}
                     className={`py-2.5 rounded-xl text-[13px] font-black transition-all border cursor-pointer ${
                       isSelected
-                        ? 'bg-[#171717] text-white border-[#171717] shadow-xs'
-                        : 'bg-[#FAF9F6] border border-[#E8E6E1] text-[#171717] hover:bg-[#F1F0EC]'
+                        ? 'bg-[#EFF6FF] text-[#2563EB] border border-[#2563EB]/40 shadow-2xs'
+                        : 'bg-[#F3F4F4] border border-[#E5E7EB] text-[#021526] hover:bg-white'
                     }`}
                   >
                     {mins} Minutes
@@ -245,21 +247,21 @@ export const CancellationRefundScreen: React.FC = () => {
         </div>
 
         {/* Card 3: Refund Payout Percentage */}
-        <div className="bg-white rounded-2xl p-4 border border-[#E8E6E1] shadow-2xs space-y-3">
-          <div className="flex items-center gap-3 pb-1 border-b border-[#F1F0EC]">
-            <div className="w-10 h-10 rounded-2xl bg-[#2FA66A]/10 text-[#2FA66A] flex items-center justify-center shrink-0">
+        <div className="bg-white rounded-2xl p-4 border border-[#E5E7EB] shadow-2xs space-y-3">
+          <div className="flex items-center gap-3 pb-1 border-b border-[#F3F4F4]">
+            <div className="w-10 h-10 rounded-2xl bg-[#16A34A]/10 text-[#16A34A] flex items-center justify-center shrink-0">
               <Percent className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-[15px] font-black text-[#171717]">Refund Payout Percentage</h2>
-              <p className="text-[11.5px] text-[#777570] font-medium">
+              <h2 className="text-[15px] font-black text-[#021526]">Refund Payout Percentage</h2>
+              <p className="text-[11.5px] text-[#5F6368] font-medium">
                 Amount returned to customer source account
               </p>
             </div>
           </div>
 
           <div>
-            <label className="text-[12px] font-bold text-[#171717] block mb-2">
+            <label className="text-[12px] font-bold text-[#021526] block mb-2">
               Eligible Refund Value:
             </label>
             <div className="grid grid-cols-4 gap-2">
@@ -275,8 +277,8 @@ export const CancellationRefundScreen: React.FC = () => {
                     }}
                     className={`py-2.5 rounded-xl text-[13px] font-black transition-all border cursor-pointer ${
                       isSelected
-                        ? 'bg-[#2FA66A] text-white border-[#2FA66A] shadow-xs'
-                        : 'bg-[#FAF9F6] border border-[#E8E6E1] text-[#171717] hover:bg-[#F1F0EC]'
+                        ? 'bg-[#16A34A] text-white border-[#16A34A] shadow-xs'
+                        : 'bg-[#F3F4F4] border border-[#E5E7EB] text-[#021526] hover:bg-[#F3F4F4]'
                     }`}
                   >
                     {pct}%
@@ -288,25 +290,25 @@ export const CancellationRefundScreen: React.FC = () => {
         </div>
 
         {/* Card 4: Customer Notice Preview */}
-        <div className="bg-white rounded-2xl p-4 border border-[#E8E6E1] shadow-2xs space-y-2.5">
-          <div className="flex items-center justify-between pb-1 border-b border-[#F1F0EC]">
-            <h3 className="text-[12.5px] font-black text-[#171717] uppercase tracking-wider">
+        <div className="bg-white rounded-2xl p-4 border border-[#E5E7EB] shadow-2xs space-y-2.5">
+          <div className="flex items-center justify-between pb-1 border-b border-[#F3F4F4]">
+            <h3 className="text-[12.5px] font-black text-[#021526] uppercase tracking-wider">
               CUSTOMER NOTICE PREVIEW ({applyToAll ? 'All Courts' : currentCourt.name})
             </h3>
-            <span className="text-[10px] font-bold text-[#2FA66A] bg-[#2FA66A]/10 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-bold text-[#16A34A] bg-[#16A34A]/10 px-2 py-0.5 rounded-full">
               Live Policy
             </span>
           </div>
 
-          <div className="bg-[#FAF9F6] p-3 rounded-xl border border-[#E8E6E1] text-[12px] text-[#55534E] leading-relaxed">
-            Players canceling at least <strong className="text-[#171717]">{freeHours} hours</strong> before
-            the booked match for <strong className="text-[#171717]">{applyToAll ? 'any court' : currentCourt.name}</strong> receive a{' '}
-            <strong className="text-[#2FA66A]">{refundPercent}% refund</strong> to their original UPI/Bank payment method. Cart slots are automatically unlocked after{' '}
-            <strong className="text-[#FF6B2C]">{autoReleaseMins} minutes</strong> of inactivity.
+          <div className="bg-[#F3F4F4] p-3 rounded-xl border border-[#E5E7EB] text-[12px] text-[#5F6368] leading-relaxed">
+            Players canceling at least <strong className="text-[#021526]">{freeHours} hours</strong> before
+            the booked match for <strong className="text-[#021526]">{applyToAll ? 'any court' : currentCourt.name}</strong> receive a{' '}
+            <strong className="text-[#16A34A]">{refundPercent}% refund</strong> to their original UPI/Bank payment method. Cart slots are automatically unlocked after{' '}
+            <strong className="text-[#F94001]">{autoReleaseMins} minutes</strong> of inactivity.
           </div>
 
-          <div className="flex items-center gap-1.5 text-[11px] text-[#777570]">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#2FA66A] shrink-0" />
+          <div className="flex items-center gap-1.5 text-[11px] text-[#5F6368]">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#16A34A] shrink-0" />
             <span>Policy syncs across app checkout, ground badges, and owner edit forms.</span>
           </div>
         </div>

@@ -46,10 +46,10 @@ export const AmenitiesScreen: React.FC = () => {
     switch (iconName) {
       case 'SunMedium':
       case 'Zap':
-        return <SunMedium className="w-5 h-5 text-[#FF6B2C]" />;
+        return <SunMedium className="w-5 h-5 text-[#F94001]" />;
       case 'DoorOpen':
       case 'ShowerHead':
-        return <DoorOpen className="w-5 h-5 text-[#2FA66A]" />;
+        return <DoorOpen className="w-5 h-5 text-[#16A34A]" />;
       case 'Droplets':
         return <Droplets className="w-5 h-5 text-[#3B82F6]" />;
       case 'Car':
@@ -57,7 +57,7 @@ export const AmenitiesScreen: React.FC = () => {
       case 'Shirt':
         return <Shirt className="w-5 h-5 text-[#EC4899]" />;
       case 'Trophy':
-        return <Trophy className="w-5 h-5 text-[#E7A72F]" />;
+        return <Trophy className="w-5 h-5 text-[#F59E0B]" />;
       case 'HeartPulse':
         return <HeartPulse className="w-5 h-5 text-[#EF4444]" />;
       case 'Coffee':
@@ -73,7 +73,7 @@ export const AmenitiesScreen: React.FC = () => {
       case 'BatteryCharging':
         return <BatteryCharging className="w-5 h-5 text-[#84CC16]" />;
       default:
-        return <Sparkles className="w-5 h-5 text-[#FF6B2C]" />;
+        return <Sparkles className="w-5 h-5 text-[#F94001]" />;
     }
   };
 
@@ -85,25 +85,25 @@ export const AmenitiesScreen: React.FC = () => {
           haptics.tap();
           goBack();
         }}
-        className="md:hidden flex items-center gap-1.5 text-[12.5px] font-bold text-[#FF6B2C] active-press cursor-pointer pb-1"
+        className="md:hidden flex items-center gap-1.5 text-[12.5px] font-bold text-[#F94001] active-press cursor-pointer pb-1"
       >
         <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
         <span>Back to Settings</span>
       </button>
 
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#E8E6E1]/70">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#E5E7EB]/70">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-[24px] font-black text-[#171717] tracking-tight">Venue Amenities</h1>
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-[#2FA66A]/10 text-[#2FA66A] border border-[#2FA66A]/20">
+            <h1 className="text-[24px] font-black text-[#021526] tracking-tight">Venue Amenities</h1>
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-[#16A34A]/10 text-[#16A34A] border border-[#16A34A]/20">
               Admin Standardized
             </span>
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#FAF9F6] text-[#777570] border border-[#E8E6E1]">
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#F3F4F4] text-[#5F6368] border border-[#E5E7EB]">
               {activeCount} of {amenities.length} Active on App
             </span>
           </div>
-          <p className="text-[12.5px] font-medium text-[#777570]">
+          <p className="text-[12.5px] font-medium text-[#5F6368]">
             Only verified admin-defined amenities are shown. Select which facility amenities are highlighted to players during online booking.
           </p>
         </div>
@@ -122,8 +122,8 @@ export const AmenitiesScreen: React.FC = () => {
               }}
               className={`px-3.5 py-2 rounded-xl text-[12.5px] font-bold transition-all whitespace-nowrap cursor-pointer ${
                 isSelected
-                  ? 'bg-[#171717] text-white shadow-xs'
-                  : 'bg-white text-[#777570] hover:text-[#171717] hover:bg-[#F7F7F5] border border-[#E8E6E1]'
+                  ? 'bg-[#F94001] text-white shadow-sm'
+                  : 'bg-white text-[#5F6368] hover:text-[#021526] hover:bg-[#F3F4F4] border border-[#E5E7EB]'
               }`}
             >
               {cat.label}
@@ -139,28 +139,28 @@ export const AmenitiesScreen: React.FC = () => {
             key={amenity.id}
             className={`p-4.5 rounded-3xl border transition-all flex items-start justify-between gap-4 shadow-2xs ${
               amenity.enabled
-                ? 'bg-white border-[#E8E6E1] hover:border-[#171717]/20'
-                : 'bg-[#F7F7F5] border-[#E8E6E1]/60 opacity-65'
+                ? 'bg-white border-[#E5E7EB] hover:border-[#021526]/20'
+                : 'bg-[#F3F4F4] border-[#E5E7EB]/60 opacity-65'
             }`}
           >
             <div className="flex items-start gap-3.5 min-w-0">
               <div
                 className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 border ${
                   amenity.enabled
-                    ? 'bg-[#FAF9F6] border-[#E8E6E1]'
-                    : 'bg-[#EBE9E3] border-[#D1CFCA]'
+                    ? 'bg-[#F3F4F4] border-[#E5E7EB]'
+                    : 'bg-[#EBE9E3] border-[#E5E7EB]'
                 }`}
               >
                 {getAmenityIcon(amenity.icon)}
               </div>
               <div className="min-w-0">
-                <h3 className="text-[14.5px] font-black text-[#171717] tracking-tight truncate">
+                <h3 className="text-[14.5px] font-black text-[#021526] tracking-tight truncate">
                   {amenity.name}
                 </h3>
-                <p className="text-[12px] text-[#777570] mt-0.5 leading-relaxed line-clamp-2">
+                <p className="text-[12px] text-[#5F6368] mt-0.5 leading-relaxed line-clamp-2">
                   {amenity.description || amenity.details}
                 </p>
-                <span className="inline-block mt-2 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-[#F1F0EC] text-[#777570]">
+                <span className="inline-block mt-2 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-[#F3F4F4] text-[#5F6368]">
                   {amenity.category}
                 </span>
               </div>
@@ -179,7 +179,7 @@ export const AmenitiesScreen: React.FC = () => {
                 );
               }}
               className={`w-12 h-7 rounded-full transition-colors relative shrink-0 cursor-pointer ${
-                amenity.enabled ? 'bg-[#2FA66A]' : 'bg-[#D1CFCA]'
+                amenity.enabled ? 'bg-[#16A34A]' : 'bg-[#E5E7EB]'
               }`}
             >
               <div

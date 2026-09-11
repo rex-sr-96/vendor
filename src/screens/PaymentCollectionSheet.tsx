@@ -31,18 +31,18 @@ export const PaymentCollectionSheet: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: '100%' }}
           transition={{ type: 'spring', damping: 28, stiffness: 320 }}
-          className="w-full bg-white rounded-t-[32px] p-5 pb-8 shadow-2xl border-t border-[#E8E6E1]"
+          className="w-full bg-white rounded-t-[32px] p-5 pb-8 shadow-2xl border-t border-[#E5E7EB]"
         >
           {/* iOS-style Sheet Grab Handle */}
-          <div className="w-10 h-1 bg-[#D1CFCA] rounded-full mx-auto mb-3.5" />
+          <div className="w-10 h-1 bg-[#E5E7EB] rounded-full mx-auto mb-3.5" />
 
           {/* Header */}
-          <div className="flex items-center justify-between pb-3 border-b border-[#F1F0EC]">
+          <div className="flex items-center justify-between pb-3 border-b border-[#F3F4F4]">
             <div>
-              <span className="text-[11px] font-bold text-[#777570] uppercase tracking-wider">
+              <span className="text-[11px] font-bold text-[#5F6368] uppercase tracking-wider">
                 Booking #{selectedBooking.id}
               </span>
-              <h2 className="text-[19px] font-bold text-[#171717]">
+              <h2 className="text-[19px] font-bold text-[#021526]">
                 Collect Balance — ₹{balance.toLocaleString('en-IN')}
               </h2>
             </div>
@@ -51,7 +51,7 @@ export const PaymentCollectionSheet: React.FC = () => {
                 setActiveModal(null);
                 haptics.tap();
               }}
-              className="w-8 h-8 rounded-full bg-[#F1F0EC] flex items-center justify-center text-[#777570] hover:text-[#171717] active-press"
+              className="w-8 h-8 rounded-full bg-[#F3F4F4] flex items-center justify-center text-[#5F6368] hover:text-[#021526] active-press"
             >
               <X className="w-4 h-4" />
             </button>
@@ -62,62 +62,62 @@ export const PaymentCollectionSheet: React.FC = () => {
             {/* Option 1: Send Payment Link */}
             <div
               onClick={() => handleSelect('link')}
-              className="bg-[#F7F7F5] hover:bg-[#F1F0EC] p-3.5 rounded-2xl border border-[#E8E6E1] flex items-center justify-between cursor-pointer active-press transition-all group"
+              className="bg-[#F3F4F4] hover:bg-[#F3F4F4] p-3.5 rounded-2xl border border-[#E5E7EB] flex items-center justify-between cursor-pointer active-press transition-all group"
             >
               <div className="flex items-center gap-3.5">
-                <div className="w-11 h-11 rounded-xl bg-[#FF6B2C] text-white flex items-center justify-center shadow-xs">
+                <div className="w-11 h-11 rounded-xl bg-[#F94001] text-white flex items-center justify-center shadow-xs">
                   <Send className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-[14.5px] font-bold text-[#171717]">Send Payment Link</h3>
-                  <p className="text-[11.5px] text-[#777570]">
+                  <h3 className="text-[14.5px] font-bold text-[#021526]">Send Payment Link</h3>
+                  <p className="text-[11.5px] text-[#5F6368]">
                     SMS & WhatsApp link with UPI / Card / Netbanking
                   </p>
                 </div>
               </div>
-              <ChevronRight className="w-4 h-4 text-[#777570] group-hover:text-[#171717]" />
+              <ChevronRight className="w-4 h-4 text-[#5F6368] group-hover:text-[#021526]" />
             </div>
 
             {/* Option 2: Show QR */}
             <div
               onClick={() => handleSelect('qr')}
-              className="bg-[#F7F7F5] hover:bg-[#F1F0EC] p-3.5 rounded-2xl border border-[#E8E6E1] flex items-center justify-between cursor-pointer active-press transition-all group"
+              className="bg-[#F3F4F4] hover:bg-[#F3F4F4] p-3.5 rounded-2xl border border-[#E5E7EB] flex items-center justify-between cursor-pointer active-press transition-all group"
             >
               <div className="flex items-center gap-3.5">
-                <div className="w-11 h-11 rounded-xl bg-[#171717] text-white flex items-center justify-center shadow-xs">
+                <div className="w-11 h-11 rounded-xl bg-[#021526] text-white flex items-center justify-center shadow-xs">
                   <QrCode className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-[14.5px] font-bold text-[#171717]">Show UPI QR Code</h3>
-                  <p className="text-[11.5px] text-[#777570]">
+                  <h3 className="text-[14.5px] font-bold text-[#021526]">Show UPI QR Code</h3>
+                  <p className="text-[11.5px] text-[#5F6368]">
                     GPay, PhonePe, Paytm instant camera scan
                   </p>
                 </div>
               </div>
-              <ChevronRight className="w-4 h-4 text-[#777570] group-hover:text-[#171717]" />
+              <ChevronRight className="w-4 h-4 text-[#5F6368] group-hover:text-[#021526]" />
             </div>
 
             {/* Option 3: Record Cash */}
             <div
               onClick={() => handleSelect('cash')}
-              className="bg-[#F7F7F5] hover:bg-[#F1F0EC] p-3.5 rounded-2xl border border-[#E8E6E1] flex items-center justify-between cursor-pointer active-press transition-all group"
+              className="bg-[#F3F4F4] hover:bg-[#F3F4F4] p-3.5 rounded-2xl border border-[#E5E7EB] flex items-center justify-between cursor-pointer active-press transition-all group"
             >
               <div className="flex items-center gap-3.5">
-                <div className="w-11 h-11 rounded-xl bg-[#2FA66A] text-white flex items-center justify-center shadow-xs">
+                <div className="w-11 h-11 rounded-xl bg-[#16A34A] text-white flex items-center justify-center shadow-xs">
                   <Banknote className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-[14.5px] font-bold text-[#171717]">Record Cash Collection</h3>
-                  <p className="text-[11.5px] text-[#777570]">
+                  <h3 className="text-[14.5px] font-bold text-[#021526]">Record Cash Collection</h3>
+                  <p className="text-[11.5px] text-[#5F6368]">
                     Log direct physical cash payment at counter
                   </p>
                 </div>
               </div>
-              <ChevronRight className="w-4 h-4 text-[#777570] group-hover:text-[#171717]" />
+              <ChevronRight className="w-4 h-4 text-[#5F6368] group-hover:text-[#021526]" />
             </div>
           </div>
 
-          <p className="text-[11px] text-center text-[#777570]">
+          <p className="text-[11px] text-center text-[#5F6368]">
             Settlement updates instantly in your venue accounting ledger.
           </p>
         </motion.div>

@@ -36,10 +36,10 @@ export const AmenitiesScreen: React.FC = () => {
     switch (iconName) {
       case 'SunMedium':
       case 'Zap':
-        return <SunMedium className="w-4 h-4 text-[#FF6B2C]" />;
+        return <SunMedium className="w-4 h-4 text-[#F94001]" />;
       case 'DoorOpen':
       case 'ShowerHead':
-        return <DoorOpen className="w-4 h-4 text-[#2FA66A]" />;
+        return <DoorOpen className="w-4 h-4 text-[#16A34A]" />;
       case 'Droplets':
         return <Droplets className="w-4 h-4 text-[#3B82F6]" />;
       case 'Car':
@@ -47,7 +47,7 @@ export const AmenitiesScreen: React.FC = () => {
       case 'Shirt':
         return <Shirt className="w-4 h-4 text-[#EC4899]" />;
       case 'Trophy':
-        return <Trophy className="w-4 h-4 text-[#E7A72F]" />;
+        return <Trophy className="w-4 h-4 text-[#F59E0B]" />;
       case 'HeartPulse':
         return <HeartPulse className="w-4 h-4 text-[#EF4444]" />;
       case 'Coffee':
@@ -63,7 +63,7 @@ export const AmenitiesScreen: React.FC = () => {
       case 'BatteryCharging':
         return <BatteryCharging className="w-4 h-4 text-[#84CC16]" />;
       default:
-        return <Sparkles className="w-4 h-4 text-[#FF6B2C]" />;
+        return <Sparkles className="w-4 h-4 text-[#F94001]" />;
     }
   };
 
@@ -77,16 +77,16 @@ export const AmenitiesScreen: React.FC = () => {
               haptics.tap();
               goBack();
             }}
-            className="w-9 h-9 -ml-1 rounded-xl flex items-center justify-center text-[#171717] hover:bg-[#E8E6E1]/50 active-press transition-colors cursor-pointer"
+            className="w-9 h-9 -ml-1 rounded-xl flex items-center justify-center text-[#021526] hover:bg-[#E5E7EB]/50 active-press transition-colors cursor-pointer"
             aria-label="Back"
           >
             <ChevronLeft className="w-5 h-5 stroke-[2.4]" />
           </button>
           <div>
-            <h1 className="text-[17px] font-extrabold text-[#171717] tracking-tight leading-none">
+            <h1 className="text-[17px] font-extrabold text-[#021526] tracking-tight leading-none">
               Venue Amenities
             </h1>
-            <span className="text-[11px] text-[#777570] mt-0.5 block">
+            <span className="text-[11px] text-[#5F6368] mt-0.5 block">
               {activeCount} of {amenities.length} active on player app
             </span>
           </div>
@@ -94,17 +94,17 @@ export const AmenitiesScreen: React.FC = () => {
       </div>
 
       {/* Summary Highlight Box */}
-      <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-xs flex items-center justify-between">
+      <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-xs flex items-center justify-between">
         <div>
-          <span className="text-[11px] font-bold text-[#777570] uppercase tracking-wider block">
+          <span className="text-[11px] font-bold text-[#5F6368] uppercase tracking-wider block">
             Public Venue Highlights
           </span>
-          <p className="text-[12.5px] text-[#171717] font-bold mt-0.5">
+          <p className="text-[12.5px] text-[#021526] font-bold mt-0.5">
             Shown to players before booking slots
           </p>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="px-2.5 py-1 rounded-xl text-[11px] font-extrabold bg-[#2FA66A]/10 text-[#1E774A]">
+          <span className="px-2.5 py-1 rounded-xl text-[11px] font-extrabold bg-[#16A34A]/10 text-[#15803D]">
             {activeCount} Visible
           </span>
         </div>
@@ -128,8 +128,8 @@ export const AmenitiesScreen: React.FC = () => {
             }}
             className={`px-3 py-1.5 rounded-xl text-[11.5px] font-bold whitespace-nowrap transition-all cursor-pointer ${
               filter === tab.id
-                ? 'bg-[#171717] text-white shadow-xs'
-                : 'bg-white text-[#777570] border border-[#E8E6E1] hover:text-[#171717]'
+                ? 'bg-[#021526] text-white shadow-xs'
+                : 'bg-white text-[#5F6368] border border-[#E5E7EB] hover:text-[#021526]'
             }`}
           >
             {tab.label}
@@ -138,7 +138,7 @@ export const AmenitiesScreen: React.FC = () => {
       </div>
 
       {/* Amenities Toggle List */}
-      <div className="bg-white rounded-2xl border border-[#E8E6E1] shadow-xs divide-y divide-[#F1F0EC] overflow-hidden">
+      <div className="bg-white rounded-2xl border border-[#E5E7EB] shadow-xs divide-y divide-[#F3F4F4] overflow-hidden">
         {filteredAmenities.map((amenity) => (
           <div
             key={amenity.id}
@@ -146,20 +146,20 @@ export const AmenitiesScreen: React.FC = () => {
               haptics.tap();
               toggleAmenity(amenity.id);
             }}
-            className="p-3.5 flex items-center justify-between hover:bg-[#F7F7F5] cursor-pointer transition-colors"
+            className="p-3.5 flex items-center justify-between hover:bg-[#F3F4F4] cursor-pointer transition-colors"
           >
             <div className="flex items-center gap-3 flex-1 pr-3">
-              <div className="w-8 h-8 rounded-xl bg-[#F1F0EC] flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-xl bg-[#F3F4F4] flex items-center justify-center shrink-0">
                 {getAmenityIcon(amenity.iconName)}
               </div>
               <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="text-[13px] font-bold text-[#171717]">{amenity.name}</h3>
+                <h3 className="text-[13px] font-bold text-[#021526]">{amenity.name}</h3>
                 {amenity.price > 0 ? (
-                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-[#E7A72F]/15 text-[#B87C0D]">
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-[#F59E0B]/15 text-[#B87C0D]">
                     ₹{amenity.price}/rental
                   </span>
                 ) : (
-                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-[#2FA66A]/10 text-[#1E774A]">
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-[#16A34A]/10 text-[#15803D]">
                     Free
                   </span>
                 )}
@@ -169,7 +169,7 @@ export const AmenitiesScreen: React.FC = () => {
             {/* Custom Mobile Toggle Switch */}
             <div
               className={`w-11 h-6 rounded-full transition-colors relative cursor-pointer shrink-0 ${
-                amenity.enabled ? 'bg-[#FF6B2C]' : 'bg-[#E8E6E1]'
+                amenity.enabled ? 'bg-[#F94001]' : 'bg-[#E5E7EB]'
               }`}
             >
               <div

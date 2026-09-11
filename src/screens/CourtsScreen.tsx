@@ -32,7 +32,7 @@ export const CourtsScreen: React.FC = () => {
   const getStatusBadge = (status: CourtStatus) => {
     if (status === 'Approved') {
       return (
-        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#2FA66A]/15 text-[#1E774A] flex items-center gap-1">
+        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#16A34A]/15 text-[#15803D] flex items-center gap-1">
           <CheckCircle2 className="w-3 h-3" />
           Approved
         </span>
@@ -40,14 +40,14 @@ export const CourtsScreen: React.FC = () => {
     }
     if (status === 'Pending Approval') {
       return (
-        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#E7A72F]/15 text-[#B87C0D] flex items-center gap-1">
+        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#F59E0B]/15 text-[#B87C0D] flex items-center gap-1">
           <Clock className="w-3 h-3" />
           Pending Approval
         </span>
       );
     }
     return (
-      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#D94B4B]/15 text-[#B52B2B] flex items-center gap-1">
+      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#DC2626]/15 text-[#B52B2B] flex items-center gap-1">
         <AlertCircle className="w-3 h-3" />
         Rejected
       </span>
@@ -66,20 +66,20 @@ export const CourtsScreen: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={goBack}
-            className="w-10 h-10 -ml-2 rounded-xl flex items-center justify-center text-[#171717] hover:bg-[#E8E6E1]/50 active-press cursor-pointer"
+            className="w-10 h-10 -ml-2 rounded-xl flex items-center justify-center text-[#021526] hover:bg-[#E5E7EB]/50 active-press cursor-pointer"
           >
             <ChevronLeft className="w-6 h-6 stroke-[2.2]" />
           </button>
           <div>
-            <h1 className="text-[22px] font-bold text-[#171717]">Courts & Grounds</h1>
-            <p className="text-[11px] text-[#777570]">Manage turfs, pricing & sports layouts</p>
+            <h1 className="text-[22px] font-bold text-[#021526]">Courts & Grounds</h1>
+            <p className="text-[11px] text-[#5F6368]">Manage turfs, pricing & sports layouts</p>
           </div>
         </div>
 
         <button
           id="btn-open-add-court"
           onClick={handleOpenAddModal}
-          className="h-9 px-3 rounded-xl bg-[#FF6B2C] text-white font-bold text-[12px] flex items-center gap-1.5 shadow-xs hover:bg-[#e85b1e] active-press cursor-pointer"
+          className="h-9 px-3 rounded-xl bg-[#F94001] text-white font-bold text-[12px] flex items-center gap-1.5 shadow-xs hover:bg-[#D93600] active-press cursor-pointer"
         >
           <Plus className="w-4 h-4 stroke-[2.5]" />
           <span>+ Add Court</span>
@@ -87,19 +87,19 @@ export const CourtsScreen: React.FC = () => {
       </div>
 
       {/* Search */}
-      <div className="relative flex items-center bg-white border border-[#E8E6E1] rounded-[14px] px-3.5 py-2.5 shadow-2xs">
-        <Search className="w-4 h-4 text-[#777570] mr-2.5 shrink-0" />
+      <div className="relative flex items-center bg-white border border-[#E5E7EB] rounded-[14px] px-3.5 py-2.5 shadow-2xs">
+        <Search className="w-4 h-4 text-[#5F6368] mr-2.5 shrink-0" />
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search court or display name..."
-          className="w-full text-[13.5px] font-medium text-[#171717] bg-transparent focus:outline-none placeholder-[#A3A099]"
+          className="w-full text-[13.5px] font-medium text-[#021526] bg-transparent focus:outline-none placeholder-[#5F6368]"
         />
         {searchTerm && (
           <button
             onClick={() => setSearchTerm('')}
-            className="text-[#777570] hover:text-[#171717] p-1"
+            className="text-[#5F6368] hover:text-[#021526] p-1"
           >
             <X className="w-3.5 h-3.5" />
           </button>
@@ -117,8 +117,8 @@ export const CourtsScreen: React.FC = () => {
             }}
             className={`px-3 py-1.5 rounded-full text-[12px] font-semibold whitespace-nowrap transition-all active-press cursor-pointer ${
               sportFilter === sport
-                ? 'bg-[#171717] text-white'
-                : 'bg-white text-[#777570] border border-[#E8E6E1]'
+                ? 'bg-[#021526] text-white'
+                : 'bg-white text-[#5F6368] border border-[#E5E7EB]'
             }`}
           >
             {sport}
@@ -131,21 +131,21 @@ export const CourtsScreen: React.FC = () => {
         {filteredCourts.map((court) => (
           <div
             key={court.id}
-            className="bg-white rounded-2xl p-4 border border-[#E8E6E1] shadow-xs space-y-3"
+            className="bg-white rounded-2xl p-4 border border-[#E5E7EB] shadow-xs space-y-3"
           >
             <div className="flex items-start justify-between">
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-[17px] font-bold text-[#171717]">{court.name}</h3>
+                  <h3 className="text-[17px] font-bold text-[#021526]">{court.name}</h3>
                   {court.samePhysicalSports && (
-                    <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#FAF9F6] text-[#777570] border border-[#E8E6E1] flex items-center gap-1">
-                      <Layers className="w-3 h-3 text-[#FF6B2C]" />
+                    <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#F3F4F4] text-[#5F6368] border border-[#E5E7EB] flex items-center gap-1">
+                      <Layers className="w-3 h-3 text-[#F94001]" />
                       Same Ground
                     </span>
                   )}
                 </div>
                 {court.displayName && (
-                  <p className="text-[12px] font-medium text-[#777570] mt-0.5">
+                  <p className="text-[12px] font-medium text-[#5F6368] mt-0.5">
                     {court.displayName}
                   </p>
                 )}
@@ -153,7 +153,7 @@ export const CourtsScreen: React.FC = () => {
                   {court.sports.map((sp) => (
                     <span
                       key={sp}
-                      className="px-2 py-0.5 rounded-md bg-[#FAF9F6] text-[#171717] text-[10.5px] font-bold border border-[#E8E6E1]"
+                      className="px-2 py-0.5 rounded-md bg-[#F3F4F4] text-[#021526] text-[10.5px] font-bold border border-[#E5E7EB]"
                     >
                       {sp}
                     </span>
@@ -164,36 +164,36 @@ export const CourtsScreen: React.FC = () => {
             </div>
 
             {/* Pricing Section */}
-            <div className="bg-[#FAF9F6] p-3 rounded-xl border border-[#E8E6E1]/80 space-y-2">
+            <div className="bg-[#F3F4F4] p-3 rounded-xl border border-[#E5E7EB]/80 space-y-2">
               <div className="flex justify-between items-center text-[13px]">
-                <span className="text-[#777570] font-medium">Regular Rate</span>
-                <span className="font-extrabold text-[#171717] text-[15px]">
+                <span className="text-[#5F6368] font-medium">Regular Rate</span>
+                <span className="font-extrabold text-[#021526] text-[15px]">
                   ₹{court.pricePerHour.toLocaleString('en-IN')}/hr
                 </span>
               </div>
 
               {(court.peakHoursPrice || court.weekendPrice || court.minBookingDuration) && (
-                <div className="pt-2 border-t border-[#E8E6E1] grid grid-cols-2 gap-2 text-[11px]">
+                <div className="pt-2 border-t border-[#E5E7EB] grid grid-cols-2 gap-2 text-[11px]">
                   {court.peakHoursPrice && (
-                    <div className="flex items-center gap-1 text-[#FF6B2C] font-semibold">
+                    <div className="flex items-center gap-1 text-[#F94001] font-semibold">
                       <Flame className="w-3.5 h-3.5" />
                       <span>Peak: ₹{court.peakHoursPrice}/hr</span>
                     </div>
                   )}
                   {court.weekendPrice && (
-                    <div className="flex items-center gap-1 text-[#171717] font-semibold">
-                      <Calendar className="w-3.5 h-3.5 text-[#2FA66A]" />
+                    <div className="flex items-center gap-1 text-[#021526] font-semibold">
+                      <Calendar className="w-3.5 h-3.5 text-[#16A34A]" />
                       <span>Weekend: ₹{court.weekendPrice}/hr</span>
                     </div>
                   )}
                   {court.minBookingDuration && (
-                    <div className="flex items-center gap-1 text-[#777570] font-medium col-span-2">
-                      <Clock className="w-3.5 h-3.5 text-[#A3A099]" />
+                    <div className="flex items-center gap-1 text-[#5F6368] font-medium col-span-2">
+                      <Clock className="w-3.5 h-3.5 text-[#5F6368]" />
                       <span>Min Booking: {court.minBookingDuration}</span>
                     </div>
                   )}
                   {court.peakHoursStart && court.peakHoursEnd && (
-                    <div className="text-[10px] text-[#A3A099] col-span-2">
+                    <div className="text-[10px] text-[#5F6368] col-span-2">
                       Peak: {court.peakHoursStart} – {court.peakHoursEnd} ({court.peakDays?.join(', ') || 'Fri-Sun'})
                     </div>
                   )}
@@ -205,8 +205,8 @@ export const CourtsScreen: React.FC = () => {
               <p
                 className={`text-[12px] pt-1 ${
                   court.status === 'Rejected'
-                    ? 'text-[#D94B4B] font-semibold'
-                    : 'text-[#777570]'
+                    ? 'text-[#DC2626] font-semibold'
+                    : 'text-[#5F6368]'
                 }`}
               >
                 {court.statusDetails}
@@ -216,7 +216,7 @@ export const CourtsScreen: React.FC = () => {
             {court.status === 'Rejected' && (
               <button
                 onClick={handleOpenAddModal}
-                className="w-full mt-1 py-2 bg-[#D94B4B]/10 hover:bg-[#D94B4B]/20 text-[#D94B4B] rounded-xl text-[12px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                className="w-full mt-1 py-2 bg-[#DC2626]/10 hover:bg-[#DC2626]/20 text-[#DC2626] rounded-xl text-[12px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
               >
                 <Edit2 className="w-3.5 h-3.5" />
                 <span>Edit & Resubmit Court</span>
@@ -226,10 +226,10 @@ export const CourtsScreen: React.FC = () => {
         ))}
 
         {filteredCourts.length === 0 && (
-          <div className="bg-white rounded-2xl p-8 text-center border border-[#E8E6E1] space-y-2">
-            <Layers className="w-8 h-8 text-[#A3A099] mx-auto" />
-            <h4 className="text-[15px] font-bold text-[#171717]">No Courts Found</h4>
-            <p className="text-[12px] text-[#777570]">
+          <div className="bg-white rounded-2xl p-8 text-center border border-[#E5E7EB] space-y-2">
+            <Layers className="w-8 h-8 text-[#5F6368] mx-auto" />
+            <h4 className="text-[15px] font-bold text-[#021526]">No Courts Found</h4>
+            <p className="text-[12px] text-[#5F6368]">
               No courts match the selected filters or search query.
             </p>
           </div>

@@ -218,7 +218,7 @@ export const HomeScreen: React.FC = () => {
       category: "Today's Activity",
       title: 'Hourly Utilization',
       badge: `${occupancyRate}% Occupied`,
-      badgeColor: occupancyRate > 0 ? 'text-[#2FA66A] bg-[#2FA66A]/10' : 'text-[#777570] bg-[#F1F0EC]',
+      badgeColor: occupancyRate > 0 ? 'text-[#16A34A] bg-[#16A34A]/10' : 'text-[#5F6368] bg-[#F3F4F4]',
       legendLeft: `${bookings.length} Bookings`,
       legendRight: `${slots.length} Total Slots`,
       itemUnit: 'Slot',
@@ -227,7 +227,7 @@ export const HomeScreen: React.FC = () => {
       category: `${currentMonthName} Velocity`,
       title: 'Daily Revenue & Booking Trend',
       badge: `${bookings.length} Bookings`,
-      badgeColor: bookings.length > 0 ? 'text-[#FF6B2C] bg-[#FF6B2C]/10' : 'text-[#777570] bg-[#F1F0EC]',
+      badgeColor: bookings.length > 0 ? 'text-[#F94001] bg-[#F94001]/10' : 'text-[#5F6368] bg-[#F3F4F4]',
       legendLeft: `${courts.length} Active Courts`,
       legendRight: formatCurrency(totalRevenue),
       itemUnit: 'Period',
@@ -236,7 +236,7 @@ export const HomeScreen: React.FC = () => {
       category: 'Annual Performance',
       title: 'Month-by-Month Gross Revenue',
       badge: formatCurrency(totalRevenue),
-      badgeColor: totalRevenue > 0 ? 'text-[#2FA66A] bg-[#2FA66A]/10' : 'text-[#777570] bg-[#F1F0EC]',
+      badgeColor: totalRevenue > 0 ? 'text-[#16A34A] bg-[#16A34A]/10' : 'text-[#5F6368] bg-[#F3F4F4]',
       legendLeft: `${bookings.length} Total Matches`,
       legendRight: totalSettled > 0 ? `${formatCurrency(totalSettled)} Settled` : 'Real-Time Sync',
       itemUnit: 'Month',
@@ -373,8 +373,8 @@ export const HomeScreen: React.FC = () => {
       {/* Mobile-only Header */}
       <div className="flex md:hidden items-center justify-between pt-1">
         <div>
-          <span className="text-[11.5px] font-semibold text-[#777570] block">Good morning</span>
-          <h1 className="text-[22px] font-extrabold text-[#171717] tracking-tight leading-none mt-0.5">
+          <span className="text-[11.5px] font-semibold text-[#5F6368] block">Good morning</span>
+          <h1 className="text-[22px] font-extrabold text-[#021526] tracking-tight leading-none mt-0.5">
             {venueName}
           </h1>
         </div>
@@ -385,12 +385,12 @@ export const HomeScreen: React.FC = () => {
               haptics.tap();
               navigateTo('notifications');
             }}
-            className="relative w-9 h-9 rounded-full bg-white border border-[#E8E6E1] text-[#171717] flex items-center justify-center shadow-2xs hover:bg-[#F7F7F5] active-press cursor-pointer"
+            className="relative w-9 h-9 rounded-full bg-white border border-[#E5E7EB] text-[#021526] flex items-center justify-center shadow-2xs hover:bg-[#F3F4F4] active-press cursor-pointer"
             aria-label="Notifications"
           >
-            <Bell className="w-4 h-4 text-[#171717]" />
+            <Bell className="w-4 h-4 text-[#021526]" />
             {unreadNotifCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] px-1 rounded-full bg-[#FF6B2C] text-white text-[9.5px] font-black flex items-center justify-center ring-2 ring-[#F6F5F2]">
+              <span className="absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] px-1 rounded-full bg-[#F94001] text-white text-[9.5px] font-black flex items-center justify-center ring-2 ring-[#F8F9FA]">
                 {unreadNotifCount}
               </span>
             )}
@@ -402,7 +402,7 @@ export const HomeScreen: React.FC = () => {
               haptics.tap();
               navigateTo('settings');
             }}
-            className="w-9 h-9 rounded-full bg-[#171717] text-white flex items-center justify-center font-extrabold text-xs shadow-xs active-press cursor-pointer"
+            className="w-9 h-9 rounded-full bg-[#021526] text-white flex items-center justify-center font-extrabold text-xs shadow-xs active-press cursor-pointer"
             aria-label="Settings"
           >
             TT
@@ -414,14 +414,14 @@ export const HomeScreen: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
         <div>
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#2FA66A] animate-pulse" />
-            <h1 className="text-[20px] sm:text-[22px] font-black text-[#171717] tracking-tight">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#16A34A] animate-pulse" />
+            <h1 className="text-[20px] sm:text-[22px] font-black text-[#021526] tracking-tight">
               {timeframe === 'today' && "Today's Operations"}
               {timeframe === 'month' && `${currentMonthName} Performance`}
               {timeframe === 'yearly' && 'Annual Arena Analytics'}
             </h1>
           </div>
-          <p className="text-[12.5px] text-[#777570] font-medium mt-0.5">
+          <p className="text-[12.5px] text-[#5F6368] font-medium mt-0.5">
             {timeframe === 'today' &&
               (todaySchedule
                 ? `Real-time slot bookings, hourly court loads & today's collections (${todaySchedule.isOpen ? `${todaySchedule.openTime} – ${todaySchedule.closeTime}` : 'Closed Today'}).`
@@ -432,18 +432,18 @@ export const HomeScreen: React.FC = () => {
         </div>
 
         {/* Sleek Segmented Switcher Pill */}
-        <div className="grid grid-cols-3 w-full sm:w-auto sm:inline-flex items-center bg-[#F1F0EC] p-1 rounded-2xl border border-[#E4E2DC] shadow-2xs self-stretch sm:self-auto">
+        <div className="grid grid-cols-3 w-full sm:w-auto sm:inline-flex items-center bg-[#F3F4F4] p-1 rounded-2xl border border-[#E4E2DC] shadow-2xs self-stretch sm:self-auto">
           <button
             id="tab-overview-today"
             type="button"
             onClick={() => handleTimeframeChange('today')}
             className={`px-3 py-1.5 rounded-xl text-[12px] sm:text-[12.5px] font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
               timeframe === 'today'
-                ? 'bg-white text-[#171717] shadow-sm ring-1 ring-black/5'
-                : 'text-[#777570] hover:text-[#171717]'
+                ? 'bg-white text-[#021526] shadow-sm ring-1 ring-black/5'
+                : 'text-[#5F6368] hover:text-[#021526]'
             }`}
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-[#2FA66A]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A]" />
             <span>Today</span>
           </button>
 
@@ -453,11 +453,11 @@ export const HomeScreen: React.FC = () => {
             onClick={() => handleTimeframeChange('month')}
             className={`px-3 py-1.5 rounded-xl text-[12px] sm:text-[12.5px] font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
               timeframe === 'month'
-                ? 'bg-white text-[#171717] shadow-sm ring-1 ring-black/5'
-                : 'text-[#777570] hover:text-[#171717]'
+                ? 'bg-white text-[#021526] shadow-sm ring-1 ring-black/5'
+                : 'text-[#5F6368] hover:text-[#021526]'
             }`}
           >
-            <Calendar className="w-3.5 h-3.5 text-[#FF6B2C]" />
+            <Calendar className="w-3.5 h-3.5 text-[#F94001]" />
             <span>Month</span>
           </button>
 
@@ -467,29 +467,29 @@ export const HomeScreen: React.FC = () => {
             onClick={() => handleTimeframeChange('yearly')}
             className={`px-3 py-1.5 rounded-xl text-[12px] sm:text-[12.5px] font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
               timeframe === 'yearly'
-                ? 'bg-white text-[#171717] shadow-sm ring-1 ring-black/5'
-                : 'text-[#777570] hover:text-[#171717]'
+                ? 'bg-white text-[#021526] shadow-sm ring-1 ring-black/5'
+                : 'text-[#5F6368] hover:text-[#021526]'
             }`}
           >
-            <TrendingUp className="w-3.5 h-3.5 text-[#4D83C4]" />
+            <TrendingUp className="w-3.5 h-3.5 text-[#2563EB]" />
             <span>Yearly</span>
           </button>
         </div>
       </div>
 
       {/* Top Arena Utilization & Revenue Graph Card */}
-      <div className="bg-white rounded-3xl p-4 sm:p-5 border border-[#E8E6E1] shadow-xs space-y-3.5">
+      <div className="bg-white rounded-3xl p-4 sm:p-5 border border-[#E5E7EB] shadow-xs space-y-3.5">
         {/* Graph Header: Title & Selected Slot Stats */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-[#FF6B2C]/10 text-[#FF6B2C] flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-xl bg-[#F94001]/10 text-[#F94001] flex items-center justify-center shrink-0">
               <BarChart2 className="w-4.5 h-4.5" />
             </div>
             <div>
-              <span className="text-[10.5px] font-bold uppercase tracking-wider text-[#777570] block">
+              <span className="text-[10.5px] font-bold uppercase tracking-wider text-[#5F6368] block">
                 {chartMeta.category}
               </span>
-              <h2 className="text-[14.5px] sm:text-[15px] font-extrabold text-[#171717] tracking-tight leading-none mt-0.5">
+              <h2 className="text-[14.5px] sm:text-[15px] font-extrabold text-[#021526] tracking-tight leading-none mt-0.5">
                 {chartMeta.title}
               </h2>
             </div>
@@ -505,15 +505,15 @@ export const HomeScreen: React.FC = () => {
 
         {/* Selected Slot Information Pill */}
         {selectedBarIdx !== null && activeChartData[selectedBarIdx] && (
-          <div className="bg-[#FAF9F6] border border-[#E8E6E1] rounded-2xl px-3.5 py-2 flex items-center justify-between text-[11.5px] sm:text-[12px] transition-all">
-            <div className="flex items-center gap-1.5 sm:gap-2 text-[#777570] truncate">
-              <span className="font-bold text-[#171717]">
+          <div className="bg-[#F3F4F4] border border-[#E5E7EB] rounded-2xl px-3.5 py-2 flex items-center justify-between text-[11.5px] sm:text-[12px] transition-all">
+            <div className="flex items-center gap-1.5 sm:gap-2 text-[#5F6368] truncate">
+              <span className="font-bold text-[#021526]">
                 {activeChartData[selectedBarIdx].time} {chartMeta.itemUnit}
               </span>
               <span>·</span>
               <span>{activeChartData[selectedBarIdx].bookings} Bookings</span>
             </div>
-            <span className="font-extrabold text-[#FF6B2C] text-[12.5px] sm:text-[13px] shrink-0 ml-2">
+            <span className="font-extrabold text-[#F94001] text-[12.5px] sm:text-[13px] shrink-0 ml-2">
               {activeChartData[selectedBarIdx].amount}
             </span>
           </div>
@@ -540,18 +540,18 @@ export const HomeScreen: React.FC = () => {
                     style={{ height: `${item.height}%` }}
                     className={`w-full rounded-t-lg transition-all duration-300 ${
                       isSelected
-                        ? 'bg-[#FF6B2C] shadow-md ring-2 ring-[#FF6B2C]/40'
+                        ? 'bg-[#F94001] shadow-md ring-2 ring-[#F94001]/40'
                         : item.isPeak
-                        ? 'bg-[#FF854D]/75 hover:bg-[#FF6B2C]'
+                        ? 'bg-[#FF854D]/75 hover:bg-[#F94001]'
                         : item.bookings > 0
-                        ? 'bg-[#2FA66A]/60 hover:bg-[#2FA66A]'
-                        : 'bg-[#E8E6E1] hover:bg-[#D8D6D0]'
+                        ? 'bg-[#16A34A]/60 hover:bg-[#16A34A]'
+                        : 'bg-[#E5E7EB] hover:bg-[#D8D6D0]'
                     }`}
                   />
                   {/* Label */}
                   <span
                     className={`text-[9px] sm:text-[9.5px] font-bold mt-2 truncate ${
-                      isSelected ? 'text-[#FF6B2C]' : 'text-[#777570]'
+                      isSelected ? 'text-[#F94001]' : 'text-[#5F6368]'
                     }`}
                   >
                     {item.time.replace(':00', '')}
@@ -562,19 +562,19 @@ export const HomeScreen: React.FC = () => {
           </div>
 
           {/* Graph Footer Legend */}
-          <div className="flex items-center justify-between pt-2.5 border-t border-[#F1F0EC] text-[11px] sm:text-[11.5px]">
-            <div className="flex items-center gap-3 text-[#777570]">
+          <div className="flex items-center justify-between pt-2.5 border-t border-[#F3F4F4] text-[11px] sm:text-[11.5px]">
+            <div className="flex items-center gap-3 text-[#5F6368]">
               <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-xs bg-[#FF6B2C]" />
-                <span className="font-semibold text-[#171717]">{chartMeta.legendLeft}</span>
+                <span className="w-2.5 h-2.5 rounded-xs bg-[#F94001]" />
+                <span className="font-semibold text-[#021526]">{chartMeta.legendLeft}</span>
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-xs bg-[#E8E6E1]" />
+                <span className="w-2.5 h-2.5 rounded-xs bg-[#E5E7EB]" />
                 <span>Available Slots</span>
               </span>
             </div>
-            <span className="text-[#2FA66A] font-bold inline-flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#2FA66A]" />
+            <span className="text-[#16A34A] font-bold inline-flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A]" />
               {chartMeta.legendRight}
             </span>
           </div>
@@ -586,18 +586,18 @@ export const HomeScreen: React.FC = () => {
         {kpis.map((kpi) => (
           <div
             key={kpi.id}
-            className="w-full bg-white rounded-2xl p-3.5 sm:p-4 border border-[#E8E6E1] shadow-xs flex flex-col justify-between hover:shadow-sm transition-shadow"
+            className="w-full bg-white rounded-2xl p-3.5 sm:p-4 border border-[#E5E7EB] shadow-xs flex flex-col justify-between hover:shadow-sm transition-shadow"
           >
-            <span className="text-[10px] sm:text-[11px] md:text-[11.5px] font-bold uppercase tracking-wider text-[#777570] truncate">
+            <span className="text-[10px] sm:text-[11px] md:text-[11.5px] font-bold uppercase tracking-wider text-[#5F6368] truncate">
               {kpi.label}
             </span>
             <div className="mt-2 flex items-baseline justify-between gap-1">
-              <p className="text-[19px] sm:text-[21px] md:text-[23px] font-black text-[#171717] tracking-tight truncate">
+              <p className="text-[19px] sm:text-[21px] md:text-[23px] font-black text-[#021526] tracking-tight truncate">
                 {kpi.value}
               </p>
               <span
                 className={`text-[10.5px] sm:text-[11px] md:text-[11.5px] font-bold shrink-0 ${
-                  kpi.isWarning ? 'text-[#E7A72F]' : 'text-[#2FA66A]'
+                  kpi.isWarning ? 'text-[#F59E0B]' : 'text-[#16A34A]'
                 }`}
               >
                 {kpi.trend}
@@ -610,8 +610,8 @@ export const HomeScreen: React.FC = () => {
       {/* Quick Actions Row (Mobile only) */}
       <div className="grid grid-cols-3 gap-2 md:hidden">
         {isStaff ? (
-          <div className="h-11 bg-[#F1F0EC] text-[#777570] border border-[#E8E6E1] rounded-2xl font-bold text-[12px] flex items-center justify-center gap-1.5 shadow-2xs cursor-not-allowed">
-            <Lock className="w-3.5 h-3.5 text-[#777570]" />
+          <div className="h-11 bg-[#F3F4F4] text-[#5F6368] border border-[#E5E7EB] rounded-2xl font-bold text-[12px] flex items-center justify-center gap-1.5 shadow-2xs cursor-not-allowed">
+            <Lock className="w-3.5 h-3.5 text-[#5F6368]" />
             <span>View-Only</span>
           </div>
         ) : (
@@ -620,7 +620,7 @@ export const HomeScreen: React.FC = () => {
               haptics.tap();
               setActiveModal('new_booking');
             }}
-            className="h-11 bg-[#FF6B2C] text-white rounded-2xl font-bold text-[12.5px] flex items-center justify-center gap-1.5 shadow-xs hover:bg-[#e85b1e] active-press transition-all cursor-pointer"
+            className="h-11 bg-[#F94001] text-white rounded-2xl font-bold text-[12.5px] flex items-center justify-center gap-1.5 shadow-xs hover:bg-[#D93600] active-press transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>+ Booking</span>
@@ -628,8 +628,8 @@ export const HomeScreen: React.FC = () => {
         )}
 
         {isStaff ? (
-          <div className="h-11 bg-[#F1F0EC] text-[#777570] border border-[#E8E6E1] rounded-2xl font-bold text-[12px] flex items-center justify-center gap-1.5 shadow-2xs cursor-not-allowed">
-            <Lock className="w-3.5 h-3.5 text-[#777570]" />
+          <div className="h-11 bg-[#F3F4F4] text-[#5F6368] border border-[#E5E7EB] rounded-2xl font-bold text-[12px] flex items-center justify-center gap-1.5 shadow-2xs cursor-not-allowed">
+            <Lock className="w-3.5 h-3.5 text-[#5F6368]" />
             <span>Locked</span>
           </div>
         ) : (
@@ -638,9 +638,9 @@ export const HomeScreen: React.FC = () => {
               haptics.tap();
               setActiveModal('block_slot');
             }}
-            className="h-11 bg-white text-[#171717] border border-[#E8E6E1] rounded-2xl font-bold text-[12.5px] flex items-center justify-center gap-1.5 shadow-xs hover:border-[#171717] active-press transition-all cursor-pointer"
+            className="h-11 bg-white text-[#021526] border border-[#E5E7EB] rounded-2xl font-bold text-[12.5px] flex items-center justify-center gap-1.5 shadow-xs hover:border-[#021526] active-press transition-all cursor-pointer"
           >
-            <Ban className="w-3.5 h-3.5 text-[#777570] stroke-[2]" />
+            <Ban className="w-3.5 h-3.5 text-[#5F6368] stroke-[2]" />
             <span>Block Slot</span>
           </button>
         )}
@@ -650,9 +650,9 @@ export const HomeScreen: React.FC = () => {
             haptics.tap();
             navigateTo('slots');
           }}
-          className="h-11 bg-white text-[#171717] border border-[#E8E6E1] rounded-2xl font-bold text-[12.5px] flex items-center justify-center gap-1.5 shadow-xs hover:border-[#171717] active-press transition-all cursor-pointer"
+          className="h-11 bg-white text-[#021526] border border-[#E5E7EB] rounded-2xl font-bold text-[12.5px] flex items-center justify-center gap-1.5 shadow-xs hover:border-[#021526] active-press transition-all cursor-pointer"
         >
-          <Calendar className="w-3.5 h-3.5 text-[#777570] stroke-[2]" />
+          <Calendar className="w-3.5 h-3.5 text-[#5F6368] stroke-[2]" />
           <span>Timetable</span>
         </button>
       </div>
@@ -668,10 +668,10 @@ export const HomeScreen: React.FC = () => {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-[#E7A72F]" />
-                <h2 className="text-[16px] font-bold text-[#171717]">Action Required</h2>
+                <div className="w-2.5 h-2.5 rounded-full bg-[#F59E0B]" />
+                <h2 className="text-[16px] font-bold text-[#021526]">Action Required</h2>
                 {actionRequiredBookings.length > 0 && (
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-[#E7A72F]/15 text-[#B87C0D]">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-[#F59E0B]/15 text-[#B87C0D]">
                     {actionRequiredBookings.length}
                   </span>
                 )}
@@ -681,7 +681,7 @@ export const HomeScreen: React.FC = () => {
                   haptics.tap();
                   navigateTo('bookings');
                 }}
-                className="text-[12px] font-semibold text-[#FF6B2C] hover:underline flex items-center cursor-pointer"
+                className="text-[12px] font-semibold text-[#F94001] hover:underline flex items-center cursor-pointer"
               >
                 View all
                 <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
@@ -689,12 +689,12 @@ export const HomeScreen: React.FC = () => {
             </div>
 
             {actionRequiredBookings.length === 0 ? (
-              <div className="bg-white rounded-2xl p-6 border border-[#E8E6E1] text-center space-y-2 shadow-xs">
-                <div className="w-10 h-10 rounded-full bg-[#2FA66A]/10 text-[#2FA66A] flex items-center justify-center mx-auto">
+              <div className="bg-white rounded-2xl p-6 border border-[#E5E7EB] text-center space-y-2 shadow-xs">
+                <div className="w-10 h-10 rounded-full bg-[#16A34A]/10 text-[#16A34A] flex items-center justify-center mx-auto">
                   <CheckCircle2 className="w-5 h-5" />
                 </div>
-                <h3 className="text-[14px] font-extrabold text-[#171717]">All Caught Up</h3>
-                <p className="text-[11.5px] text-[#777570] max-w-xs mx-auto">
+                <h3 className="text-[14px] font-extrabold text-[#021526]">All Caught Up</h3>
+                <p className="text-[11.5px] text-[#5F6368] max-w-xs mx-auto">
                   No pending dues or expiring holds requiring counter action today.
                 </p>
                 {!isStaff && (
@@ -703,7 +703,7 @@ export const HomeScreen: React.FC = () => {
                       haptics.tap();
                       setActiveModal('new_booking');
                     }}
-                    className="mt-1 px-3.5 py-1.5 rounded-xl bg-[#FF6B2C] text-white text-[11.5px] font-bold inline-flex items-center gap-1.5 shadow-xs cursor-pointer active-press hover:bg-[#e85b1e]"
+                    className="mt-1 px-3.5 py-1.5 rounded-xl bg-[#F94001] text-white text-[11.5px] font-bold inline-flex items-center gap-1.5 shadow-xs cursor-pointer active-press hover:bg-[#D93600]"
                   >
                     <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
                     <span>+ New Booking</span>
@@ -720,20 +720,20 @@ export const HomeScreen: React.FC = () => {
                     <div
                       key={b.id}
                       onClick={() => handleViewBooking(b.id)}
-                      className="bg-white rounded-2xl p-3.5 border border-[#FF6B2C]/40 shadow-xs active-press cursor-pointer hover:border-[#FF6B2C] transition-all"
+                      className="bg-white rounded-2xl p-3.5 border border-[#F94001]/40 shadow-xs active-press cursor-pointer hover:border-[#F94001] transition-all"
                     >
                       <div className="flex items-start justify-between">
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
-                            <span className="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-[#FF6B2C]/15 text-[#E65100]">
+                            <span className="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-[#F94001]/15 text-[#E65100]">
                               {b.balanceAmount > 0 ? `Due ₹${b.balanceAmount}` : 'Hold Expiring'}
                             </span>
-                            <span className="text-[11.5px] font-semibold text-[#777570]">{b.courtName}</span>
+                            <span className="text-[11.5px] font-semibold text-[#5F6368]">{b.courtName}</span>
                           </div>
-                          <h3 className="text-[14.5px] font-bold text-[#171717]">{b.customerName}</h3>
-                          <p className="text-[11.5px] text-[#777570]">
+                          <h3 className="text-[14.5px] font-bold text-[#021526]">{b.customerName}</h3>
+                          <p className="text-[11.5px] text-[#5F6368]">
                             {b.timeSlot} · Paid ₹{b.paidAmount || 0} ·{' '}
-                            <strong className="text-[#FF6B2C]">Due ₹{b.balanceAmount || 0}</strong>
+                            <strong className="text-[#F94001]">Due ₹{b.balanceAmount || 0}</strong>
                           </p>
                         </div>
 
@@ -745,7 +745,7 @@ export const HomeScreen: React.FC = () => {
                               setSelectedBookingId(b.id);
                               setActiveModal('payment_options');
                             }}
-                            className="px-3 py-1.5 rounded-xl bg-[#FF6B2C] text-white text-[11.5px] font-bold flex items-center gap-1 shadow-xs hover:bg-[#e85b1e] active-press cursor-pointer"
+                            className="px-3 py-1.5 rounded-xl bg-[#F94001] text-white text-[11.5px] font-bold flex items-center gap-1 shadow-xs hover:bg-[#D93600] active-press cursor-pointer"
                           >
                             <CreditCard className="w-3 h-3" />
                             <span>Collect ₹{b.balanceAmount}</span>
@@ -757,7 +757,7 @@ export const HomeScreen: React.FC = () => {
                             className={`px-3 py-1.5 rounded-xl text-[11.5px] font-bold flex items-center gap-1 transition-all ${
                               isBlocked
                                 ? 'bg-amber-100 text-amber-900 border border-amber-300 cursor-not-allowed'
-                                : 'bg-[#171717] hover:bg-[#333] text-white active-press cursor-pointer'
+                                : 'bg-[#021526] hover:bg-[#333] text-white active-press cursor-pointer'
                             }`}
                           >
                             {isBlocked ? (
@@ -784,13 +784,13 @@ export const HomeScreen: React.FC = () => {
           {/* Today's Schedule Column */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-[16px] font-bold text-[#171717]">Today's Schedule</h2>
+              <h2 className="text-[16px] font-bold text-[#021526]">Today's Schedule</h2>
               <button
                 onClick={() => {
                   haptics.tap();
                   navigateTo('slots');
                 }}
-                className="text-[12px] font-semibold text-[#777570] hover:text-[#171717] flex items-center cursor-pointer"
+                className="text-[12px] font-semibold text-[#5F6368] hover:text-[#021526] flex items-center cursor-pointer"
               >
                 Court Grid
                 <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
@@ -798,12 +798,12 @@ export const HomeScreen: React.FC = () => {
             </div>
 
             {todayScheduleBookings.length === 0 ? (
-              <div className="bg-white rounded-2xl p-6 border border-[#E8E6E1] text-center space-y-2 shadow-xs">
-                <div className="w-10 h-10 rounded-full bg-[#FAF9F6] border border-[#E8E6E1] text-[#777570] flex items-center justify-center mx-auto">
-                  <Calendar className="w-5 h-5 text-[#FF6B2C]" />
+              <div className="bg-white rounded-2xl p-6 border border-[#E5E7EB] text-center space-y-2 shadow-xs">
+                <div className="w-10 h-10 rounded-full bg-[#F3F4F4] border border-[#E5E7EB] text-[#5F6368] flex items-center justify-center mx-auto">
+                  <Calendar className="w-5 h-5 text-[#F94001]" />
                 </div>
-                <h3 className="text-[14px] font-extrabold text-[#171717]">No Bookings Scheduled Yet</h3>
-                <p className="text-[11.5px] text-[#777570] max-w-xs mx-auto">
+                <h3 className="text-[14px] font-extrabold text-[#021526]">No Bookings Scheduled Yet</h3>
+                <p className="text-[11.5px] text-[#5F6368] max-w-xs mx-auto">
                   All {courts.length || 2} courts are currently open and ready for walk-in or online bookings.
                 </p>
                 <div className="flex items-center justify-center gap-2 pt-1">
@@ -812,7 +812,7 @@ export const HomeScreen: React.FC = () => {
                       haptics.tap();
                       navigateTo('slots');
                     }}
-                    className="px-3 py-1.5 rounded-xl bg-white border border-[#E8E6E1] text-[#171717] text-[11.5px] font-bold cursor-pointer active-press hover:bg-[#FAF9F6]"
+                    className="px-3 py-1.5 rounded-xl bg-white border border-[#E5E7EB] text-[#021526] text-[11.5px] font-bold cursor-pointer active-press hover:bg-[#F3F4F4]"
                   >
                     View Court Grid
                   </button>
@@ -821,14 +821,14 @@ export const HomeScreen: React.FC = () => {
                       haptics.tap();
                       setActiveModal('new_booking');
                     }}
-                    className="px-3 py-1.5 rounded-xl bg-[#171717] text-white text-[11.5px] font-bold cursor-pointer active-press hover:bg-[#333]"
+                    className="px-3 py-1.5 rounded-xl bg-[#021526] text-white text-[11.5px] font-bold cursor-pointer active-press hover:bg-[#333]"
                   >
                     + Add Booking
                   </button>
                 </div>
               </div>
             ) : (
-              <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-xs divide-y divide-[#F1F0EC]">
+              <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-xs divide-y divide-[#F3F4F4]">
                 {todayScheduleBookings.map((b) => (
                   <div
                     key={b.id}
@@ -836,26 +836,26 @@ export const HomeScreen: React.FC = () => {
                     className="py-2.5 first:pt-0 last:pb-0 flex items-center justify-between cursor-pointer active-press group"
                   >
                     <div className="flex items-center gap-2.5">
-                      <span className="text-[12px] font-bold text-[#777570] w-14 font-mono truncate">
+                      <span className="text-[12px] font-bold text-[#5F6368] w-14 font-mono truncate">
                         {b.timeSlot?.split('–')[0]?.trim() || 'Slot'}
                       </span>
                       <div
                         className={`w-2 h-2 rounded-full ${
-                          b.status === 'Confirmed' ? 'bg-[#2FA66A]' : b.status === 'Ongoing' ? 'bg-[#FF6B2C]' : 'bg-[#E7A72F]'
+                          b.status === 'Confirmed' ? 'bg-[#16A34A]' : b.status === 'Ongoing' ? 'bg-[#F94001]' : 'bg-[#F59E0B]'
                         }`}
                       />
                       <div>
-                        <p className="text-[13.5px] font-bold text-[#171717] group-hover:text-[#FF6B2C] transition-colors">
+                        <p className="text-[13.5px] font-bold text-[#021526] group-hover:text-[#F94001] transition-colors">
                           {b.courtName} · {b.customerName}
                         </p>
-                        <p className="text-[10.5px] text-[#777570]">{b.sport} match</p>
+                        <p className="text-[10.5px] text-[#5F6368]">{b.sport} match</p>
                       </div>
                     </div>
                     <span
                       className={`px-2 py-0.5 rounded-full text-[10.5px] font-bold ${
                         b.status === 'Confirmed'
-                          ? 'bg-[#2FA66A]/15 text-[#1E774A]'
-                          : 'bg-[#E7A72F]/15 text-[#B87C0D]'
+                          ? 'bg-[#16A34A]/15 text-[#15803D]'
+                          : 'bg-[#F59E0B]/15 text-[#B87C0D]'
                       }`}
                     >
                       {b.status}
@@ -875,52 +875,52 @@ export const HomeScreen: React.FC = () => {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Layers className="w-4 h-4 text-[#FF6B2C]" />
-                <h2 className="text-[16px] font-bold text-[#171717]">Top Revenue Drivers ({currentMonthName})</h2>
+                <Layers className="w-4 h-4 text-[#F94001]" />
+                <h2 className="text-[16px] font-bold text-[#021526]">Top Revenue Drivers ({currentMonthName})</h2>
               </div>
               <button
                 onClick={() => {
                   haptics.tap();
                   navigateTo('courts');
                 }}
-                className="text-[12px] font-semibold text-[#FF6B2C] hover:underline flex items-center cursor-pointer"
+                className="text-[12px] font-semibold text-[#F94001] hover:underline flex items-center cursor-pointer"
               >
                 Courts details
                 <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
               </button>
             </div>
 
-            <div className="bg-white rounded-2xl p-4 border border-[#E8E6E1] shadow-xs space-y-4">
+            <div className="bg-white rounded-2xl p-4 border border-[#E5E7EB] shadow-xs space-y-4">
               {courts.length === 0 ? (
-                <p className="text-[12.5px] text-[#777570] py-4 text-center">No active courts found.</p>
+                <p className="text-[12.5px] text-[#5F6368] py-4 text-center">No active courts found.</p>
               ) : (
                 courts.map((court, i) => {
                   const courtBookings = bookings.filter((b) => b.courtId === court.id);
                   const courtRev = courtBookings.reduce((sum, b) => sum + (b.paidAmount || 0), 0);
                   const pct = totalRevenue > 0 ? Math.round((courtRev / totalRevenue) * 100) : 0;
-                  const colors = ['#FF6B2C', '#2FA66A', '#4D83C4', '#E7A72F'];
+                  const colors = ['#F94001', '#16A34A', '#2563EB', '#F59E0B'];
                   const barColor = colors[i % colors.length];
 
                   return (
-                    <div key={court.id} className={i > 0 ? 'space-y-1.5 pt-2 border-t border-[#F1F0EC]' : 'space-y-1.5'}>
+                    <div key={court.id} className={i > 0 ? 'space-y-1.5 pt-2 border-t border-[#F3F4F4]' : 'space-y-1.5'}>
                       <div className="flex items-center justify-between text-[13px]">
-                        <span className="font-bold text-[#171717]">
+                        <span className="font-bold text-[#021526]">
                           {court.name} · {court.sports.join(', ')}
                         </span>
-                        <span className="font-black text-[#171717]">
+                        <span className="font-black text-[#021526]">
                           {formatCurrency(courtRev)}{' '}
-                          <span className="text-[11px] text-[#777570] font-medium">({pct}%)</span>
+                          <span className="text-[11px] text-[#5F6368] font-medium">({pct}%)</span>
                         </span>
                       </div>
-                      <div className="w-full h-2 rounded-full bg-[#F1F0EC] overflow-hidden">
+                      <div className="w-full h-2 rounded-full bg-[#F3F4F4] overflow-hidden">
                         <div
                           className="h-full rounded-full transition-all duration-500"
                           style={{ width: `${Math.max(pct, courtRev > 0 ? 10 : 0)}%`, backgroundColor: barColor }}
                         />
                       </div>
-                      <div className="flex items-center justify-between text-[11px] text-[#777570]">
+                      <div className="flex items-center justify-between text-[11px] text-[#5F6368]">
                         <span>{courtBookings.length} slots confirmed</span>
-                        <span className="font-semibold text-[#171717]">₹{court.pricePerHour}/hr base</span>
+                        <span className="font-semibold text-[#021526]">₹{court.pricePerHour}/hr base</span>
                       </div>
                     </div>
                   );
@@ -932,32 +932,32 @@ export const HomeScreen: React.FC = () => {
           {/* Right: Monthly Operational Insights */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-[16px] font-bold text-[#171717]">Monthly Operations Summary</h2>
+              <h2 className="text-[16px] font-bold text-[#021526]">Monthly Operations Summary</h2>
               <button
                 onClick={() => {
                   haptics.tap();
                   navigateTo('payments');
                 }}
-                className="text-[12px] font-semibold text-[#777570] hover:text-[#171717] flex items-center cursor-pointer"
+                className="text-[12px] font-semibold text-[#5F6368] hover:text-[#021526] flex items-center cursor-pointer"
               >
                 Ledger
                 <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
               </button>
             </div>
 
-            <div className="bg-white rounded-2xl p-4 border border-[#E8E6E1] shadow-xs divide-y divide-[#F1F0EC] space-y-3">
+            <div className="bg-white rounded-2xl p-4 border border-[#E5E7EB] shadow-xs divide-y divide-[#F3F4F4] space-y-3">
               <div className="flex items-center justify-between pt-1">
                 <div>
-                  <p className="text-[13.5px] font-bold text-[#171717]">Total Court Hours Operated</p>
-                  <p className="text-[11.5px] text-[#777570]">Booked arena sessions</p>
+                  <p className="text-[13.5px] font-bold text-[#021526]">Total Court Hours Operated</p>
+                  <p className="text-[11.5px] text-[#5F6368]">Booked arena sessions</p>
                 </div>
-                <span className="font-black text-[16px] text-[#171717]">{bookings.length} hrs</span>
+                <span className="font-black text-[16px] text-[#021526]">{bookings.length} hrs</span>
               </div>
 
               <div className="flex items-center justify-between pt-3">
                 <div>
-                  <p className="text-[13.5px] font-bold text-[#171717]">Online vs Cash Ratio</p>
-                  <p className="text-[11.5px] text-[#777570]">Payment methods split</p>
+                  <p className="text-[13.5px] font-bold text-[#021526]">Online vs Cash Ratio</p>
+                  <p className="text-[11.5px] text-[#5F6368]">Payment methods split</p>
                 </div>
                 <div className="text-right">
                   {(() => {
@@ -966,8 +966,8 @@ export const HomeScreen: React.FC = () => {
                     const onlinePct = bookings.length > 0 ? Math.round((onlineCount / bookings.length) * 100) : 0;
                     return (
                       <>
-                        <span className="font-bold text-[13px] text-[#2FA66A]">{onlinePct}% Online</span>
-                        <span className="text-[#777570] text-[11px] block">{100 - onlinePct}% Counter Cash</span>
+                        <span className="font-bold text-[13px] text-[#16A34A]">{onlinePct}% Online</span>
+                        <span className="text-[#5F6368] text-[11px] block">{100 - onlinePct}% Counter Cash</span>
                       </>
                     );
                   })()}
@@ -976,23 +976,23 @@ export const HomeScreen: React.FC = () => {
 
               <div className="flex items-center justify-between pt-3">
                 <div>
-                  <p className="text-[13.5px] font-bold text-[#171717]">Active Court Count</p>
-                  <p className="text-[11.5px] text-[#777570]">Pitches & arenas configured</p>
+                  <p className="text-[13.5px] font-bold text-[#021526]">Active Court Count</p>
+                  <p className="text-[11.5px] text-[#5F6368]">Pitches & arenas configured</p>
                 </div>
-                <span className="font-bold text-[13.5px] text-[#FF6B2C] bg-[#FFF3EC] px-2.5 py-0.5 rounded-full border border-[#FF6B2C]/20">
+                <span className="font-bold text-[13.5px] text-[#F94001] bg-[#FFF3EC] px-2.5 py-0.5 rounded-full border border-[#F94001]/20">
                   {courts.length} Live Pitches
                 </span>
               </div>
 
               <div className="flex items-center justify-between pt-3">
                 <div>
-                  <p className="text-[13.5px] font-bold text-[#171717]">Bank Settlement Account</p>
-                  <p className="text-[11.5px] text-[#777570]">
+                  <p className="text-[13.5px] font-bold text-[#021526]">Bank Settlement Account</p>
+                  <p className="text-[11.5px] text-[#5F6368]">
                     {bankDetails?.bankName || 'Verified Bank'} A/C ••
                     {bankDetails?.accountNumber?.slice(-4) || '6914'}
                   </p>
                 </div>
-                <span className="inline-flex items-center gap-1 text-[11.5px] font-bold text-[#2FA66A] bg-[#2FA66A]/10 px-2 py-0.5 rounded-full">
+                <span className="inline-flex items-center gap-1 text-[11.5px] font-bold text-[#16A34A] bg-[#16A34A]/10 px-2 py-0.5 rounded-full">
                   <CheckCircle2 className="w-3.5 h-3.5" />
                   {formatCurrency(totalSettled)} Settled
                 </span>
@@ -1009,26 +1009,26 @@ export const HomeScreen: React.FC = () => {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-[#FF6B2C]" />
-                <h2 className="text-[16px] font-bold text-[#171717]">Sport Category Split</h2>
+                <Sparkles className="w-4 h-4 text-[#F94001]" />
+                <h2 className="text-[16px] font-bold text-[#021526]">Sport Category Split</h2>
               </div>
               <button
                 onClick={() => {
                   haptics.tap();
                   navigateTo('export_report');
                 }}
-                className="text-[12px] font-semibold text-[#FF6B2C] hover:underline flex items-center cursor-pointer"
+                className="text-[12px] font-semibold text-[#F94001] hover:underline flex items-center cursor-pointer"
               >
                 Annual report
                 <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
               </button>
             </div>
 
-            <div className="bg-white rounded-2xl p-4 border border-[#E8E6E1] shadow-xs space-y-4">
+            <div className="bg-white rounded-2xl p-4 border border-[#E5E7EB] shadow-xs space-y-4">
               {(() => {
                 const venueSports = Array.from(new Set(courts.flatMap((c) => c.sports)));
                 if (venueSports.length === 0) venueSports.push('Cricket', 'Football');
-                const colors = ['#FF6B2C', '#2FA66A', '#4D83C4', '#E7A72F'];
+                const colors = ['#F94001', '#16A34A', '#2563EB', '#F59E0B'];
 
                 return venueSports.map((sport, idx) => {
                   const sportBookings = bookings.filter((b) => b.sport === sport);
@@ -1037,23 +1037,23 @@ export const HomeScreen: React.FC = () => {
                   const barColor = colors[idx % colors.length];
 
                   return (
-                    <div key={sport} className={idx > 0 ? 'space-y-1.5 pt-2 border-t border-[#F1F0EC]' : 'space-y-1.5'}>
+                    <div key={sport} className={idx > 0 ? 'space-y-1.5 pt-2 border-t border-[#F3F4F4]' : 'space-y-1.5'}>
                       <div className="flex items-center justify-between text-[13px]">
-                        <span className="font-bold text-[#171717]">🏆 {sport}</span>
-                        <span className="font-black text-[#171717]">
+                        <span className="font-bold text-[#021526]">🏆 {sport}</span>
+                        <span className="font-black text-[#021526]">
                           {formatCurrency(sportRev)}{' '}
-                          <span className="text-[11px] text-[#777570] font-medium">({pct}%)</span>
+                          <span className="text-[11px] text-[#5F6368] font-medium">({pct}%)</span>
                         </span>
                       </div>
-                      <div className="w-full h-2 rounded-full bg-[#F1F0EC] overflow-hidden">
+                      <div className="w-full h-2 rounded-full bg-[#F3F4F4] overflow-hidden">
                         <div
                           className="h-full rounded-full transition-all duration-500"
                           style={{ width: `${Math.max(pct, sportRev > 0 ? 10 : 0)}%`, backgroundColor: barColor }}
                         />
                       </div>
-                      <div className="flex items-center justify-between text-[11px] text-[#777570]">
+                      <div className="flex items-center justify-between text-[11px] text-[#5F6368]">
                         <span>{sportBookings.length} match bookings</span>
-                        <span className="text-[#2FA66A] font-bold">Active Venue Sport</span>
+                        <span className="text-[#16A34A] font-bold">Active Venue Sport</span>
                       </div>
                     </div>
                   );
@@ -1065,48 +1065,48 @@ export const HomeScreen: React.FC = () => {
           {/* Right: Annual Arena Health & Milestones */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-[16px] font-bold text-[#171717]">Annual Milestones & Health</h2>
-              <span className="text-[11px] font-bold text-[#2FA66A] bg-[#2FA66A]/10 px-2 py-0.5 rounded-full">
+              <h2 className="text-[16px] font-bold text-[#021526]">Annual Milestones & Health</h2>
+              <span className="text-[11px] font-bold text-[#16A34A] bg-[#16A34A]/10 px-2 py-0.5 rounded-full">
                 100% Uptime
               </span>
             </div>
 
-            <div className="bg-white rounded-2xl p-4 border border-[#E8E6E1] shadow-xs divide-y divide-[#F1F0EC] space-y-3">
+            <div className="bg-white rounded-2xl p-4 border border-[#E5E7EB] shadow-xs divide-y divide-[#F3F4F4] space-y-3">
               <div className="flex items-center justify-between pt-1">
                 <div>
-                  <p className="text-[13.5px] font-bold text-[#171717]">Total Arena Hours Played</p>
-                  <p className="text-[11.5px] text-[#777570]">Across all {courts.length} configured pitches</p>
+                  <p className="text-[13.5px] font-bold text-[#021526]">Total Arena Hours Played</p>
+                  <p className="text-[11.5px] text-[#5F6368]">Across all {courts.length} configured pitches</p>
                 </div>
-                <span className="font-black text-[16px] text-[#171717]">{bookings.length} hrs</span>
+                <span className="font-black text-[16px] text-[#021526]">{bookings.length} hrs</span>
               </div>
 
               <div className="flex items-center justify-between pt-3">
                 <div>
-                  <p className="text-[13.5px] font-bold text-[#171717]">Unique Registered Players</p>
-                  <p className="text-[11.5px] text-[#777570]">Active player & captain records</p>
+                  <p className="text-[13.5px] font-bold text-[#021526]">Unique Registered Players</p>
+                  <p className="text-[11.5px] text-[#5F6368]">Active player & captain records</p>
                 </div>
-                <span className="font-black text-[16px] text-[#FF6B2C]">
+                <span className="font-black text-[16px] text-[#F94001]">
                   {new Set(bookings.map((b) => b.customerPhone || b.customerName)).size} Players
                 </span>
               </div>
 
               <div className="flex items-center justify-between pt-3">
                 <div>
-                  <p className="text-[13.5px] font-bold text-[#171717]">Current Month Gross</p>
-                  <p className="text-[11.5px] text-[#777570]">{currentMonthName}</p>
+                  <p className="text-[13.5px] font-bold text-[#021526]">Current Month Gross</p>
+                  <p className="text-[11.5px] text-[#5F6368]">{currentMonthName}</p>
                 </div>
-                <span className="font-bold text-[13px] text-[#2FA66A] bg-[#2FA66A]/10 px-2.5 py-0.5 rounded-full">
+                <span className="font-bold text-[13px] text-[#16A34A] bg-[#16A34A]/10 px-2.5 py-0.5 rounded-full">
                   {formatCurrency(totalRevenue)}
                 </span>
               </div>
 
               <div className="flex items-center justify-between pt-3">
                 <div>
-                  <p className="text-[13.5px] font-bold text-[#171717]">Anti-Double Booking Guarantee</p>
-                  <p className="text-[11.5px] text-[#777570]">Automated slot lock engine</p>
+                  <p className="text-[13.5px] font-bold text-[#021526]">Anti-Double Booking Guarantee</p>
+                  <p className="text-[11.5px] text-[#5F6368]">Automated slot lock engine</p>
                 </div>
-                <span className="inline-flex items-center gap-1 text-[11.5px] font-bold text-[#171717] bg-[#F1F0EC] px-2.5 py-0.5 rounded-full">
-                  <ShieldCheck className="w-3.5 h-3.5 text-[#2FA66A]" />
+                <span className="inline-flex items-center gap-1 text-[11.5px] font-bold text-[#021526] bg-[#F3F4F4] px-2.5 py-0.5 rounded-full">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#16A34A]" />
                   100% Conflict-Free
                 </span>
               </div>

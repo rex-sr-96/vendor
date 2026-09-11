@@ -32,6 +32,7 @@ import {
 import { SupportTicket, SupportCategory } from '../types';
 import { haptics } from '../utils/haptics';
 import { motion, AnimatePresence } from 'motion/react';
+import { CustomSelect } from '../components/CustomSelect';
 import {
   vendorRequestsApi,
   VendorRequestItem,
@@ -388,24 +389,24 @@ export const HelpSupportScreen: React.FC = () => {
           haptics.tap();
           goBack();
         }}
-        className="md:hidden flex items-center gap-1.5 text-[12.5px] font-bold text-[#FF6B2C] active-press cursor-pointer pb-1"
+        className="md:hidden flex items-center gap-1.5 text-[12.5px] font-bold text-[#F94001] active-press cursor-pointer pb-1"
       >
         <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
         <span>Back to Settings</span>
       </button>
 
       {/* Header & Main Actions */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-[#E8E6E1]">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-[#E5E7EB]">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-[24px] font-black text-[#171717] tracking-tight">
+            <h1 className="text-[24px] font-black text-[#021526] tracking-tight">
               Help Desk & Operational Support
             </h1>
-            <span className="hidden sm:inline-flex px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#171717] text-white">
+            <span className="hidden sm:inline-flex px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#021526] text-white">
               Partner Portal
             </span>
           </div>
-          <p className="text-[13px] font-medium text-[#777570] mt-0.5">
+          <p className="text-[13px] font-medium text-[#5F6368] mt-0.5">
             Submit bank & court change requests, track compliance review tickets & priority hotline
           </p>
         </div>
@@ -417,9 +418,9 @@ export const HelpSupportScreen: React.FC = () => {
               haptics.tap();
               setIsBankModalOpen(true);
             }}
-            className="h-10 px-3.5 rounded-xl bg-white hover:bg-[#FAF9F6] text-[#171717] border border-[#D5D3CC] font-bold text-[12.5px] flex items-center gap-2 shadow-2xs active-press cursor-pointer transition-all"
+            className="h-10 px-3.5 rounded-xl bg-white hover:bg-[#F3F4F4] text-[#021526] border border-[#D5D3CC] font-bold text-[12.5px] flex items-center gap-2 shadow-2xs active-press cursor-pointer transition-all"
           >
-            <Building2 className="w-4 h-4 text-[#FF6B2C]" />
+            <Building2 className="w-4 h-4 text-[#F94001]" />
             <span>Change Bank Request</span>
           </button>
 
@@ -428,9 +429,9 @@ export const HelpSupportScreen: React.FC = () => {
               haptics.tap();
               setIsCourtModalOpen(true);
             }}
-            className="h-10 px-3.5 rounded-xl bg-white hover:bg-[#FAF9F6] text-[#171717] border border-[#D5D3CC] font-bold text-[12.5px] flex items-center gap-2 shadow-2xs active-press cursor-pointer transition-all"
+            className="h-10 px-3.5 rounded-xl bg-white hover:bg-[#F3F4F4] text-[#021526] border border-[#D5D3CC] font-bold text-[12.5px] flex items-center gap-2 shadow-2xs active-press cursor-pointer transition-all"
           >
-            <Trophy className="w-4 h-4 text-[#FF6B2C]" />
+            <Trophy className="w-4 h-4 text-[#F94001]" />
             <span>Court Request</span>
           </button>
 
@@ -439,7 +440,7 @@ export const HelpSupportScreen: React.FC = () => {
               haptics.tap();
               setIsTicketModalOpen(true);
             }}
-            className="h-10 px-4 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white font-extrabold text-[12.5px] flex items-center gap-1.5 shadow-sm active-press cursor-pointer transition-all"
+            className="h-10 px-4 rounded-xl bg-[#F94001] hover:bg-[#D93600] text-white font-extrabold text-[12.5px] flex items-center gap-1.5 shadow-sm active-press cursor-pointer transition-all"
           >
             <Plus className="w-4 h-4 stroke-[3]" />
             <span>General Ticket</span>
@@ -448,21 +449,21 @@ export const HelpSupportScreen: React.FC = () => {
       </div>
 
       {/* Hotline Strip */}
-      <div className="bg-[#171717] text-white rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-[#262626]">
+      <div className="bg-[#021526] text-white rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-[#262626]">
         <div className="flex items-center gap-3.5">
           <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
-            <Phone className="w-5 h-5 text-[#FF6B2C]" />
+            <Phone className="w-5 h-5 text-[#F94001]" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[10.5px] font-bold text-[#A3A099] uppercase tracking-wider">
+              <span className="text-[10.5px] font-bold text-[#5F6368] uppercase tracking-wider">
                 Priority Partner Desk
               </span>
-              <span className="w-1.5 h-1.5 rounded-full bg-[#2FA66A]" />
-              <span className="text-[10.5px] text-[#2FA66A] font-semibold">Toll-Free Online</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A]" />
+              <span className="text-[10.5px] text-[#16A34A] font-semibold">Toll-Free Online</span>
             </div>
             <h3 className="text-[15.5px] font-bold text-white mt-0.5">
-              1800-208-1010 <span className="text-[12px] font-normal text-[#A3A099]">(6:00 AM – 11:00 PM IST)</span>
+              1800-208-1010 <span className="text-[12px] font-normal text-[#5F6368]">(6:00 AM – 11:00 PM IST)</span>
             </h3>
           </div>
         </div>
@@ -470,7 +471,7 @@ export const HelpSupportScreen: React.FC = () => {
         <div className="flex items-center gap-2 self-start sm:self-auto">
           <a
             href="tel:18002081010"
-            className="h-9 px-4 bg-[#FF6B2C] hover:bg-[#e85b1e] text-white rounded-lg text-[12px] font-bold flex items-center gap-2 active-press transition-colors"
+            className="h-9 px-4 bg-[#F94001] hover:bg-[#D93600] text-white rounded-lg text-[12px] font-bold flex items-center gap-2 active-press transition-colors"
           >
             <Phone className="w-3.5 h-3.5" />
             <span>Direct Call</span>
@@ -479,7 +480,7 @@ export const HelpSupportScreen: React.FC = () => {
       </div>
 
       {/* Tabs Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E8E6E1] pb-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E5E7EB] pb-2">
         <div className="flex items-center gap-2">
           <button
             onClick={() => {
@@ -488,11 +489,11 @@ export const HelpSupportScreen: React.FC = () => {
             }}
             className={`px-4 py-2 rounded-xl text-[13px] font-extrabold flex items-center gap-2 transition-all cursor-pointer ${
               activeTab === 'requests'
-                ? 'bg-[#171717] text-white shadow-xs'
-                : 'text-[#777570] hover:text-[#171717] hover:bg-[#FAF9F6]'
+                ? 'bg-[#021526] text-white shadow-xs'
+                : 'text-[#5F6368] hover:text-[#021526] hover:bg-[#F3F4F4]'
             }`}
           >
-            <Layers className="w-4 h-4" />
+            <Layers className={`w-4 h-4 ${activeTab === 'requests' ? 'text-[#F94001]' : ''}`} />
             <span>Change Requests ({vendorRequests.length})</span>
           </button>
 
@@ -503,11 +504,11 @@ export const HelpSupportScreen: React.FC = () => {
             }}
             className={`px-4 py-2 rounded-xl text-[13px] font-extrabold flex items-center gap-2 transition-all cursor-pointer ${
               activeTab === 'general_tickets'
-                ? 'bg-[#171717] text-white shadow-xs'
-                : 'text-[#777570] hover:text-[#171717] hover:bg-[#FAF9F6]'
+                ? 'bg-[#021526] text-white shadow-xs'
+                : 'text-[#5F6368] hover:text-[#021526] hover:bg-[#F3F4F4]'
             }`}
           >
-            <MessageSquare className="w-4 h-4" />
+            <MessageSquare className={`w-4 h-4 ${activeTab === 'general_tickets' ? 'text-[#F94001]' : ''}`} />
             <span>Support Queries ({supportTickets.length})</span>
           </button>
 
@@ -518,11 +519,11 @@ export const HelpSupportScreen: React.FC = () => {
             }}
             className={`px-4 py-2 rounded-xl text-[13px] font-extrabold flex items-center gap-2 transition-all cursor-pointer ${
               activeTab === 'faqs'
-                ? 'bg-[#171717] text-white shadow-xs'
-                : 'text-[#777570] hover:text-[#171717] hover:bg-[#FAF9F6]'
+                ? 'bg-[#021526] text-white shadow-xs'
+                : 'text-[#5F6368] hover:text-[#021526] hover:bg-[#F3F4F4]'
             }`}
           >
-            <HelpCircle className="w-4 h-4" />
+            <HelpCircle className={`w-4 h-4 ${activeTab === 'faqs' ? 'text-[#F94001]' : ''}`} />
             <span>Knowledge Base</span>
           </button>
         </div>
@@ -534,7 +535,7 @@ export const HelpSupportScreen: React.FC = () => {
               loadVendorRequests();
             }}
             disabled={isLoadingRequests}
-            className="flex items-center gap-1.5 text-[12px] font-bold text-[#777570] hover:text-[#171717] cursor-pointer px-2.5 py-1.5 rounded-lg hover:bg-[#FAF9F6] border border-[#E8E6E1]"
+            className="flex items-center gap-1.5 text-[12px] font-bold text-[#5F6368] hover:text-[#021526] cursor-pointer px-2.5 py-1.5 rounded-lg hover:bg-[#F3F4F4] border border-[#E5E7EB]"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLoadingRequests ? 'animate-spin' : ''}`} />
             <span>Refresh Status</span>
@@ -546,7 +547,7 @@ export const HelpSupportScreen: React.FC = () => {
       {activeTab === 'requests' && (
         <div className="space-y-4">
           {/* Filter Bar */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#FAF9F6] p-3 rounded-2xl border border-[#E8E6E1]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#F3F4F4] p-3 rounded-2xl border border-[#E5E7EB]">
             <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
               {(
                 [
@@ -563,8 +564,8 @@ export const HelpSupportScreen: React.FC = () => {
                   }}
                   className={`px-3 py-1.5 rounded-xl text-[12px] font-bold whitespace-nowrap transition-all cursor-pointer ${
                     filterType === f.id
-                      ? 'bg-[#171717] text-white'
-                      : 'bg-white text-[#777570] border border-[#E8E6E1] hover:text-[#171717]'
+                      ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/30 font-black shadow-2xs'
+                      : 'bg-white text-[#5F6368] border border-[#E5E7EB] hover:text-[#021526]'
                   }`}
                 >
                   {f.label}
@@ -572,17 +573,17 @@ export const HelpSupportScreen: React.FC = () => {
               ))}
             </div>
 
-            <div className="relative flex items-center bg-white border border-[#E8E6E1] rounded-xl px-3 py-1.5 w-full sm:w-64">
-              <Search className="w-3.5 h-3.5 text-[#777570] mr-2 shrink-0" />
+            <div className="relative flex items-center bg-white border border-[#E5E7EB] rounded-xl px-3 py-1.5 w-full sm:w-64">
+              <Search className="w-3.5 h-3.5 text-[#5F6368] mr-2 shrink-0" />
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search ticket ID or details..."
-                className="w-full text-[12px] font-medium text-[#171717] bg-transparent focus:outline-none placeholder-[#A3A099]"
+                className="w-full text-[12px] font-medium text-[#021526] bg-transparent focus:outline-none placeholder-[#5F6368]"
               />
               {searchTerm && (
-                <button onClick={() => setSearchTerm('')} className="text-[#777570] hover:text-[#171717]">
+                <button onClick={() => setSearchTerm('')} className="text-[#5F6368] hover:text-[#021526]">
                   <X className="w-3 h-3" />
                 </button>
               )}
@@ -591,18 +592,18 @@ export const HelpSupportScreen: React.FC = () => {
 
           {/* List of Request Cards */}
           {isLoadingRequests ? (
-            <div className="bg-white rounded-2xl p-12 border border-[#E8E6E1] text-center space-y-2">
-              <RefreshCw className="w-6 h-6 text-[#777570] animate-spin mx-auto" />
-              <p className="text-[13px] font-bold text-[#171717]">Loading change requests...</p>
+            <div className="bg-white rounded-2xl p-12 border border-[#E5E7EB] text-center space-y-2">
+              <RefreshCw className="w-6 h-6 text-[#5F6368] animate-spin mx-auto" />
+              <p className="text-[13px] font-bold text-[#021526]">Loading change requests...</p>
             </div>
           ) : filteredVendorRequests.length === 0 ? (
-            <div className="bg-white rounded-2xl p-10 border border-[#E8E6E1] text-center space-y-3">
-              <div className="w-12 h-12 rounded-2xl bg-[#FAF9F6] border border-[#E8E6E1] flex items-center justify-center mx-auto text-[#A3A099]">
+            <div className="bg-white rounded-2xl p-10 border border-[#E5E7EB] text-center space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-[#F3F4F4] border border-[#E5E7EB] flex items-center justify-center mx-auto text-[#5F6368]">
                 <Layers className="w-6 h-6" />
               </div>
               <div>
-                <h4 className="text-[15px] font-extrabold text-[#171717]">No change requests found</h4>
-                <p className="text-[12.5px] text-[#777570] max-w-md mx-auto mt-1">
+                <h4 className="text-[15px] font-extrabold text-[#021526]">No change requests found</h4>
+                <p className="text-[12.5px] text-[#5F6368] max-w-md mx-auto mt-1">
                   You do not have any pending or historical change requests under this filter. Submit a new bank or court change request using the buttons above.
                 </p>
               </div>
@@ -618,20 +619,20 @@ export const HelpSupportScreen: React.FC = () => {
                 return (
                   <div
                     key={req.request_id}
-                    className="bg-white rounded-2xl border border-[#E8E6E1] overflow-hidden shadow-2xs hover:border-[#D5D3CC] transition-all"
+                    className="bg-white rounded-2xl border border-[#E5E7EB] overflow-hidden shadow-2xs hover:border-[#D5D3CC] transition-all"
                   >
                     {/* Card Header Row */}
-                    <div className="p-4 sm:p-5 border-b border-[#F1F0EC] flex flex-wrap items-center justify-between gap-3 bg-[#FAF9F6]/50">
+                    <div className="p-4 sm:p-5 border-b border-[#F3F4F4] flex flex-wrap items-center justify-between gap-3 bg-[#F3F4F4]/50">
                       <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                         {/* Request ID Pill */}
-                        <div className="flex items-center gap-1.5 bg-white border border-[#E8E6E1] px-2.5 py-1 rounded-lg">
-                          <span className="text-[11.5px] font-mono font-extrabold text-[#171717]">
+                        <div className="flex items-center gap-1.5 bg-white border border-[#E5E7EB] px-2.5 py-1 rounded-lg">
+                          <span className="text-[11.5px] font-mono font-extrabold text-[#021526]">
                             {req.request_id}
                           </span>
                           <button
                             onClick={() => handleCopyId(req.request_id)}
                             title="Copy ID"
-                            className="text-[#777570] hover:text-[#171717] cursor-pointer"
+                            className="text-[#5F6368] hover:text-[#021526] cursor-pointer"
                           >
                             {copiedId === req.request_id ? (
                               <Check className="w-3 h-3 text-[#047857]" />
@@ -643,18 +644,18 @@ export const HelpSupportScreen: React.FC = () => {
 
                         {/* Request Type Badge */}
                         {isBank ? (
-                          <span className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[#FAF9F6] text-[#55534E] border border-[#E8E6E1] flex items-center gap-1.5">
-                            <Building2 className="w-3.5 h-3.5 text-[#FF6B2C]" />
+                          <span className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[#F3F4F4] text-[#5F6368] border border-[#E5E7EB] flex items-center gap-1.5">
+                            <Building2 className="w-3.5 h-3.5 text-[#F94001]" />
                             Bank Details Change
                           </span>
                         ) : (
-                          <span className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[#FAF9F6] text-[#55534E] border border-[#E8E6E1] flex items-center gap-1.5">
-                            <Trophy className="w-3.5 h-3.5 text-[#FF6B2C]" />
+                          <span className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[#F3F4F4] text-[#5F6368] border border-[#E5E7EB] flex items-center gap-1.5">
+                            <Trophy className="w-3.5 h-3.5 text-[#F94001]" />
                             Court Request
                           </span>
                         )}
 
-                        <span className="text-[11.5px] text-[#A3A099]">
+                        <span className="text-[11.5px] text-[#5F6368]">
                           Submitted {new Date(req.submitted_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                         </span>
                       </div>
@@ -686,41 +687,41 @@ export const HelpSupportScreen: React.FC = () => {
                     <div className="p-4 sm:p-5 space-y-4">
                       {isBank && req.bank_details && (
                         <div className="space-y-3">
-                          <div className="text-[11px] font-bold text-[#777570] uppercase tracking-wider">
+                          <div className="text-[11px] font-bold text-[#5F6368] uppercase tracking-wider">
                             Proposed Bank Account Specifications
                           </div>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 bg-[#FAF9F6] p-3.5 rounded-xl border border-[#E8E6E1]">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 bg-[#F3F4F4] p-3.5 rounded-xl border border-[#E5E7EB]">
                             <div>
-                              <span className="text-[11px] text-[#777570] block">Bank Name</span>
-                              <span className="text-[13px] font-bold text-[#171717]">{req.bank_details.bank_name}</span>
+                              <span className="text-[11px] text-[#5F6368] block">Bank Name</span>
+                              <span className="text-[13px] font-bold text-[#021526]">{req.bank_details.bank_name}</span>
                             </div>
                             <div>
-                              <span className="text-[11px] text-[#777570] block">Account Holder</span>
-                              <span className="text-[13px] font-bold text-[#171717]">{req.bank_details.account_holder_name}</span>
+                              <span className="text-[11px] text-[#5F6368] block">Account Holder</span>
+                              <span className="text-[13px] font-bold text-[#021526]">{req.bank_details.account_holder_name}</span>
                             </div>
                             <div>
-                              <span className="text-[11px] text-[#777570] block">Account Number</span>
-                              <span className="text-[13px] font-mono font-bold text-[#171717]">
+                              <span className="text-[11px] text-[#5F6368] block">Account Number</span>
+                              <span className="text-[13px] font-mono font-bold text-[#021526]">
                                 •••• •••• {req.bank_details.account_number.slice(-4) || '••••'}
                               </span>
                             </div>
                             <div>
-                              <span className="text-[11px] text-[#777570] block">IFSC Code</span>
-                              <span className="text-[13px] font-mono font-bold text-[#171717]">{req.bank_details.ifsc_code}</span>
+                              <span className="text-[11px] text-[#5F6368] block">IFSC Code</span>
+                              <span className="text-[13px] font-mono font-bold text-[#021526]">{req.bank_details.ifsc_code}</span>
                             </div>
                             {req.bank_details.branch_name && (
                               <div>
-                                <span className="text-[11px] text-[#777570] block">Branch</span>
-                                <span className="text-[12.5px] font-medium text-[#171717]">{req.bank_details.branch_name}</span>
+                                <span className="text-[11px] text-[#5F6368] block">Branch</span>
+                                <span className="text-[12.5px] font-medium text-[#021526]">{req.bank_details.branch_name}</span>
                               </div>
                             )}
                             <div>
-                              <span className="text-[11px] text-[#777570] block">Account Type</span>
-                              <span className="text-[12.5px] font-medium text-[#171717]">{req.bank_details.account_type}</span>
+                              <span className="text-[11px] text-[#5F6368] block">Account Type</span>
+                              <span className="text-[12.5px] font-medium text-[#021526]">{req.bank_details.account_type}</span>
                             </div>
                             <div className="sm:col-span-2">
-                              <span className="text-[11px] text-[#777570] block">Reason for Update</span>
-                              <span className="text-[12px] text-[#55534E] font-medium">{req.bank_details.reason_for_change}</span>
+                              <span className="text-[11px] text-[#5F6368] block">Reason for Update</span>
+                              <span className="text-[12px] text-[#5F6368] font-medium">{req.bank_details.reason_for_change}</span>
                             </div>
                           </div>
                         </div>
@@ -728,42 +729,42 @@ export const HelpSupportScreen: React.FC = () => {
 
                       {!isBank && req.court_details && (
                         <div className="space-y-3">
-                          <div className="text-[11px] font-bold text-[#777570] uppercase tracking-wider">
+                          <div className="text-[11px] font-bold text-[#5F6368] uppercase tracking-wider">
                             Requested Court Details & Specifications
                           </div>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 bg-[#FAF9F6] p-3.5 rounded-xl border border-[#E8E6E1]">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 bg-[#F3F4F4] p-3.5 rounded-xl border border-[#E5E7EB]">
                             <div>
-                              <span className="text-[11px] text-[#777570] block">Court / Pitch Name</span>
-                              <span className="text-[13px] font-bold text-[#171717]">{req.court_details.court_name}</span>
+                              <span className="text-[11px] text-[#5F6368] block">Court / Pitch Name</span>
+                              <span className="text-[13px] font-bold text-[#021526]">{req.court_details.court_name}</span>
                             </div>
                             <div>
-                              <span className="text-[11px] text-[#777570] block">Primary Sport</span>
-                              <span className="text-[13px] font-bold text-[#171717]">{req.court_details.sport_type}</span>
+                              <span className="text-[11px] text-[#5F6368] block">Primary Sport</span>
+                              <span className="text-[13px] font-bold text-[#021526]">{req.court_details.sport_type}</span>
                             </div>
                             <div>
-                              <span className="text-[11px] text-[#777570] block">Surface Type</span>
-                              <span className="text-[12.5px] font-medium text-[#171717]">{req.court_details.surface_type}</span>
+                              <span className="text-[11px] text-[#5F6368] block">Surface Type</span>
+                              <span className="text-[12.5px] font-medium text-[#021526]">{req.court_details.surface_type}</span>
                             </div>
                             <div>
-                              <span className="text-[11px] text-[#777570] block">Base Hourly Rate</span>
-                              <span className="text-[13px] font-bold text-[#171717]">₹{req.court_details.hourly_rate} / hr</span>
+                              <span className="text-[11px] text-[#5F6368] block">Base Hourly Rate</span>
+                              <span className="text-[13px] font-bold text-[#021526]">₹{req.court_details.hourly_rate} / hr</span>
                             </div>
                             {req.court_details.court_dimensions && (
                               <div>
-                                <span className="text-[11px] text-[#777570] block">Dimensions</span>
-                                <span className="text-[12.5px] font-medium text-[#171717]">{req.court_details.court_dimensions}</span>
+                                <span className="text-[11px] text-[#5F6368] block">Dimensions</span>
+                                <span className="text-[12.5px] font-medium text-[#021526]">{req.court_details.court_dimensions}</span>
                               </div>
                             )}
                             <div>
-                              <span className="text-[11px] text-[#777570] block">Environment & Lighting</span>
-                              <span className="text-[12px] font-medium text-[#171717]">
+                              <span className="text-[11px] text-[#5F6368] block">Environment & Lighting</span>
+                              <span className="text-[12px] font-medium text-[#021526]">
                                 {req.court_details.indoor_outdoor === 'INDOOR' ? 'Indoor Arena' : 'Outdoor Pitch'} · {req.court_details.lighting_available ? 'Floodlights Enabled' : 'Daylight Only'}
                               </span>
                             </div>
                             {req.court_details.remarks && (
                               <div className="sm:col-span-2">
-                                <span className="text-[11px] text-[#777570] block">Operational Remarks</span>
-                                <span className="text-[12px] text-[#55534E] font-medium">{req.court_details.remarks}</span>
+                                <span className="text-[11px] text-[#5F6368] block">Operational Remarks</span>
+                                <span className="text-[12px] text-[#5F6368] font-medium">{req.court_details.remarks}</span>
                               </div>
                             )}
                           </div>
@@ -844,12 +845,12 @@ export const HelpSupportScreen: React.FC = () => {
       {activeTab === 'general_tickets' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-[15px] font-extrabold text-[#171717]">
+            <h3 className="text-[15px] font-extrabold text-[#021526]">
               Operations Support Inquiries ({supportTickets.length})
             </h3>
             <button
               onClick={() => setIsTicketModalOpen(true)}
-              className="px-3 py-1.5 rounded-lg bg-[#FF6B2C] text-white text-[12px] font-bold flex items-center gap-1.5 cursor-pointer"
+              className="px-3 py-1.5 rounded-lg bg-[#F94001] text-white text-[12px] font-bold flex items-center gap-1.5 cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Raise Query</span>
@@ -857,27 +858,27 @@ export const HelpSupportScreen: React.FC = () => {
           </div>
 
           {supportTickets.length === 0 ? (
-            <div className="bg-white rounded-2xl p-10 border border-[#E8E6E1] text-center space-y-2">
-              <MessageSquare className="w-8 h-8 text-[#A3A099] mx-auto" />
-              <p className="text-[13.5px] font-bold text-[#171717]">No operational tickets</p>
-              <p className="text-[12px] text-[#777570]">
+            <div className="bg-white rounded-2xl p-10 border border-[#E5E7EB] text-center space-y-2">
+              <MessageSquare className="w-8 h-8 text-[#5F6368] mx-auto" />
+              <p className="text-[13.5px] font-bold text-[#021526]">No operational tickets</p>
+              <p className="text-[12px] text-[#5F6368]">
                 Need help with booking disputes or app issues? Raise a ticket to connect with our operations team.
               </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {supportTickets.map((t) => (
-                <div key={t.id} className="bg-white rounded-2xl p-4 border border-[#E8E6E1] shadow-2xs space-y-2">
+                <div key={t.id} className="bg-white rounded-2xl p-4 border border-[#E5E7EB] shadow-2xs space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[11.5px] font-mono font-bold text-[#FF6B2C]">{t.id}</span>
-                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#E7A72F]/15 text-[#B87C0D] flex items-center gap-1">
+                    <span className="text-[11.5px] font-mono font-bold text-[#F94001]">{t.id}</span>
+                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#F59E0B]/15 text-[#B87C0D] flex items-center gap-1">
                       <Clock className="w-3 h-3" />
                       {t.status}
                     </span>
                   </div>
-                  <h4 className="text-[13.5px] font-bold text-[#171717]">{t.subject}</h4>
-                  <p className="text-[12px] text-[#777570] leading-relaxed">{t.description}</p>
-                  <p className="text-[10.5px] font-semibold text-[#A3A099] pt-2 border-t border-[#F1F0EC]">
+                  <h4 className="text-[13.5px] font-bold text-[#021526]">{t.subject}</h4>
+                  <p className="text-[12px] text-[#5F6368] leading-relaxed">{t.description}</p>
+                  <p className="text-[10.5px] font-semibold text-[#5F6368] pt-2 border-t border-[#F3F4F4]">
                     Submitted on {t.date}
                   </p>
                 </div>
@@ -896,7 +897,7 @@ export const HelpSupportScreen: React.FC = () => {
               return (
                 <div
                   key={faq.q}
-                  className="bg-white rounded-2xl border border-[#E8E6E1] overflow-hidden shadow-2xs transition-all"
+                  className="bg-white rounded-2xl border border-[#E5E7EB] overflow-hidden shadow-2xs transition-all"
                 >
                   <button
                     type="button"
@@ -904,18 +905,18 @@ export const HelpSupportScreen: React.FC = () => {
                       haptics.tap();
                       setExpandedFaq(isOpen ? null : idx);
                     }}
-                    className="w-full p-4 text-left flex items-center justify-between gap-3 hover:bg-[#FAF9F6] transition-colors cursor-pointer"
+                    className="w-full p-4 text-left flex items-center justify-between gap-3 hover:bg-[#F3F4F4] transition-colors cursor-pointer"
                   >
-                    <span className="text-[13.5px] font-extrabold text-[#171717]">{faq.q}</span>
+                    <span className="text-[13.5px] font-extrabold text-[#021526]">{faq.q}</span>
                     <ChevronDown
-                      className={`w-4 h-4 text-[#777570] shrink-0 transition-transform ${
-                        isOpen ? 'rotate-180 text-[#FF6B2C]' : ''
+                      className={`w-4 h-4 text-[#5F6368] shrink-0 transition-transform ${
+                        isOpen ? 'rotate-180 text-[#F94001]' : ''
                       }`}
                     />
                   </button>
 
                   {isOpen && (
-                    <div className="px-4 pb-4 pt-1 text-[13px] text-[#55534E] leading-relaxed border-t border-[#F1F0EC] bg-[#FAF9F6]">
+                    <div className="px-4 pb-4 pt-1 text-[13px] text-[#5F6368] leading-relaxed border-t border-[#F3F4F4] bg-[#F3F4F4]">
                       {faq.a}
                     </div>
                   )}
@@ -936,19 +937,19 @@ export const HelpSupportScreen: React.FC = () => {
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
-              className="relative w-full max-w-xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-[#E8E6E1] overflow-hidden max-h-[92vh] flex flex-col"
+              className="relative w-full max-w-xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-[#E5E7EB] overflow-hidden max-h-[92vh] flex flex-col"
             >
               {/* Modal Header */}
-              <div className="p-5 border-b border-[#F1F0EC] flex items-center justify-between bg-[#FAF9F6]">
+              <div className="p-5 border-b border-[#F3F4F4] flex items-center justify-between bg-[#F3F4F4]">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#171717] text-white flex items-center justify-center">
-                    <Building2 className="w-5 h-5 text-[#FF6B2C]" />
+                  <div className="w-10 h-10 rounded-xl bg-[#021526] text-white flex items-center justify-center">
+                    <Building2 className="w-5 h-5 text-[#F94001]" />
                   </div>
                   <div>
-                    <h2 className="text-[17px] font-black text-[#171717]">
+                    <h2 className="text-[17px] font-black text-[#021526]">
                       Request Bank Details Change
                     </h2>
-                    <p className="text-[11.5px] text-[#777570]">
+                    <p className="text-[11.5px] text-[#5F6368]">
                       Compliance review ticket · Updates midnight IMPS payout destination
                     </p>
                   </div>
@@ -958,7 +959,7 @@ export const HelpSupportScreen: React.FC = () => {
                   type="button"
                   onClick={() => setIsBankModalOpen(false)}
                   disabled={isSubmitting}
-                  className="w-8 h-8 rounded-full bg-white border border-[#E8E6E1] flex items-center justify-center text-[#777570] hover:text-[#171717] cursor-pointer"
+                  className="w-8 h-8 rounded-full bg-white border border-[#E5E7EB] flex items-center justify-center text-[#5F6368] hover:text-[#021526] cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -966,37 +967,38 @@ export const HelpSupportScreen: React.FC = () => {
 
               {/* Form Body */}
               <form onSubmit={handleBankSubmit} className="p-5 overflow-y-auto space-y-4 text-[12.5px]">
-                <div className="bg-[#FAF9F6] border border-[#E8E6E1] rounded-xl p-3 text-[11.5px] text-[#55534E] leading-relaxed">
-                  <strong className="text-[#171717] font-bold block mb-0.5">Audit Compliance Notice</strong>
+                <div className="bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl p-3 text-[11.5px] text-[#5F6368] leading-relaxed">
+                  <strong className="text-[#021526] font-bold block mb-0.5">Audit Compliance Notice</strong>
                   Bank detail changes are validated against the GST / PAN of <strong>{currentVenue}</strong>. Existing settlement account continues to receive payouts until approved.
                 </div>
 
                 {/* Bank Name */}
                 <div>
-                  <label className="block text-[11px] font-bold text-[#777570] mb-1">
-                    Bank Name <span className="text-[#FF6B2C]">*</span>
+                  <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                    Bank Name <span className="text-[#F94001]">*</span>
                   </label>
-                  <select
+                  <CustomSelect
                     value={bankName}
-                    onChange={(e) => setBankName(e.target.value)}
-                    className="w-full bg-white border border-[#D5D3CC] rounded-xl px-3 py-2 font-bold text-[#171717] focus:outline-none focus:border-[#171717]"
-                  >
-                    <option value="HDFC Bank">HDFC Bank</option>
-                    <option value="ICICI Bank">ICICI Bank</option>
-                    <option value="State Bank of India">State Bank of India</option>
-                    <option value="Axis Bank">Axis Bank</option>
-                    <option value="Kotak Mahindra Bank">Kotak Mahindra Bank</option>
-                    <option value="Punjab National Bank">Punjab National Bank</option>
-                    <option value="Canara Bank">Canara Bank</option>
-                    <option value="Bank of Baroda">Bank of Baroda</option>
-                    <option value="Other Commercial Bank">Other Commercial Bank</option>
-                  </select>
+                    onChange={(val) => setBankName(val)}
+                    options={[
+                      'HDFC Bank',
+                      'ICICI Bank',
+                      'State Bank of India',
+                      'Axis Bank',
+                      'Kotak Mahindra Bank',
+                      'Punjab National Bank',
+                      'Canara Bank',
+                      'Bank of Baroda',
+                      'Other Commercial Bank',
+                    ]}
+                    className="w-full bg-white border border-[#D5D3CC] rounded-xl px-3 py-2 font-bold text-[#021526] focus:outline-none"
+                  />
                 </div>
 
                 {/* Account Holder Name */}
                 <div>
-                  <label className="block text-[11px] font-bold text-[#777570] mb-1">
-                    Beneficiary Account Holder Name <span className="text-[#FF6B2C]">*</span>
+                  <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                    Beneficiary Account Holder Name <span className="text-[#F94001]">*</span>
                   </label>
                   <input
                     type="text"
@@ -1004,9 +1006,9 @@ export const HelpSupportScreen: React.FC = () => {
                     value={accountHolder}
                     onChange={(e) => setAccountHolder(e.target.value)}
                     placeholder="e.g. Sky Sports Private Limited"
-                    className="w-full bg-white border border-[#D5D3CC] rounded-xl px-3 py-2 font-bold text-[#171717] focus:outline-none focus:border-[#171717]"
+                    className="w-full bg-white border border-[#D5D3CC] rounded-xl px-3 py-2 font-bold text-[#021526] focus:outline-none focus:border-[#021526]"
                   />
-                  <span className="text-[10.5px] text-[#A3A099] mt-0.5 block">
+                  <span className="text-[10.5px] text-[#5F6368] mt-0.5 block">
                     Must strictly match the business entity registered on your tax invoices.
                   </span>
                 </div>
@@ -1014,8 +1016,8 @@ export const HelpSupportScreen: React.FC = () => {
                 {/* Account Number & Confirm */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] font-bold text-[#777570] mb-1">
-                      New Account Number <span className="text-[#FF6B2C]">*</span>
+                    <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                      New Account Number <span className="text-[#F94001]">*</span>
                     </label>
                     <input
                       type="text"
@@ -1023,13 +1025,13 @@ export const HelpSupportScreen: React.FC = () => {
                       value={accountNumber}
                       onChange={(e) => setAccountNumber(e.target.value)}
                       placeholder="e.g. 50200012345678"
-                      className="w-full bg-white border border-[#D5D3CC] rounded-xl px-3 py-2 font-mono font-bold text-[#171717] focus:outline-none focus:border-[#171717]"
+                      className="w-full bg-white border border-[#D5D3CC] rounded-xl px-3 py-2 font-mono font-bold text-[#021526] focus:outline-none focus:border-[#021526]"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-[#777570] mb-1">
-                      Confirm Account Number <span className="text-[#FF6B2C]">*</span>
+                    <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                      Confirm Account Number <span className="text-[#F94001]">*</span>
                     </label>
                     <input
                       type="text"
@@ -1037,7 +1039,7 @@ export const HelpSupportScreen: React.FC = () => {
                       value={confirmAccountNumber}
                       onChange={(e) => setConfirmAccountNumber(e.target.value)}
                       placeholder="Re-enter account number"
-                      className="w-full bg-white border border-[#D5D3CC] rounded-xl px-3 py-2 font-mono font-bold text-[#171717] focus:outline-none focus:border-[#171717]"
+                      className="w-full bg-white border border-[#D5D3CC] rounded-xl px-3 py-2 font-mono font-bold text-[#021526] focus:outline-none focus:border-[#021526]"
                     />
                   </div>
                 </div>
@@ -1045,8 +1047,8 @@ export const HelpSupportScreen: React.FC = () => {
                 {/* IFSC & Branch */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] font-bold text-[#777570] mb-1">
-                      IFSC Code <span className="text-[#FF6B2C]">*</span>
+                    <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                      IFSC Code <span className="text-[#F94001]">*</span>
                     </label>
                     <input
                       type="text"
@@ -1055,12 +1057,12 @@ export const HelpSupportScreen: React.FC = () => {
                       onChange={(e) => setIfscCode(e.target.value.toUpperCase())}
                       placeholder="e.g. HDFC0001234"
                       maxLength={11}
-                      className="w-full bg-white border border-[#D5D3CC] rounded-xl px-3 py-2 font-mono font-bold text-[#171717] uppercase focus:outline-none focus:border-[#171717]"
+                      className="w-full bg-white border border-[#D5D3CC] rounded-xl px-3 py-2 font-mono font-bold text-[#021526] uppercase focus:outline-none focus:border-[#021526]"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-[#777570] mb-1">
+                    <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
                       Branch Name
                     </label>
                     <input
@@ -1068,14 +1070,14 @@ export const HelpSupportScreen: React.FC = () => {
                       value={branchName}
                       onChange={(e) => setBranchName(e.target.value)}
                       placeholder="e.g. Peelamedu, Coimbatore"
-                      className="w-full bg-white border border-[#D5D3CC] rounded-xl px-3 py-2 font-medium text-[#171717] focus:outline-none focus:border-[#171717]"
+                      className="w-full bg-white border border-[#D5D3CC] rounded-xl px-3 py-2 font-medium text-[#021526] focus:outline-none focus:border-[#021526]"
                     />
                   </div>
                 </div>
 
                 {/* Account Type */}
                 <div>
-                  <label className="block text-[11px] font-bold text-[#777570] mb-1">
+                  <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
                     Account Classification
                   </label>
                   <div className="grid grid-cols-2 gap-2">
@@ -1086,8 +1088,8 @@ export const HelpSupportScreen: React.FC = () => {
                         onClick={() => setAccountType(t)}
                         className={`p-2.5 rounded-xl text-[12px] font-bold border transition-all cursor-pointer text-center ${
                           accountType === t
-                            ? 'bg-[#171717] text-white border-[#171717]'
-                            : 'bg-white text-[#777570] border-[#E8E6E1]'
+                            ? 'bg-[#FFF1EC] text-[#F94001] border-[#F94001]/50 font-black shadow-2xs'
+                            : 'bg-white text-[#5F6368] border-[#E5E7EB]'
                         }`}
                       >
                         {t}
@@ -1098,8 +1100,8 @@ export const HelpSupportScreen: React.FC = () => {
 
                 {/* Reason for Change */}
                 <div>
-                  <label className="block text-[11px] font-bold text-[#777570] mb-1">
-                    Reason for Bank Details Change <span className="text-[#FF6B2C]">*</span>
+                  <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                    Reason for Bank Details Change <span className="text-[#F94001]">*</span>
                   </label>
                   <textarea
                     rows={2}
@@ -1107,42 +1109,42 @@ export const HelpSupportScreen: React.FC = () => {
                     value={bankChangeReason}
                     onChange={(e) => setBankChangeReason(e.target.value)}
                     placeholder="e.g. Migrated to primary corporate current account with Axis Bank..."
-                    className="w-full bg-white border border-[#D5D3CC] rounded-xl p-3 text-[12px] font-medium text-[#171717] focus:outline-none focus:border-[#171717] resize-none"
+                    className="w-full bg-white border border-[#D5D3CC] rounded-xl p-3 text-[12px] font-medium text-[#021526] focus:outline-none focus:border-[#021526] resize-none"
                   />
                 </div>
 
                 {/* Declaration Consent */}
-                <label className="flex items-start gap-2.5 p-3 rounded-xl bg-[#FAF9F6] border border-[#E8E6E1] cursor-pointer">
+                <label className="flex items-start gap-2.5 p-3 rounded-xl bg-[#F3F4F4] border border-[#E5E7EB] cursor-pointer">
                   <input
                     type="checkbox"
                     checked={bankConsent}
                     onChange={(e) => setBankConsent(e.target.checked)}
-                    className="mt-0.5 rounded text-[#FF6B2C] focus:ring-0"
+                    className="mt-0.5 rounded text-[#F94001] focus:ring-0"
                   />
-                  <span className="text-[11px] text-[#55534E] leading-relaxed">
+                  <span className="text-[11px] text-[#5F6368] leading-relaxed">
                     I declare under penalty of platform de-listing that this bank account is solely owned by the authorized legal entity for <strong>{currentVenue}</strong>.
                   </span>
                 </label>
 
                 {/* Action Buttons */}
-                <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#F1F0EC]">
+                <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#F3F4F4]">
                   <button
                     type="button"
                     onClick={() => setIsBankModalOpen(false)}
                     disabled={isSubmitting}
-                    className="px-4 py-2 rounded-xl text-[12.5px] font-bold text-[#777570] hover:text-[#171717] cursor-pointer"
+                    className="px-4 py-2 rounded-xl text-[12.5px] font-bold text-[#5F6368] hover:text-[#021526] cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="px-5 py-2.5 rounded-xl bg-[#171717] hover:bg-black text-white text-[12.5px] font-black flex items-center gap-2 shadow-xs active-press cursor-pointer disabled:opacity-50"
+                    className="px-5 py-2.5 rounded-xl bg-[#021526] hover:bg-black text-white text-[12.5px] font-black flex items-center gap-2 shadow-xs active-press cursor-pointer disabled:opacity-50"
                   >
                     {isSubmitting ? (
                       <RefreshCw className="w-4 h-4 animate-spin text-white" />
                     ) : (
-                      <Send className="w-4 h-4 text-[#FF6B2C]" />
+                      <Send className="w-4 h-4 text-[#F94001]" />
                     )}
                     <span>Submit Bank Change Request</span>
                   </button>
@@ -1163,19 +1165,19 @@ export const HelpSupportScreen: React.FC = () => {
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
-              className="relative w-full max-w-xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-[#E8E6E1] overflow-hidden max-h-[92vh] flex flex-col"
+              className="relative w-full max-w-xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-[#E5E7EB] overflow-hidden max-h-[92vh] flex flex-col"
             >
               {/* Modal Header */}
-              <div className="p-5 border-b border-[#F1F0EC] flex items-center justify-between bg-[#FAF9F6]">
+              <div className="p-5 border-b border-[#F3F4F4] flex items-center justify-between bg-[#F3F4F4]">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#171717] text-white flex items-center justify-center">
-                    <Trophy className="w-5 h-5 text-[#FF6B2C]" />
+                  <div className="w-10 h-10 rounded-xl bg-[#021526] text-white flex items-center justify-center">
+                    <Trophy className="w-5 h-5 text-[#F94001]" />
                   </div>
                   <div>
-                    <h2 className="text-[17px] font-black text-[#171717]">
+                    <h2 className="text-[17px] font-black text-[#021526]">
                       Request Court / Pitch Addition
                     </h2>
-                    <p className="text-[11.5px] text-[#777570]">
+                    <p className="text-[11.5px] text-[#5F6368]">
                       Compliance audit ticket · Verified before going live on TurfTown app
                     </p>
                   </div>
@@ -1185,7 +1187,7 @@ export const HelpSupportScreen: React.FC = () => {
                   type="button"
                   onClick={() => setIsCourtModalOpen(false)}
                   disabled={isSubmitting}
-                  className="w-8 h-8 rounded-full bg-white border border-[#E8E6E1] flex items-center justify-center text-[#777570] hover:text-[#171717] cursor-pointer"
+                  className="w-8 h-8 rounded-full bg-white border border-[#E5E7EB] flex items-center justify-center text-[#5F6368] hover:text-[#021526] cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -1193,15 +1195,15 @@ export const HelpSupportScreen: React.FC = () => {
 
               {/* Form Body */}
               <form onSubmit={handleCourtSubmit} className="p-5 overflow-y-auto space-y-4 text-[12.5px]">
-                <div className="bg-[#FAF9F6] border border-[#E8E6E1] rounded-xl p-3 text-[11.5px] text-[#55534E] leading-relaxed">
-                  <strong className="text-[#171717] font-bold block mb-0.5">Court Listing Guideline</strong>
+                <div className="bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl p-3 text-[11.5px] text-[#5F6368] leading-relaxed">
+                  <strong className="text-[#021526] font-bold block mb-0.5">Court Listing Guideline</strong>
                   Every court is reviewed for boundary safety, lighting standards, and zone hourly rate benchmarks before publishing to public booking users.
                 </div>
 
                 {/* Court Name */}
                 <div>
-                  <label className="block text-[11px] font-bold text-[#777570] mb-1">
-                    Court / Pitch Name <span className="text-[#FF6B2C]">*</span>
+                  <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                    Court / Pitch Name <span className="text-[#F94001]">*</span>
                   </label>
                   <input
                     type="text"
@@ -1209,56 +1211,58 @@ export const HelpSupportScreen: React.FC = () => {
                     value={courtName}
                     onChange={(e) => setCourtName(e.target.value)}
                     placeholder="e.g. Pitch 3 — Floodlit Box Cricket Arena"
-                    className="w-full bg-white border border-[#D5D3CC] rounded-xl px-3 py-2 font-bold text-[#171717] focus:outline-none focus:border-[#171717]"
+                    className="w-full bg-white border border-[#D5D3CC] rounded-xl px-3 py-2 font-bold text-[#021526] focus:outline-none focus:border-[#021526]"
                   />
                 </div>
 
                 {/* Sport & Surface */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] font-bold text-[#777570] mb-1">
-                      Primary Sport <span className="text-[#FF6B2C]">*</span>
+                    <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                      Primary Sport <span className="text-[#F94001]">*</span>
                     </label>
-                    <select
+                    <CustomSelect
                       value={courtSport}
-                      onChange={(e) => setCourtSport(e.target.value)}
-                      className="w-full bg-white border border-[#D5D3CC] rounded-xl px-3 py-2 font-bold text-[#171717] focus:outline-none focus:border-[#171717]"
-                    >
-                      <option value="Football">Football</option>
-                      <option value="Cricket">Cricket</option>
-                      <option value="Badminton">Badminton</option>
-                      <option value="Pickleball">Pickleball</option>
-                      <option value="Tennis">Tennis</option>
-                      <option value="Basketball">Basketball</option>
-                      <option value="Volleyball">Volleyball</option>
-                      <option value="Padel">Padel</option>
-                    </select>
+                      onChange={(val) => setCourtSport(val)}
+                      options={[
+                        'Football',
+                        'Cricket',
+                        'Badminton',
+                        'Pickleball',
+                        'Tennis',
+                        'Basketball',
+                        'Volleyball',
+                        'Padel',
+                      ]}
+                      className="w-full bg-white border border-[#D5D3CC] rounded-xl px-3 py-2 font-bold text-[#021526] focus:outline-none"
+                    />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-[#777570] mb-1">
-                      Surface Specification <span className="text-[#FF6B2C]">*</span>
+                    <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                      Surface Specification <span className="text-[#F94001]">*</span>
                     </label>
-                    <select
+                    <CustomSelect
                       value={courtSurface}
-                      onChange={(e) => setCourtSurface(e.target.value)}
-                      className="w-full bg-white border border-[#D5D3CC] rounded-xl px-3 py-2 font-medium text-[#171717] focus:outline-none focus:border-[#171717]"
-                    >
-                      <option value="FIFA-Grade Artificial Turf">FIFA-Grade Artificial Turf</option>
-                      <option value="BWF Wooden Court">BWF Wooden Court</option>
-                      <option value="Synthetic Acrylic Cushion">Synthetic Acrylic Cushion</option>
-                      <option value="Natural Grass Pitch">Natural Grass Pitch</option>
-                      <option value="Clay Court">Clay Court</option>
-                      <option value="Hard Concrete">Hard Concrete</option>
-                    </select>
+                      onChange={(val) => setCourtSurface(val)}
+                      options={[
+                        'FIFA-Grade Artificial Turf',
+                        'BWF Wooden Court',
+                        'Synthetic Acrylic Cushion',
+                        'Natural Grass Pitch',
+                        'Clay Court',
+                        'Hard Concrete',
+                      ]}
+                      className="w-full bg-white border border-[#D5D3CC] rounded-xl px-3 py-2 font-medium text-[#021526] focus:outline-none"
+                    />
                   </div>
                 </div>
 
                 {/* Hourly Rate & Dimensions */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] font-bold text-[#777570] mb-1">
-                      Base Hourly Rate (₹) <span className="text-[#FF6B2C]">*</span>
+                    <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                      Base Hourly Rate (₹) <span className="text-[#F94001]">*</span>
                     </label>
                     <input
                       type="number"
@@ -1268,12 +1272,12 @@ export const HelpSupportScreen: React.FC = () => {
                       value={courtHourlyRate}
                       onChange={(e) => setCourtHourlyRate(e.target.value)}
                       placeholder="1200"
-                      className="w-full bg-white border border-[#D5D3CC] rounded-xl px-3 py-2 font-bold text-[#171717] focus:outline-none focus:border-[#171717]"
+                      className="w-full bg-white border border-[#D5D3CC] rounded-xl px-3 py-2 font-bold text-[#021526] focus:outline-none focus:border-[#021526]"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-[#777570] mb-1">
+                    <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
                       Dimensions
                     </label>
                     <input
@@ -1281,7 +1285,7 @@ export const HelpSupportScreen: React.FC = () => {
                       value={courtDimensions}
                       onChange={(e) => setCourtDimensions(e.target.value)}
                       placeholder="e.g. 100 x 60 ft"
-                      className="w-full bg-white border border-[#D5D3CC] rounded-xl px-3 py-2 font-medium text-[#171717] focus:outline-none focus:border-[#171717]"
+                      className="w-full bg-white border border-[#D5D3CC] rounded-xl px-3 py-2 font-medium text-[#021526] focus:outline-none focus:border-[#021526]"
                     />
                   </div>
                 </div>
@@ -1289,7 +1293,7 @@ export const HelpSupportScreen: React.FC = () => {
                 {/* Indoor / Outdoor & Lighting */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                   <div>
-                    <label className="block text-[11px] font-bold text-[#777570] mb-1">
+                    <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
                       Arena Environment
                     </label>
                     <div className="grid grid-cols-2 gap-2">
@@ -1298,8 +1302,8 @@ export const HelpSupportScreen: React.FC = () => {
                         onClick={() => setCourtIndoorOutdoor('OUTDOOR')}
                         className={`py-2 rounded-xl text-[12px] font-bold border transition-all cursor-pointer text-center ${
                           courtIndoorOutdoor === 'OUTDOOR'
-                            ? 'bg-[#171717] text-white border-[#171717]'
-                            : 'bg-white text-[#777570] border-[#E8E6E1]'
+                            ? 'bg-[#FFF1EC] text-[#F94001] border-[#F94001]/50 font-black shadow-2xs'
+                            : 'bg-white text-[#5F6368] border-[#E5E7EB]'
                         }`}
                       >
                         Outdoor
@@ -1309,8 +1313,8 @@ export const HelpSupportScreen: React.FC = () => {
                         onClick={() => setCourtIndoorOutdoor('INDOOR')}
                         className={`py-2 rounded-xl text-[12px] font-bold border transition-all cursor-pointer text-center ${
                           courtIndoorOutdoor === 'INDOOR'
-                            ? 'bg-[#171717] text-white border-[#171717]'
-                            : 'bg-white text-[#777570] border-[#E8E6E1]'
+                            ? 'bg-[#FFF1EC] text-[#F94001] border-[#F94001]/50 font-black shadow-2xs'
+                            : 'bg-white text-[#5F6368] border-[#E5E7EB]'
                         }`}
                       >
                         Indoor
@@ -1319,7 +1323,7 @@ export const HelpSupportScreen: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-[#777570] mb-1">
+                    <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
                       Night Lighting
                     </label>
                     <button
@@ -1327,8 +1331,8 @@ export const HelpSupportScreen: React.FC = () => {
                       onClick={() => setCourtLighting(!courtLighting)}
                       className={`w-full py-2 px-3 rounded-xl text-[12px] font-bold border transition-all cursor-pointer flex items-center justify-center gap-2 ${
                         courtLighting
-                          ? 'bg-[#2FA66A]/15 text-[#1E774A] border-[#2FA66A]/30'
-                          : 'bg-white text-[#777570] border-[#E8E6E1]'
+                          ? 'bg-[#16A34A]/15 text-[#15803D] border-[#16A34A]/30'
+                          : 'bg-white text-[#5F6368] border-[#E5E7EB]'
                       }`}
                     >
                       <CheckCircle2 className="w-3.5 h-3.5" />
@@ -1339,7 +1343,7 @@ export const HelpSupportScreen: React.FC = () => {
 
                 {/* Remarks */}
                 <div>
-                  <label className="block text-[11px] font-bold text-[#777570] mb-1">
+                  <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
                     Operational Remarks / Features
                   </label>
                   <textarea
@@ -1347,29 +1351,29 @@ export const HelpSupportScreen: React.FC = () => {
                     value={courtRemarks}
                     onChange={(e) => setCourtRemarks(e.target.value)}
                     placeholder="e.g. Equipped with 8-a-side side nets, electronic scoreboard, spectator benches..."
-                    className="w-full bg-white border border-[#D5D3CC] rounded-xl p-3 text-[12px] font-medium text-[#171717] focus:outline-none focus:border-[#171717] resize-none"
+                    className="w-full bg-white border border-[#D5D3CC] rounded-xl p-3 text-[12px] font-medium text-[#021526] focus:outline-none focus:border-[#021526] resize-none"
                   />
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#F1F0EC]">
+                <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#F3F4F4]">
                   <button
                     type="button"
                     onClick={() => setIsCourtModalOpen(false)}
                     disabled={isSubmitting}
-                    className="px-4 py-2 rounded-xl text-[12.5px] font-bold text-[#777570] hover:text-[#171717] cursor-pointer"
+                    className="px-4 py-2 rounded-xl text-[12.5px] font-bold text-[#5F6368] hover:text-[#021526] cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="px-5 py-2.5 rounded-xl bg-[#171717] hover:bg-black text-white text-[12.5px] font-black flex items-center gap-2 shadow-xs active-press cursor-pointer disabled:opacity-50"
+                    className="px-5 py-2.5 rounded-xl bg-[#021526] hover:bg-black text-white text-[12.5px] font-black flex items-center gap-2 shadow-xs active-press cursor-pointer disabled:opacity-50"
                   >
                     {isSubmitting ? (
                       <RefreshCw className="w-4 h-4 animate-spin text-white" />
                     ) : (
-                      <Send className="w-4 h-4 text-[#FF6B2C]" />
+                      <Send className="w-4 h-4 text-[#F94001]" />
                     )}
                     <span>Submit Court Request</span>
                   </button>
@@ -1390,18 +1394,18 @@ export const HelpSupportScreen: React.FC = () => {
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
-              className="relative w-full max-w-lg bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-[#E8E6E1] overflow-hidden"
+              className="relative w-full max-w-lg bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-[#E5E7EB] overflow-hidden"
             >
-              <div className="p-5 border-b border-[#F1F0EC] flex items-center justify-between bg-[#FAF9F6]">
+              <div className="p-5 border-b border-[#F3F4F4] flex items-center justify-between bg-[#F3F4F4]">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#FF6B2C]/10 text-[#FF6B2C] flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-[#F94001]/10 text-[#F94001] flex items-center justify-center">
                     <LifeBuoy className="w-5 h-5" />
                   </div>
                   <div>
-                    <h2 className="text-[17px] font-black text-[#171717]">
+                    <h2 className="text-[17px] font-black text-[#021526]">
                       Raise Support Ticket
                     </h2>
-                    <p className="text-[11.5px] text-[#777570]">
+                    <p className="text-[11.5px] text-[#5F6368]">
                       Operations desk responds within 30 minutes
                     </p>
                   </div>
@@ -1410,7 +1414,7 @@ export const HelpSupportScreen: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsTicketModalOpen(false)}
-                  className="w-8 h-8 rounded-full bg-white border border-[#E8E6E1] flex items-center justify-center text-[#777570] hover:text-[#171717] cursor-pointer"
+                  className="w-8 h-8 rounded-full bg-white border border-[#E5E7EB] flex items-center justify-center text-[#5F6368] hover:text-[#021526] cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -1419,8 +1423,8 @@ export const HelpSupportScreen: React.FC = () => {
               <form onSubmit={handleTicketSubmit} className="p-5 space-y-3.5 text-[12.5px]">
                 {/* Category Selection */}
                 <div>
-                  <label className="block text-[11px] font-bold text-[#777570] mb-1.5">
-                    Category <span className="text-[#FF6B2C]">*</span>
+                  <label className="block text-[11px] font-bold text-[#5F6368] mb-1.5">
+                    Category <span className="text-[#F94001]">*</span>
                   </label>
                   <div className="flex flex-wrap gap-1.5">
                     {(['Payment', 'Booking', 'Technical', 'Settlements', 'General', 'Other'] as SupportCategory[]).map((cat) => (
@@ -1433,8 +1437,8 @@ export const HelpSupportScreen: React.FC = () => {
                         }}
                         className={`h-8 px-3 rounded-xl text-[11.5px] font-bold transition-all border cursor-pointer ${
                           category === cat
-                            ? 'bg-[#171717] text-white border-[#171717]'
-                            : 'bg-[#FAF9F6] text-[#777570] border-[#E8E6E1] hover:text-[#171717]'
+                            ? 'bg-[#FFF1EC] text-[#F94001] border-[#F94001]/50 font-black shadow-2xs'
+                            : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:text-[#021526]'
                         }`}
                       >
                         {cat === 'Payment'
@@ -1455,7 +1459,7 @@ export const HelpSupportScreen: React.FC = () => {
 
                 {/* Priority */}
                 <div>
-                  <label className="block text-[11px] font-bold text-[#777570] mb-1.5">
+                  <label className="block text-[11px] font-bold text-[#5F6368] mb-1.5">
                     Priority Level
                   </label>
                   <div className="grid grid-cols-3 gap-1.5">
@@ -1470,11 +1474,11 @@ export const HelpSupportScreen: React.FC = () => {
                         className={`py-1.5 px-2 rounded-xl text-[11.5px] font-bold transition-all border cursor-pointer text-center ${
                           urgency === lvl
                             ? lvl === 'Urgent'
-                              ? 'bg-[#D94B4B] text-white border-[#D94B4B]'
+                              ? 'bg-[#DC2626] text-white border-[#DC2626]'
                               : lvl === 'High'
-                              ? 'bg-[#FF6B2C] text-white border-[#FF6B2C]'
-                              : 'bg-[#171717] text-white border-[#171717]'
-                            : 'bg-[#FAF9F6] text-[#777570] border-[#E8E6E1] hover:text-[#171717]'
+                              ? 'bg-[#F94001] text-white border-[#F94001]'
+                              : 'bg-[#F94001] text-white border-[#F94001]'
+                            : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:text-[#021526]'
                         }`}
                       >
                         {lvl}
@@ -1485,8 +1489,8 @@ export const HelpSupportScreen: React.FC = () => {
 
                 {/* Subject */}
                 <div>
-                  <label className="block text-[11px] font-bold text-[#777570] mb-1">
-                    Subject / Query Title <span className="text-[#FF6B2C]">*</span>
+                  <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                    Subject / Query Title <span className="text-[#F94001]">*</span>
                   </label>
                   <input
                     type="text"
@@ -1494,14 +1498,14 @@ export const HelpSupportScreen: React.FC = () => {
                     value={subject}
                     onChange={(e) => setSubject(e.target.value)}
                     placeholder="e.g. Customer QR scan timed out but money deducted"
-                    className="w-full bg-[#FAF9F6] border border-[#E8E6E1] rounded-xl px-3 py-2 text-[12.5px] font-bold text-[#171717] focus:outline-none focus:border-[#171717]"
+                    className="w-full bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-3 py-2 text-[12.5px] font-bold text-[#021526] focus:outline-none focus:border-[#021526]"
                   />
                 </div>
 
                 {/* Details */}
                 <div>
-                  <label className="block text-[11px] font-bold text-[#777570] mb-1">
-                    Details & Notes <span className="text-[#FF6B2C]">*</span>
+                  <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                    Details & Notes <span className="text-[#F94001]">*</span>
                   </label>
                   <textarea
                     rows={3}
@@ -1509,14 +1513,14 @@ export const HelpSupportScreen: React.FC = () => {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Describe transaction details, customer phone number, or booking reference..."
-                    className="w-full bg-[#FAF9F6] border border-[#E8E6E1] rounded-xl p-3 text-[12px] font-medium text-[#171717] focus:outline-none focus:border-[#171717] resize-none"
+                    className="w-full bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl p-3 text-[12px] font-medium text-[#021526] focus:outline-none focus:border-[#021526] resize-none"
                   />
                 </div>
 
                 {/* Submit */}
                 <button
                   type="submit"
-                  className="w-full h-11 bg-[#FF6B2C] hover:bg-[#e85b1e] text-white font-black text-[13px] rounded-xl flex items-center justify-center gap-1.5 shadow-sm active-press cursor-pointer transition-all mt-2"
+                  className="w-full h-11 bg-[#F94001] hover:bg-[#D93600] text-white font-black text-[13px] rounded-xl flex items-center justify-center gap-1.5 shadow-sm active-press cursor-pointer transition-all mt-2"
                 >
                   <Sparkles className="w-4 h-4" />
                   <span>Submit Ticket</span>

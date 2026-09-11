@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { haptics } from '../utils/haptics';
+import { CustomSelect } from '../components/CustomSelect';
 
 // Converts "06:00 AM", "6:00 AM", "12:00 PM", "12:00 AM" into minutes from midnight
 function parseTimeToMinutes(tStr: string, isEndTime = false): number {
@@ -353,22 +354,22 @@ export const BlockSlotSheet: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: '100%' }}
           transition={{ type: 'spring', damping: 28, stiffness: 320 }}
-          className="relative w-full max-h-[92vh] md:max-w-lg md:rounded-3xl overflow-y-auto no-scrollbar bg-white rounded-t-3xl p-5 pb-6 shadow-2xl border border-[#E8E6E1]"
+          className="relative w-full max-h-[92vh] md:max-w-lg md:rounded-3xl overflow-y-auto no-scrollbar bg-white rounded-t-3xl p-5 pb-6 shadow-2xl border border-[#E5E7EB]"
         >
           {/* Mobile Native Handle Bar */}
           <div className="md:hidden w-10 h-1 rounded-full bg-[#D4D2CD] mx-auto mb-3 shrink-0" />
 
           {/* Header */}
-          <div className="flex items-center justify-between pb-3 border-b border-[#F1F0EC]">
+          <div className="flex items-center justify-between pb-3 border-b border-[#F3F4F4]">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-2xl bg-[#D94B4B]/10 border border-[#D94B4B]/30 flex items-center justify-center text-[#D94B4B]">
+              <div className="w-9 h-9 rounded-2xl bg-[#DC2626]/10 border border-[#DC2626]/30 flex items-center justify-center text-[#DC2626]">
                 <Wrench className="w-4.5 h-4.5" />
               </div>
               <div>
-                <h2 className="text-[17px] font-black text-[#171717] leading-tight">
+                <h2 className="text-[17px] font-black text-[#021526] leading-tight">
                   Pitch Maintenance Block
                 </h2>
-                <p className="text-[11px] text-[#777570] font-medium">
+                <p className="text-[11px] text-[#5F6368] font-medium">
                   Block available slots for turf upkeep & repair (Unavailable for bookings)
                 </p>
               </div>
@@ -376,7 +377,7 @@ export const BlockSlotSheet: React.FC = () => {
 
             <button
               onClick={handleClose}
-              className="w-8 h-8 rounded-full bg-[#F1F0EC] flex items-center justify-center text-[#777570] hover:text-[#171717] cursor-pointer transition-colors"
+              className="w-8 h-8 rounded-full bg-[#F3F4F4] flex items-center justify-center text-[#5F6368] hover:text-[#021526] cursor-pointer transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
@@ -386,35 +387,33 @@ export const BlockSlotSheet: React.FC = () => {
             {/* 1. Court Selection */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="text-[11px] font-bold text-[#777570]">
-                  Select Court <span className="text-[#FF6B2C]">*</span>
+                <label className="text-[11px] font-bold text-[#5F6368]">
+                  Select Court <span className="text-[#F94001]">*</span>
                 </label>
-                <span className="text-[10px] font-bold text-[#2FA66A] bg-[#2FA66A]/10 px-2 py-0.5 rounded-md">
+                <span className="text-[10px] font-bold text-[#16A34A] bg-[#16A34A]/10 px-2 py-0.5 rounded-md">
                   {currentCourt?.sports.join(', ')} · {currentCourt?.minBookingDuration || '1 hr'}
                 </span>
               </div>
-              <select
+              <CustomSelect
                 value={courtId}
-                onChange={(e) => setCourtId(e.target.value)}
-                className="w-full bg-[#F7F7F5] border border-[#E8E6E1] rounded-xl px-3 py-2.5 text-[12.5px] font-bold text-[#171717] focus:outline-none focus:border-[#171717]"
-              >
-                {approvedCourts.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name} ({c.sports.join(', ')}) · {c.minBookingDuration || '1 hr'} min
-                  </option>
-                ))}
-              </select>
+                onChange={(val) => setCourtId(val)}
+                options={approvedCourts.map((c) => ({
+                  value: c.id,
+                  label: `${c.name} (${c.sports.join(', ')}) · ${c.minBookingDuration || '1 hr'} min`,
+                }))}
+                className="w-full bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-3 py-2.5 text-[12.5px] font-bold text-[#021526] focus:outline-none"
+              />
             </div>
 
             {/* 2. Date Selection with Quick Chips */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="text-[11px] font-bold text-[#777570]">Date</label>
+                <label className="text-[11px] font-bold text-[#5F6368]">Date</label>
                 <div className="flex items-center gap-1.5">
                   <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
                     availableSlots.length > 0
-                      ? 'bg-[#2FA66A]/15 text-[#2FA66A]'
-                      : 'bg-[#D94B4B]/15 text-[#D94B4B]'
+                      ? 'bg-[#16A34A]/15 text-[#16A34A]'
+                      : 'bg-[#DC2626]/15 text-[#DC2626]'
                   }`}>
                     {availableSlots.length > 0 ? `🟢 ${availableSlots.length} Available Slots` : '🔴 0 Slots Available'}
                   </span>
@@ -441,8 +440,8 @@ export const BlockSlotSheet: React.FC = () => {
                       }}
                       className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all shrink-0 cursor-pointer ${
                         isMatch
-                          ? 'bg-[#171717] text-white shadow-xs'
-                          : 'bg-[#F7F7F5] border border-[#E8E6E1] text-[#777570] hover:text-[#171717]'
+                          ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 font-black shadow-2xs'
+                          : 'bg-[#F3F4F4] border border-[#E5E7EB] text-[#5F6368] hover:text-[#021526]'
                       }`}
                     >
                       {qd.label}
@@ -461,15 +460,15 @@ export const BlockSlotSheet: React.FC = () => {
                     setIsFromOpen(false);
                     setIsToOpen(false);
                   }}
-                  className="w-full bg-[#F7F7F5] border border-[#E8E6E1] hover:border-[#171717] rounded-xl px-3 py-2 text-left flex items-center justify-between cursor-pointer"
+                  className="w-full bg-[#F3F4F4] border border-[#E5E7EB] hover:border-[#021526] rounded-xl px-3 py-2 text-left flex items-center justify-between cursor-pointer"
                 >
                   <div className="flex items-center gap-2">
-                    <CalendarIcon className="w-3.5 h-3.5 text-[#FF6B2C]" />
-                    <span className="text-[12px] font-black text-[#171717]">
+                    <CalendarIcon className="w-3.5 h-3.5 text-[#F94001]" />
+                    <span className="text-[12px] font-black text-[#021526]">
                       {bookingDate}
                     </span>
                   </div>
-                  <ChevronDown className="w-3.5 h-3.5 text-[#777570]" />
+                  <ChevronDown className="w-3.5 h-3.5 text-[#5F6368]" />
                 </button>
 
                 {/* Calendar Popover */}
@@ -479,24 +478,24 @@ export const BlockSlotSheet: React.FC = () => {
                       initial={{ opacity: 0, y: 6, scale: 0.98 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 4, scale: 0.98 }}
-                      className="absolute left-0 top-full mt-1.5 w-68 bg-white rounded-2xl border border-[#E8E6E1] shadow-2xl p-3 z-50"
+                      className="absolute left-0 top-full mt-1.5 w-68 bg-white rounded-2xl border border-[#E5E7EB] shadow-2xl p-3 z-50"
                     >
-                      <div className="flex items-center justify-between pb-2 border-b border-[#F1F0EC] mb-2">
-                        <span className="text-[12px] font-black text-[#171717]">
+                      <div className="flex items-center justify-between pb-2 border-b border-[#F3F4F4] mb-2">
+                        <span className="text-[12px] font-black text-[#021526]">
                           {MONTH_NAMES[selectedMonth]} {selectedYear}
                         </span>
                         <div className="flex items-center gap-1">
                           <button
                             type="button"
                             onClick={() => setSelectedMonth((p) => (p === 0 ? 11 : p - 1))}
-                            className="w-6 h-6 rounded-lg bg-[#FAF9F6] flex items-center justify-center text-[#777570]"
+                            className="w-6 h-6 rounded-lg bg-[#F3F4F4] flex items-center justify-center text-[#5F6368]"
                           >
                             <ChevronLeft className="w-3.5 h-3.5" />
                           </button>
                           <button
                             type="button"
                             onClick={() => setSelectedMonth((p) => (p === 11 ? 0 : p + 1))}
-                            className="w-6 h-6 rounded-lg bg-[#FAF9F6] flex items-center justify-center text-[#777570]"
+                            className="w-6 h-6 rounded-lg bg-[#F3F4F4] flex items-center justify-center text-[#5F6368]"
                           >
                             <ChevronRight className="w-3.5 h-3.5" />
                           </button>
@@ -505,7 +504,7 @@ export const BlockSlotSheet: React.FC = () => {
 
                       <div className="grid grid-cols-7 gap-1 text-center mb-1">
                         {DAYS_SHORT.map((d) => (
-                          <span key={d} className="text-[9.5px] font-bold text-[#A3A099]">
+                          <span key={d} className="text-[9.5px] font-bold text-[#5F6368]">
                             {d}
                           </span>
                         ))}
@@ -529,10 +528,10 @@ export const BlockSlotSheet: React.FC = () => {
                               }}
                               className={`w-7 h-7 rounded-lg text-[11px] font-bold flex items-center justify-center cursor-pointer ${
                                 isSelected
-                                  ? 'bg-[#171717] text-white'
+                                  ? 'bg-[#F94001] text-white'
                                   : isToday
-                                  ? 'bg-[#FF6B2C]/15 text-[#FF6B2C]'
-                                  : 'text-[#171717] hover:bg-[#FAF9F6]'
+                                  ? 'bg-[#F94001]/15 text-[#F94001]'
+                                  : 'text-[#021526] hover:bg-[#F3F4F4]'
                               }`}
                             >
                               {dNum}
@@ -550,25 +549,25 @@ export const BlockSlotSheet: React.FC = () => {
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <div className="flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-[#2FA66A]" />
-                  <label className="text-[11px] font-black text-[#171717]">
+                  <Clock className="w-3.5 h-3.5 text-[#16A34A]" />
+                  <label className="text-[11px] font-black text-[#021526]">
                     Available Slots to Block
                   </label>
                 </div>
-                <span className="text-[10px] text-[#777570]">
+                <span className="text-[10px] text-[#5F6368]">
                   Tap any slot to select instantly
                 </span>
               </div>
 
               {availableSlots.length === 0 ? (
-                <div className="p-3 bg-[#D94B4B]/10 border border-[#D94B4B]/25 rounded-xl flex items-center gap-2 text-[#D94B4B]">
+                <div className="p-3 bg-[#DC2626]/10 border border-[#DC2626]/25 rounded-xl flex items-center gap-2 text-[#DC2626]">
                   <AlertTriangle className="w-4 h-4 shrink-0" />
                   <p className="text-[11.5px] font-bold">
                     No available slots on this date. All slots are currently booked or under maintenance.
                   </p>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 max-h-36 overflow-y-auto no-scrollbar p-1 bg-[#FAF9F6] border border-[#E8E6E1] rounded-2xl">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 max-h-36 overflow-y-auto no-scrollbar p-1 bg-[#F3F4F4] border border-[#E5E7EB] rounded-2xl">
                   {availableSlots.map((slot) => {
                     const isSelected = fromTime === slot.startStr && toTime === slot.endStr;
                     return (
@@ -582,23 +581,23 @@ export const BlockSlotSheet: React.FC = () => {
                         }}
                         className={`px-2.5 py-2 rounded-xl text-left border transition-all cursor-pointer flex items-center justify-between ${
                           isSelected
-                            ? 'bg-[#171717] text-white border-[#171717] shadow-sm ring-2 ring-[#FF6B2C]'
-                            : 'bg-white border-[#E8E6E1] text-[#171717] hover:border-[#777570] hover:bg-[#F7F7F5]'
+                            ? 'bg-[#FFF1EC] text-[#021526] border-2 border-[#F94001] shadow-2xs'
+                            : 'bg-white border-[#E5E7EB] text-[#021526] hover:border-[#5F6368] hover:bg-[#F3F4F4]'
                         }`}
                       >
                         <div className="min-w-0 pr-1">
                           <div className="flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#2FA66A] shrink-0" />
+                            <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isSelected ? 'bg-[#F94001]' : 'bg-[#16A34A]'}`} />
                             <span className="text-[11px] font-black truncate">
                               {slot.startStr}
                             </span>
                           </div>
-                          <span className={`text-[9.5px] block truncate ${isSelected ? 'text-[#A3A099]' : 'text-[#777570]'}`}>
+                          <span className={`text-[9.5px] block truncate ${isSelected ? 'text-[#021526]/70' : 'text-[#5F6368]'}`}>
                             to {slot.endStr}
                           </span>
                         </div>
                         <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded shrink-0 ${
-                          isSelected ? 'bg-white/20 text-white' : 'bg-[#FAF9F6] text-[#777570]'
+                          isSelected ? 'bg-[#F94001]/15 text-[#F94001]' : 'bg-[#F3F4F4] text-[#5F6368]'
                         }`}>
                           {slot.durationLabel}
                         </span>
@@ -614,8 +613,8 @@ export const BlockSlotSheet: React.FC = () => {
               {/* Start Time Dropdown (Filtered to ONLY available slot start times) */}
               <div className="relative" ref={fromRef}>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-[11px] font-bold text-[#777570]">Start Time</label>
-                  <span className="text-[9px] font-black text-[#2FA66A] bg-[#2FA66A]/10 px-1.5 py-0.5 rounded">
+                  <label className="text-[11px] font-bold text-[#5F6368]">Start Time</label>
+                  <span className="text-[9px] font-black text-[#16A34A] bg-[#16A34A]/10 px-1.5 py-0.5 rounded">
                     Free Slots Only
                   </span>
                 </div>
@@ -628,12 +627,12 @@ export const BlockSlotSheet: React.FC = () => {
                     setIsDatePickerOpen(false);
                     setIsToOpen(false);
                   }}
-                  className="w-full bg-[#F7F7F5] border border-[#E8E6E1] hover:border-[#171717] disabled:opacity-50 rounded-xl px-2.5 py-2 text-left flex items-center justify-between cursor-pointer"
+                  className="w-full bg-[#F3F4F4] border border-[#E5E7EB] hover:border-[#021526] disabled:opacity-50 rounded-xl px-2.5 py-2 text-left flex items-center justify-between cursor-pointer"
                 >
-                  <span className="text-[11.5px] font-black text-[#171717] truncate">
+                  <span className="text-[11.5px] font-black text-[#021526] truncate">
                     {fromTime || 'No slot available'}
                   </span>
-                  <ChevronDown className="w-3 h-3 text-[#777570] shrink-0" />
+                  <ChevronDown className="w-3 h-3 text-[#5F6368] shrink-0" />
                 </button>
 
                 <AnimatePresence>
@@ -642,11 +641,11 @@ export const BlockSlotSheet: React.FC = () => {
                       initial={{ opacity: 0, y: 6, scale: 0.98 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 4, scale: 0.98 }}
-                      className="absolute left-0 top-full mt-1.5 w-64 max-h-56 overflow-y-auto no-scrollbar bg-white rounded-2xl border border-[#E8E6E1] shadow-2xl p-2.5 z-50"
+                      className="absolute left-0 top-full mt-1.5 w-64 max-h-56 overflow-y-auto no-scrollbar bg-white rounded-2xl border border-[#E5E7EB] shadow-2xl p-2.5 z-50"
                     >
-                      <div className="px-1.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#777570] flex items-center justify-between border-b border-[#F1F0EC] mb-1.5">
+                      <div className="px-1.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#5F6368] flex items-center justify-between border-b border-[#F3F4F4] mb-1.5">
                         <span>Select Available Start</span>
-                        <span className="text-[9px] font-black text-[#2FA66A]">
+                        <span className="text-[9px] font-black text-[#16A34A]">
                           {availableStartTimes.length} Open
                         </span>
                       </div>
@@ -664,12 +663,12 @@ export const BlockSlotSheet: React.FC = () => {
                               }}
                               className={`px-2 py-2 rounded-xl text-[11px] font-bold transition-all cursor-pointer flex items-center justify-between ${
                                 isSelected
-                                  ? 'bg-[#171717] text-white shadow-xs'
-                                  : 'bg-[#FAF9F6] border border-[#E8E6E1] text-[#171717] hover:bg-[#F1F0EC]'
+                                  ? 'bg-[#F94001] text-white shadow-xs'
+                                  : 'bg-[#F3F4F4] border border-[#E5E7EB] text-[#021526] hover:bg-[#F3F4F4]'
                               }`}
                             >
                               <span>{val}</span>
-                              {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-[#2FA66A]" />}
+                              {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A]" />}
                             </button>
                           );
                         })}
@@ -682,8 +681,8 @@ export const BlockSlotSheet: React.FC = () => {
               {/* End Time Dropdown (Filtered to ONLY non-colliding continuous ends) */}
               <div className="relative" ref={toRef}>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-[11px] font-bold text-[#777570]">End Time</label>
-                  <span className="text-[9px] font-black text-[#FF6B2C] bg-[#FF6B2C]/10 px-1.5 py-0.5 rounded">
+                  <label className="text-[11px] font-bold text-[#5F6368]">End Time</label>
+                  <span className="text-[9px] font-black text-[#F94001] bg-[#F94001]/10 px-1.5 py-0.5 rounded">
                     Release
                   </span>
                 </div>
@@ -696,12 +695,12 @@ export const BlockSlotSheet: React.FC = () => {
                     setIsDatePickerOpen(false);
                     setIsFromOpen(false);
                   }}
-                  className="w-full bg-[#F7F7F5] border border-[#E8E6E1] hover:border-[#171717] disabled:opacity-50 rounded-xl px-2.5 py-2 text-left flex items-center justify-between cursor-pointer"
+                  className="w-full bg-[#F3F4F4] border border-[#E5E7EB] hover:border-[#021526] disabled:opacity-50 rounded-xl px-2.5 py-2 text-left flex items-center justify-between cursor-pointer"
                 >
-                  <span className="text-[11.5px] font-black text-[#171717] truncate">
+                  <span className="text-[11.5px] font-black text-[#021526] truncate">
                     {toTime || 'Select Start first'}
                   </span>
-                  <ChevronDown className="w-3 h-3 text-[#777570] shrink-0" />
+                  <ChevronDown className="w-3 h-3 text-[#5F6368] shrink-0" />
                 </button>
 
                 <AnimatePresence>
@@ -710,11 +709,11 @@ export const BlockSlotSheet: React.FC = () => {
                       initial={{ opacity: 0, y: 6, scale: 0.98 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 4, scale: 0.98 }}
-                      className="absolute right-0 top-full mt-1.5 w-64 max-h-56 overflow-y-auto no-scrollbar bg-white rounded-2xl border border-[#E8E6E1] shadow-2xl p-2.5 z-50"
+                      className="absolute right-0 top-full mt-1.5 w-64 max-h-56 overflow-y-auto no-scrollbar bg-white rounded-2xl border border-[#E5E7EB] shadow-2xl p-2.5 z-50"
                     >
-                      <div className="px-1.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#777570] flex items-center justify-between border-b border-[#F1F0EC] mb-1.5">
+                      <div className="px-1.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#5F6368] flex items-center justify-between border-b border-[#F3F4F4] mb-1.5">
                         <span>Select Available End</span>
-                        <span className="text-[9px] font-black text-[#2FA66A]">
+                        <span className="text-[9px] font-black text-[#16A34A]">
                           Valid Ranges
                         </span>
                       </div>
@@ -732,13 +731,13 @@ export const BlockSlotSheet: React.FC = () => {
                               }}
                               className={`px-2.5 py-2 rounded-xl text-[11px] font-bold transition-all cursor-pointer flex items-center justify-between ${
                                 isSelected
-                                  ? 'bg-[#171717] text-white shadow-xs'
-                                  : 'bg-[#FAF9F6] border border-[#E8E6E1] text-[#171717] hover:bg-[#F1F0EC]'
+                                  ? 'bg-[#F94001] text-white shadow-xs'
+                                  : 'bg-[#F3F4F4] border border-[#E5E7EB] text-[#021526] hover:bg-[#F3F4F4]'
                               }`}
                             >
                               <span>{opt.value}</span>
                               <span className={`text-[9px] font-black px-1.5 py-0.5 rounded ${
-                                isSelected ? 'bg-white/20 text-white' : 'bg-[#E8E6E1] text-[#777570]'
+                                isSelected ? 'bg-white/20 text-white' : 'bg-[#E5E7EB] text-[#5F6368]'
                               }`}>
                                 +{opt.durationLabel}
                               </span>
@@ -754,12 +753,12 @@ export const BlockSlotSheet: React.FC = () => {
 
             {/* Selected Block Summary Banner */}
             {fromTime && toTime && (
-              <div className="p-2.5 bg-[#FAF9F6] border border-[#E8E6E1] rounded-xl flex items-center justify-between text-[11.5px]">
-                <div className="flex items-center gap-1.5 font-bold text-[#171717]">
-                  <Sparkles className="w-3.5 h-3.5 text-[#FF6B2C]" />
+              <div className="p-2.5 bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl flex items-center justify-between text-[11.5px]">
+                <div className="flex items-center gap-1.5 font-bold text-[#021526]">
+                  <Sparkles className="w-3.5 h-3.5 text-[#F94001]" />
                   <span>Blocking: <strong>{fromTime} – {toTime}</strong></span>
                 </div>
-                <span className="font-extrabold text-[#D94B4B] bg-[#D94B4B]/10 px-2 py-0.5 rounded-md text-[10.5px]">
+                <span className="font-extrabold text-[#DC2626] bg-[#DC2626]/10 px-2 py-0.5 rounded-md text-[10.5px]">
                   {selectedDurationLabel}
                 </span>
               </div>
@@ -767,8 +766,8 @@ export const BlockSlotSheet: React.FC = () => {
 
             {/* 5. Maintenance Category Selection & Manual Entry */}
             <div className="space-y-1.5 pt-0.5">
-              <label className="block text-[11px] font-bold text-[#777570]">
-                Maintenance Purpose / Category <span className="text-[#FF6B2C]">*</span>
+              <label className="block text-[11px] font-bold text-[#5F6368]">
+                Maintenance Purpose / Category <span className="text-[#F94001]">*</span>
               </label>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
@@ -784,12 +783,12 @@ export const BlockSlotSheet: React.FC = () => {
                       }}
                       className={`p-2.5 rounded-xl border text-left text-[11.5px] font-bold transition-all cursor-pointer flex items-center justify-between ${
                         isSelected
-                          ? 'bg-[#171717] text-white border-[#171717] shadow-xs'
-                          : 'bg-[#F7F7F5] border-[#E8E6E1] text-[#171717] hover:bg-[#F1F0EC]'
+                          ? 'bg-[#F94001] text-white border-[#F94001] shadow-sm shadow-[#F94001]/20'
+                          : 'bg-[#F3F4F4] border-[#E5E7EB] text-[#021526] hover:bg-[#F3F4F4]'
                       }`}
                     >
                       <span className="truncate">{cat}</span>
-                      {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-[#2FA66A] shrink-0" />}
+                      {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-white shrink-0" />}
                     </button>
                   );
                 })}
@@ -798,8 +797,8 @@ export const BlockSlotSheet: React.FC = () => {
               {/* Manual Entry Text Field */}
               {maintenanceCategory === 'Custom (Manual Entry)' && (
                 <div className="pt-1">
-                  <label className="block text-[10.5px] font-bold text-[#171717] mb-1 flex items-center gap-1">
-                    <Edit3 className="w-3 h-3 text-[#FF6B2C]" />
+                  <label className="block text-[10.5px] font-bold text-[#021526] mb-1 flex items-center gap-1">
+                    <Edit3 className="w-3 h-3 text-[#F94001]" />
                     <span>Enter Custom Maintenance Reason</span>
                   </label>
                   <input
@@ -808,22 +807,22 @@ export const BlockSlotSheet: React.FC = () => {
                     placeholder="e.g. Synthetic grass patch repair & high-pressure wash"
                     value={manualReason}
                     onChange={(e) => setManualReason(e.target.value)}
-                    className="w-full bg-[#F7F7F5] border border-[#FF6B2C] rounded-xl px-3 py-2 text-[12px] font-bold text-[#171717] focus:outline-none"
+                    className="w-full bg-[#F3F4F4] border border-[#F94001] rounded-xl px-3 py-2 text-[12px] font-bold text-[#021526] focus:outline-none"
                   />
                 </div>
               )}
             </div>
 
             {/* Notice Strip */}
-            <div className="bg-[#FAF9F6] border border-[#E8E6E1] rounded-xl p-2.5 text-[11px] text-[#777570]">
-              Pitch status will display as <strong className="text-[#D94B4B]">Unavailable (Maintenance)</strong> on the slot matrix. Customer bookings will be disabled for this window.
+            <div className="bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl p-2.5 text-[11px] text-[#5F6368]">
+              Pitch status will display as <strong className="text-[#DC2626]">Unavailable (Maintenance)</strong> on the slot matrix. Customer bookings will be disabled for this window.
             </div>
 
             {/* Confirm Button */}
             <button
               type="submit"
               disabled={availableSlots.length === 0 || !fromTime || !toTime}
-              className="w-full h-10 bg-[#D94B4B] hover:bg-[#c33d3d] disabled:opacity-50 text-white font-extrabold text-[13px] rounded-xl flex items-center justify-center gap-1.5 shadow-sm active-press cursor-pointer transition-all mt-1"
+              className="w-full h-10 bg-[#DC2626] hover:bg-[#c33d3d] disabled:opacity-50 text-white font-extrabold text-[13px] rounded-xl flex items-center justify-center gap-1.5 shadow-sm active-press cursor-pointer transition-all mt-1"
             >
               <Wrench className="w-4 h-4" />
               <span>

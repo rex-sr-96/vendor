@@ -225,23 +225,12 @@ export const PaymentsScreen: React.FC = () => {
       {/* Top Header */}
       <div className="flex items-center justify-between gap-2 pt-0.5">
         <div className="min-w-0">
-          <h1 className="text-[20px] font-extrabold text-[#171717] tracking-tight leading-tight">
+          <h1 className="text-[20px] font-extrabold text-[#021526] tracking-tight leading-tight">
             Payments
           </h1>
-          <p className="text-[11.5px] text-[#777570] font-medium truncate">
+          <p className="text-[11.5px] text-[#5F6368] font-medium truncate">
             Daily collections & settlements
           </p>
-        </div>
-        <button
-          onClick={() => {
-            haptics.tap();
-            navigateTo('payment_settings');
-          }}
-          className="shrink-0 text-[11.5px] font-bold text-[#FF6B2C] bg-white border border-[#E8E6E1] px-2.5 py-1.5 rounded-xl hover:border-[#FF6B2C] active-press cursor-pointer shadow-2xs flex items-center gap-1.5 whitespace-nowrap"
-        >
-          <Building2 className="w-3.5 h-3.5 text-[#FF6B2C]" />
-          <span>Bank Settings</span>
-        </button>
       </div>
 
       {/* Main Two-Option Tab Switcher: Booking vs Settlement */}
@@ -253,8 +242,8 @@ export const PaymentsScreen: React.FC = () => {
           }}
           className={`flex-1 py-2 rounded-xl text-[12.5px] font-bold transition-all flex items-center justify-center gap-1.5 active-press cursor-pointer whitespace-nowrap ${
             activeTab === 'booking'
-              ? 'bg-[#171717] text-white shadow-xs'
-              : 'text-[#777570] hover:text-[#171717]'
+              ? 'bg-[#021526] text-white shadow-xs'
+              : 'text-[#5F6368] hover:text-[#021526]'
           }`}
         >
           <Wallet className="w-3.5 h-3.5" />
@@ -263,8 +252,8 @@ export const PaymentsScreen: React.FC = () => {
             <span
               className={`px-1.5 py-0.2 rounded-full text-[10px] font-extrabold leading-tight ${
                 activeTab === 'booking'
-                  ? 'bg-[#FF6B2C] text-white'
-                  : 'bg-[#DCDAD2] text-[#171717]'
+                  ? 'bg-[#F94001] text-white'
+                  : 'bg-[#DCDAD2] text-[#021526]'
               }`}
             >
               {activeBookings.length}
@@ -279,13 +268,13 @@ export const PaymentsScreen: React.FC = () => {
           }}
           className={`flex-1 py-2 rounded-xl text-[12.5px] font-bold transition-all flex items-center justify-center gap-1.5 active-press cursor-pointer whitespace-nowrap ${
             activeTab === 'settlement'
-              ? 'bg-[#171717] text-white shadow-xs'
-              : 'text-[#777570] hover:text-[#171717]'
+              ? 'bg-[#021526] text-white shadow-xs'
+              : 'text-[#5F6368] hover:text-[#021526]'
           }`}
         >
           <Building2 className="w-3.5 h-3.5" />
           <span>Settlement</span>
-          <span className="w-1.5 h-1.5 rounded-full bg-[#2FA66A]" />
+          <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A]" />
         </button>
       </div>
 
@@ -309,17 +298,17 @@ export const PaymentsScreen: React.FC = () => {
                   haptics.tap();
                   setIsBookingPickerOpen(true);
                 }}
-                className="w-full flex items-center justify-between bg-white border border-[#E8E6E1] hover:border-[#FF6B2C] px-3 py-2 rounded-2xl active-press cursor-pointer shadow-2xs group transition-all"
+                className="w-full flex items-center justify-between bg-white border border-[#E5E7EB] hover:border-[#F94001] px-3 py-2 rounded-2xl active-press cursor-pointer shadow-2xs group transition-all"
               >
                 <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="w-7 h-7 rounded-xl bg-[#FF6B2C]/10 text-[#FF6B2C] flex items-center justify-center shrink-0">
+                  <div className="w-7 h-7 rounded-xl bg-[#F94001]/10 text-[#F94001] flex items-center justify-center shrink-0">
                     <Calendar className="w-3.5 h-3.5" />
                   </div>
                   <div className="text-left min-w-0">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#A3A099] block leading-none">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#5F6368] block leading-none">
                       Booking Date
                     </span>
-                    <span className="text-[12.5px] font-extrabold text-[#171717] truncate block leading-tight mt-0.5">
+                    <span className="text-[12.5px] font-extrabold text-[#021526] truncate block leading-tight mt-0.5">
                       {selectedBookingDate === 'Today'
                         ? 'Today (28 Aug 2026)'
                         : selectedBookingDate === 'Yesterday'
@@ -331,7 +320,7 @@ export const PaymentsScreen: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1 bg-[#F7F7F5] group-hover:bg-[#FF6B2C]/10 group-hover:text-[#FF6B2C] text-[#777570] px-2.5 py-1 rounded-xl text-[11px] font-bold shrink-0 transition-colors">
+                <div className="flex items-center gap-1 bg-[#F3F4F4] group-hover:bg-[#F94001]/10 group-hover:text-[#F94001] text-[#5F6368] px-2.5 py-1 rounded-xl text-[11px] font-bold shrink-0 transition-colors">
                   <Calendar className="w-3 h-3" />
                   <span>Change Date</span>
                   <ChevronDown className="w-3 h-3" />
@@ -340,10 +329,10 @@ export const PaymentsScreen: React.FC = () => {
             </div>
 
             {/* Daily Amount Hero Card */}
-            <div className="bg-[#171717] text-white rounded-3xl p-4 shadow-sm space-y-3">
+            <div className="bg-[#021526] text-white rounded-3xl p-4 shadow-sm space-y-3">
               {/* Row 1: Label & Count Pill */}
               <div className="flex items-center justify-between gap-2">
-                <span className="text-[10.5px] font-bold uppercase tracking-wider text-[#A3A099] truncate">
+                <span className="text-[10.5px] font-bold uppercase tracking-wider text-[#5F6368] truncate">
                   {selectedBookingDate === 'All'
                     ? 'All-Time Booking Revenue'
                     : selectedBookingDate === 'Today'
@@ -352,7 +341,7 @@ export const PaymentsScreen: React.FC = () => {
                     ? 'Yesterday Booking Revenue'
                     : `${selectedBookingDate} Revenue`}
                 </span>
-                <span className="text-[10.5px] text-[#2FA66A] font-bold bg-[#2FA66A]/20 px-2 py-0.5 rounded-full whitespace-nowrap">
+                <span className="text-[10.5px] text-[#16A34A] font-bold bg-[#16A34A]/20 px-2 py-0.5 rounded-full whitespace-nowrap">
                   {activeBookings.length} {activeBookings.length === 1 ? 'booking' : 'bookings'}
                 </span>
               </div>
@@ -368,12 +357,12 @@ export const PaymentsScreen: React.FC = () => {
               <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/10">
                 <div className="bg-white/10 rounded-2xl p-2.5 border border-white/5 space-y-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-[#A3A099] font-medium">
+                    <span className="text-[10px] text-[#5F6368] font-medium">
                       {selectedBookingDate === 'Today' ? 'Daily Paid' : selectedBookingDate === 'All' ? 'Total Paid' : 'Paid Amount'}
                     </span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#2FA66A] shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A] shrink-0" />
                   </div>
-                  <div className="text-[16px] font-extrabold text-[#2FA66A] leading-tight">
+                  <div className="text-[16px] font-extrabold text-[#16A34A] leading-tight">
                     ₹{bookingPaidAmount.toLocaleString('en-IN')}
                   </div>
                   <div className="text-[9.5px] text-white/65 font-medium truncate">
@@ -384,10 +373,10 @@ export const PaymentsScreen: React.FC = () => {
 
                 <div className="bg-white/10 rounded-2xl p-2.5 border border-white/5 space-y-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-[#A3A099] font-medium">Due Balance</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#E7A72F] shrink-0" />
+                    <span className="text-[10px] text-[#5F6368] font-medium">Due Balance</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] shrink-0" />
                   </div>
-                  <div className="text-[16px] font-extrabold text-[#E7A72F] leading-tight">
+                  <div className="text-[16px] font-extrabold text-[#F59E0B] leading-tight">
                     ₹{bookingPendingAmount.toLocaleString('en-IN')}
                   </div>
                   <div className="text-[9.5px] text-white/65 font-medium truncate">
@@ -398,19 +387,19 @@ export const PaymentsScreen: React.FC = () => {
             </div>
 
             {/* Search Bar */}
-            <div className="relative flex items-center bg-[#F7F7F5] border border-[#E8E6E1] rounded-2xl px-3 py-2 shadow-2xs">
-              <Search className="w-3.5 h-3.5 text-[#777570] mr-2 shrink-0" />
+            <div className="relative flex items-center bg-[#F3F4F4] border border-[#E5E7EB] rounded-2xl px-3 py-2 shadow-2xs">
+              <Search className="w-3.5 h-3.5 text-[#5F6368] mr-2 shrink-0" />
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search booking ID, customer, turf..."
-                className="w-full text-[12.5px] font-medium text-[#171717] bg-transparent focus:outline-none placeholder-[#A3A099]"
+                className="w-full text-[12.5px] font-medium text-[#021526] bg-transparent focus:outline-none placeholder-[#5F6368]"
               />
               {searchTerm && (
                 <button
                   onClick={() => setSearchTerm('')}
-                  className="text-[10.5px] font-bold text-[#777570] hover:text-[#171717] px-1 shrink-0"
+                  className="text-[10.5px] font-bold text-[#5F6368] hover:text-[#021526] px-1 shrink-0"
                 >
                   Clear
                 </button>
@@ -429,8 +418,8 @@ export const PaymentsScreen: React.FC = () => {
                     }}
                     className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all active-press cursor-pointer whitespace-nowrap ${
                       statusFilter === f
-                        ? 'bg-[#171717] text-white'
-                        : 'bg-white text-[#777570] border border-[#E8E6E1]'
+                        ? 'bg-[#021526] text-white'
+                        : 'bg-white text-[#5F6368] border border-[#E5E7EB]'
                     }`}
                   >
                     {f}
@@ -444,12 +433,12 @@ export const PaymentsScreen: React.FC = () => {
                     haptics.tap();
                     setShowBookingExportMenu(!showBookingExportMenu);
                   }}
-                  className="h-7 px-2.5 rounded-xl bg-white border border-[#E8E6E1] text-[#171717] text-[11px] font-bold flex items-center gap-1 shadow-2xs hover:border-[#FF6B2C] active-press cursor-pointer shrink-0 whitespace-nowrap"
+                  className="h-7 px-2.5 rounded-xl bg-white border border-[#E5E7EB] text-[#021526] text-[11px] font-bold flex items-center gap-1 shadow-2xs hover:border-[#F94001] active-press cursor-pointer shrink-0 whitespace-nowrap"
                   title="Export booking payment transactions"
                 >
-                  <Download className="w-3 h-3 text-[#FF6B2C]" />
+                  <Download className="w-3 h-3 text-[#F94001]" />
                   <span>Export</span>
-                  <ChevronDown className="w-3 h-3 text-[#777570]" />
+                  <ChevronDown className="w-3 h-3 text-[#5F6368]" />
                 </button>
 
                 {/* Format Dropdown Menu */}
@@ -459,27 +448,27 @@ export const PaymentsScreen: React.FC = () => {
                       className="fixed inset-0 z-40"
                       onClick={() => setShowBookingExportMenu(false)}
                     />
-                    <div className="absolute right-0 top-8 z-50 w-44 bg-white rounded-2xl shadow-xl border border-[#E8E6E1] p-1.5 space-y-1">
+                    <div className="absolute right-0 top-8 z-50 w-44 bg-white rounded-2xl shadow-xl border border-[#E5E7EB] p-1.5 space-y-1">
                       <button
                         onClick={() => handleExportBookingPayments('pdf')}
-                        className="w-full text-left px-2.5 py-1.5 rounded-xl text-[11.5px] font-bold text-[#171717] hover:bg-[#FF6B2C]/10 hover:text-[#FF6B2C] flex items-center justify-between transition-colors cursor-pointer"
+                        className="w-full text-left px-2.5 py-1.5 rounded-xl text-[11.5px] font-bold text-[#021526] hover:bg-[#F94001]/10 hover:text-[#F94001] flex items-center justify-between transition-colors cursor-pointer"
                       >
                         <span>PDF Report</span>
-                        <span className="text-[9.5px] bg-[#D94B4B]/10 text-[#D94B4B] px-1.5 py-0.5 rounded font-mono">.pdf</span>
+                        <span className="text-[9.5px] bg-[#DC2626]/10 text-[#DC2626] px-1.5 py-0.5 rounded font-mono">.pdf</span>
                       </button>
                       <button
                         onClick={() => handleExportBookingPayments('excel')}
-                        className="w-full text-left px-2.5 py-1.5 rounded-xl text-[11.5px] font-bold text-[#171717] hover:bg-[#2FA66A]/10 hover:text-[#2FA66A] flex items-center justify-between transition-colors cursor-pointer"
+                        className="w-full text-left px-2.5 py-1.5 rounded-xl text-[11.5px] font-bold text-[#021526] hover:bg-[#16A34A]/10 hover:text-[#16A34A] flex items-center justify-between transition-colors cursor-pointer"
                       >
                         <span>Excel Spreadsheet</span>
-                        <span className="text-[9.5px] bg-[#2FA66A]/10 text-[#2FA66A] px-1.5 py-0.5 rounded font-mono">.xlsx</span>
+                        <span className="text-[9.5px] bg-[#16A34A]/10 text-[#16A34A] px-1.5 py-0.5 rounded font-mono">.xlsx</span>
                       </button>
                       <button
                         onClick={() => handleExportBookingPayments('csv')}
-                        className="w-full text-left px-2.5 py-1.5 rounded-xl text-[11.5px] font-bold text-[#171717] hover:bg-[#F1F0EC] flex items-center justify-between transition-colors cursor-pointer"
+                        className="w-full text-left px-2.5 py-1.5 rounded-xl text-[11.5px] font-bold text-[#021526] hover:bg-[#F3F4F4] flex items-center justify-between transition-colors cursor-pointer"
                       >
                         <span>CSV Data File</span>
-                        <span className="text-[9.5px] bg-[#F1F0EC] text-[#777570] px-1.5 py-0.5 rounded font-mono">.csv</span>
+                        <span className="text-[9.5px] bg-[#F3F4F4] text-[#5F6368] px-1.5 py-0.5 rounded font-mono">.csv</span>
                       </button>
                     </div>
                   </>
@@ -490,12 +479,12 @@ export const PaymentsScreen: React.FC = () => {
             {/* Booking Transactions List */}
             <div className="space-y-2.5">
               {filteredBookings.length === 0 ? (
-                <div className="bg-white rounded-2xl p-7 border border-[#E8E6E1] text-center space-y-1.5 shadow-2xs">
-                  <div className="w-9 h-9 rounded-full bg-[#F1F0EC] flex items-center justify-center mx-auto text-[#777570]">
+                <div className="bg-white rounded-2xl p-7 border border-[#E5E7EB] text-center space-y-1.5 shadow-2xs">
+                  <div className="w-9 h-9 rounded-full bg-[#F3F4F4] flex items-center justify-center mx-auto text-[#5F6368]">
                     <Wallet className="w-4 h-4" />
                   </div>
-                  <h3 className="text-[13.5px] font-bold text-[#171717]">No booking payments</h3>
-                  <p className="text-[11.5px] text-[#777570]">
+                  <h3 className="text-[13.5px] font-bold text-[#021526]">No booking payments</h3>
+                  <p className="text-[11.5px] text-[#5F6368]">
                     No transactions match your current search or filter.
                   </p>
                 </div>
@@ -503,31 +492,31 @@ export const PaymentsScreen: React.FC = () => {
                 filteredBookings.map((b) => (
                   <div
                     key={b.id}
-                    className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-2xs space-y-2 hover:border-[#171717]/25 transition-all"
+                    className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-2xs space-y-2 hover:border-[#021526]/25 transition-all"
                   >
                     {/* Top Metadata & Status Badge Row */}
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
-                        <span className="text-[11.5px] font-mono font-extrabold text-[#171717] whitespace-nowrap">
+                        <span className="text-[11.5px] font-mono font-extrabold text-[#021526] whitespace-nowrap">
                           {b.id}
                         </span>
                         <span className="w-1 h-1 rounded-full bg-[#DCDAD2] shrink-0" />
-                        <span className="text-[11px] text-[#777570] font-medium whitespace-nowrap">
+                        <span className="text-[11px] text-[#5F6368] font-medium whitespace-nowrap">
                           {b.date}
                         </span>
                         <span className="w-1 h-1 rounded-full bg-[#DCDAD2] shrink-0" />
-                        <span className="text-[10px] font-bold text-[#FF6B2C] bg-[#FF6B2C]/10 px-1.5 py-0.5 rounded whitespace-nowrap">
+                        <span className="text-[10px] font-bold text-[#F94001] bg-[#F94001]/10 px-1.5 py-0.5 rounded whitespace-nowrap">
                           {b.timeSlot}
                         </span>
                       </div>
 
                       {b.balanceAmount === 0 ? (
-                        <span className="shrink-0 whitespace-nowrap px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#2FA66A]/15 text-[#1E774A] flex items-center gap-1">
+                        <span className="shrink-0 whitespace-nowrap px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#16A34A]/15 text-[#15803D] flex items-center gap-1">
                           <CheckCircle2 className="w-3 h-3" />
                           <span>Paid</span>
                         </span>
                       ) : (
-                        <span className="shrink-0 whitespace-nowrap px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#E7A72F]/15 text-[#B87C0D] flex items-center gap-1">
+                        <span className="shrink-0 whitespace-nowrap px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#F59E0B]/15 text-[#B87C0D] flex items-center gap-1">
                           <Clock className="w-3 h-3" />
                           <span>Due ₹{b.balanceAmount.toLocaleString('en-IN')}</span>
                         </span>
@@ -536,29 +525,29 @@ export const PaymentsScreen: React.FC = () => {
 
                     {/* Customer & Court Details */}
                     <div>
-                      <h3 className="text-[14px] font-bold text-[#171717] leading-snug">
+                      <h3 className="text-[14px] font-bold text-[#021526] leading-snug">
                         {b.customerName}
                       </h3>
-                      <p className="text-[11.5px] text-[#777570] mt-0.5">
+                      <p className="text-[11.5px] text-[#5F6368] mt-0.5">
                         {b.courtName} · {b.sport} · Total ₹{b.totalAmount.toLocaleString('en-IN')}
                       </p>
                     </div>
 
                     {/* Bottom Payment Status & Action */}
-                    <div className="pt-2 border-t border-[#F1F0EC] flex items-center justify-between gap-2">
+                    <div className="pt-2 border-t border-[#F3F4F4] flex items-center justify-between gap-2">
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="text-[12px] font-bold text-[#171717] whitespace-nowrap">
+                          <span className="text-[12px] font-bold text-[#021526] whitespace-nowrap">
                             Paid: ₹{b.paidAmount.toLocaleString('en-IN')}
                           </span>
                           {b.paymentMethod && (
-                            <span className="text-[9px] font-bold text-[#777570] bg-[#F1F0EC] px-1.5 py-0.2 rounded uppercase whitespace-nowrap">
+                            <span className="text-[9px] font-bold text-[#5F6368] bg-[#F3F4F4] px-1.5 py-0.2 rounded uppercase whitespace-nowrap">
                               {b.paymentMethod}
                             </span>
                           )}
                         </div>
                         {b.balanceAmount > 0 && (
-                          <span className="text-[11px] text-[#E7A72F] font-bold block mt-0.5 whitespace-nowrap">
+                          <span className="text-[11px] text-[#F59E0B] font-bold block mt-0.5 whitespace-nowrap">
                             Balance Due: ₹{b.balanceAmount.toLocaleString('en-IN')}
                           </span>
                         )}
@@ -567,7 +556,7 @@ export const PaymentsScreen: React.FC = () => {
                       {b.balanceAmount > 0 ? (
                         <button
                           onClick={() => handleCollect(b.id)}
-                          className="shrink-0 px-3 py-1.5 rounded-xl bg-[#FF6B2C] text-white text-[11.5px] font-bold flex items-center gap-1 shadow-2xs hover:bg-[#e85b1e] active-press cursor-pointer whitespace-nowrap"
+                          className="shrink-0 px-3 py-1.5 rounded-xl bg-[#F94001] text-white text-[11.5px] font-bold flex items-center gap-1 shadow-2xs hover:bg-[#D93600] active-press cursor-pointer whitespace-nowrap"
                         >
                           <span>Collect</span>
                           <ChevronRight className="w-3.5 h-3.5" />
@@ -575,7 +564,7 @@ export const PaymentsScreen: React.FC = () => {
                       ) : (
                         <button
                           onClick={() => handleView(b.id)}
-                          className="shrink-0 px-3 py-1.5 rounded-xl bg-[#F1F0EC] text-[#171717] text-[11.5px] font-bold flex items-center gap-1 hover:bg-[#E8E6E1] active-press cursor-pointer whitespace-nowrap"
+                          className="shrink-0 px-3 py-1.5 rounded-xl bg-[#F3F4F4] text-[#021526] text-[11.5px] font-bold flex items-center gap-1 hover:bg-[#E5E7EB] active-press cursor-pointer whitespace-nowrap"
                         >
                           <span>View</span>
                           <ChevronRight className="w-3.5 h-3.5" />
@@ -606,17 +595,17 @@ export const PaymentsScreen: React.FC = () => {
                   haptics.tap();
                   setIsSettlementPickerOpen(true);
                 }}
-                className="w-full flex items-center justify-between bg-white border border-[#E8E6E1] hover:border-[#2FA66A] px-3 py-2 rounded-2xl active-press cursor-pointer shadow-2xs group transition-all"
+                className="w-full flex items-center justify-between bg-white border border-[#E5E7EB] hover:border-[#16A34A] px-3 py-2 rounded-2xl active-press cursor-pointer shadow-2xs group transition-all"
               >
                 <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="w-7 h-7 rounded-xl bg-[#2FA66A]/10 text-[#2FA66A] flex items-center justify-center shrink-0">
+                  <div className="w-7 h-7 rounded-xl bg-[#16A34A]/10 text-[#16A34A] flex items-center justify-center shrink-0">
                     <Calendar className="w-3.5 h-3.5" />
                   </div>
                   <div className="text-left min-w-0">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#A3A099] block leading-none">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#5F6368] block leading-none">
                       Settlement Month
                     </span>
-                    <span className="text-[12.5px] font-extrabold text-[#171717] truncate block leading-tight mt-0.5">
+                    <span className="text-[12.5px] font-extrabold text-[#021526] truncate block leading-tight mt-0.5">
                       {selectedSettlementMonth === 'All'
                         ? 'All Settlements'
                         : `Month of ${selectedSettlementMonth}`}
@@ -624,7 +613,7 @@ export const PaymentsScreen: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1 bg-[#F7F7F5] group-hover:bg-[#2FA66A]/10 group-hover:text-[#2FA66A] text-[#777570] px-2.5 py-1 rounded-xl text-[11px] font-bold shrink-0 transition-colors">
+                <div className="flex items-center gap-1 bg-[#F3F4F4] group-hover:bg-[#16A34A]/10 group-hover:text-[#16A34A] text-[#5F6368] px-2.5 py-1 rounded-xl text-[11px] font-bold shrink-0 transition-colors">
                   <Calendar className="w-3 h-3" />
                   <span>Change Month</span>
                   <ChevronDown className="w-3 h-3" />
@@ -633,17 +622,17 @@ export const PaymentsScreen: React.FC = () => {
             </div>
 
             {/* Master Settlement Hero Card */}
-            <div className="bg-[#171717] text-white rounded-3xl p-4 shadow-sm space-y-3">
+            <div className="bg-[#021526] text-white rounded-3xl p-4 shadow-sm space-y-3">
               <div className="flex items-center justify-between gap-2">
                 <div className="min-w-0">
-                  <span className="text-[10.5px] font-bold uppercase tracking-wider text-[#A3A099] block">
+                  <span className="text-[10.5px] font-bold uppercase tracking-wider text-[#5F6368] block">
                     Settlement Overview {selectedSettlementMonth !== 'All' ? `(${selectedSettlementMonth})` : ''}
                   </span>
                   <p className="text-[11.5px] text-white/70 mt-0.5 truncate">
                     Direct payouts to {paymentSettings.bankName}
                   </p>
                 </div>
-                <span className="shrink-0 px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-[#2FA66A]/20 text-[#2FA66A] border border-[#2FA66A]/30 flex items-center gap-1 whitespace-nowrap">
+                <span className="shrink-0 px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-[#16A34A]/20 text-[#16A34A] border border-[#16A34A]/30 flex items-center gap-1 whitespace-nowrap">
                   <ShieldCheck className="w-3 h-3" />
                   <span>Verified</span>
                 </span>
@@ -654,13 +643,13 @@ export const PaymentsScreen: React.FC = () => {
                 {/* 1. Amount Settled to Bank */}
                 <div className="bg-white/10 rounded-2xl p-2.5 border border-white/10 flex flex-col justify-between space-y-2">
                   <div>
-                    <div className="flex items-center gap-1 text-[#2FA66A]">
+                    <div className="flex items-center gap-1 text-[#16A34A]">
                       <ArrowDownLeft className="w-3.5 h-3.5 stroke-[2.5]" />
-                      <span className="text-[10px] text-[#A3A099] font-semibold whitespace-nowrap">
+                      <span className="text-[10px] text-[#5F6368] font-semibold whitespace-nowrap">
                         Settled to Bank
                       </span>
                     </div>
-                    <div className="text-[19px] font-extrabold text-[#2FA66A] mt-1 leading-tight">
+                    <div className="text-[19px] font-extrabold text-[#16A34A] mt-1 leading-tight">
                       ₹{totalSettledAmount.toLocaleString('en-IN')}
                     </div>
                   </div>
@@ -672,13 +661,13 @@ export const PaymentsScreen: React.FC = () => {
                 {/* 2. Pending Balance */}
                 <div className="bg-white/10 rounded-2xl p-2.5 border border-white/10 flex flex-col justify-between space-y-2">
                   <div>
-                    <div className="flex items-center gap-1 text-[#E7A72F]">
+                    <div className="flex items-center gap-1 text-[#F59E0B]">
                       <Clock className="w-3.5 h-3.5 stroke-[2.5]" />
-                      <span className="text-[10px] text-[#A3A099] font-semibold whitespace-nowrap">
+                      <span className="text-[10px] text-[#5F6368] font-semibold whitespace-nowrap">
                         Pending Balance
                       </span>
                     </div>
-                    <div className="text-[19px] font-extrabold text-[#E7A72F] mt-1 leading-tight">
+                    <div className="text-[19px] font-extrabold text-[#F59E0B] mt-1 leading-tight">
                       ₹{pendingSettlementBalance.toLocaleString('en-IN')}
                     </div>
                   </div>
@@ -692,10 +681,10 @@ export const PaymentsScreen: React.FC = () => {
               <div className="bg-white/5 rounded-2xl p-2.5 border border-white/10 flex items-center justify-between gap-2">
                 <div className="min-w-0 space-y-0.5">
                   <div className="flex items-center gap-1 text-white">
-                    <Zap className="w-3.5 h-3.5 text-[#FF6B2C] fill-[#FF6B2C] shrink-0" />
+                    <Zap className="w-3.5 h-3.5 text-[#F94001] fill-[#F94001] shrink-0" />
                     <span className="text-[11.5px] font-bold truncate">Instant Settlement</span>
                   </div>
-                  <p className="text-[10px] text-[#A3A099] truncate">
+                  <p className="text-[10px] text-[#5F6368] truncate">
                     Settle ₹{pendingSettlementBalance.toLocaleString('en-IN')} now via IMPS
                   </p>
                 </div>
@@ -703,7 +692,7 @@ export const PaymentsScreen: React.FC = () => {
                 <button
                   onClick={handleInstantPayout}
                   disabled={isSettlingInstant}
-                  className="shrink-0 px-2.5 py-1.5 rounded-xl bg-[#FF6B2C] text-white text-[11px] font-extrabold flex items-center gap-1 shadow-2xs hover:bg-[#e85b1e] active-press cursor-pointer disabled:opacity-50 whitespace-nowrap"
+                  className="shrink-0 px-2.5 py-1.5 rounded-xl bg-[#F94001] text-white text-[11px] font-extrabold flex items-center gap-1 shadow-2xs hover:bg-[#D93600] active-press cursor-pointer disabled:opacity-50 whitespace-nowrap"
                 >
                   <span>{isSettlingInstant ? 'Processing...' : 'Settle Now'}</span>
                   <ArrowUpRight className="w-3 h-3" />
@@ -712,17 +701,17 @@ export const PaymentsScreen: React.FC = () => {
             </div>
 
             {/* Linked Settlement Account Information Card */}
-            <div className="bg-white rounded-2xl p-3 border border-[#E8E6E1] shadow-2xs space-y-2">
+            <div className="bg-white rounded-2xl p-3 border border-[#E5E7EB] shadow-2xs space-y-2">
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2 min-w-0">
-                  <div className="w-7 h-7 rounded-xl bg-[#171717] text-white flex items-center justify-center shrink-0">
+                  <div className="w-7 h-7 rounded-xl bg-[#021526] text-white flex items-center justify-center shrink-0">
                     <Building2 className="w-3.5 h-3.5" />
                   </div>
                   <div className="min-w-0">
-                    <h3 className="text-[13px] font-bold text-[#171717] truncate">
+                    <h3 className="text-[13px] font-bold text-[#021526] truncate">
                       {paymentSettings.bankName}
                     </h3>
-                    <p className="text-[10.5px] text-[#777570] font-mono truncate">
+                    <p className="text-[10.5px] text-[#5F6368] font-mono truncate">
                       A/c {paymentSettings.accountNumberMasked} · IFSC: {paymentSettings.ifscCode}
                     </p>
                   </div>
@@ -733,22 +722,22 @@ export const PaymentsScreen: React.FC = () => {
                     haptics.tap();
                     navigateTo('payment_settings');
                   }}
-                  className="shrink-0 text-[11px] font-bold text-[#FF6B2C] hover:underline whitespace-nowrap"
+                  className="shrink-0 text-[11px] font-bold text-[#F94001] hover:underline whitespace-nowrap"
                 >
                   Edit
                 </button>
               </div>
 
-              <div className="pt-2 border-t border-[#F1F0EC] grid grid-cols-2 gap-2 text-[11px]">
-                <div className="bg-[#F7F7F5] rounded-xl p-2">
-                  <span className="text-[#777570] block text-[9.5px]">Payout Cycle</span>
-                  <strong className="text-[#171717] text-[11px] block truncate">
+              <div className="pt-2 border-t border-[#F3F4F4] grid grid-cols-2 gap-2 text-[11px]">
+                <div className="bg-[#F3F4F4] rounded-xl p-2">
+                  <span className="text-[#5F6368] block text-[9.5px]">Payout Cycle</span>
+                  <strong className="text-[#021526] text-[11px] block truncate">
                     {paymentSettings.payoutFrequency} (T+0)
                   </strong>
                 </div>
-                <div className="bg-[#F7F7F5] rounded-xl p-2">
-                  <span className="text-[#777570] block text-[9.5px]">Linked UPI ID</span>
-                  <strong className="text-[#171717] text-[11px] block truncate">
+                <div className="bg-[#F3F4F4] rounded-xl p-2">
+                  <span className="text-[#5F6368] block text-[9.5px]">Linked UPI ID</span>
+                  <strong className="text-[#021526] text-[11px] block truncate">
                     {paymentSettings.upiId}
                   </strong>
                 </div>
@@ -759,10 +748,10 @@ export const PaymentsScreen: React.FC = () => {
             <div className="space-y-2">
               <div className="flex items-center justify-between pt-0.5">
                 <div>
-                  <h2 className="text-[13.5px] font-bold text-[#171717]">
+                  <h2 className="text-[13.5px] font-bold text-[#021526]">
                     Bank Settlement History
                   </h2>
-                  <span className="text-[11px] text-[#777570] font-medium">
+                  <span className="text-[11px] text-[#5F6368] font-medium">
                     {filteredSettlements.length} {filteredSettlements.length === 1 ? 'payout' : 'payouts'} · {selectedSettlementMonth}
                   </span>
                 </div>
@@ -773,12 +762,12 @@ export const PaymentsScreen: React.FC = () => {
                       haptics.tap();
                       setShowSettlementExportMenu(!showSettlementExportMenu);
                     }}
-                    className="h-7 px-2.5 rounded-xl bg-white border border-[#E8E6E1] text-[#171717] text-[11px] font-bold flex items-center gap-1 shadow-2xs hover:border-[#2FA66A] active-press cursor-pointer shrink-0 whitespace-nowrap"
+                    className="h-7 px-2.5 rounded-xl bg-white border border-[#E5E7EB] text-[#021526] text-[11px] font-bold flex items-center gap-1 shadow-2xs hover:border-[#16A34A] active-press cursor-pointer shrink-0 whitespace-nowrap"
                     title="Export settlement statement (PDF / Excel / CSV)"
                   >
-                    <Download className="w-3 h-3 text-[#2FA66A]" />
+                    <Download className="w-3 h-3 text-[#16A34A]" />
                     <span>Export Statement</span>
-                    <ChevronDown className="w-3 h-3 text-[#777570]" />
+                    <ChevronDown className="w-3 h-3 text-[#5F6368]" />
                   </button>
 
                   {/* Format Dropdown Menu */}
@@ -788,27 +777,27 @@ export const PaymentsScreen: React.FC = () => {
                         className="fixed inset-0 z-40"
                         onClick={() => setShowSettlementExportMenu(false)}
                       />
-                      <div className="absolute right-0 top-8 z-50 w-44 bg-white rounded-2xl shadow-xl border border-[#E8E6E1] p-1.5 space-y-1">
+                      <div className="absolute right-0 top-8 z-50 w-44 bg-white rounded-2xl shadow-xl border border-[#E5E7EB] p-1.5 space-y-1">
                         <button
                           onClick={() => handleExportSettlements('pdf')}
-                          className="w-full text-left px-2.5 py-1.5 rounded-xl text-[11.5px] font-bold text-[#171717] hover:bg-[#D94B4B]/10 hover:text-[#D94B4B] flex items-center justify-between transition-colors cursor-pointer"
+                          className="w-full text-left px-2.5 py-1.5 rounded-xl text-[11.5px] font-bold text-[#021526] hover:bg-[#DC2626]/10 hover:text-[#DC2626] flex items-center justify-between transition-colors cursor-pointer"
                         >
                           <span>PDF Statement</span>
-                          <span className="text-[9.5px] bg-[#D94B4B]/10 text-[#D94B4B] px-1.5 py-0.5 rounded font-mono">.pdf</span>
+                          <span className="text-[9.5px] bg-[#DC2626]/10 text-[#DC2626] px-1.5 py-0.5 rounded font-mono">.pdf</span>
                         </button>
                         <button
                           onClick={() => handleExportSettlements('excel')}
-                          className="w-full text-left px-2.5 py-1.5 rounded-xl text-[11.5px] font-bold text-[#171717] hover:bg-[#2FA66A]/10 hover:text-[#2FA66A] flex items-center justify-between transition-colors cursor-pointer"
+                          className="w-full text-left px-2.5 py-1.5 rounded-xl text-[11.5px] font-bold text-[#021526] hover:bg-[#16A34A]/10 hover:text-[#16A34A] flex items-center justify-between transition-colors cursor-pointer"
                         >
                           <span>Excel Sheet</span>
-                          <span className="text-[9.5px] bg-[#2FA66A]/10 text-[#2FA66A] px-1.5 py-0.5 rounded font-mono">.xlsx</span>
+                          <span className="text-[9.5px] bg-[#16A34A]/10 text-[#16A34A] px-1.5 py-0.5 rounded font-mono">.xlsx</span>
                         </button>
                         <button
                           onClick={() => handleExportSettlements('csv')}
-                          className="w-full text-left px-2.5 py-1.5 rounded-xl text-[11.5px] font-bold text-[#171717] hover:bg-[#F1F0EC] flex items-center justify-between transition-colors cursor-pointer"
+                          className="w-full text-left px-2.5 py-1.5 rounded-xl text-[11.5px] font-bold text-[#021526] hover:bg-[#F3F4F4] flex items-center justify-between transition-colors cursor-pointer"
                         >
                           <span>CSV Statement</span>
-                          <span className="text-[9.5px] bg-[#F1F0EC] text-[#777570] px-1.5 py-0.5 rounded font-mono">.csv</span>
+                          <span className="text-[9.5px] bg-[#F3F4F4] text-[#5F6368] px-1.5 py-0.5 rounded font-mono">.csv</span>
                         </button>
                       </div>
                     </>
@@ -818,9 +807,9 @@ export const PaymentsScreen: React.FC = () => {
 
               <div className="space-y-2">
                 {filteredSettlements.length === 0 ? (
-                  <div className="bg-white rounded-2xl p-6 border border-[#E8E6E1] text-center space-y-1">
-                    <p className="text-[13px] font-bold text-[#171717]">No payouts for this period</p>
-                    <p className="text-[11.5px] text-[#777570]">Try selecting another month or &quot;All&quot;</p>
+                  <div className="bg-white rounded-2xl p-6 border border-[#E5E7EB] text-center space-y-1">
+                    <p className="text-[13px] font-bold text-[#021526]">No payouts for this period</p>
+                    <p className="text-[11.5px] text-[#5F6368]">Try selecting another month or &quot;All&quot;</p>
                   </div>
                 ) : (
                   filteredSettlements.map((settlement) => {
@@ -828,7 +817,7 @@ export const PaymentsScreen: React.FC = () => {
                   return (
                     <div
                       key={settlement.id}
-                      className="bg-white rounded-2xl p-3 border border-[#E8E6E1] shadow-2xs space-y-2 hover:border-[#171717]/25 transition-all"
+                      className="bg-white rounded-2xl p-3 border border-[#E5E7EB] shadow-2xs space-y-2 hover:border-[#021526]/25 transition-all"
                     >
                       {/* Clickable Card Header */}
                       <div
@@ -841,17 +830,17 @@ export const PaymentsScreen: React.FC = () => {
                         {/* Top Meta: Status Badge + Date/Time + UTR */}
                         <div className="flex items-center justify-between gap-2">
                           <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
-                            <span className="shrink-0 whitespace-nowrap px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-[#2FA66A]/15 text-[#1E774A] flex items-center gap-1">
+                            <span className="shrink-0 whitespace-nowrap px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-[#16A34A]/15 text-[#15803D] flex items-center gap-1">
                               <CheckCircle2 className="w-2.5 h-2.5" />
                               <span>Settled to Bank</span>
                             </span>
-                            <span className="text-[10.5px] text-[#777570] whitespace-nowrap">
+                            <span className="text-[10.5px] text-[#5F6368] whitespace-nowrap">
                               {settlement.date} · {settlement.time}
                             </span>
                           </div>
 
-                          <div className="flex items-center gap-1 text-[#777570] shrink-0">
-                            <span className="text-[10px] font-mono font-bold text-[#777570] whitespace-nowrap">
+                          <div className="flex items-center gap-1 text-[#5F6368] shrink-0">
+                            <span className="text-[10px] font-mono font-bold text-[#5F6368] whitespace-nowrap">
                               UTR: {settlement.utrNumber.slice(0, 7)}...
                             </span>
                             {isExpanded ? (
@@ -864,10 +853,10 @@ export const PaymentsScreen: React.FC = () => {
 
                         {/* Amount & Period */}
                         <div>
-                          <div className="text-[16px] font-extrabold text-[#171717] leading-tight">
+                          <div className="text-[16px] font-extrabold text-[#021526] leading-tight">
                             ₹{settlement.settledAmount.toLocaleString('en-IN')}
                           </div>
-                          <p className="text-[11px] text-[#777570] mt-0.5">
+                          <p className="text-[11px] text-[#5F6368] mt-0.5">
                             {settlement.period} · {settlement.payoutMode}
                           </p>
                         </div>
@@ -875,30 +864,30 @@ export const PaymentsScreen: React.FC = () => {
 
                       {/* Expandable Breakdown Details */}
                       {isExpanded && (
-                        <div className="pt-2 border-t border-[#F1F0EC] space-y-1.5 text-[11px] bg-[#F7F7F5] p-2.5 rounded-xl">
+                        <div className="pt-2 border-t border-[#F3F4F4] space-y-1.5 text-[11px] bg-[#F3F4F4] p-2.5 rounded-xl">
                           <div className="flex justify-between">
-                            <span className="text-[#777570]">Full UTR Ref:</span>
-                            <span className="font-mono font-bold text-[#171717]">
+                            <span className="text-[#5F6368]">Full UTR Ref:</span>
+                            <span className="font-mono font-bold text-[#021526]">
                               {settlement.utrNumber}
                             </span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-[#777570]">Gross Booking Volume:</span>
-                            <span className="font-bold text-[#171717]">
+                            <span className="text-[#5F6368]">Gross Booking Volume:</span>
+                            <span className="font-bold text-[#021526]">
                               ₹{settlement.grossAmount.toLocaleString('en-IN')}
                             </span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-[#777570]">Gateway Deductions:</span>
-                            <span className="font-bold text-[#2FA66A]">
+                            <span className="text-[#5F6368]">Gateway Deductions:</span>
+                            <span className="font-bold text-[#16A34A]">
                               ₹{settlement.feeDeductions.toLocaleString('en-IN')} (0% fee)
                             </span>
                           </div>
-                          <div className="flex justify-between pt-1 border-t border-[#E8E6E1]">
-                            <span className="font-bold text-[#171717]">
+                          <div className="flex justify-between pt-1 border-t border-[#E5E7EB]">
+                            <span className="font-bold text-[#021526]">
                               Net to {settlement.bankName}:
                             </span>
-                            <span className="font-extrabold text-[#2FA66A]">
+                            <span className="font-extrabold text-[#16A34A]">
                               ₹{settlement.settledAmount.toLocaleString('en-IN')}
                             </span>
                           </div>

@@ -210,7 +210,7 @@ export const HelpFAQScreen: React.FC = () => {
             haptics.tap();
             goBack();
           }}
-          className="flex items-center gap-1.5 text-[13px] font-bold text-[#FF6B2C] active-press cursor-pointer"
+          className="flex items-center gap-1.5 text-[13px] font-bold text-[#F94001] active-press cursor-pointer"
         >
           <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
           <span>Back</span>
@@ -221,7 +221,7 @@ export const HelpFAQScreen: React.FC = () => {
             haptics.tap();
             navigateTo('support');
           }}
-          className="h-8 px-3 rounded-lg bg-[#FF6B2C]/10 text-[#FF6B2C] text-[12px] font-extrabold flex items-center gap-1 active-press"
+          className="h-8 px-3 rounded-lg bg-[#F94001]/10 text-[#F94001] text-[12px] font-extrabold flex items-center gap-1 active-press"
         >
           <LifeBuoy className="w-3.5 h-3.5" />
           <span>Support Desk</span>
@@ -229,17 +229,17 @@ export const HelpFAQScreen: React.FC = () => {
       </div>
 
       {/* Main Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#E8E6E1]/70">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#E5E7EB]/70">
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#FF6B2C]/10 text-[#FF6B2C] uppercase tracking-wider">
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#F94001]/10 text-[#F94001] uppercase tracking-wider">
               Knowledge Base
             </span>
           </div>
-          <h1 className="text-[26px] font-black text-[#171717] tracking-tight mt-1">
+          <h1 className="text-[26px] font-black text-[#021526] tracking-tight mt-1">
             Help & Frequently Asked Questions
           </h1>
-          <p className="text-[13px] font-medium text-[#777570]">
+          <p className="text-[13px] font-medium text-[#5F6368]">
             Operational guides, payment settlement rules, court setups, and self-serve tutorials
           </p>
         </div>
@@ -250,18 +250,18 @@ export const HelpFAQScreen: React.FC = () => {
               haptics.tap();
               navigateTo('support');
             }}
-            className="h-10 px-4 rounded-xl bg-[#171717] hover:bg-[#2b2a28] text-white font-extrabold text-[13px] flex items-center justify-center gap-2 shadow-sm active-press cursor-pointer transition-all"
+            className="h-10 px-4 rounded-xl bg-[#021526] hover:bg-[#061D33] text-white font-extrabold text-[13px] flex items-center justify-center gap-2 shadow-sm active-press cursor-pointer transition-all"
           >
-            <LifeBuoy className="w-4 h-4 text-[#FF6B2C]" />
+            <LifeBuoy className="w-4 h-4 text-[#F94001]" />
             <span>Open Support Desk</span>
           </button>
         </div>
       </div>
 
       {/* Search Input Hero */}
-      <div className="relative bg-gradient-to-br from-[#171717] to-[#252422] rounded-3xl p-6 md:p-8 text-white shadow-sm overflow-hidden">
+      <div className="relative bg-gradient-to-br from-[#021526] to-[#252422] rounded-3xl p-6 md:p-8 text-white shadow-sm overflow-hidden">
         <div className="relative z-10 max-w-2xl">
-          <span className="text-[11px] font-extrabold tracking-wider uppercase text-[#FF6B2C] block">
+          <span className="text-[11px] font-extrabold tracking-wider uppercase text-[#F94001] block">
             Instant Answers
           </span>
           <h2 className="text-[20px] md:text-[24px] font-black mt-1">
@@ -271,19 +271,19 @@ export const HelpFAQScreen: React.FC = () => {
             Search answers on refunds, payouts, court schedules, or slot holds.
           </p>
 
-          <div className="relative flex items-center bg-white rounded-2xl px-4 py-3 shadow-md focus-within:ring-2 focus-within:ring-[#FF6B2C]">
-            <Search className="w-5 h-5 text-[#777570] mr-3 shrink-0" />
+          <div className="relative flex items-center bg-white rounded-2xl px-4 py-3 shadow-md focus-within:ring-2 focus-within:ring-[#F94001]">
+            <Search className="w-5 h-5 text-[#5F6368] mr-3 shrink-0" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search guides (e.g. UPI payout, slot timer, extend slot, rain block)..."
-              className="w-full text-[14px] font-semibold text-[#171717] bg-transparent focus:outline-none placeholder-[#A3A099]"
+              className="w-full text-[14px] font-semibold text-[#021526] bg-transparent focus:outline-none placeholder-[#5F6368]"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="p-1 rounded-full text-[#777570] hover:text-[#171717] hover:bg-[#F7F7F5] transition-colors cursor-pointer"
+                className="p-1 rounded-full text-[#5F6368] hover:text-[#021526] hover:bg-[#F3F4F4] transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -292,7 +292,7 @@ export const HelpFAQScreen: React.FC = () => {
         </div>
 
         {/* Decorative background blob */}
-        <div className="absolute right-[-40px] bottom-[-40px] w-64 h-64 rounded-full bg-[#FF6B2C]/10 blur-2xl pointer-events-none" />
+        <div className="absolute right-[-40px] bottom-[-40px] w-64 h-64 rounded-full bg-[#F94001]/10 blur-2xl pointer-events-none" />
       </div>
 
       {/* Category Filter Tabs */}
@@ -308,15 +308,15 @@ export const HelpFAQScreen: React.FC = () => {
               }}
               className={`h-9 px-4 rounded-xl text-[12.5px] font-bold whitespace-nowrap transition-all active-press cursor-pointer flex items-center gap-1.5 ${
                 isActive
-                  ? 'bg-[#171717] text-white shadow-xs'
-                  : 'bg-white text-[#55534E] hover:text-[#171717] border border-[#E8E6E1] hover:bg-[#FAF9F6]'
+                  ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 font-black shadow-2xs'
+                  : 'bg-white text-[#5F6368] hover:text-[#021526] border border-[#E5E7EB] hover:bg-[#F3F4F4]'
               }`}
             >
               <span>{cat.label}</span>
               {cat.id !== 'all' && (
                 <span
-                  className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                    isActive ? 'bg-white/20 text-white' : 'bg-[#F1F0EC] text-[#777570]'
+                  className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                    isActive ? 'bg-[#F94001]/15 text-[#F94001]' : 'bg-[#F3F4F4] text-[#5F6368]'
                   }`}
                 >
                   {FAQ_DATA.filter((f) => f.category === cat.id).length}
@@ -332,24 +332,24 @@ export const HelpFAQScreen: React.FC = () => {
         {/* Left Column: FAQ Accordion List */}
         <div className="lg:col-span-8 space-y-3">
           <div className="flex items-center justify-between pb-1">
-            <h3 className="text-[14px] font-black text-[#171717] uppercase tracking-wider">
+            <h3 className="text-[14px] font-black text-[#021526] uppercase tracking-wider">
               {activeCategory === 'all'
                 ? `All Articles & FAQs (${filteredFaqs.length})`
                 : `${categories.find((c) => c.id === activeCategory)?.label} (${filteredFaqs.length})`}
             </h3>
 
             {searchQuery && (
-              <span className="text-[12px] font-medium text-[#777570]">
-                Showing results for &ldquo;<span className="font-bold text-[#171717]">{searchQuery}</span>&rdquo;
+              <span className="text-[12px] font-medium text-[#5F6368]">
+                Showing results for &ldquo;<span className="font-bold text-[#021526]">{searchQuery}</span>&rdquo;
               </span>
             )}
           </div>
 
           {filteredFaqs.length === 0 ? (
-            <div className="bg-white rounded-3xl p-10 border border-[#E8E6E1] text-center space-y-3 shadow-2xs">
-              <HelpCircle className="w-10 h-10 text-[#A3A099] mx-auto stroke-[1.5]" />
-              <h4 className="text-[15px] font-bold text-[#171717]">No articles matched your search</h4>
-              <p className="text-[12.5px] text-[#777570] max-w-md mx-auto">
+            <div className="bg-white rounded-3xl p-10 border border-[#E5E7EB] text-center space-y-3 shadow-2xs">
+              <HelpCircle className="w-10 h-10 text-[#5F6368] mx-auto stroke-[1.5]" />
+              <h4 className="text-[15px] font-bold text-[#021526]">No articles matched your search</h4>
+              <p className="text-[12.5px] text-[#5F6368] max-w-md mx-auto">
                 Couldn&apos;t find an answer to &ldquo;{searchQuery}&rdquo;? Raise a ticket with our 24/7 Operations Desk for personalized support.
               </p>
               <button
@@ -357,7 +357,7 @@ export const HelpFAQScreen: React.FC = () => {
                   haptics.tap();
                   navigateTo('support');
                 }}
-                className="mt-2 h-10 px-5 rounded-xl bg-[#FF6B2C] text-white font-extrabold text-[13px] inline-flex items-center gap-2 shadow-xs active-press"
+                className="mt-2 h-10 px-5 rounded-xl bg-[#F94001] text-white font-extrabold text-[13px] inline-flex items-center gap-2 shadow-xs active-press"
               >
                 <LifeBuoy className="w-4 h-4" />
                 <span>Contact Support Desk</span>
@@ -372,7 +372,7 @@ export const HelpFAQScreen: React.FC = () => {
                 return (
                   <div
                     key={faq.id}
-                    className="bg-white rounded-2xl border border-[#E8E6E1] overflow-hidden shadow-2xs transition-all hover:border-[#D3D0C9]"
+                    className="bg-white rounded-2xl border border-[#E5E7EB] overflow-hidden shadow-2xs transition-all hover:border-[#D3D0C9]"
                   >
                     <button
                       type="button"
@@ -380,20 +380,20 @@ export const HelpFAQScreen: React.FC = () => {
                         haptics.tap();
                         setExpandedFaqId(isExpanded ? null : faq.id);
                       }}
-                      className="w-full p-4 md:p-5 text-left flex items-start justify-between gap-3 hover:bg-[#FAF9F6] transition-colors cursor-pointer"
+                      className="w-full p-4 md:p-5 text-left flex items-start justify-between gap-3 hover:bg-[#F3F4F4] transition-colors cursor-pointer"
                     >
                       <div className="space-y-1">
-                        <span className="inline-block px-2 py-0.5 rounded-md text-[10.5px] font-bold bg-[#F1F0EC] text-[#777570]">
+                        <span className="inline-block px-2 py-0.5 rounded-md text-[10.5px] font-bold bg-[#F3F4F4] text-[#5F6368]">
                           {faq.categoryLabel}
                         </span>
-                        <h4 className="text-[14px] md:text-[14.5px] font-extrabold text-[#171717] leading-snug">
+                        <h4 className="text-[14px] md:text-[14.5px] font-extrabold text-[#021526] leading-snug">
                           {faq.question}
                         </h4>
                       </div>
 
                       <div
-                        className={`w-7 h-7 rounded-lg bg-[#FAF9F6] border border-[#E8E6E1] flex items-center justify-center shrink-0 transition-transform duration-200 mt-1 ${
-                          isExpanded ? 'rotate-180 bg-[#FF6B2C]/10 border-[#FF6B2C]/30 text-[#FF6B2C]' : 'text-[#777570]'
+                        className={`w-7 h-7 rounded-lg bg-[#F3F4F4] border border-[#E5E7EB] flex items-center justify-center shrink-0 transition-transform duration-200 mt-1 ${
+                          isExpanded ? 'rotate-180 bg-[#F94001]/10 border-[#F94001]/30 text-[#F94001]' : 'text-[#5F6368]'
                         }`}
                       >
                         <ChevronDown className="w-4 h-4" />
@@ -409,19 +409,19 @@ export const HelpFAQScreen: React.FC = () => {
                           transition={{ duration: 0.2 }}
                           className="overflow-hidden"
                         >
-                          <div className="px-4 md:px-5 pb-5 pt-2 text-[13.5px] text-[#44423E] leading-relaxed border-t border-[#F1F0EC] bg-[#FAF9F6]/60">
+                          <div className="px-4 md:px-5 pb-5 pt-2 text-[13.5px] text-[#44423E] leading-relaxed border-t border-[#F3F4F4] bg-[#F3F4F4]/60">
                             <div
                               className="prose prose-sm max-w-none text-[13.5px] text-[#44423E] leading-relaxed [&_p]:mb-1 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5"
                               dangerouslySetInnerHTML={{ __html: faq.answer }}
                             />
 
                             {/* Tags + Helpful button */}
-                            <div className="mt-4 pt-3 border-t border-[#E8E6E1]/60 flex flex-wrap items-center justify-between gap-2">
+                            <div className="mt-4 pt-3 border-t border-[#E5E7EB]/60 flex flex-wrap items-center justify-between gap-2">
                               <div className="flex flex-wrap gap-1.5">
                                 {faq.tags.map((tag) => (
                                   <span
                                     key={tag}
-                                    className="px-2 py-0.5 rounded text-[11px] font-medium bg-white text-[#777570] border border-[#E8E6E1]"
+                                    className="px-2 py-0.5 rounded text-[11px] font-medium bg-white text-[#5F6368] border border-[#E5E7EB]"
                                   >
                                     #{tag}
                                   </span>
@@ -432,8 +432,8 @@ export const HelpFAQScreen: React.FC = () => {
                                 onClick={() => handleHelpfulClick(faq.id)}
                                 className={`px-2.5 py-1 rounded-lg text-[11.5px] font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
                                   isHelpful
-                                    ? 'bg-[#2FA66A]/15 text-[#1E774A]'
-                                    : 'bg-white text-[#777570] hover:text-[#171717] border border-[#E8E6E1]'
+                                    ? 'bg-[#16A34A]/15 text-[#15803D]'
+                                    : 'bg-white text-[#5F6368] hover:text-[#021526] border border-[#E5E7EB]'
                                 }`}
                               >
                                 <ThumbsUp className="w-3.5 h-3.5" />
@@ -454,10 +454,10 @@ export const HelpFAQScreen: React.FC = () => {
         {/* Right Column: Quick Guides & Support Contact Card */}
         <div className="lg:col-span-4 space-y-4">
           {/* Quick Guides Card */}
-          <div className="bg-white rounded-3xl p-5 border border-[#E8E6E1] shadow-2xs space-y-3.5">
+          <div className="bg-white rounded-3xl p-5 border border-[#E5E7EB] shadow-2xs space-y-3.5">
             <div className="flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-[#FF6B2C]" />
-              <h3 className="text-[14px] font-black text-[#171717] uppercase tracking-wider">
+              <BookOpen className="w-4 h-4 text-[#F94001]" />
+              <h3 className="text-[14px] font-black text-[#021526] uppercase tracking-wider">
                 Popular Quick Guides
               </h3>
             </div>
@@ -468,17 +468,17 @@ export const HelpFAQScreen: React.FC = () => {
                 return (
                   <div
                     key={guide.title}
-                    className="p-3 rounded-2xl bg-[#FAF9F6] border border-[#E8E6E1]/70 hover:border-[#D3D0C9] transition-all cursor-pointer group"
+                    className="p-3 rounded-2xl bg-[#F3F4F4] border border-[#E5E7EB]/70 hover:border-[#D3D0C9] transition-all cursor-pointer group"
                   >
                     <div className="flex items-start gap-2.5">
                       <div className={`w-8 h-8 rounded-xl ${guide.color} flex items-center justify-center shrink-0`}>
                         <Icon className="w-4 h-4" />
                       </div>
                       <div className="space-y-0.5">
-                        <h5 className="text-[12.5px] font-extrabold text-[#171717] group-hover:text-[#FF6B2C] transition-colors">
+                        <h5 className="text-[12.5px] font-extrabold text-[#021526] group-hover:text-[#F94001] transition-colors">
                           {guide.title}
                         </h5>
-                        <p className="text-[11px] text-[#777570] leading-snug">
+                        <p className="text-[11px] text-[#5F6368] leading-snug">
                           {guide.desc}
                         </p>
                       </div>
@@ -490,13 +490,13 @@ export const HelpFAQScreen: React.FC = () => {
           </div>
 
           {/* Dedicated Support Ticket Card */}
-          <div className="bg-gradient-to-br from-[#FFF8F4] to-white rounded-3xl p-5 border border-[#FF6B2C]/25 shadow-2xs space-y-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#FF6B2C]/10 text-[#FF6B2C] flex items-center justify-center">
+          <div className="bg-gradient-to-br from-[#FFF8F4] to-white rounded-3xl p-5 border border-[#F94001]/25 shadow-2xs space-y-3">
+            <div className="w-10 h-10 rounded-2xl bg-[#F94001]/10 text-[#F94001] flex items-center justify-center">
               <LifeBuoy className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-[15px] font-black text-[#171717]">Need Personalized Support?</h4>
-              <p className="text-[12px] text-[#777570] mt-1 leading-relaxed">
+              <h4 className="text-[15px] font-black text-[#021526]">Need Personalized Support?</h4>
+              <p className="text-[12px] text-[#5F6368] mt-1 leading-relaxed">
                 Have a payment dispute, court marking question, or need hardware integration? Raise a ticket with our operations team.
               </p>
             </div>
@@ -505,7 +505,7 @@ export const HelpFAQScreen: React.FC = () => {
                 haptics.tap();
                 navigateTo('support');
               }}
-              className="w-full h-10 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white font-extrabold text-[13px] flex items-center justify-center gap-1.5 shadow-xs active-press transition-all cursor-pointer"
+              className="w-full h-10 rounded-xl bg-[#F94001] hover:bg-[#D93600] text-white font-extrabold text-[13px] flex items-center justify-center gap-1.5 shadow-xs active-press transition-all cursor-pointer"
             >
               <span>Go to Support & Tickets</span>
               <ArrowRight className="w-4 h-4" />
@@ -513,9 +513,9 @@ export const HelpFAQScreen: React.FC = () => {
           </div>
 
           {/* Hotline Box */}
-          <div className="bg-[#171717] text-white rounded-3xl p-5 shadow-2xs space-y-3">
+          <div className="bg-[#021526] text-white rounded-3xl p-5 shadow-2xs space-y-3">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-[#FF6B2C] shrink-0">
+              <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-[#F94001] shrink-0">
                 <Phone className="w-4 h-4" />
               </div>
               <div>
@@ -536,7 +536,7 @@ export const HelpFAQScreen: React.FC = () => {
               href="tel:18002081010"
               className="w-full h-10 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-[12.5px] flex items-center justify-center gap-2 transition-colors cursor-pointer"
             >
-              <Phone className="w-3.5 h-3.5 text-[#FF6B2C]" />
+              <Phone className="w-3.5 h-3.5 text-[#F94001]" />
               <span>Call 1800-208-1010</span>
             </a>
           </div>

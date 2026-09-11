@@ -179,18 +179,18 @@ export const NewBookingModal: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: '100%' }}
           transition={{ type: 'spring', damping: 28, stiffness: 320 }}
-          className="w-full max-h-[92vh] overflow-y-auto no-scrollbar bg-white rounded-t-[32px] p-5 pb-8 shadow-2xl border-t border-[#E8E6E1]"
+          className="w-full max-h-[92vh] overflow-y-auto no-scrollbar bg-white rounded-t-[32px] p-5 pb-8 shadow-2xl border-t border-[#E5E7EB]"
         >
           {/* iOS Grab Handle */}
-          <div className="w-10 h-1 bg-[#D1CFCA] rounded-full mx-auto mb-3" />
+          <div className="w-10 h-1 bg-[#E5E7EB] rounded-full mx-auto mb-3" />
 
           {/* Header */}
-          <div className="flex items-center justify-between pb-3 border-b border-[#F1F0EC]">
+          <div className="flex items-center justify-between pb-3 border-b border-[#F3F4F4]">
             <div>
-              <h2 className="text-[18px] font-black text-[#171717] tracking-tight">
+              <h2 className="text-[18px] font-black text-[#021526] tracking-tight">
                 New Booking Reservation
               </h2>
-              <p className="text-[11px] text-[#777570] font-medium">
+              <p className="text-[11px] text-[#5F6368] font-medium">
                 Reserve custom start & end time slots
               </p>
             </div>
@@ -199,7 +199,7 @@ export const NewBookingModal: React.FC = () => {
                 setActiveModal(null);
                 haptics.tap();
               }}
-              className="w-8 h-8 rounded-full bg-[#F1F0EC] flex items-center justify-center text-[#777570] hover:text-[#171717] active-press cursor-pointer"
+              className="w-8 h-8 rounded-full bg-[#F3F4F4] flex items-center justify-center text-[#5F6368] hover:text-[#021526] active-press cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -209,7 +209,7 @@ export const NewBookingModal: React.FC = () => {
             {/* Customer Details */}
             <div className="grid grid-cols-2 gap-2.5">
               <div>
-                <label className="block text-[11.5px] font-bold text-[#171717] mb-1">
+                <label className="block text-[11.5px] font-bold text-[#021526] mb-1">
                   Customer Name
                 </label>
                 <input
@@ -218,32 +218,32 @@ export const NewBookingModal: React.FC = () => {
                   placeholder="e.g. Rahul Kumar"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  className="w-full bg-[#F7F7F5] border border-[#E8E6E1] rounded-[14px] px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none"
+                  className="w-full bg-[#F3F4F4] border border-[#E5E7EB] rounded-[14px] px-3 py-2 text-[13px] font-bold text-[#021526] focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-[11.5px] font-bold text-[#171717] mb-1">Phone</label>
+                <label className="block text-[11.5px] font-bold text-[#021526] mb-1">Phone</label>
                 <input
                   type="tel"
                   required
                   placeholder="+91 98765..."
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
-                  className="w-full bg-[#F7F7F5] border border-[#E8E6E1] rounded-[14px] px-3 py-2 text-[12.5px] font-bold text-[#171717] focus:outline-none"
+                  className="w-full bg-[#F3F4F4] border border-[#E5E7EB] rounded-[14px] px-3 py-2 text-[12.5px] font-bold text-[#021526] focus:outline-none"
                 />
               </div>
             </div>
 
             {/* Court Selection */}
             <div>
-              <label className="block text-[11.5px] font-bold text-[#171717] mb-1">
+              <label className="block text-[11.5px] font-bold text-[#021526] mb-1">
                 Select Court & Turf
               </label>
               <select
                 value={courtId}
                 onChange={(e) => handleCourtChange(e.target.value)}
-                className="w-full bg-[#F7F7F5] border border-[#E8E6E1] rounded-[14px] px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none"
+                className="w-full bg-[#F3F4F4] border border-[#E5E7EB] rounded-[14px] px-3 py-2 text-[13px] font-bold text-[#021526] focus:outline-none"
               >
                 {courts.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -254,14 +254,14 @@ export const NewBookingModal: React.FC = () => {
             </div>
 
             {/* Booking Duration & Manual Start / End Time Selection */}
-            <div className="bg-[#F7F7F5] border border-[#E8E6E1] rounded-2xl p-3.5 space-y-3">
+            <div className="bg-[#F3F4F4] border border-[#E5E7EB] rounded-2xl p-3.5 space-y-3">
               {/* Card Header & Dynamic Duration Badge */}
               <div className="flex items-center justify-between">
-                <label className="text-[12px] font-extrabold text-[#171717] flex items-center gap-1.5">
-                  <Clock className="w-4 h-4 text-[#FF6B2C]" />
+                <label className="text-[12px] font-extrabold text-[#021526] flex items-center gap-1.5">
+                  <Clock className="w-4 h-4 text-[#F94001]" />
                   <span>Booking Duration & Timings</span>
                 </label>
-                <span className="text-[10.5px] font-extrabold bg-[#FF6B2C]/10 text-[#FF6B2C] px-2.5 py-0.5 rounded-full">
+                <span className="text-[10.5px] font-extrabold bg-[#F94001]/10 text-[#F94001] px-2.5 py-0.5 rounded-full">
                   {durationHours} {durationHours === 1 ? 'Hour' : 'Hours'} ({durationHours * 60} mins)
                 </span>
               </div>
@@ -274,8 +274,8 @@ export const NewBookingModal: React.FC = () => {
                   onClick={() => handlePresetDuration(1)}
                   className={`py-2 rounded-xl text-[11px] font-bold transition-all cursor-pointer flex flex-col items-center justify-center ${
                     durationHours === 1
-                      ? 'bg-[#171717] text-white shadow-xs'
-                      : 'bg-white text-[#777570] border border-[#E8E6E1] hover:bg-[#EBE9E3]'
+                      ? 'bg-[#021526] text-white shadow-xs'
+                      : 'bg-white text-[#5F6368] border border-[#E5E7EB] hover:bg-[#EBE9E3]'
                   }`}
                 >
                   <span>1 Hour</span>
@@ -288,15 +288,15 @@ export const NewBookingModal: React.FC = () => {
                   onClick={() => handlePresetDuration(2)}
                   className={`py-2 rounded-xl text-[11px] font-bold transition-all cursor-pointer flex flex-col items-center justify-center ${
                     durationHours === 2
-                      ? 'bg-[#171717] text-white shadow-xs'
-                      : 'bg-white text-[#777570] border border-[#E8E6E1] hover:bg-[#EBE9E3]'
+                      ? 'bg-[#021526] text-white shadow-xs'
+                      : 'bg-white text-[#5F6368] border border-[#E5E7EB] hover:bg-[#EBE9E3]'
                   }`}
                 >
                   <span className="flex items-center gap-0.5">
-                    <Zap className="w-3 h-3 text-[#FF6B2C]" />
+                    <Zap className="w-3 h-3 text-[#F94001]" />
                     2 Hours
                   </span>
-                  <span className="text-[8.5px] text-[#FF6B2C] font-extrabold">Continuous</span>
+                  <span className="text-[8.5px] text-[#F94001] font-extrabold">Continuous</span>
                 </button>
 
                 <button
@@ -305,8 +305,8 @@ export const NewBookingModal: React.FC = () => {
                   onClick={() => handlePresetDuration(3)}
                   className={`py-2 rounded-xl text-[11px] font-bold transition-all cursor-pointer flex flex-col items-center justify-center ${
                     durationHours === 3
-                      ? 'bg-[#171717] text-white shadow-xs'
-                      : 'bg-white text-[#777570] border border-[#E8E6E1] hover:bg-[#EBE9E3]'
+                      ? 'bg-[#021526] text-white shadow-xs'
+                      : 'bg-white text-[#5F6368] border border-[#E5E7EB] hover:bg-[#EBE9E3]'
                   }`}
                 >
                   <span>3 Hours</span>
@@ -319,8 +319,8 @@ export const NewBookingModal: React.FC = () => {
                   onClick={() => handlePresetDuration(4)}
                   className={`py-2 rounded-xl text-[11px] font-bold transition-all cursor-pointer flex flex-col items-center justify-center ${
                     durationHours >= 4
-                      ? 'bg-[#171717] text-white shadow-xs'
-                      : 'bg-white text-[#777570] border border-[#E8E6E1] hover:bg-[#EBE9E3]'
+                      ? 'bg-[#021526] text-white shadow-xs'
+                      : 'bg-white text-[#5F6368] border border-[#E5E7EB] hover:bg-[#EBE9E3]'
                   }`}
                 >
                   <span>4+ Hours</span>
@@ -333,15 +333,15 @@ export const NewBookingModal: React.FC = () => {
                 {/* Start Time Select */}
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="text-[11px] font-bold text-[#171717] flex items-center gap-1">
-                      <span className="w-2 h-2 rounded-full bg-[#2FA66A]" />
+                    <label className="text-[11px] font-bold text-[#021526] flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-full bg-[#16A34A]" />
                       Start Time
                     </label>
                   </div>
                   <select
                     value={startTime}
                     onChange={(e) => handleStartTimeChange(e.target.value)}
-                    className="w-full bg-white border border-[#E8E6E1] rounded-xl px-2.5 py-2 text-[12.5px] font-extrabold text-[#171717] focus:outline-none focus:border-[#FF6B2C] shadow-2xs"
+                    className="w-full bg-white border border-[#E5E7EB] rounded-xl px-2.5 py-2 text-[12.5px] font-extrabold text-[#021526] focus:outline-none focus:border-[#F94001] shadow-2xs"
                   >
                     {ALL_TIME_SLOTS.slice(0, -1).map((slot) => (
                       <option key={slot.value} value={slot.value}>
@@ -354,15 +354,15 @@ export const NewBookingModal: React.FC = () => {
                 {/* End Time Select */}
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="text-[11px] font-bold text-[#171717] flex items-center gap-1">
-                      <span className="w-2 h-2 rounded-full bg-[#FF6B2C]" />
+                    <label className="text-[11px] font-bold text-[#021526] flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-full bg-[#F94001]" />
                       End Time
                     </label>
                   </div>
                   <select
                     value={endTime}
                     onChange={(e) => handleEndTimeChange(e.target.value)}
-                    className="w-full bg-white border border-[#E8E6E1] rounded-xl px-2.5 py-2 text-[12.5px] font-extrabold text-[#171717] focus:outline-none focus:border-[#FF6B2C] shadow-2xs"
+                    className="w-full bg-white border border-[#E5E7EB] rounded-xl px-2.5 py-2 text-[12.5px] font-extrabold text-[#021526] focus:outline-none focus:border-[#F94001] shadow-2xs"
                   >
                     {validEndOptions.map((slot) => (
                       <option key={slot.value} value={slot.value}>
@@ -374,22 +374,22 @@ export const NewBookingModal: React.FC = () => {
               </div>
 
               {/* Slot & Price Breakdown Banner */}
-              <div className="bg-white rounded-xl p-2.5 border border-[#E8E6E1] flex items-center justify-between">
+              <div className="bg-white rounded-xl p-2.5 border border-[#E5E7EB] flex items-center justify-between">
                 <div className="min-w-0">
-                  <span className="text-[10px] uppercase font-bold text-[#A3A099] block tracking-wide">
+                  <span className="text-[10px] uppercase font-bold text-[#5F6368] block tracking-wide">
                     Reservation Window
                   </span>
-                  <div className="text-[12.5px] font-extrabold text-[#FF6B2C] truncate flex items-center gap-1">
+                  <div className="text-[12.5px] font-extrabold text-[#F94001] truncate flex items-center gap-1">
                     <span>{startTime}</span>
-                    <ArrowRight className="w-3 h-3 text-[#777570] shrink-0" />
+                    <ArrowRight className="w-3 h-3 text-[#5F6368] shrink-0" />
                     <span>{endTime}</span>
                   </div>
                 </div>
                 <div className="text-right shrink-0">
-                  <span className="text-[10px] uppercase font-bold text-[#A3A099] block tracking-wide">
+                  <span className="text-[10px] uppercase font-bold text-[#5F6368] block tracking-wide">
                     Rate Calculation
                   </span>
-                  <span className="text-[12px] font-extrabold text-[#171717]">
+                  <span className="text-[12px] font-extrabold text-[#021526]">
                     ₹{unitPrice}/hr × {durationHours} hr{durationHours > 1 ? 's' : ''}
                   </span>
                 </div>
@@ -398,7 +398,7 @@ export const NewBookingModal: React.FC = () => {
               {/* Multi-hour continuous badge */}
               {durationHours >= 2 && (
                 <div className="p-2.5 rounded-xl bg-[#E8F8EE] border border-[#A7E8BD] flex items-center gap-2 text-[11px] font-bold text-[#177A42]">
-                  <Check className="w-4 h-4 shrink-0 stroke-[2.5] text-[#2FA66A]" />
+                  <Check className="w-4 h-4 shrink-0 stroke-[2.5] text-[#16A34A]" />
                   <span>
                     Continuous {durationHours}-hour span: Reserves consecutive slots automatically for uninterrupted play.
                   </span>
@@ -409,26 +409,26 @@ export const NewBookingModal: React.FC = () => {
             {/* Financials */}
             <div className="grid grid-cols-2 gap-2.5">
               <div>
-                <label className="block text-[11.5px] font-bold text-[#171717] mb-1">
+                <label className="block text-[11.5px] font-bold text-[#021526] mb-1">
                   Total Price (₹)
                 </label>
                 <input
                   type="number"
                   value={totalAmount}
                   onChange={(e) => setTotalAmount(e.target.value)}
-                  className="w-full bg-[#F7F7F5] border border-[#E8E6E1] rounded-[14px] px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none"
+                  className="w-full bg-[#F3F4F4] border border-[#E5E7EB] rounded-[14px] px-3 py-2 text-[13px] font-bold text-[#021526] focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-[11.5px] font-bold text-[#171717] mb-1">
+                <label className="block text-[11.5px] font-bold text-[#021526] mb-1">
                   Advance Collected (₹)
                 </label>
                 <input
                   type="number"
                   value={paidAmount}
                   onChange={(e) => setPaidAmount(e.target.value)}
-                  className="w-full bg-[#F7F7F5] border border-[#E8E6E1] rounded-[14px] px-3 py-2 text-[13px] font-bold text-[#1E9A55] focus:outline-none"
+                  className="w-full bg-[#F3F4F4] border border-[#E5E7EB] rounded-[14px] px-3 py-2 text-[13px] font-bold text-[#1E9A55] focus:outline-none"
                 />
               </div>
             </div>
@@ -437,7 +437,7 @@ export const NewBookingModal: React.FC = () => {
               <button
                 type="submit"
                 id="btn-submit-new-booking"
-                className="w-full h-11 bg-[#FF6B2C] text-white font-bold text-[13.5px] rounded-xl flex items-center justify-center shadow-xs hover:bg-[#e85b1e] active-press cursor-pointer"
+                className="w-full h-11 bg-[#F94001] text-white font-bold text-[13.5px] rounded-xl flex items-center justify-center shadow-xs hover:bg-[#D93600] active-press cursor-pointer"
               >
                 Create & Confirm Reservation
               </button>

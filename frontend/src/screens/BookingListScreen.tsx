@@ -293,15 +293,15 @@ export const BookingListScreen: React.FC = () => {
   const getBookingStatusBadge = (status: BookingStatus, holdMinutes?: number, notes?: string) => {
     if (status === 'Ongoing') {
       return (
-        <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-black bg-[#2FA66A]/20 text-[#1E774A] border border-[#2FA66A]/30 inline-flex items-center gap-1.5 shrink-0 shadow-2xs">
-          <span className="w-2 h-2 rounded-full bg-[#2FA66A] animate-ping shrink-0" />
+        <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-black bg-[#16A34A]/20 text-[#15803D] border border-[#16A34A]/30 inline-flex items-center gap-1.5 shrink-0 shadow-2xs">
+          <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-ping shrink-0" />
           <span>Ongoing Match</span>
         </span>
       );
     }
     if (status === 'Confirmed') {
       return (
-        <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-black bg-[#FF6B2C]/15 text-[#E65100] border border-[#FF6B2C]/25 inline-flex items-center gap-1 shrink-0">
+        <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-black bg-[#F94001]/15 text-[#E65100] border border-[#F94001]/25 inline-flex items-center gap-1 shrink-0">
           <CheckCircle2 className="w-3 h-3" />
           <span>Confirmed</span>
         </span>
@@ -309,8 +309,8 @@ export const BookingListScreen: React.FC = () => {
     }
     if (status === 'Completed') {
       return (
-        <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-black bg-[#F1F0EC] text-[#777570] border border-[#E8E6E1] inline-flex items-center gap-1 shrink-0">
-          <Check className="w-3 h-3 text-[#2FA66A]" />
+        <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-black bg-[#F3F4F4] text-[#5F6368] border border-[#E5E7EB] inline-flex items-center gap-1 shrink-0">
+          <Check className="w-3 h-3 text-[#16A34A]" />
           <span>Checked Out</span>
         </span>
       );
@@ -320,7 +320,7 @@ export const BookingListScreen: React.FC = () => {
       (status === 'Payment Pending' && holdMinutes !== undefined && holdMinutes <= 0)
     ) {
       return (
-        <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-black bg-[#D94B4B]/15 text-[#B52B2B] border border-[#D94B4B]/25 inline-flex items-center gap-1 shrink-0 animate-pulse">
+        <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-black bg-[#DC2626]/15 text-[#B52B2B] border border-[#DC2626]/25 inline-flex items-center gap-1 shrink-0 animate-pulse">
           <AlertTriangle className="w-3 h-3" />
           <span>Hold Expired</span>
         </span>
@@ -328,14 +328,14 @@ export const BookingListScreen: React.FC = () => {
     }
     if (status === 'Payment Pending') {
       return (
-        <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-black bg-[#E7A72F]/15 text-[#B87C0D] border border-[#E7A72F]/30 inline-flex items-center gap-1 shrink-0">
+        <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-black bg-[#F59E0B]/15 text-[#B87C0D] border border-[#F59E0B]/30 inline-flex items-center gap-1 shrink-0">
           <Clock className="w-3 h-3 text-[#B87C0D]" />
           <span>Payment Pending ({holdMinutes || 15}m hold)</span>
         </span>
       );
     }
     return (
-      <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-black bg-[#777570]/15 text-[#171717] border border-[#E8E6E1] inline-flex items-center gap-1 shrink-0">
+      <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-black bg-[#5F6368]/15 text-[#021526] border border-[#E5E7EB] inline-flex items-center gap-1 shrink-0">
         <span>{status}</span>
       </span>
     );
@@ -344,14 +344,14 @@ export const BookingListScreen: React.FC = () => {
   const getPaymentStatusBadge = (paymentStatus: PaymentStatus, balanceAmount: number) => {
     if (balanceAmount === 0 || paymentStatus === 'Paid') {
       return (
-        <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-[#2FA66A]/10 text-[#2FA66A] border border-[#2FA66A]/20 inline-flex items-center gap-1 shrink-0">
+        <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-[#16A34A]/10 text-[#16A34A] border border-[#16A34A]/20 inline-flex items-center gap-1 shrink-0">
           <CheckCircle2 className="w-2.5 h-2.5" />
           <span>Paid</span>
         </span>
       );
     }
     return (
-      <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-[#E7A72F]/15 text-[#B87C0D] border border-[#E7A72F]/25 inline-flex items-center gap-1 shrink-0">
+      <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-[#F59E0B]/15 text-[#B87C0D] border border-[#F59E0B]/25 inline-flex items-center gap-1 shrink-0">
         <Clock className="w-2.5 h-2.5" />
         <span>Due ₹{balanceAmount.toLocaleString('en-IN')}</span>
       </span>
@@ -432,30 +432,30 @@ export const BookingListScreen: React.FC = () => {
       {/* ========================================================================= */}
       {/* 2. TOP HEADER & PRIMARY ACTIONS                                           */}
       {/* ========================================================================= */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2.5 border-b border-[#E8E6E1]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2.5 border-b border-[#E5E7EB]">
         <div>
           <div className="flex items-center gap-2 flex-wrap">
-            <h1 className="text-[20px] sm:text-[22px] font-black text-[#171717] tracking-tight leading-tight">
+            <h1 className="text-[20px] sm:text-[22px] font-black text-[#021526] tracking-tight leading-tight">
               Bookings
             </h1>
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-[#171717]/10 text-[#171717]">
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-[#021526]/10 text-[#021526]">
               {filteredBookings.length}
             </span>
             {kpis.ongoingCount > 0 && (
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-[#2FA66A]/15 text-[#2FA66A] inline-flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#2FA66A] animate-ping" />
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-[#16A34A]/15 text-[#16A34A] inline-flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A] animate-ping" />
                 <span>{kpis.ongoingCount} Live</span>
               </span>
             )}
           </div>
-          <p className="text-[11.5px] sm:text-[12px] text-[#777570] font-medium mt-0.5">
+          <p className="text-[11.5px] sm:text-[12px] text-[#5F6368] font-medium mt-0.5">
             Real-time arena court schedule, player dues & check-ins
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           {/* View Mode Toggle - Desktop Only (Cards preferred on mobile UX) */}
-          <div className="hidden md:flex items-center bg-[#FAF9F6] p-1 rounded-xl border border-[#E8E6E1]">
+          <div className="hidden md:flex items-center bg-[#F3F4F4] p-1 rounded-xl border border-[#E5E7EB]">
             <button
               onClick={() => {
                 haptics.tap();
@@ -463,8 +463,8 @@ export const BookingListScreen: React.FC = () => {
               }}
               className={`p-1.5 rounded-lg transition-all cursor-pointer ${
                 viewMode === 'grid'
-                  ? 'bg-white text-[#171717] shadow-xs'
-                  : 'text-[#777570] hover:text-[#171717]'
+                  ? 'bg-white text-[#021526] shadow-xs'
+                  : 'text-[#5F6368] hover:text-[#021526]'
               }`}
               title="Card Grid View"
             >
@@ -477,8 +477,8 @@ export const BookingListScreen: React.FC = () => {
               }}
               className={`p-1.5 rounded-lg transition-all cursor-pointer ${
                 viewMode === 'table'
-                  ? 'bg-white text-[#171717] shadow-xs'
-                  : 'text-[#777570] hover:text-[#171717]'
+                  ? 'bg-white text-[#021526] shadow-xs'
+                  : 'text-[#5F6368] hover:text-[#021526]'
               }`}
               title="Structured Table View"
             >
@@ -489,7 +489,7 @@ export const BookingListScreen: React.FC = () => {
           <button
             id="btn-export-bookings"
             onClick={handleOpenExportPage}
-            className="h-9 px-3 rounded-xl bg-white border border-[#E8E6E1] text-[#171717] font-bold text-[12px] flex items-center gap-1.5 shadow-2xs hover:bg-[#FAF9F6] active-press cursor-pointer transition-colors"
+            className="h-9 px-3 rounded-xl bg-white border border-[#E5E7EB] text-[#021526] font-bold text-[12px] flex items-center gap-1.5 shadow-2xs hover:bg-[#F3F4F4] active-press cursor-pointer transition-colors"
             title="Export reports"
           >
             <Download className="w-3.5 h-3.5" />
@@ -501,7 +501,7 @@ export const BookingListScreen: React.FC = () => {
               haptics.tap();
               setActiveModal('new_booking');
             }}
-            className="h-9 px-3.5 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white font-black text-[12px] flex items-center gap-1.5 shadow-xs active-press cursor-pointer transition-colors"
+            className="h-9 px-3.5 rounded-xl bg-[#F94001] hover:bg-[#D93600] text-white font-black text-[12px] flex items-center gap-1.5 shadow-xs active-press cursor-pointer transition-colors"
           >
             <Plus className="w-4 h-4 stroke-[3]" />
             <span>New Booking</span>
@@ -514,51 +514,51 @@ export const BookingListScreen: React.FC = () => {
       {/* ========================================================================= */}
       {/* Desktop View (>= 768px): Spacious 4-Card Grid */}
       <div className="hidden md:grid md:grid-cols-4 gap-3">
-        <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-2xs">
-          <div className="flex items-center justify-between text-[#777570] text-[10.5px] font-black uppercase tracking-wider">
+        <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-2xs">
+          <div className="flex items-center justify-between text-[#5F6368] text-[10.5px] font-black uppercase tracking-wider">
             <span>Ongoing Matches</span>
-            <span className="w-2.5 h-2.5 rounded-full bg-[#2FA66A] animate-ping" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#16A34A] animate-ping" />
           </div>
-          <p className="text-[20px] font-black text-[#2FA66A] mt-1 leading-none">
+          <p className="text-[20px] font-black text-[#16A34A] mt-1 leading-none">
             {kpis.ongoingCount} Live
           </p>
-          <span className="text-[11px] font-medium text-[#777570] mt-1 block truncate">
+          <span className="text-[11px] font-medium text-[#5F6368] mt-1 block truncate">
             Active on pitches
           </span>
         </div>
 
-        <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-2xs">
-          <div className="flex items-center justify-between text-[#777570] text-[10.5px] font-black uppercase tracking-wider">
+        <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-2xs">
+          <div className="flex items-center justify-between text-[#5F6368] text-[10.5px] font-black uppercase tracking-wider">
             <span>Confirmed</span>
-            <span className="w-2.5 h-2.5 rounded-full bg-[#FF6B2C]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#F94001]" />
           </div>
-          <p className="text-[20px] font-black text-[#171717] mt-1 leading-none">
+          <p className="text-[20px] font-black text-[#021526] mt-1 leading-none">
             {kpis.confirmedCount} Bookings
           </p>
-          <span className="text-[11px] font-medium text-[#777570] mt-1 block truncate">
+          <span className="text-[11px] font-medium text-[#5F6368] mt-1 block truncate">
             Ready for check-in
           </span>
         </div>
 
-        <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-2xs">
-          <div className="flex items-center justify-between text-[#777570] text-[10.5px] font-black uppercase tracking-wider">
+        <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-2xs">
+          <div className="flex items-center justify-between text-[#5F6368] text-[10.5px] font-black uppercase tracking-wider">
             <span>Pending Balance</span>
-            <span className="w-2.5 h-2.5 rounded-full bg-[#E7A72F]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B]" />
           </div>
           <p className="text-[20px] font-black text-[#B87C0D] mt-1 leading-none">
             ₹{kpis.totalDue.toLocaleString('en-IN')}
           </p>
-          <span className="text-[11px] font-medium text-[#777570] mt-1 block truncate">
+          <span className="text-[11px] font-medium text-[#5F6368] mt-1 block truncate">
             Due at counter
           </span>
         </div>
 
-        <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-2xs">
-          <div className="flex items-center justify-between text-[#777570] text-[10.5px] font-black uppercase tracking-wider">
+        <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-2xs">
+          <div className="flex items-center justify-between text-[#5F6368] text-[10.5px] font-black uppercase tracking-wider">
             <span>Timeline</span>
-            <span className="w-2.5 h-2.5 rounded-full bg-[#171717]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#021526]" />
           </div>
-          <p className="text-[16px] font-black text-[#171717] mt-1 leading-none truncate">
+          <p className="text-[16px] font-black text-[#021526] mt-1 leading-none truncate">
             {dateFilter === 'today'
               ? 'Today'
               : dateFilter === 'tomorrow'
@@ -569,7 +569,7 @@ export const BookingListScreen: React.FC = () => {
               ? selectedParticularDate
               : 'All Dates'}
           </p>
-          <span className="text-[11px] font-medium text-[#777570] mt-1 block truncate">
+          <span className="text-[11px] font-medium text-[#5F6368] mt-1 block truncate">
             ₹{kpis.totalGross.toLocaleString('en-IN')} gross
           </span>
         </div>
@@ -577,35 +577,35 @@ export const BookingListScreen: React.FC = () => {
 
       {/* Mobile View (< 768px): Sleek Horizontal Swipeable Stats Strip (Takes only 50px height!) */}
       <div className="flex md:hidden gap-2 overflow-x-auto no-scrollbar py-0.5">
-        <div className="bg-white rounded-xl px-3 py-2 border border-[#E8E6E1] shadow-2xs flex items-center gap-2.5 shrink-0">
-          <span className="w-2 h-2 rounded-full bg-[#2FA66A] animate-ping" />
+        <div className="bg-white rounded-xl px-3 py-2 border border-[#E5E7EB] shadow-2xs flex items-center gap-2.5 shrink-0">
+          <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-ping" />
           <div>
-            <span className="text-[9px] font-extrabold text-[#777570] uppercase block leading-none">Live Match</span>
-            <span className="text-[13px] font-black text-[#2FA66A] leading-tight block">{kpis.ongoingCount} Ongoing</span>
+            <span className="text-[9px] font-extrabold text-[#5F6368] uppercase block leading-none">Live Match</span>
+            <span className="text-[13px] font-black text-[#16A34A] leading-tight block">{kpis.ongoingCount} Ongoing</span>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl px-3 py-2 border border-[#E8E6E1] shadow-2xs flex items-center gap-2.5 shrink-0">
-          <span className="w-2 h-2 rounded-full bg-[#FF6B2C]" />
+        <div className="bg-white rounded-xl px-3 py-2 border border-[#E5E7EB] shadow-2xs flex items-center gap-2.5 shrink-0">
+          <span className="w-2 h-2 rounded-full bg-[#F94001]" />
           <div>
-            <span className="text-[9px] font-extrabold text-[#777570] uppercase block leading-none">Confirmed</span>
-            <span className="text-[13px] font-black text-[#171717] leading-tight block">{kpis.confirmedCount} Bookings</span>
+            <span className="text-[9px] font-extrabold text-[#5F6368] uppercase block leading-none">Confirmed</span>
+            <span className="text-[13px] font-black text-[#021526] leading-tight block">{kpis.confirmedCount} Bookings</span>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl px-3 py-2 border border-[#E8E6E1] shadow-2xs flex items-center gap-2.5 shrink-0">
-          <span className="w-2 h-2 rounded-full bg-[#E7A72F]" />
+        <div className="bg-white rounded-xl px-3 py-2 border border-[#E5E7EB] shadow-2xs flex items-center gap-2.5 shrink-0">
+          <span className="w-2 h-2 rounded-full bg-[#F59E0B]" />
           <div>
-            <span className="text-[9px] font-extrabold text-[#777570] uppercase block leading-none">Due Balance</span>
+            <span className="text-[9px] font-extrabold text-[#5F6368] uppercase block leading-none">Due Balance</span>
             <span className="text-[13px] font-black text-[#B87C0D] leading-tight block">₹{kpis.totalDue.toLocaleString('en-IN')}</span>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl px-3 py-2 border border-[#E8E6E1] shadow-2xs flex items-center gap-2.5 shrink-0">
-          <span className="w-2 h-2 rounded-full bg-[#171717]" />
+        <div className="bg-white rounded-xl px-3 py-2 border border-[#E5E7EB] shadow-2xs flex items-center gap-2.5 shrink-0">
+          <span className="w-2 h-2 rounded-full bg-[#021526]" />
           <div>
-            <span className="text-[9px] font-extrabold text-[#777570] uppercase block leading-none">Timeline</span>
-            <span className="text-[13px] font-black text-[#171717] leading-tight block">
+            <span className="text-[9px] font-extrabold text-[#5F6368] uppercase block leading-none">Timeline</span>
+            <span className="text-[13px] font-black text-[#021526] leading-tight block">
               {dateFilter === 'particular' ? selectedParticularDate : dateFilter === 'all' ? 'All Dates' : dateFilter}
             </span>
           </div>
@@ -616,15 +616,15 @@ export const BookingListScreen: React.FC = () => {
       {/* 4. TOOLBAR & FILTER SYSTEM (DESKTOP INLINE + MOBILE APP FILTER BAR)        */}
       {/* ========================================================================= */}
       {/* DESKTOP TOOLBAR (>= 768px): Full 2-tier Toolbar */}
-      <div className="hidden md:block bg-white rounded-2xl p-4 border border-[#E8E6E1] shadow-2xs space-y-3">
+      <div className="hidden md:block bg-white rounded-2xl p-4 border border-[#E5E7EB] shadow-2xs space-y-3">
         {/* Tier 1: Match Status & Date Timeline */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
           <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
             {[
               { id: 'All', label: 'All Bookings', count: statusCounts.all },
-              { id: 'Ongoing', label: 'Ongoing', count: statusCounts.ongoing, dot: 'bg-[#2FA66A]' },
+              { id: 'Ongoing', label: 'Ongoing', count: statusCounts.ongoing, dot: 'bg-[#16A34A]' },
               { id: 'Confirmed', label: 'Confirmed', count: statusCounts.confirmed },
-              { id: 'Payment Pending', label: 'Payment Pending', count: statusCounts.pending, dot: 'bg-[#E7A72F]' },
+              { id: 'Payment Pending', label: 'Payment Pending', count: statusCounts.pending, dot: 'bg-[#F59E0B]' },
               { id: 'Completed', label: 'Completed', count: statusCounts.completed },
             ].map((tab) => {
               const isActive = selectedBookingStatus === tab.id;
@@ -637,8 +637,8 @@ export const BookingListScreen: React.FC = () => {
                   }}
                   className={`px-3 py-1.5 rounded-xl text-[12px] font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
                     isActive
-                      ? 'bg-[#171717] text-white shadow-xs'
-                      : 'bg-[#FAF9F6] text-[#777570] border border-[#E8E6E1] hover:text-[#171717] hover:bg-[#F1F0EC]'
+                      ? 'bg-[#021526] text-white shadow-xs'
+                      : 'bg-white text-[#5F6368] border border-[#E5E7EB] hover:text-[#021526] hover:bg-[#F3F4F4]'
                   }`}
                 >
                   {tab.dot && (
@@ -652,7 +652,7 @@ export const BookingListScreen: React.FC = () => {
                   {tab.count !== undefined && tab.count > 0 && (
                     <span
                       className={`px-1.5 py-0.2 rounded-md text-[10px] font-black ${
-                        isActive ? 'bg-white/20 text-white' : 'bg-[#E8E6E1] text-[#777570]'
+                        isActive ? 'bg-white/20 text-white' : 'bg-[#E5E7EB] text-[#5F6368]'
                       }`}
                     >
                       {tab.count}
@@ -664,7 +664,7 @@ export const BookingListScreen: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-0.5">
-            <div className="flex items-center bg-[#FAF9F6] p-1 rounded-xl border border-[#E8E6E1] shrink-0">
+            <div className="flex items-center bg-[#F3F4F4] p-1 rounded-xl border border-[#E5E7EB] shrink-0">
               {[
                 { id: 'today', label: 'Today' },
                 { id: 'tomorrow', label: 'Tomorrow' },
@@ -681,8 +681,8 @@ export const BookingListScreen: React.FC = () => {
                     }}
                     className={`px-3 py-1.5 rounded-lg text-[12px] transition-all cursor-pointer whitespace-nowrap ${
                       isActive
-                        ? 'bg-white text-[#171717] shadow-xs font-black'
-                        : 'text-[#777570] hover:text-[#171717] font-semibold'
+                        ? 'bg-white text-[#021526] shadow-xs font-black'
+                        : 'text-[#5F6368] hover:text-[#021526] font-semibold'
                     }`}
                   >
                     {d.label}
@@ -698,8 +698,8 @@ export const BookingListScreen: React.FC = () => {
               }}
               className={`h-9 px-3 rounded-xl border flex items-center gap-1.5 transition-all cursor-pointer shrink-0 ${
                 dateFilter === 'particular'
-                  ? 'bg-[#FF6B2C] text-white border-[#FF6B2C] shadow-xs font-black'
-                  : 'bg-[#FAF9F6] border-[#E8E6E1] text-[#171717] hover:bg-[#F1F0EC] font-bold'
+                  ? 'bg-[#F94001] text-white border-[#F94001] shadow-xs font-black'
+                  : 'bg-[#F3F4F4] border-[#E5E7EB] text-[#021526] hover:bg-[#F3F4F4] font-bold'
               }`}
               title="Pick a specific date"
             >
@@ -715,7 +715,7 @@ export const BookingListScreen: React.FC = () => {
                   haptics.tap();
                   setDateFilter('all');
                 }}
-                className="w-8 h-8 rounded-xl bg-[#FAF9F6] border border-[#E8E6E1] flex items-center justify-center text-[#777570] hover:text-[#171717] cursor-pointer transition-colors shrink-0"
+                className="w-8 h-8 rounded-xl bg-[#F3F4F4] border border-[#E5E7EB] flex items-center justify-center text-[#5F6368] hover:text-[#021526] cursor-pointer transition-colors shrink-0"
                 title="Reset to All Dates"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
@@ -724,23 +724,23 @@ export const BookingListScreen: React.FC = () => {
           </div>
         </div>
 
-        <div className="h-px bg-[#F1F0EC] w-full" />
+        <div className="h-px bg-[#F3F4F4] w-full" />
 
         {/* Tier 2: Search Bar + Sport & Payment Taxonomies */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-          <div className="relative flex items-center bg-[#FAF9F6] border border-[#E8E6E1] focus-within:border-[#171717] focus-within:bg-white rounded-xl px-3.5 py-2 flex-1 w-full md:max-w-md transition-all shadow-2xs">
-            <Search className="w-4 h-4 text-[#777570] mr-2.5 shrink-0" />
+          <div className="relative flex items-center bg-[#F3F4F4] border border-[#E5E7EB] focus-within:border-[#021526] focus-within:bg-white rounded-xl px-3.5 py-2 flex-1 w-full md:max-w-md transition-all shadow-2xs">
+            <Search className="w-4 h-4 text-[#5F6368] mr-2.5 shrink-0" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search customer, booking ID, court, sport..."
-              className="w-full text-[13px] font-medium text-[#171717] bg-transparent focus:outline-none placeholder-[#A3A099]"
+              className="w-full text-[13px] font-medium text-[#021526] bg-transparent focus:outline-none placeholder-[#5F6368]"
             />
             {searchTerm && (
               <button
                 onClick={() => setSearchTerm('')}
-                className="w-5 h-5 rounded-full bg-[#E8E6E1] hover:bg-[#D1CFCA] flex items-center justify-center text-[#777570] hover:text-[#171717] text-[10px] font-bold cursor-pointer transition-colors"
+                className="w-5 h-5 rounded-full bg-[#E5E7EB] hover:bg-[#E5E7EB] flex items-center justify-center text-[#5F6368] hover:text-[#021526] text-[10px] font-bold cursor-pointer transition-colors"
                 title="Clear search"
               >
                 ✕
@@ -749,8 +749,8 @@ export const BookingListScreen: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-0.5">
-            <div className="flex items-center bg-[#FAF9F6] p-1 rounded-xl border border-[#E8E6E1] shrink-0">
-              <span className="text-[11px] font-bold text-[#777570] px-2">Sport:</span>
+            <div className="flex items-center bg-[#F3F4F4] p-1 rounded-xl border border-[#E5E7EB] shrink-0">
+              <span className="text-[11px] font-bold text-[#5F6368] px-2">Sport:</span>
               {['All', 'Football', 'Cricket', 'Badminton'].map((sport) => {
                 const isActive = selectedSport === sport;
                 return (
@@ -762,8 +762,8 @@ export const BookingListScreen: React.FC = () => {
                     }}
                     className={`px-2.5 py-1 rounded-lg text-[11.5px] transition-all cursor-pointer whitespace-nowrap ${
                       isActive
-                        ? 'bg-white text-[#171717] shadow-xs font-black'
-                        : 'text-[#777570] hover:text-[#171717] font-semibold'
+                        ? 'bg-white text-[#021526] shadow-xs font-black'
+                        : 'text-[#5F6368] hover:text-[#021526] font-semibold'
                     }`}
                   >
                     {sport}
@@ -772,8 +772,8 @@ export const BookingListScreen: React.FC = () => {
               })}
             </div>
 
-            <div className="flex items-center bg-[#FAF9F6] p-1 rounded-xl border border-[#E8E6E1] shrink-0">
-              <span className="text-[11px] font-bold text-[#777570] px-2">Payment:</span>
+            <div className="flex items-center bg-[#F3F4F4] p-1 rounded-xl border border-[#E5E7EB] shrink-0">
+              <span className="text-[11px] font-bold text-[#5F6368] px-2">Payment:</span>
               {[
                 { id: 'All', label: 'All' },
                 { id: 'Paid', label: 'Paid in Full' },
@@ -789,8 +789,8 @@ export const BookingListScreen: React.FC = () => {
                     }}
                     className={`px-2.5 py-1 rounded-lg text-[11.5px] transition-all cursor-pointer whitespace-nowrap ${
                       isActive
-                        ? 'bg-white text-[#171717] shadow-xs font-black'
-                        : 'text-[#777570] hover:text-[#171717] font-semibold'
+                        ? 'bg-white text-[#021526] shadow-xs font-black'
+                        : 'text-[#5F6368] hover:text-[#021526] font-semibold'
                     }`}
                   >
                     {p.label}
@@ -802,7 +802,7 @@ export const BookingListScreen: React.FC = () => {
             {hasActiveFilters && (
               <button
                 onClick={handleClearAllFilters}
-                className="h-8 px-2.5 rounded-xl bg-[#FAF9F6] hover:bg-red-50 text-[#777570] hover:text-red-700 text-[11px] font-bold border border-[#E8E6E1] hover:border-red-200 flex items-center gap-1 cursor-pointer transition-colors shrink-0"
+                className="h-8 px-2.5 rounded-xl bg-[#F3F4F4] hover:bg-red-50 text-[#5F6368] hover:text-red-700 text-[11px] font-bold border border-[#E5E7EB] hover:border-red-200 flex items-center gap-1 cursor-pointer transition-colors shrink-0"
                 title="Reset all filters to default"
               >
                 <RotateCcw className="w-3 h-3" />
@@ -817,19 +817,19 @@ export const BookingListScreen: React.FC = () => {
       <div className="block md:hidden space-y-2">
         {/* Row 1: Search Box + Native Filter Sheet Button */}
         <div className="flex items-center gap-2">
-          <div className="relative flex items-center bg-white border border-[#E8E6E1] focus-within:border-[#FF6B2C] rounded-2xl px-3 py-2 flex-1 shadow-2xs transition-all">
-            <Search className="w-4 h-4 text-[#777570] mr-2 shrink-0" />
+          <div className="relative flex items-center bg-white border border-[#E5E7EB] focus-within:border-[#F94001] rounded-2xl px-3 py-2 flex-1 shadow-2xs transition-all">
+            <Search className="w-4 h-4 text-[#5F6368] mr-2 shrink-0" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search customer, ID, court..."
-              className="w-full text-[13px] font-medium text-[#171717] bg-transparent focus:outline-none placeholder-[#A3A099]"
+              className="w-full text-[13px] font-medium text-[#021526] bg-transparent focus:outline-none placeholder-[#5F6368]"
             />
             {searchTerm && (
               <button
                 onClick={() => setSearchTerm('')}
-                className="w-5 h-5 rounded-full bg-[#E8E6E1] flex items-center justify-center text-[#777570] text-[10px] font-bold shrink-0"
+                className="w-5 h-5 rounded-full bg-[#E5E7EB] flex items-center justify-center text-[#5F6368] text-[10px] font-bold shrink-0"
               >
                 ✕
               </button>
@@ -844,14 +844,14 @@ export const BookingListScreen: React.FC = () => {
             }}
             className={`h-10 px-3 rounded-2xl border flex items-center gap-1.5 transition-all shadow-2xs shrink-0 cursor-pointer active-press ${
               activeFiltersCount > 0
-                ? 'bg-[#171717] text-white border-[#171717] font-black'
-                : 'bg-white text-[#171717] border-[#E8E6E1] hover:bg-[#FAF9F6] font-bold'
+                ? 'bg-[#F94001] text-white border-[#F94001] font-black'
+                : 'bg-white text-[#021526] border-[#E5E7EB] hover:bg-[#F3F4F4] font-bold'
             }`}
           >
             <SlidersHorizontal className="w-3.5 h-3.5" />
             <span className="text-[12px]">Filter</span>
             {activeFiltersCount > 0 && (
-              <span className="min-w-[17px] h-[17px] px-1 rounded-full bg-[#FF6B2C] text-white text-[9.5px] font-black flex items-center justify-center">
+              <span className="min-w-[17px] h-[17px] px-1 rounded-full bg-white text-[#F94001] text-[9.5px] font-black flex items-center justify-center">
                 {activeFiltersCount}
               </span>
             )}
@@ -862,9 +862,9 @@ export const BookingListScreen: React.FC = () => {
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 w-full">
           {[
             { id: 'All', label: 'All', count: statusCounts.all },
-            { id: 'Ongoing', label: 'Ongoing', count: statusCounts.ongoing, dot: 'bg-[#2FA66A]' },
+            { id: 'Ongoing', label: 'Ongoing', count: statusCounts.ongoing, dot: 'bg-[#16A34A]' },
             { id: 'Confirmed', label: 'Confirmed', count: statusCounts.confirmed },
-            { id: 'Payment Pending', label: 'Due', count: statusCounts.pending, dot: 'bg-[#E7A72F]' },
+            { id: 'Payment Pending', label: 'Due', count: statusCounts.pending, dot: 'bg-[#F59E0B]' },
             { id: 'Completed', label: 'Done', count: statusCounts.completed },
           ].map((tab) => {
             const isActive = selectedBookingStatus === tab.id;
@@ -877,8 +877,8 @@ export const BookingListScreen: React.FC = () => {
                 }}
                 className={`px-3 py-1.5 rounded-xl text-[11.5px] font-bold transition-all flex items-center gap-1.5 shrink-0 cursor-pointer active-press ${
                   isActive
-                    ? 'bg-[#171717] text-white shadow-xs font-black'
-                    : 'bg-white text-[#777570] border border-[#E8E6E1]'
+                    ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/30 font-black shadow-2xs'
+                    : 'bg-white text-[#5F6368] border border-[#E5E7EB]'
                 }`}
               >
                 {tab.dot && (
@@ -892,7 +892,7 @@ export const BookingListScreen: React.FC = () => {
                 {tab.count !== undefined && tab.count > 0 && (
                   <span
                     className={`px-1.5 py-0.2 rounded-md text-[9.5px] font-black ${
-                      isActive ? 'bg-white/20 text-white' : 'bg-[#E8E6E1] text-[#777570]'
+                      isActive ? 'bg-white/20 text-white' : 'bg-[#E5E7EB] text-[#5F6368]'
                     }`}
                   >
                     {tab.count}
@@ -906,11 +906,11 @@ export const BookingListScreen: React.FC = () => {
         {/* Row 3: Active Filters Tags Strip (Only visible if extra filters applied) */}
         {(selectedSport !== 'All' || dateFilter !== 'all' || selectedPaymentFilter !== 'All') && (
           <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5">
-            <span className="text-[10px] font-bold text-[#777570] shrink-0">Filters:</span>
+            <span className="text-[10px] font-bold text-[#5F6368] shrink-0">Filters:</span>
             {selectedSport !== 'All' && (
               <button
                 onClick={() => setSelectedSport('All')}
-                className="h-6 px-2 rounded-lg bg-[#FF6B2C]/10 text-[#FF6B2C] text-[10.5px] font-black inline-flex items-center gap-1 border border-[#FF6B2C]/25 shrink-0"
+                className="h-6 px-2 rounded-lg bg-[#F94001]/10 text-[#F94001] text-[10.5px] font-black inline-flex items-center gap-1 border border-[#F94001]/25 shrink-0"
               >
                 <span>{selectedSport}</span>
                 <X className="w-3 h-3" />
@@ -919,7 +919,7 @@ export const BookingListScreen: React.FC = () => {
             {dateFilter !== 'all' && (
               <button
                 onClick={() => setDateFilter('all')}
-                className="h-6 px-2 rounded-lg bg-[#FF6B2C]/10 text-[#FF6B2C] text-[10.5px] font-black inline-flex items-center gap-1 border border-[#FF6B2C]/25 shrink-0"
+                className="h-6 px-2 rounded-lg bg-[#F94001]/10 text-[#F94001] text-[10.5px] font-black inline-flex items-center gap-1 border border-[#F94001]/25 shrink-0"
               >
                 <span>{dateFilter === 'particular' ? selectedParticularDate : dateFilter}</span>
                 <X className="w-3 h-3" />
@@ -928,7 +928,7 @@ export const BookingListScreen: React.FC = () => {
             {selectedPaymentFilter !== 'All' && (
               <button
                 onClick={() => setSelectedPaymentFilter('All')}
-                className="h-6 px-2 rounded-lg bg-[#FF6B2C]/10 text-[#FF6B2C] text-[10.5px] font-black inline-flex items-center gap-1 border border-[#FF6B2C]/25 shrink-0"
+                className="h-6 px-2 rounded-lg bg-[#F94001]/10 text-[#F94001] text-[10.5px] font-black inline-flex items-center gap-1 border border-[#F94001]/25 shrink-0"
               >
                 <span>{selectedPaymentFilter === 'Pending' ? 'Due Balances' : 'Paid'}</span>
                 <X className="w-3 h-3" />
@@ -936,7 +936,7 @@ export const BookingListScreen: React.FC = () => {
             )}
             <button
               onClick={handleClearAllFilters}
-              className="text-[10.5px] font-bold text-[#777570] hover:text-red-600 underline shrink-0 ml-1"
+              className="text-[10.5px] font-bold text-[#5F6368] hover:text-red-600 underline shrink-0 ml-1"
             >
               Clear
             </button>
@@ -948,12 +948,12 @@ export const BookingListScreen: React.FC = () => {
       {/* 5. MAIN CONTENT: STRUCTURED TABLE OR CARD GRID VIEW                       */}
       {/* ========================================================================= */}
       {filteredBookings.length === 0 ? (
-        <div className="bg-white rounded-2xl p-12 border border-[#E8E6E1] text-center space-y-2.5 shadow-2xs">
-          <div className="w-12 h-12 rounded-2xl bg-[#FAF9F6] flex items-center justify-center mx-auto text-[#777570] border border-[#E8E6E1]">
-            <CalendarIcon className="w-6 h-6 text-[#FF6B2C]" />
+        <div className="bg-white rounded-2xl p-12 border border-[#E5E7EB] text-center space-y-2.5 shadow-2xs">
+          <div className="w-12 h-12 rounded-2xl bg-[#F3F4F4] flex items-center justify-center mx-auto text-[#5F6368] border border-[#E5E7EB]">
+            <CalendarIcon className="w-6 h-6 text-[#F94001]" />
           </div>
-          <h3 className="text-[15px] font-black text-[#171717]">No bookings found</h3>
-          <p className="text-[12px] text-[#777570] max-w-md mx-auto">
+          <h3 className="text-[15px] font-black text-[#021526]">No bookings found</h3>
+          <p className="text-[12px] text-[#5F6368] max-w-md mx-auto">
             No bookings match the selected date filter ({dateFilter === 'particular' ? selectedParticularDate : dateFilter}) or search criteria.
           </p>
           <button
@@ -965,7 +965,7 @@ export const BookingListScreen: React.FC = () => {
               setSelectedSport('All');
               setSearchTerm('');
             }}
-            className="mt-2 px-4 py-1.5 rounded-xl bg-[#171717] text-white text-[12px] font-bold cursor-pointer"
+            className="mt-2 px-4 py-1.5 rounded-xl bg-[#021526] text-white text-[12px] font-bold cursor-pointer"
           >
             Clear All Filters
           </button>
@@ -979,15 +979,15 @@ export const BookingListScreen: React.FC = () => {
             <div
               key={b.id}
               onClick={() => handleOpenPopup(b)}
-              className="bg-white rounded-2xl p-4 border border-[#E8E6E1] shadow-2xs hover:border-[#171717]/40 hover:shadow-xs transition-all cursor-pointer flex flex-col justify-between space-y-3 group"
+              className="bg-white rounded-2xl p-4 border border-[#E5E7EB] shadow-2xs hover:border-[#021526]/40 hover:shadow-xs transition-all cursor-pointer flex flex-col justify-between space-y-3 group"
             >
               {/* Header: ID + Dual Status Badges (Booking Status + Payment Status) */}
               <div className="flex items-center justify-between gap-1 flex-wrap">
                 <div className="flex items-center gap-1.5">
-                  <span className="font-mono text-[11px] font-black text-[#171717] bg-[#FAF9F6] px-2 py-0.5 rounded border border-[#E8E6E1]">
+                  <span className="font-mono text-[11px] font-black text-[#021526] bg-[#F3F4F4] px-2 py-0.5 rounded border border-[#E5E7EB]">
                     {b.id}
                   </span>
-                  <span className="text-[11.5px] font-bold text-[#777570]">
+                  <span className="text-[11.5px] font-bold text-[#5F6368]">
                     · {b.sport}
                   </span>
                 </div>
@@ -1000,33 +1000,33 @@ export const BookingListScreen: React.FC = () => {
 
               {/* Customer Avatar & Name */}
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#171717] text-white font-black text-[13px] flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-[#021526] text-white font-black text-[13px] flex items-center justify-center shrink-0">
                   {b.customerName.slice(0, 2).toUpperCase()}
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-[14.5px] font-black text-[#171717] tracking-tight truncate group-hover:text-[#FF6B2C] transition-colors">
+                  <h3 className="text-[14.5px] font-black text-[#021526] tracking-tight truncate group-hover:text-[#F94001] transition-colors">
                     {b.customerName}
                   </h3>
-                  <p className="text-[11.5px] text-[#777570] flex items-center gap-1 truncate">
-                    <MapPin className="w-3 h-3 text-[#FF6B2C] shrink-0" />
+                  <p className="text-[11.5px] text-[#5F6368] flex items-center gap-1 truncate">
+                    <MapPin className="w-3 h-3 text-[#F94001] shrink-0" />
                     <span>{b.courtName}</span>
                   </p>
                 </div>
               </div>
 
               {/* Slot Details Box */}
-              <div className="bg-[#FAF9F6] rounded-xl p-2.5 border border-[#E8E6E1]/80 text-[11.5px] flex items-center justify-between">
-                <div className="flex items-center gap-1.5 font-bold text-[#171717]">
-                  <Clock className="w-3.5 h-3.5 text-[#FF6B2C]" />
+              <div className="bg-[#F3F4F4] rounded-xl p-2.5 border border-[#E5E7EB]/80 text-[11.5px] flex items-center justify-between">
+                <div className="flex items-center gap-1.5 font-bold text-[#021526]">
+                  <Clock className="w-3.5 h-3.5 text-[#F94001]" />
                   <span>{b.timeSlot}</span>
                 </div>
-                <span className="font-medium text-[#777570]">{b.date}</span>
+                <span className="font-medium text-[#5F6368]">{b.date}</span>
               </div>
 
               {/* Footer: Price & Contextual Lifecycle Actions */}
-              <div className="pt-2 border-t border-[#F1F0EC] flex items-center justify-between gap-2">
+              <div className="pt-2 border-t border-[#F3F4F4] flex items-center justify-between gap-2">
                 <div>
-                  <span className="text-[15px] font-black text-[#171717] block leading-none">
+                  <span className="text-[15px] font-black text-[#021526] block leading-none">
                     ₹{b.totalAmount.toLocaleString('en-IN')}
                   </span>
                   {b.balanceAmount > 0 ? (
@@ -1034,7 +1034,7 @@ export const BookingListScreen: React.FC = () => {
                       Paid ₹{b.paidAmount.toLocaleString('en-IN')} · Due ₹{b.balanceAmount.toLocaleString('en-IN')}
                     </span>
                   ) : (
-                    <span className="text-[10.5px] font-semibold text-[#2FA66A] mt-1 block">
+                    <span className="text-[10.5px] font-semibold text-[#16A34A] mt-1 block">
                       Fully Settled ({b.paymentMethod || 'Online'})
                     </span>
                   )}
@@ -1053,7 +1053,7 @@ export const BookingListScreen: React.FC = () => {
                             setSelectedBookingId(b.id);
                             setActiveModal('payment_options');
                           }}
-                          className="h-8 px-2.5 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white text-[10.5px] font-black flex items-center gap-1 shadow-2xs active-press cursor-pointer transition-colors whitespace-nowrap"
+                          className="h-8 px-2.5 rounded-xl bg-[#F94001] hover:bg-[#D93600] text-white text-[10.5px] font-black flex items-center gap-1 shadow-2xs active-press cursor-pointer transition-colors whitespace-nowrap"
                           title="Collect remaining balance at counter"
                         >
                           <CreditCard className="w-3 h-3" />
@@ -1066,7 +1066,7 @@ export const BookingListScreen: React.FC = () => {
                           haptics.tap();
                           checkInBooking(b.id);
                         }}
-                        className="h-8 px-2.5 rounded-xl bg-[#2FA66A] hover:bg-[#258756] text-white text-[11px] font-black flex items-center gap-1 shadow-2xs active-press cursor-pointer transition-colors whitespace-nowrap"
+                        className="h-8 px-2.5 rounded-xl bg-[#16A34A] hover:bg-[#258756] text-white text-[11px] font-black flex items-center gap-1 shadow-2xs active-press cursor-pointer transition-colors whitespace-nowrap"
                         title="Check in players on court"
                       >
                         <LogIn className="w-3 h-3" />
@@ -1086,7 +1086,7 @@ export const BookingListScreen: React.FC = () => {
                             setSelectedBookingId(b.id);
                             setActiveModal('payment_options');
                           }}
-                          className="h-8 px-2.5 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white text-[10.5px] font-black flex items-center gap-1 shadow-2xs active-press cursor-pointer transition-colors whitespace-nowrap"
+                          className="h-8 px-2.5 rounded-xl bg-[#F94001] hover:bg-[#D93600] text-white text-[10.5px] font-black flex items-center gap-1 shadow-2xs active-press cursor-pointer transition-colors whitespace-nowrap"
                           title="Collect remaining balance"
                         >
                           <CreditCard className="w-3 h-3" />
@@ -1100,10 +1100,10 @@ export const BookingListScreen: React.FC = () => {
                           setExtendingBooking(b);
                           setExtensionMinutes(null);
                         }}
-                        className="h-8 px-2 rounded-xl bg-[#171717] hover:bg-[#2e2e2e] text-white text-[11px] font-black flex items-center gap-1 shadow-2xs active-press cursor-pointer transition-colors whitespace-nowrap"
+                        className="h-8 px-2 rounded-xl bg-[#021526] hover:bg-[#061D33] text-white text-[11px] font-black flex items-center gap-1 shadow-2xs active-press cursor-pointer transition-colors whitespace-nowrap"
                         title="Extend match duration"
                       >
-                        <Clock className="w-3 h-3 text-[#FF6B2C]" />
+                        <Clock className="w-3 h-3 text-[#F94001]" />
                         <span>+ Extend</span>
                       </button>
 
@@ -1113,7 +1113,7 @@ export const BookingListScreen: React.FC = () => {
                           haptics.tap();
                           checkOutBooking(b.id);
                         }}
-                        className="h-8 px-2.5 rounded-xl bg-[#2FA66A] hover:bg-[#258756] text-white text-[11px] font-black flex items-center gap-1 shadow-2xs active-press cursor-pointer transition-colors whitespace-nowrap"
+                        className="h-8 px-2.5 rounded-xl bg-[#16A34A] hover:bg-[#258756] text-white text-[11px] font-black flex items-center gap-1 shadow-2xs active-press cursor-pointer transition-colors whitespace-nowrap"
                         title="Check out and finish session"
                       >
                         <LogOut className="w-3 h-3" />
@@ -1138,7 +1138,7 @@ export const BookingListScreen: React.FC = () => {
                       className={`h-8 px-2.5 rounded-xl border text-[10.5px] font-bold flex items-center gap-1 shadow-2xs whitespace-nowrap transition-colors ${
                         isPaymentLinkBlocked(b.id)
                           ? 'bg-amber-50 border-amber-300 text-amber-800 cursor-not-allowed'
-                          : 'bg-white border-[#FF6B2C]/40 hover:bg-[#FAF9F6] text-[#FF6B2C] active-press cursor-pointer'
+                          : 'bg-white border-[#F94001]/40 hover:bg-[#F3F4F4] text-[#F94001] active-press cursor-pointer'
                       }`}
                       title={isPaymentLinkBlocked(b.id) ? `Link active (Valid for ${formatMinutesSeconds(getPaymentLinkTimeRemaining(b.id))})` : "Send payment link"}
                     >
@@ -1164,7 +1164,7 @@ export const BookingListScreen: React.FC = () => {
                         haptics.tap();
                         handleOpenPopup(b);
                       }}
-                      className="h-8 px-2.5 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white text-[10.5px] font-black flex items-center gap-1 shadow-2xs active-press cursor-pointer transition-colors whitespace-nowrap"
+                      className="h-8 px-2.5 rounded-xl bg-[#F94001] hover:bg-[#D93600] text-white text-[10.5px] font-black flex items-center gap-1 shadow-2xs active-press cursor-pointer transition-colors whitespace-nowrap"
                       title="Re-lock slot with new hold time"
                     >
                       <RefreshCw className="w-3 h-3" />
@@ -1178,7 +1178,7 @@ export const BookingListScreen: React.FC = () => {
                       e.stopPropagation();
                       handleOpenPopup(b);
                     }}
-                    className="h-8 px-2.5 rounded-xl bg-[#FAF9F6] hover:bg-[#F1F0EC] border border-[#E8E6E1] text-[#171717] text-[11px] font-bold flex items-center gap-0.5 active-press cursor-pointer transition-colors"
+                    className="h-8 px-2.5 rounded-xl bg-[#F3F4F4] hover:bg-[#F3F4F4] border border-[#E5E7EB] text-[#021526] text-[11px] font-bold flex items-center gap-0.5 active-press cursor-pointer transition-colors"
                   >
                     <span>Details</span>
                     <ChevronRight className="w-3 h-3" />
@@ -1192,11 +1192,11 @@ export const BookingListScreen: React.FC = () => {
         /* -------------------------------------------------------------
            TABLE LIST VIEW (High-Density Structured 5-Column Ledger)
            ------------------------------------------------------------- */
-        <div className="bg-white rounded-2xl border border-[#E8E6E1] shadow-2xs overflow-hidden">
+        <div className="bg-white rounded-2xl border border-[#E5E7EB] shadow-2xs overflow-hidden">
           <div className="overflow-x-auto no-scrollbar">
             <div className="min-w-[1020px]">
               {/* Structured Column Header */}
-              <div className="grid grid-cols-[minmax(230px,2fr)_minmax(150px,1.2fr)_minmax(120px,1fr)_minmax(180px,1.3fr)_minmax(290px,2.2fr)] items-center px-4 py-3 bg-[#FAF9F6] border-b border-[#E8E6E1] text-[10.5px] font-black text-[#777570] uppercase tracking-wider">
+              <div className="grid grid-cols-[minmax(230px,2fr)_minmax(150px,1.2fr)_minmax(120px,1fr)_minmax(180px,1.3fr)_minmax(290px,2.2fr)] items-center px-4 py-3 bg-[#F3F4F4] border-b border-[#E5E7EB] text-[10.5px] font-black text-[#5F6368] uppercase tracking-wider">
                 <div>Customer & Court</div>
                 <div>Slot & Date</div>
                 <div>Total (Paid)</div>
@@ -1205,28 +1205,28 @@ export const BookingListScreen: React.FC = () => {
               </div>
 
               {/* Table Rows */}
-              <div className="divide-y divide-[#F1F0EC]">
+              <div className="divide-y divide-[#F3F4F4]">
                 {filteredBookings.map((b) => (
                   <div
                     key={b.id}
                     onClick={() => handleOpenPopup(b)}
-                    className="grid grid-cols-[minmax(230px,2fr)_minmax(150px,1.2fr)_minmax(120px,1fr)_minmax(180px,1.3fr)_minmax(290px,2.2fr)] items-center px-4 py-3 hover:bg-[#FAF9F6]/80 transition-colors cursor-pointer group"
+                    className="grid grid-cols-[minmax(230px,2fr)_minmax(150px,1.2fr)_minmax(120px,1fr)_minmax(180px,1.3fr)_minmax(290px,2.2fr)] items-center px-4 py-3 hover:bg-[#F3F4F4]/80 transition-colors cursor-pointer group"
                   >
                     {/* Column 1: Customer & Court */}
                     <div className="flex items-center gap-3 min-w-0 pr-3">
-                      <div className="w-10 h-10 rounded-xl bg-[#171717] text-white flex items-center justify-center font-black text-[13px] shrink-0 shadow-2xs">
+                      <div className="w-10 h-10 rounded-xl bg-[#021526] text-white flex items-center justify-center font-black text-[13px] shrink-0 shadow-2xs">
                         {b.customerName.slice(0, 2).toUpperCase()}
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <h3 className="text-[13.5px] font-black text-[#171717] tracking-tight truncate group-hover:text-[#FF6B2C] transition-colors">
+                          <h3 className="text-[13.5px] font-black text-[#021526] tracking-tight truncate group-hover:text-[#F94001] transition-colors">
                             {b.customerName}
                           </h3>
-                          <span className="font-mono text-[10px] font-bold text-[#777570] bg-[#FAF9F6] px-1.5 py-0.5 rounded border border-[#E8E6E1]">
+                          <span className="font-mono text-[10px] font-bold text-[#5F6368] bg-[#F3F4F4] px-1.5 py-0.5 rounded border border-[#E5E7EB]">
                             {b.id}
                           </span>
                         </div>
-                        <p className="text-[11.5px] text-[#777570] mt-0.5 truncate font-medium">
+                        <p className="text-[11.5px] text-[#5F6368] mt-0.5 truncate font-medium">
                           {b.sport} · {b.courtName}
                         </p>
                       </div>
@@ -1234,18 +1234,18 @@ export const BookingListScreen: React.FC = () => {
 
                     {/* Column 2: Slot & Date */}
                     <div className="text-[12px] pr-2">
-                      <div className="flex items-center gap-1.5 text-[#171717] font-bold">
-                        <Clock className="w-3.5 h-3.5 text-[#FF6B2C] shrink-0" />
+                      <div className="flex items-center gap-1.5 text-[#021526] font-bold">
+                        <Clock className="w-3.5 h-3.5 text-[#F94001] shrink-0" />
                         <span className="whitespace-nowrap">{b.timeSlot}</span>
                       </div>
-                      <span className="text-[10.5px] text-[#777570] font-medium block mt-0.5">
+                      <span className="text-[10.5px] text-[#5F6368] font-medium block mt-0.5">
                         {b.date}
                       </span>
                     </div>
 
                     {/* Column 3: Amount (Paid / Due) */}
                     <div className="text-left pr-2">
-                      <p className="text-[14.5px] font-black text-[#171717] leading-none">
+                      <p className="text-[14.5px] font-black text-[#021526] leading-none">
                         ₹{b.totalAmount.toLocaleString('en-IN')}
                       </p>
                       <p className="text-[11px] font-medium mt-1">
@@ -1254,7 +1254,7 @@ export const BookingListScreen: React.FC = () => {
                             Due: ₹{b.balanceAmount.toLocaleString('en-IN')}
                           </span>
                         ) : (
-                          <span className="text-[#2FA66A] font-bold">
+                          <span className="text-[#16A34A] font-bold">
                             Paid: ₹{b.paidAmount.toLocaleString('en-IN')}
                           </span>
                         )}
@@ -1279,7 +1279,7 @@ export const BookingListScreen: React.FC = () => {
                                 setSelectedBookingId(b.id);
                                 setActiveModal('payment_options');
                               }}
-                              className="h-8 px-2.5 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white text-[10.5px] font-black flex items-center gap-1 shadow-2xs active-press cursor-pointer transition-colors whitespace-nowrap shrink-0"
+                              className="h-8 px-2.5 rounded-xl bg-[#F94001] hover:bg-[#D93600] text-white text-[10.5px] font-black flex items-center gap-1 shadow-2xs active-press cursor-pointer transition-colors whitespace-nowrap shrink-0"
                               title="Collect remaining balance at counter"
                             >
                               <CreditCard className="w-3 h-3" />
@@ -1292,7 +1292,7 @@ export const BookingListScreen: React.FC = () => {
                               haptics.tap();
                               checkInBooking(b.id);
                             }}
-                            className="h-8 px-2.5 rounded-xl bg-[#2FA66A] hover:bg-[#258756] text-white text-[11px] font-black flex items-center gap-1 shadow-2xs active-press cursor-pointer transition-colors whitespace-nowrap shrink-0"
+                            className="h-8 px-2.5 rounded-xl bg-[#16A34A] hover:bg-[#258756] text-white text-[11px] font-black flex items-center gap-1 shadow-2xs active-press cursor-pointer transition-colors whitespace-nowrap shrink-0"
                           >
                             <LogIn className="w-3 h-3" />
                             <span>Check In</span>
@@ -1310,7 +1310,7 @@ export const BookingListScreen: React.FC = () => {
                                 setSelectedBookingId(b.id);
                                 setActiveModal('payment_options');
                               }}
-                              className="h-8 px-2.5 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white text-[10.5px] font-black flex items-center gap-1 shadow-2xs active-press cursor-pointer transition-colors whitespace-nowrap shrink-0"
+                              className="h-8 px-2.5 rounded-xl bg-[#F94001] hover:bg-[#D93600] text-white text-[10.5px] font-black flex items-center gap-1 shadow-2xs active-press cursor-pointer transition-colors whitespace-nowrap shrink-0"
                               title="Collect remaining balance"
                             >
                               <CreditCard className="w-3 h-3" />
@@ -1324,10 +1324,10 @@ export const BookingListScreen: React.FC = () => {
                               setExtendingBooking(b);
                               setExtensionMinutes(null);
                             }}
-                            className="h-8 px-2.5 rounded-xl bg-[#171717] hover:bg-[#2e2e2e] text-white text-[11px] font-black flex items-center gap-1 shadow-2xs active-press cursor-pointer transition-colors whitespace-nowrap shrink-0"
+                            className="h-8 px-2.5 rounded-xl bg-[#021526] hover:bg-[#061D33] text-white text-[11px] font-black flex items-center gap-1 shadow-2xs active-press cursor-pointer transition-colors whitespace-nowrap shrink-0"
                             title="Extend Slot"
                           >
-                            <Clock className="w-3 h-3 text-[#FF6B2C]" />
+                            <Clock className="w-3 h-3 text-[#F94001]" />
                             <span>Extend</span>
                           </button>
 
@@ -1337,7 +1337,7 @@ export const BookingListScreen: React.FC = () => {
                               haptics.tap();
                               checkOutBooking(b.id);
                             }}
-                            className="h-8 px-2.5 rounded-xl bg-[#2FA66A] hover:bg-[#258756] text-white text-[11px] font-black flex items-center gap-1 shadow-2xs active-press cursor-pointer transition-colors whitespace-nowrap shrink-0"
+                            className="h-8 px-2.5 rounded-xl bg-[#16A34A] hover:bg-[#258756] text-white text-[11px] font-black flex items-center gap-1 shadow-2xs active-press cursor-pointer transition-colors whitespace-nowrap shrink-0"
                           >
                             <LogOut className="w-3 h-3" />
                             <span>Check Out</span>
@@ -1361,7 +1361,7 @@ export const BookingListScreen: React.FC = () => {
                           className={`h-8 px-2.5 rounded-xl border text-[10.5px] font-bold flex items-center gap-1 shadow-2xs whitespace-nowrap shrink-0 transition-colors ${
                             isPaymentLinkBlocked(b.id)
                               ? 'bg-amber-50 border-amber-300 text-amber-800 cursor-not-allowed'
-                              : 'bg-white border-[#FF6B2C]/40 hover:bg-[#FAF9F6] text-[#FF6B2C] active-press cursor-pointer'
+                              : 'bg-white border-[#F94001]/40 hover:bg-[#F3F4F4] text-[#F94001] active-press cursor-pointer'
                           }`}
                           title={isPaymentLinkBlocked(b.id) ? `Link active (Valid for ${formatMinutesSeconds(getPaymentLinkTimeRemaining(b.id))})` : "Send payment link"}
                         >
@@ -1387,7 +1387,7 @@ export const BookingListScreen: React.FC = () => {
                             haptics.tap();
                             handleOpenPopup(b);
                           }}
-                          className="h-8 px-2.5 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white text-[10.5px] font-black flex items-center gap-1 shadow-2xs active-press cursor-pointer transition-colors whitespace-nowrap shrink-0"
+                          className="h-8 px-2.5 rounded-xl bg-[#F94001] hover:bg-[#D93600] text-white text-[10.5px] font-black flex items-center gap-1 shadow-2xs active-press cursor-pointer transition-colors whitespace-nowrap shrink-0"
                           title="Re-lock slot with custom timer"
                         >
                           <RefreshCw className="w-3 h-3" />
@@ -1400,7 +1400,7 @@ export const BookingListScreen: React.FC = () => {
                           e.stopPropagation();
                           handleOpenPopup(b);
                         }}
-                        className="h-8 px-2.5 rounded-xl bg-[#FAF9F6] hover:bg-[#F1F0EC] border border-[#E8E6E1] text-[#171717] text-[11px] font-bold active-press cursor-pointer transition-colors flex items-center gap-1 shrink-0 whitespace-nowrap"
+                        className="h-8 px-2.5 rounded-xl bg-[#F3F4F4] hover:bg-[#F3F4F4] border border-[#E5E7EB] text-[#021526] text-[11px] font-bold active-press cursor-pointer transition-colors flex items-center gap-1 shrink-0 whitespace-nowrap"
                       >
                         <span>Details</span>
                         <ChevronRight className="w-3 h-3" />
@@ -1435,18 +1435,18 @@ export const BookingListScreen: React.FC = () => {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-lg bg-white rounded-t-[32px] md:rounded-3xl p-5 md:p-6 border border-[#E8E6E1] shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto no-scrollbar pb-safe"
+              className="relative w-full max-w-lg bg-white rounded-t-[32px] md:rounded-3xl p-5 md:p-6 border border-[#E5E7EB] shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto no-scrollbar pb-safe"
             >
               {/* Mobile Sheet Drag Handle */}
               <div className="w-10 h-1 rounded-full bg-[#D4D2CD] mx-auto mb-2 md:hidden" />
 
               {/* Modal Top Bar */}
-              <div className="flex items-center justify-between pb-3 border-b border-[#F1F0EC]">
+              <div className="flex items-center justify-between pb-3 border-b border-[#F3F4F4]">
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-[14px] font-black text-[#171717] bg-[#FAF9F6] px-2 py-0.5 rounded-lg border border-[#E8E6E1]">
+                  <span className="font-mono text-[14px] font-black text-[#021526] bg-[#F3F4F4] px-2 py-0.5 rounded-lg border border-[#E5E7EB]">
                     #{activePopupBooking.id}
                   </span>
-                  <span className="text-[11px] text-[#777570] font-medium">
+                  <span className="text-[11px] text-[#5F6368] font-medium">
                     {activePopupBooking.createdAt}
                   </span>
                 </div>
@@ -1456,7 +1456,7 @@ export const BookingListScreen: React.FC = () => {
                   {getPaymentStatusBadge(activePopupBooking.paymentStatus, activePopupBooking.balanceAmount)}
                   <button
                     onClick={() => setSelectedPopupBooking(null)}
-                    className="w-8 h-8 rounded-full bg-[#F1F0EC] flex items-center justify-center text-[#777570] hover:text-[#171717] cursor-pointer transition-colors"
+                    className="w-8 h-8 rounded-full bg-[#F3F4F4] flex items-center justify-center text-[#5F6368] hover:text-[#021526] cursor-pointer transition-colors"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -1464,20 +1464,20 @@ export const BookingListScreen: React.FC = () => {
               </div>
 
               {/* Customer Contact Card */}
-              <div className="bg-[#FAF9F6] rounded-2xl p-3.5 border border-[#E8E6E1] flex items-center justify-between">
+              <div className="bg-[#F3F4F4] rounded-2xl p-3.5 border border-[#E5E7EB] flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-2xl bg-[#171717] text-white font-black text-[14px] flex items-center justify-center">
+                  <div className="w-11 h-11 rounded-2xl bg-[#021526] text-white font-black text-[14px] flex items-center justify-center">
                     {activePopupBooking.customerName.slice(0, 2).toUpperCase()}
                   </div>
                   <div>
-                    <h3 className="text-[15px] font-black text-[#171717]">
+                    <h3 className="text-[15px] font-black text-[#021526]">
                       {activePopupBooking.customerName}
                     </h3>
-                    <div className="flex items-center gap-1.5 text-[12px] text-[#777570] font-medium mt-0.5">
+                    <div className="flex items-center gap-1.5 text-[12px] text-[#5F6368] font-medium mt-0.5">
                       <span>{activePopupBooking.customerPhone}</span>
                       <button
                         onClick={() => copyPhone(activePopupBooking.customerPhone)}
-                        className="text-[#777570] hover:text-[#171717] cursor-pointer"
+                        className="text-[#5F6368] hover:text-[#021526] cursor-pointer"
                         title="Copy Phone"
                       >
                         <Copy className="w-3 h-3" />
@@ -1490,7 +1490,7 @@ export const BookingListScreen: React.FC = () => {
                   <a
                     href={`tel:${activePopupBooking.customerPhone}`}
                     onClick={() => haptics.tap()}
-                    className="w-9 h-9 rounded-xl bg-white border border-[#E8E6E1] flex items-center justify-center text-[#171717] hover:bg-[#171717] hover:text-white transition-all shadow-2xs cursor-pointer"
+                    className="w-9 h-9 rounded-xl bg-white border border-[#E5E7EB] flex items-center justify-center text-[#021526] hover:bg-[#021526] hover:text-white transition-all shadow-2xs cursor-pointer"
                     title="Call Customer"
                   >
                     <Phone className="w-4 h-4" />
@@ -1499,53 +1499,53 @@ export const BookingListScreen: React.FC = () => {
               </div>
 
               {/* Match & Court Information */}
-              <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-2xs space-y-3">
+              <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-2xs space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-black text-[#777570] uppercase tracking-wider">
+                  <span className="text-[11px] font-black text-[#5F6368] uppercase tracking-wider">
                     Court & Slot Details
                   </span>
-                  <span className="px-2 py-0.5 rounded-full text-[10.5px] font-black bg-[#FF6B2C]/10 text-[#FF6B2C]">
+                  <span className="px-2 py-0.5 rounded-full text-[10.5px] font-black bg-[#F94001]/10 text-[#F94001]">
                     {activePopupBooking.sport}
                   </span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 text-[12px]">
                   <div className="space-y-0.5">
-                    <span className="text-[#777570] text-[10.5px] font-medium block">Venue Pitch</span>
-                    <span className="font-bold text-[#171717] flex items-center gap-1">
-                      <MapPin className="w-3.5 h-3.5 text-[#FF6B2C]" />
+                    <span className="text-[#5F6368] text-[10.5px] font-medium block">Venue Pitch</span>
+                    <span className="font-bold text-[#021526] flex items-center gap-1">
+                      <MapPin className="w-3.5 h-3.5 text-[#F94001]" />
                       {activePopupBooking.courtName}
                     </span>
                   </div>
 
                   <div className="space-y-0.5">
-                    <span className="text-[#777570] text-[10.5px] font-medium block">Reserved Date</span>
-                    <span className="font-bold text-[#171717] flex items-center gap-1">
-                      <CalendarIcon className="w-3.5 h-3.5 text-[#2FA66A]" />
+                    <span className="text-[#5F6368] text-[10.5px] font-medium block">Reserved Date</span>
+                    <span className="font-bold text-[#021526] flex items-center gap-1">
+                      <CalendarIcon className="w-3.5 h-3.5 text-[#16A34A]" />
                       {activePopupBooking.date}
                     </span>
                   </div>
 
-                  <div className="col-span-2 pt-2 border-t border-[#F1F0EC] space-y-0.5">
-                    <span className="text-[#777570] text-[10.5px] font-medium block">Time Slot</span>
-                    <span className="font-bold text-[#171717] text-[13px] flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-[#FF6B2C]" />
+                  <div className="col-span-2 pt-2 border-t border-[#F3F4F4] space-y-0.5">
+                    <span className="text-[#5F6368] text-[10.5px] font-medium block">Time Slot</span>
+                    <span className="font-bold text-[#021526] text-[13px] flex items-center gap-1">
+                      <Clock className="w-3.5 h-3.5 text-[#F94001]" />
                       {activePopupBooking.timeSlot}
                     </span>
                   </div>
                 </div>
 
                 {activePopupBooking.notes && (
-                  <div className="bg-[#FAF9F6] p-2.5 rounded-xl text-[11.5px] text-[#777570] border border-[#E8E6E1]">
-                    <strong className="text-[#171717]">Booking Note:</strong> {activePopupBooking.notes}
+                  <div className="bg-[#F3F4F4] p-2.5 rounded-xl text-[11.5px] text-[#5F6368] border border-[#E5E7EB]">
+                    <strong className="text-[#021526]">Booking Note:</strong> {activePopupBooking.notes}
                   </div>
                 )}
               </div>
 
               {/* Financial Breakdown Card */}
-              <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-2xs space-y-3">
+              <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-2xs space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-black text-[#777570] uppercase tracking-wider">
+                  <span className="text-[11px] font-black text-[#5F6368] uppercase tracking-wider">
                     Payment Breakdown
                   </span>
                   <button
@@ -1554,7 +1554,7 @@ export const BookingListScreen: React.FC = () => {
                       exportSingleBookingReceipt(activePopupBooking);
                       showToast('Receipt Generated', `Invoice #${activePopupBooking.id} downloaded`, 'success');
                     }}
-                    className="text-[11px] font-bold text-[#2FA66A] hover:underline flex items-center gap-1 cursor-pointer"
+                    className="text-[11px] font-bold text-[#16A34A] hover:underline flex items-center gap-1 cursor-pointer"
                   >
                     <Download className="w-3.5 h-3.5" />
                     <span>Download Invoice</span>
@@ -1565,35 +1565,35 @@ export const BookingListScreen: React.FC = () => {
                   const fin = calculateBookingFinancials(activePopupBooking.totalAmount);
                   return (
                     <div className="space-y-1.5 text-[11.5px]">
-                      <div className="flex justify-between text-[#777570]">
+                      <div className="flex justify-between text-[#5F6368]">
                         <span>Base Court Cost:</span>
-                        <strong className="text-[#171717]">₹{fin.baseCourtCost.toLocaleString('en-IN')}</strong>
+                        <strong className="text-[#021526]">₹{fin.baseCourtCost.toLocaleString('en-IN')}</strong>
                       </div>
-                      <div className="flex justify-between text-[#777570]">
+                      <div className="flex justify-between text-[#5F6368]">
                         <span>Venue GST (18%):</span>
-                        <strong className="text-[#171717]">₹{fin.courtGst18.toLocaleString('en-IN')}</strong>
+                        <strong className="text-[#021526]">₹{fin.courtGst18.toLocaleString('en-IN')}</strong>
                       </div>
-                      <div className="flex justify-between text-[#171717] font-bold bg-[#FAF9F6] p-1.5 rounded-lg border border-[#E8E6E1]">
+                      <div className="flex justify-between text-[#021526] font-bold bg-[#F3F4F4] p-1.5 rounded-lg border border-[#E5E7EB]">
                         <span>Total Turf Price (Venue):</span>
                         <span>₹{fin.courtTotal.toLocaleString('en-IN')}</span>
                       </div>
-                      <div className="flex justify-between text-[#777570] pt-0.5">
+                      <div className="flex justify-between text-[#5F6368] pt-0.5">
                         <span>Platform Convenience Fee (5%):</span>
                         <strong className="text-[#B87C0D]">+₹{fin.convenienceFee5Percent.toLocaleString('en-IN')}</strong>
                       </div>
-                      <div className="flex justify-between text-[#777570]">
+                      <div className="flex justify-between text-[#5F6368]">
                         <span>Convenience GST (18% on fee):</span>
                         <strong className="text-[#B87C0D]">+₹{fin.convenienceGst18Percent.toLocaleString('en-IN')}</strong>
                       </div>
-                      <div className="flex justify-between text-[#777570]">
+                      <div className="flex justify-between text-[#5F6368]">
                         <span>Amount Paid ({activePopupBooking.paymentMethod || 'Online'}):</span>
-                        <strong className="text-[#2FA66A]">₹{activePopupBooking.paidAmount.toLocaleString('en-IN')}</strong>
+                        <strong className="text-[#16A34A]">₹{activePopupBooking.paidAmount.toLocaleString('en-IN')}</strong>
                       </div>
-                      <div className="pt-1.5 border-t border-[#F1F0EC] flex justify-between items-baseline">
-                        <span className="font-bold text-[#171717]">Balance Due at Counter:</span>
+                      <div className="pt-1.5 border-t border-[#F3F4F4] flex justify-between items-baseline">
+                        <span className="font-bold text-[#021526]">Balance Due at Counter:</span>
                         <span
                           className={`text-[17px] font-black ${
-                            activePopupBooking.balanceAmount > 0 ? 'text-[#B87C0D]' : 'text-[#2FA66A]'
+                            activePopupBooking.balanceAmount > 0 ? 'text-[#B87C0D]' : 'text-[#16A34A]'
                           }`}
                         >
                           ₹{activePopupBooking.balanceAmount.toLocaleString('en-IN')}
@@ -1605,11 +1605,11 @@ export const BookingListScreen: React.FC = () => {
 
                 {/* Status Notice Banner */}
                 {activePopupBooking.status === 'Payment Pending' && !isBookingExpired(activePopupBooking) ? (
-                  <div className="bg-[#E7A72F]/10 border border-[#E7A72F]/30 rounded-xl p-2.5 text-center">
+                  <div className="bg-[#F59E0B]/10 border border-[#F59E0B]/30 rounded-xl p-2.5 text-center">
                     <span className="text-[11px] font-black text-[#B87C0D] uppercase tracking-wider block">
                       PAYMENT LINK ACTIVE · {activePopupBooking.holdExpiresInMinutes || 15} MIN HOLD
                     </span>
-                    <span className="text-[10px] text-[#777570] block mt-0.5">
+                    <span className="text-[10px] text-[#5F6368] block mt-0.5">
                       Online payment link sent to customer. Status auto-updates to Confirmed once paid.
                     </span>
                   </div>
@@ -1623,21 +1623,21 @@ export const BookingListScreen: React.FC = () => {
                     </span>
                   </div>
                 ) : activePopupBooking.balanceAmount > 0 ? (
-                  <div className="bg-[#E7A72F]/10 border border-[#E7A72F]/30 rounded-xl p-2.5 text-center">
+                  <div className="bg-[#F59E0B]/10 border border-[#F59E0B]/30 rounded-xl p-2.5 text-center">
                     <span className="text-[11px] font-black text-[#B87C0D] uppercase tracking-wider block">
                       OUTSTANDING BALANCE ₹{activePopupBooking.balanceAmount.toLocaleString('en-IN')}
                     </span>
-                    <span className="text-[10px] text-[#777570] block mt-0.5">
+                    <span className="text-[10px] text-[#5F6368] block mt-0.5">
                       Must be collected at counter via UPI QR or Cash before match completion
                     </span>
                   </div>
                 ) : (
-                  <div className="bg-[#2FA66A]/10 border border-[#2FA66A]/30 rounded-xl p-2.5 text-center">
-                    <span className="text-[11px] font-black text-[#1E774A] uppercase tracking-wider flex items-center justify-center gap-1">
+                  <div className="bg-[#16A34A]/10 border border-[#16A34A]/30 rounded-xl p-2.5 text-center">
+                    <span className="text-[11px] font-black text-[#15803D] uppercase tracking-wider flex items-center justify-center gap-1">
                       <CheckCircle2 className="w-3.5 h-3.5" />
                       FULL PAYMENT SETTLED
                     </span>
-                    <span className="text-[10px] text-[#777570] block mt-0.5">
+                    <span className="text-[10px] text-[#5F6368] block mt-0.5">
                       Customer verified for immediate court entry
                     </span>
                   </div>
@@ -1646,18 +1646,18 @@ export const BookingListScreen: React.FC = () => {
 
               {/* ACTIVE PAYMENT LINK HOLD (When Status is Payment Pending) */}
               {activePopupBooking.status === 'Payment Pending' && !isBookingExpired(activePopupBooking) && (
-                <div className="space-y-2 pt-1 border-t border-[#F1F0EC]">
-                  <div className="bg-[#E7A72F]/10 border border-[#E7A72F]/30 rounded-2xl p-3.5 space-y-2.5">
+                <div className="space-y-2 pt-1 border-t border-[#F3F4F4]">
+                  <div className="bg-[#F59E0B]/10 border border-[#F59E0B]/30 rounded-2xl p-3.5 space-y-2.5">
                     <div className="flex items-center justify-between">
                       <span className="text-[11.5px] font-black text-[#B87C0D] uppercase tracking-wider flex items-center gap-1.5">
                         <Clock className="w-4 h-4 text-[#B87C0D]" />
                         Payment Link Sent · Hold Active ({activePopupBooking.holdExpiresInMinutes || 15}m)
                       </span>
-                      <span className="text-[11px] font-bold text-[#171717] bg-white px-2.5 py-0.5 rounded-md border border-[#E8E6E1]">
+                      <span className="text-[11px] font-bold text-[#021526] bg-white px-2.5 py-0.5 rounded-md border border-[#E5E7EB]">
                         Due ₹{activePopupBooking.balanceAmount.toLocaleString('en-IN')}
                       </span>
                     </div>
-                    <p className="text-[11px] text-[#777570]">
+                    <p className="text-[11px] text-[#5F6368]">
                       Payment link is valid for 15 minutes. When customer completes payment, booking automatically moves to <strong>Confirmed</strong>.
                     </p>
                     <button
@@ -1676,7 +1676,7 @@ export const BookingListScreen: React.FC = () => {
                       className={`w-full h-10 rounded-xl font-black text-[12px] flex items-center justify-center gap-2 shadow-xs transition-colors ${
                         isPaymentLinkBlocked(activePopupBooking.id)
                           ? 'bg-amber-100 text-amber-900 border border-amber-300 cursor-not-allowed'
-                          : 'bg-[#FF6B2C] hover:bg-[#e85b1e] text-white cursor-pointer'
+                          : 'bg-[#F94001] hover:bg-[#D93600] text-white cursor-pointer'
                       }`}
                     >
                       {isPaymentLinkBlocked(activePopupBooking.id) ? (
@@ -1699,12 +1699,12 @@ export const BookingListScreen: React.FC = () => {
               {activePopupBooking.balanceAmount > 0 &&
                 activePopupBooking.status !== 'Expired' &&
                 activePopupBooking.status !== 'Payment Pending' && (
-                  <div className="space-y-2 pt-1 border-t border-[#F1F0EC]">
+                  <div className="space-y-2 pt-1 border-t border-[#F3F4F4]">
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-black text-[#777570] uppercase tracking-wider">
+                      <span className="text-[11px] font-black text-[#5F6368] uppercase tracking-wider">
                         Collect Remaining Balance Due
                       </span>
-                      <span className="text-[10.5px] font-bold text-[#FF6B2C] bg-[#FF6B2C]/10 px-2 py-0.5 rounded-full">
+                      <span className="text-[10.5px] font-bold text-[#F94001] bg-[#F94001]/10 px-2 py-0.5 rounded-full">
                         Due ₹{activePopupBooking.balanceAmount.toLocaleString('en-IN')}
                       </span>
                     </div>
@@ -1728,21 +1728,21 @@ export const BookingListScreen: React.FC = () => {
                         className={`p-2.5 rounded-2xl border text-left flex flex-col justify-between transition-all active-press ${
                           isPaymentLinkBlocked(activePopupBooking.id)
                             ? 'bg-amber-50 border-amber-300 opacity-90 cursor-not-allowed'
-                            : 'bg-[#FAF9F6] hover:bg-[#F1F0EC] border-[#E8E6E1] cursor-pointer group'
+                            : 'bg-[#F3F4F4] hover:bg-[#F3F4F4] border-[#E5E7EB] cursor-pointer group'
                         }`}
                       >
                         <div className={`w-7 h-7 rounded-xl text-white flex items-center justify-center shadow-xs mb-1.5 ${
-                          isPaymentLinkBlocked(activePopupBooking.id) ? 'bg-amber-500' : 'bg-[#FF6B2C]'
+                          isPaymentLinkBlocked(activePopupBooking.id) ? 'bg-amber-500' : 'bg-[#F94001]'
                         }`}>
                           {isPaymentLinkBlocked(activePopupBooking.id) ? <Lock className="w-3.5 h-3.5" /> : <Link2 className="w-3.5 h-3.5" />}
                         </div>
                         <div>
                           <span className={`text-[11.5px] font-black block leading-tight ${
-                            isPaymentLinkBlocked(activePopupBooking.id) ? 'text-amber-900' : 'text-[#171717] group-hover:text-[#FF6B2C]'
+                            isPaymentLinkBlocked(activePopupBooking.id) ? 'text-amber-900' : 'text-[#021526] group-hover:text-[#F94001]'
                           }`}>
                             {isPaymentLinkBlocked(activePopupBooking.id) ? 'Link Sent' : 'Pay Link'}
                           </span>
-                          <span className="text-[9px] text-[#777570] block leading-tight mt-0.5">
+                          <span className="text-[9px] text-[#5F6368] block leading-tight mt-0.5">
                             {isPaymentLinkBlocked(activePopupBooking.id)
                               ? `${formatMinutesSeconds(getPaymentLinkTimeRemaining(activePopupBooking.id))} left`
                               : 'Share Online'}
@@ -1759,16 +1759,16 @@ export const BookingListScreen: React.FC = () => {
                           setSelectedPopupBooking(null);
                           setActiveModal('qr_payment');
                         }}
-                        className="p-2.5 rounded-2xl bg-[#FAF9F6] hover:bg-[#F1F0EC] border border-[#E8E6E1] text-left flex flex-col justify-between transition-all cursor-pointer group active-press"
+                        className="p-2.5 rounded-2xl bg-[#F3F4F4] hover:bg-[#F3F4F4] border border-[#E5E7EB] text-left flex flex-col justify-between transition-all cursor-pointer group active-press"
                       >
-                        <div className="w-7 h-7 rounded-xl bg-[#171717] text-white flex items-center justify-center shadow-xs mb-1.5">
+                        <div className="w-7 h-7 rounded-xl bg-[#021526] text-white flex items-center justify-center shadow-xs mb-1.5">
                           <QrCode className="w-3.5 h-3.5" />
                         </div>
                         <div>
-                          <span className="text-[11.5px] font-black text-[#171717] block group-hover:text-[#FF6B2C] transition-colors leading-tight">
+                          <span className="text-[11.5px] font-black text-[#021526] block group-hover:text-[#F94001] transition-colors leading-tight">
                             UPI QR Code
                           </span>
-                          <span className="text-[9px] text-[#777570] block leading-tight mt-0.5">
+                          <span className="text-[9px] text-[#5F6368] block leading-tight mt-0.5">
                             Instant Scan
                           </span>
                         </div>
@@ -1783,16 +1783,16 @@ export const BookingListScreen: React.FC = () => {
                           setSelectedPopupBooking(null);
                           setActiveModal('record_cash');
                         }}
-                        className="p-2.5 rounded-2xl bg-[#FAF9F6] hover:bg-[#F1F0EC] border border-[#E8E6E1] text-left flex flex-col justify-between transition-all cursor-pointer group active-press"
+                        className="p-2.5 rounded-2xl bg-[#F3F4F4] hover:bg-[#F3F4F4] border border-[#E5E7EB] text-left flex flex-col justify-between transition-all cursor-pointer group active-press"
                       >
-                        <div className="w-7 h-7 rounded-xl bg-[#2FA66A] text-white flex items-center justify-center shadow-xs mb-1.5">
+                        <div className="w-7 h-7 rounded-xl bg-[#16A34A] text-white flex items-center justify-center shadow-xs mb-1.5">
                           <Banknote className="w-3.5 h-3.5" />
                         </div>
                         <div>
-                          <span className="text-[11.5px] font-black text-[#171717] block group-hover:text-[#2FA66A] transition-colors leading-tight">
+                          <span className="text-[11.5px] font-black text-[#021526] block group-hover:text-[#16A34A] transition-colors leading-tight">
                             Record Cash
                           </span>
-                          <span className="text-[9px] text-[#777570] block leading-tight mt-0.5">
+                          <span className="text-[9px] text-[#5F6368] block leading-tight mt-0.5">
                             Counter Cash
                           </span>
                         </div>
@@ -1802,8 +1802,8 @@ export const BookingListScreen: React.FC = () => {
                 )}
 
               {/* BOOKING LIFECYCLE MANAGEMENT HUB */}
-              <div className="space-y-2 pt-2 border-t border-[#F1F0EC]">
-                <span className="text-[11px] font-black text-[#777570] uppercase tracking-wider block">
+              <div className="space-y-2 pt-2 border-t border-[#F3F4F4]">
+                <span className="text-[11px] font-black text-[#5F6368] uppercase tracking-wider block">
                   Booking Lifecycle Operations
                 </span>
 
@@ -1814,7 +1814,7 @@ export const BookingListScreen: React.FC = () => {
                       haptics.tap();
                       checkInBooking(activePopupBooking.id);
                     }}
-                    className="w-full h-11 rounded-2xl bg-[#2FA66A] hover:bg-[#258756] text-white font-black text-[13px] flex items-center justify-center gap-2 shadow-xs cursor-pointer transition-colors"
+                    className="w-full h-11 rounded-2xl bg-[#16A34A] hover:bg-[#258756] text-white font-black text-[13px] flex items-center justify-center gap-2 shadow-xs cursor-pointer transition-colors"
                   >
                     <LogIn className="w-4 h-4" />
                     <span>Check In Players (Start Match)</span>
@@ -1830,9 +1830,9 @@ export const BookingListScreen: React.FC = () => {
                         setExtendingBooking(activePopupBooking);
                         setExtensionMinutes(null);
                       }}
-                      className="h-11 rounded-2xl bg-[#171717] hover:bg-[#2e2e2e] text-white font-black text-[12px] flex items-center justify-center gap-1.5 shadow-xs cursor-pointer transition-colors"
+                      className="h-11 rounded-2xl bg-[#021526] hover:bg-[#061D33] text-white font-black text-[12px] flex items-center justify-center gap-1.5 shadow-xs cursor-pointer transition-colors"
                     >
-                      <Clock className="w-4 h-4 text-[#FF6B2C]" />
+                      <Clock className="w-4 h-4 text-[#F94001]" />
                       <span>Extend Slot (+Time)</span>
                     </button>
 
@@ -1841,7 +1841,7 @@ export const BookingListScreen: React.FC = () => {
                         haptics.tap();
                         checkOutBooking(activePopupBooking.id);
                       }}
-                      className="h-11 rounded-2xl bg-[#2FA66A] hover:bg-[#258756] text-white font-black text-[12px] flex items-center justify-center gap-1.5 shadow-xs cursor-pointer transition-colors"
+                      className="h-11 rounded-2xl bg-[#16A34A] hover:bg-[#258756] text-white font-black text-[12px] flex items-center justify-center gap-1.5 shadow-xs cursor-pointer transition-colors"
                     >
                       <LogOut className="w-4 h-4" />
                       <span>Check Out & Complete</span>
@@ -1860,8 +1860,8 @@ export const BookingListScreen: React.FC = () => {
                       <span className="font-bold text-red-700">Expired</span>
                     </div>
 
-                    <div className="bg-[#FAF9F6] border border-[#E8E6E1] p-2.5 rounded-2xl space-y-1.5">
-                      <span className="text-[11px] font-bold text-[#777570] block">
+                    <div className="bg-[#F3F4F4] border border-[#E5E7EB] p-2.5 rounded-2xl space-y-1.5">
+                      <span className="text-[11px] font-bold text-[#5F6368] block">
                         Select Re-lock Hold Duration:
                       </span>
                       <div className="grid grid-cols-4 gap-1.5">
@@ -1875,8 +1875,8 @@ export const BookingListScreen: React.FC = () => {
                             }}
                             className={`py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer ${
                               relockMins === mins
-                                ? 'bg-[#171717] text-white shadow-2xs'
-                                : 'bg-white border border-[#E8E6E1] text-[#777570]'
+                                ? 'bg-[#F94001] text-white shadow-sm shadow-[#F94001]/20'
+                                : 'bg-white border border-[#E5E7EB] text-[#5F6368]'
                             }`}
                           >
                             +{mins}m
@@ -1891,7 +1891,7 @@ export const BookingListScreen: React.FC = () => {
                         relockAndResendLink(activePopupBooking.id, relockMins);
                         setSelectedPopupBooking(null);
                       }}
-                      className="w-full h-11 rounded-2xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white font-black text-[12px] flex items-center justify-center gap-1.5 shadow-xs cursor-pointer transition-colors"
+                      className="w-full h-11 rounded-2xl bg-[#F94001] hover:bg-[#D93600] text-white font-black text-[12px] flex items-center justify-center gap-1.5 shadow-xs cursor-pointer transition-colors"
                     >
                       <RefreshCw className="w-4 h-4" />
                       <span>Re-lock & Send Payment Link (+{relockMins}m)</span>
@@ -1902,7 +1902,7 @@ export const BookingListScreen: React.FC = () => {
                 {/* Close Button */}
                 <button
                   onClick={() => setSelectedPopupBooking(null)}
-                  className="w-full h-10 rounded-2xl bg-[#FAF9F6] hover:bg-[#F1F0EC] border border-[#E8E6E1] text-[#171717] font-bold text-[12px] cursor-pointer transition-colors mt-2"
+                  className="w-full h-10 rounded-2xl bg-[#F3F4F4] hover:bg-[#F3F4F4] border border-[#E5E7EB] text-[#021526] font-bold text-[12px] cursor-pointer transition-colors mt-2"
                 >
                   Close Window
                 </button>
@@ -1925,20 +1925,20 @@ export const BookingListScreen: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: '100%' }}
               transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-              className="relative w-full bg-white rounded-t-[32px] p-5 pb-8 border-t border-[#E8E6E1] shadow-2xl max-h-[85vh] overflow-y-auto no-scrollbar space-y-5 z-10"
+              className="relative w-full bg-white rounded-t-[32px] p-5 pb-8 border-t border-[#E5E7EB] shadow-2xl max-h-[85vh] overflow-y-auto no-scrollbar space-y-5 z-10"
             >
               {/* Drag Handle */}
               <div className="w-10 h-1 rounded-full bg-[#D4D2CD] mx-auto mb-1" />
 
               {/* Sheet Header */}
-              <div className="flex items-center justify-between pb-3 border-b border-[#F1F0EC]">
+              <div className="flex items-center justify-between pb-3 border-b border-[#F3F4F4]">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-xl bg-[#FF6B2C]/10 text-[#FF6B2C] flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-xl bg-[#F94001]/10 text-[#F94001] flex items-center justify-center">
                     <SlidersHorizontal className="w-4 h-4" />
                   </div>
                   <div>
-                    <h2 className="text-[17px] font-black text-[#171717] leading-tight">Filter Bookings</h2>
-                    <p className="text-[11.5px] text-[#777570] font-medium">
+                    <h2 className="text-[17px] font-black text-[#021526] leading-tight">Filter Bookings</h2>
+                    <p className="text-[11.5px] text-[#5F6368] font-medium">
                       {filteredBookings.length} matches currently found
                     </p>
                   </div>
@@ -1955,7 +1955,7 @@ export const BookingListScreen: React.FC = () => {
                   )}
                   <button
                     onClick={() => setIsMobileFilterSheetOpen(false)}
-                    className="w-8 h-8 rounded-full bg-[#F1F0EC] flex items-center justify-center text-[#777570] hover:text-[#171717] cursor-pointer"
+                    className="w-8 h-8 rounded-full bg-[#F3F4F4] flex items-center justify-center text-[#5F6368] hover:text-[#021526] cursor-pointer"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -1964,7 +1964,7 @@ export const BookingListScreen: React.FC = () => {
 
               {/* Section 1: Sport Taxonomy */}
               <div className="space-y-2">
-                <span className="text-[11px] font-black text-[#777570] uppercase tracking-wider block">
+                <span className="text-[11px] font-black text-[#5F6368] uppercase tracking-wider block">
                   Sport Category
                 </span>
                 <div className="grid grid-cols-2 gap-2">
@@ -1984,8 +1984,8 @@ export const BookingListScreen: React.FC = () => {
                         }}
                         className={`h-11 px-3 rounded-xl text-[12.5px] font-bold flex items-center justify-center transition-all cursor-pointer ${
                           isActive
-                            ? 'bg-[#171717] text-white shadow-xs font-black'
-                            : 'bg-[#FAF9F6] text-[#777570] border border-[#E8E6E1]'
+                            ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 font-black'
+                            : 'bg-white text-[#5F6368] border border-[#E5E7EB]'
                         }`}
                       >
                         {s.label}
@@ -1998,11 +1998,11 @@ export const BookingListScreen: React.FC = () => {
               {/* Section 2: Timeline / Date */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-black text-[#777570] uppercase tracking-wider">
+                  <span className="text-[11px] font-black text-[#5F6368] uppercase tracking-wider">
                     Timeline & Schedule
                   </span>
                   {dateFilter === 'particular' && (
-                    <span className="text-[11px] font-black text-[#FF6B2C]">
+                    <span className="text-[11px] font-black text-[#F94001]">
                       {selectedParticularDate}
                     </span>
                   )}
@@ -2024,8 +2024,8 @@ export const BookingListScreen: React.FC = () => {
                         }}
                         className={`h-11 px-3 rounded-xl text-[12px] font-bold flex items-center justify-center transition-all cursor-pointer ${
                           isActive
-                            ? 'bg-[#171717] text-white shadow-xs font-black'
-                            : 'bg-[#FAF9F6] text-[#777570] border border-[#E8E6E1]'
+                            ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 font-black'
+                            : 'bg-white text-[#5F6368] border border-[#E5E7EB]'
                         }`}
                       >
                         {d.label}
@@ -2041,8 +2041,8 @@ export const BookingListScreen: React.FC = () => {
                   }}
                   className={`w-full h-11 px-3.5 rounded-xl border flex items-center justify-center gap-2 text-[12px] font-bold transition-all cursor-pointer ${
                     dateFilter === 'particular'
-                      ? 'bg-[#FF6B2C] text-white border-[#FF6B2C] shadow-xs font-black'
-                      : 'bg-[#FAF9F6] text-[#171717] border-[#E8E6E1]'
+                      ? 'bg-[#F94001] text-white border-[#F94001] shadow-xs font-black'
+                      : 'bg-[#F3F4F4] text-[#021526] border-[#E5E7EB]'
                   }`}
                 >
                   <CalendarIcon className="w-4 h-4" />
@@ -2052,7 +2052,7 @@ export const BookingListScreen: React.FC = () => {
 
               {/* Section 3: Payment Status */}
               <div className="space-y-2">
-                <span className="text-[11px] font-black text-[#777570] uppercase tracking-wider block">
+                <span className="text-[11px] font-black text-[#5F6368] uppercase tracking-wider block">
                   Payment Status
                 </span>
                 <div className="grid grid-cols-3 gap-2">
@@ -2071,8 +2071,8 @@ export const BookingListScreen: React.FC = () => {
                         }}
                         className={`h-11 px-2 rounded-xl text-[12px] font-bold flex items-center justify-center transition-all cursor-pointer ${
                           isActive
-                            ? 'bg-[#171717] text-white shadow-xs font-black'
-                            : 'bg-[#FAF9F6] text-[#777570] border border-[#E8E6E1]'
+                            ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 font-black'
+                            : 'bg-white text-[#5F6368] border border-[#E5E7EB]'
                         }`}
                       >
                         {p.label}
@@ -2084,7 +2084,7 @@ export const BookingListScreen: React.FC = () => {
 
               {/* Section 4: Booking Lifecycle Status */}
               <div className="space-y-2">
-                <span className="text-[11px] font-black text-[#777570] uppercase tracking-wider block">
+                <span className="text-[11px] font-black text-[#5F6368] uppercase tracking-wider block">
                   Match Status
                 </span>
                 <div className="flex flex-wrap gap-1.5">
@@ -2105,8 +2105,8 @@ export const BookingListScreen: React.FC = () => {
                         }}
                         className={`px-3 py-2 rounded-xl text-[12px] font-bold transition-all cursor-pointer ${
                           isActive
-                            ? 'bg-[#171717] text-white shadow-xs font-black'
-                            : 'bg-[#FAF9F6] text-[#777570] border border-[#E8E6E1]'
+                            ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 font-black'
+                            : 'bg-white text-[#5F6368] border border-[#E5E7EB]'
                         }`}
                       >
                         {s.label}
@@ -2123,7 +2123,7 @@ export const BookingListScreen: React.FC = () => {
                     haptics.tap();
                     setIsMobileFilterSheetOpen(false);
                   }}
-                  className="w-full h-12 rounded-2xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white font-black text-[14px] flex items-center justify-center gap-2 shadow-md active-press cursor-pointer transition-colors"
+                  className="w-full h-12 rounded-2xl bg-[#F94001] hover:bg-[#D93600] text-white font-black text-[14px] flex items-center justify-center gap-2 shadow-md active-press cursor-pointer transition-colors"
                 >
                   <span>Apply Filters ({filteredBookings.length} Bookings)</span>
                 </button>
@@ -2140,7 +2140,7 @@ export const BookingListScreen: React.FC = () => {
             haptics.tap();
             setActiveModal('new_booking');
           }}
-          className="h-12 px-4.5 rounded-full bg-[#FF6B2C] hover:bg-[#e85b1e] text-white font-black text-[13px] flex items-center gap-2 shadow-[0_8px_25px_rgba(255,107,44,0.38)] active-press cursor-pointer border-2 border-white"
+          className="h-12 px-4.5 rounded-full bg-[#F94001] hover:bg-[#D93600] text-white font-black text-[13px] flex items-center gap-2 shadow-[0_8px_25px_rgba(255,107,44,0.38)] active-press cursor-pointer border-2 border-white"
           aria-label="New Booking"
         >
           <Plus className="w-4.5 h-4.5 stroke-[3]" />

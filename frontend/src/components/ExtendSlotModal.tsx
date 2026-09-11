@@ -369,61 +369,61 @@ export const ExtendSlotModal: React.FC<ExtendSlotModalProps> = ({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: '100%' }}
           transition={{ type: 'spring', damping: 28, stiffness: 320 }}
-          className="relative w-full max-h-[92vh] md:max-w-xl md:rounded-3xl overflow-y-auto no-scrollbar bg-white rounded-t-3xl p-5 md:p-6 shadow-2xl border border-[#E8E6E1] space-y-3.5"
+          className="relative w-full max-h-[92vh] md:max-w-xl md:rounded-3xl overflow-y-auto no-scrollbar bg-white rounded-t-3xl p-5 md:p-6 shadow-2xl border border-[#E5E7EB] space-y-3.5"
         >
           {/* Grab handle for mobile */}
           <div className="md:hidden w-10 h-1 rounded-full bg-[#D4D2CD] mx-auto mb-2 shrink-0" />
 
           {/* Header */}
-          <div className="flex items-center justify-between pb-3 border-b border-[#F1F0EC]">
+          <div className="flex items-center justify-between pb-3 border-b border-[#F3F4F4]">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[11px] font-bold text-[#FF6B2C] uppercase tracking-wider">
+                <span className="text-[11px] font-bold text-[#F94001] uppercase tracking-wider">
                   Extend Booking #{booking.id}
                 </span>
-                <span className="px-2 py-0.2 rounded-full text-[10px] font-black bg-[#FF6B2C]/10 text-[#FF6B2C]">
+                <span className="px-2 py-0.2 rounded-full text-[10px] font-black bg-[#F94001]/10 text-[#F94001]">
                   {booking.sport}
                 </span>
               </div>
-              <h2 className="text-[17px] font-black text-[#171717] tracking-tight mt-0.5">
+              <h2 className="text-[17px] font-black text-[#021526] tracking-tight mt-0.5">
                 Timeline Slot Extension
               </h2>
             </div>
 
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-full bg-[#F1F0EC] flex items-center justify-center text-[#777570] hover:text-[#171717] cursor-pointer"
+              className="w-8 h-8 rounded-full bg-[#F3F4F4] flex items-center justify-center text-[#5F6368] hover:text-[#021526] cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
           {/* Current Booking Header Box */}
-          <div className="bg-[#FAF9F6] border border-[#E8E6E1] rounded-2xl p-3 flex items-center justify-between">
+          <div className="bg-[#F3F4F4] border border-[#E5E7EB] rounded-2xl p-3 flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[13.5px] font-black text-[#171717]">
+                <span className="text-[13.5px] font-black text-[#021526]">
                   {booking.customerName}
                 </span>
-                <span className="text-[11px] font-mono text-[#777570]">
+                <span className="text-[11px] font-mono text-[#5F6368]">
                   {booking.customerPhone}
                 </span>
               </div>
-              <div className="flex items-center gap-2 text-[11.5px] text-[#777570] mt-0.5">
+              <div className="flex items-center gap-2 text-[11.5px] text-[#5F6368] mt-0.5">
                 <span>{booking.courtName}</span>
                 <span>·</span>
                 <span className="flex items-center gap-1">
-                  <Calendar className="w-3 h-3 text-[#FF6B2C]" />
+                  <Calendar className="w-3 h-3 text-[#F94001]" />
                   {booking.date}
                 </span>
               </div>
             </div>
 
             <div className="text-right">
-              <span className="text-[9.5px] font-bold uppercase text-[#777570] block">
+              <span className="text-[9.5px] font-bold uppercase text-[#5F6368] block">
                 Current Match
               </span>
-              <span className="text-[13px] font-black text-[#171717]">
+              <span className="text-[13px] font-black text-[#021526]">
                 {booking.timeSlot}
               </span>
             </div>
@@ -449,24 +449,24 @@ export const ExtendSlotModal: React.FC<ExtendSlotModalProps> = ({
               {/* ========================================================================= */}
               {/* INTERACTIVE 2-ROW TIMELINE SLOT PICKER                                   */}
               {/* ========================================================================= */}
-              <div className="bg-[#FAF9F6] border border-[#E8E6E1] rounded-2xl p-3.5 space-y-3">
+              <div className="bg-[#F3F4F4] border border-[#E5E7EB] rounded-2xl p-3.5 space-y-3">
                 {/* Timeline Header & Comprehensive Status Legend */}
-                <div className="flex items-center justify-between flex-wrap gap-1.5 pb-2 border-b border-[#E8E6E1]">
+                <div className="flex items-center justify-between flex-wrap gap-1.5 pb-2 border-b border-[#E5E7EB]">
                   <div className="flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5 text-[#FF6B2C]" />
-                    <span className="text-[11.5px] font-black text-[#171717]">
+                    <Clock className="w-3.5 h-3.5 text-[#F94001]" />
+                    <span className="text-[11.5px] font-black text-[#021526]">
                       Court Timeline Schedule (2-Row View)
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 text-[9px] font-bold text-[#777570] flex-wrap">
+                  <div className="flex items-center gap-2 text-[9px] font-bold text-[#5F6368] flex-wrap">
                     <span className="flex items-center gap-1">
-                      <span className="w-2 h-2 rounded-full bg-[#171717]" /> Match
+                      <span className="w-2 h-2 rounded-full bg-[#021526]" /> Match
                     </span>
                     <span className="flex items-center gap-1">
-                      <span className="w-2 h-2 rounded-full bg-[#FF6B2C]" /> Extended
+                      <span className="w-2 h-2 rounded-full bg-[#F94001]" /> Extended
                     </span>
                     <span className="flex items-center gap-1">
-                      <span className="w-2 h-2 rounded-full bg-[#2FA66A]" /> Available
+                      <span className="w-2 h-2 rounded-full bg-[#16A34A]" /> Available
                     </span>
                     <span className="flex items-center gap-1">
                       <span className="w-2 h-2 rounded-full bg-[#F59E0B]" /> Hold
@@ -487,18 +487,18 @@ export const ExtendSlotModal: React.FC<ExtendSlotModalProps> = ({
                         onClick={() => handleSlotClick(slot)}
                         className={`px-2.5 py-2 rounded-xl text-center transition-all shrink-0 flex flex-col items-center justify-center min-w-[70px] select-none ${
                           slot.isCurrentMatch
-                            ? 'bg-[#171717] text-white shadow-xs cursor-default ring-1 ring-white/10'
+                            ? 'bg-[#021526] text-white shadow-xs cursor-default ring-1 ring-white/10'
                             : slot.isExtended
-                            ? 'bg-gradient-to-r from-[#FF6B2C] to-[#FA5A14] text-white shadow-md ring-2 ring-[#FF6B2C]/40 cursor-pointer active:scale-95'
+                            ? 'bg-gradient-to-r from-[#F94001] to-[#D93600] text-white shadow-md ring-2 ring-[#F94001]/40 cursor-pointer active:scale-95'
                             : slot.isPreceding
-                            ? 'bg-[#ECEAE4]/60 border border-[#E8E6E1] text-[#A3A099] line-through cursor-not-allowed opacity-45'
+                            ? 'bg-[#E5E7EB]/60 border border-[#E5E7EB] text-[#5F6368] line-through cursor-not-allowed opacity-45'
                             : slot.isHold
                             ? 'bg-[#FFFBEB] border-2 border-[#F59E0B] text-[#B45309] shadow-2xs cursor-not-allowed'
                             : slot.isBooked
                             ? 'bg-[#1E293B] text-white border border-[#0F172A] cursor-not-allowed shadow-2xs'
                             : slot.isBlocked
                             ? 'bg-[#F1F5F9] text-[#475569] border border-[#CBD5E1] cursor-not-allowed'
-                            : 'bg-white border-2 border-dashed border-[#2FA66A]/40 hover:border-[#FF6B2C] hover:bg-[#FFF8F5] text-[#171717] cursor-pointer active:scale-95 shadow-2xs'
+                            : 'bg-white border-2 border-dashed border-[#16A34A]/40 hover:border-[#F94001] hover:bg-[#FFF1EC] text-[#021526] cursor-pointer active:scale-95 shadow-2xs'
                         }`}
                       >
                         <span
@@ -514,18 +514,18 @@ export const ExtendSlotModal: React.FC<ExtendSlotModalProps> = ({
                         <span
                           className={`text-[8.5px] font-bold leading-tight mt-0.5 flex items-center justify-center gap-0.5 ${
                             slot.isCurrentMatch
-                              ? 'text-[#FF9D66] font-black uppercase'
+                              ? 'text-[#F94001] font-black uppercase'
                               : slot.isExtended
                               ? 'text-white/95 font-black'
                               : slot.isPreceding
-                              ? 'text-[#A3A099]'
+                              ? 'text-[#5F6368]'
                               : slot.isHold
-                              ? 'text-[#D97706] font-black uppercase'
+                              ? 'text-[#F59E0B] font-black uppercase'
                               : slot.isBooked
                               ? 'text-[#94A3B8] font-bold'
                               : slot.isBlocked
                               ? 'text-[#475569] font-bold'
-                              : 'text-[#2FA66A] font-black'
+                              : 'text-[#16A34A] font-black'
                           }`}
                         >
                           {slot.isCurrentMatch ? (
@@ -554,11 +554,11 @@ export const ExtendSlotModal: React.FC<ExtendSlotModalProps> = ({
                     <div className="space-y-2.5">
                       {/* Row 1: Morning & Afternoon */}
                       <div className="space-y-1">
-                        <div className="flex items-center justify-between text-[9.5px] font-bold text-[#777570] px-0.5">
-                          <span className="flex items-center gap-1 text-[#D97706] font-black">
+                        <div className="flex items-center justify-between text-[9.5px] font-bold text-[#5F6368] px-0.5">
+                          <span className="flex items-center gap-1 text-[#F59E0B] font-black">
                             <Sun className="w-3 h-3 text-[#F59E0B]" /> Morning & Afternoon (06:00 AM – 02:00 PM)
                           </span>
-                          <span className="text-[9px] text-[#A3A099] font-extrabold">Row 1</span>
+                          <span className="text-[9px] text-[#5F6368] font-extrabold">Row 1</span>
                         </div>
                         <div className="overflow-x-auto no-scrollbar py-0.5">
                           <div className="flex items-center gap-1.5 min-w-max">
@@ -568,12 +568,12 @@ export const ExtendSlotModal: React.FC<ExtendSlotModalProps> = ({
                       </div>
 
                       {/* Row 2: Evening & Prime Time */}
-                      <div className="space-y-1 pt-1.5 border-t border-[#E8E6E1]/60">
-                        <div className="flex items-center justify-between text-[9.5px] font-bold text-[#777570] px-0.5">
+                      <div className="space-y-1 pt-1.5 border-t border-[#E5E7EB]/60">
+                        <div className="flex items-center justify-between text-[9.5px] font-bold text-[#5F6368] px-0.5">
                           <span className="flex items-center gap-1 text-[#4F46E5] font-black">
                             <Moon className="w-3 h-3 text-[#6366F1]" /> Evening & Prime Time (02:00 PM – 11:00 PM)
                           </span>
-                          <span className="text-[9px] text-[#A3A099] font-extrabold">Row 2</span>
+                          <span className="text-[9px] text-[#5F6368] font-extrabold">Row 2</span>
                         </div>
                         <div className="overflow-x-auto no-scrollbar py-0.5">
                           <div className="flex items-center gap-1.5 min-w-max">
@@ -587,8 +587,8 @@ export const ExtendSlotModal: React.FC<ExtendSlotModalProps> = ({
 
                 {/* Quick Add Presets Bar */}
                 {quickPresets.length > 0 && (
-                  <div className="pt-2 border-t border-[#E8E6E1] flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-                    <span className="text-[10px] font-black text-[#777570] uppercase tracking-wider shrink-0 mr-0.5">
+                  <div className="pt-2 border-t border-[#E5E7EB] flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+                    <span className="text-[10px] font-black text-[#5F6368] uppercase tracking-wider shrink-0 mr-0.5">
                       Quick Add:
                     </span>
                     {quickPresets.map((opt) => {
@@ -603,12 +603,12 @@ export const ExtendSlotModal: React.FC<ExtendSlotModalProps> = ({
                           }}
                           className={`px-2.5 py-1 rounded-full text-[10.5px] font-black shrink-0 transition-all cursor-pointer flex items-center gap-1 ${
                             isSelected
-                              ? 'bg-[#171717] text-white shadow-2xs ring-1 ring-[#171717]'
-                              : 'bg-white border border-[#E8E6E1] text-[#55534E] hover:border-[#FF6B2C] hover:text-[#FF6B2C]'
+                              ? 'bg-[#F94001] text-white shadow-sm shadow-[#F94001]/20 ring-1 ring-[#F94001]'
+                              : 'bg-white border border-[#E5E7EB] text-[#5F6368] hover:border-[#F94001] hover:text-[#F94001]'
                           }`}
                         >
                           <span>+{opt.hours}h</span>
-                          <span className={isSelected ? 'text-[#FF9D66]' : 'text-[#777570]'}>
+                          <span className={isSelected ? 'text-white/80' : 'text-[#5F6368]'}>
                             (+₹{opt.fee.toLocaleString('en-IN')})
                           </span>
                         </button>
@@ -627,31 +627,31 @@ export const ExtendSlotModal: React.FC<ExtendSlotModalProps> = ({
                   </span>
                 </div>
               ) : (
-                <div className="bg-[#FAF9F6] p-3.5 rounded-2xl border border-[#E8E6E1] space-y-2 text-[12px] animate-in fade-in duration-200">
-                  <div className="flex justify-between text-[#777570]">
+                <div className="bg-[#F3F4F4] p-3.5 rounded-2xl border border-[#E5E7EB] space-y-2 text-[12px] animate-in fade-in duration-200">
+                  <div className="flex justify-between text-[#5F6368]">
                     <span>Original Match Schedule:</span>
-                    <strong className="text-[#171717]">{booking.timeSlot}</strong>
+                    <strong className="text-[#021526]">{booking.timeSlot}</strong>
                   </div>
-                  <div className="flex justify-between text-[#777570]">
+                  <div className="flex justify-between text-[#5F6368]">
                     <span>New Extended Schedule:</span>
-                    <strong className="text-[#171717] font-black text-[13px]">
+                    <strong className="text-[#021526] font-black text-[13px]">
                       {extensionSummary.newFullTimeSlot}
                     </strong>
                   </div>
-                  <div className="flex justify-between text-[#777570]">
+                  <div className="flex justify-between text-[#5F6368]">
                     <span>Additional Duration:</span>
-                    <strong className="text-[#171717]">
+                    <strong className="text-[#021526]">
                       +{extensionSummary.addedHours} Hour{extensionSummary.addedHours !== 1 ? 's' : ''}
                     </strong>
                   </div>
-                  <div className="flex justify-between text-[#777570]">
+                  <div className="flex justify-between text-[#5F6368]">
                     <span>Extension Fee:</span>
-                    <strong className="text-[#FF6B2C] font-black">
+                    <strong className="text-[#F94001] font-black">
                       +₹{extensionSummary.addedFee.toLocaleString('en-IN')}
                     </strong>
                   </div>
-                  <div className="pt-2 border-t border-[#E8E6E1] flex justify-between items-baseline">
-                    <span className="font-bold text-[#171717]">Updated Balance Due:</span>
+                  <div className="pt-2 border-t border-[#E5E7EB] flex justify-between items-baseline">
+                    <span className="font-bold text-[#021526]">Updated Balance Due:</span>
                     <span className="text-[17px] font-black text-[#B87C0D]">
                       ₹{extensionSummary.newBalanceAmount.toLocaleString('en-IN')}
                     </span>
@@ -664,7 +664,7 @@ export const ExtendSlotModal: React.FC<ExtendSlotModalProps> = ({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex-1 h-11 rounded-xl bg-[#F7F7F5] border border-[#E8E6E1] text-[#777570] font-bold text-[13px] hover:text-[#171717] active-press cursor-pointer transition-all"
+                  className="flex-1 h-11 rounded-xl bg-[#F3F4F4] border border-[#E5E7EB] text-[#5F6368] font-bold text-[13px] hover:text-[#021526] active-press cursor-pointer transition-all"
                 >
                   Cancel
                 </button>
@@ -674,8 +674,8 @@ export const ExtendSlotModal: React.FC<ExtendSlotModalProps> = ({
                   onClick={handleConfirm}
                   className={`flex-2 h-11 rounded-xl font-black text-[13px] flex items-center justify-center gap-2 shadow-xs transition-all ${
                     extensionSummary
-                      ? 'bg-gradient-to-r from-[#FF6B2C] to-[#FA5A14] hover:brightness-105 text-white active-press cursor-pointer shadow-md'
-                      : 'bg-[#E8E6E1] text-[#A3A099] cursor-not-allowed border border-[#D5D3CC]'
+                      ? 'bg-gradient-to-r from-[#F94001] to-[#D93600] hover:brightness-105 text-white active-press cursor-pointer shadow-md'
+                      : 'bg-[#E5E7EB] text-[#5F6368] cursor-not-allowed border border-[#D5D3CC]'
                   }`}
                 >
                   <Sparkles className="w-4 h-4" />

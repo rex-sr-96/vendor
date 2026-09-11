@@ -36,7 +36,7 @@ export const BottomNav: React.FC = () => {
   return (
     <nav
       id="bottom-nav-bar"
-      className="w-full z-40 bg-white/95 backdrop-blur-lg border-t border-[#E8E6E1] shrink-0 select-none shadow-[0_-4px_12px_rgba(0,0,0,0.03)]"
+      className="w-full z-40 bg-white/95 backdrop-blur-lg border-t border-[#E5E7EB] shrink-0 select-none shadow-[0_-4px_12px_rgba(0,0,0,0.03)]"
     >
       <div className="w-full px-2 h-15 flex items-center justify-around">
         {navItems.map((item) => {
@@ -53,18 +53,18 @@ export const BottomNav: React.FC = () => {
               <div className="relative flex items-center justify-center w-7 h-7">
                 <Icon
                   className={`w-5 h-5 transition-all duration-150 ${
-                    isActive ? 'text-[#FF6B2C] stroke-[2.4] scale-105' : 'text-[#777570] stroke-[1.8] group-hover:text-[#171717]'
+                    isActive ? 'text-[#F94001] stroke-[2.4] scale-105' : 'text-[#5F6368] stroke-[1.8] group-hover:text-[#021526]'
                   }`}
                 />
                 {item.badge && (
-                  <span className="absolute -top-1 -right-2 min-w-4 h-4 px-1 rounded-full bg-[#FF6B2C] text-white text-[9px] font-extrabold flex items-center justify-center ring-2 ring-white">
+                  <span className="absolute -top-1 -right-2 min-w-4 h-4 px-1 rounded-full bg-[#F94001] text-white text-[9px] font-extrabold flex items-center justify-center ring-2 ring-white">
                     {item.badge}
                   </span>
                 )}
               </div>
               <span
                 className={`text-[10.5px] mt-0.5 transition-all duration-150 tracking-tight ${
-                  isActive ? 'text-[#171717] font-extrabold' : 'text-[#777570] font-medium'
+                  isActive ? 'text-[#021526] font-extrabold' : 'text-[#5F6368] font-medium'
                 }`}
               >
                 {item.label}

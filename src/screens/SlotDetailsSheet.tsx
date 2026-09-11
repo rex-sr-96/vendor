@@ -88,28 +88,28 @@ export const SlotDetailsSheet: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: '100%' }}
           transition={{ type: 'spring', damping: 28, stiffness: 320 }}
-          className="w-full max-h-[92vh] overflow-y-auto no-scrollbar bg-white rounded-t-[32px] p-5 pb-8 shadow-2xl border-t border-[#E8E6E1]"
+          className="w-full max-h-[92vh] overflow-y-auto no-scrollbar bg-white rounded-t-[32px] p-5 pb-8 shadow-2xl border-t border-[#E5E7EB]"
         >
           {/* Grab Handle */}
-          <div className="w-10 h-1 bg-[#D1CFCA] rounded-full mx-auto mb-3" />
+          <div className="w-10 h-1 bg-[#E5E7EB] rounded-full mx-auto mb-3" />
 
           {/* Header */}
-          <div className="flex items-center justify-between pb-3 border-b border-[#F1F0EC]">
+          <div className="flex items-center justify-between pb-3 border-b border-[#F3F4F4]">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[11px] font-bold text-[#FF6B2C] uppercase tracking-wider">
+                <span className="text-[11px] font-bold text-[#F94001] uppercase tracking-wider">
                   {slot.sport || 'Football'}
                 </span>
-                <span className="w-1 h-1 rounded-full bg-[#E8E6E1]" />
-                <span className="text-[12px] font-bold text-[#171717]">{slot.courtName}</span>
+                <span className="w-1 h-1 rounded-full bg-[#E5E7EB]" />
+                <span className="text-[12px] font-bold text-[#021526]">{slot.courtName}</span>
                 {isContinuous && (
-                  <span className="text-[9.5px] font-extrabold bg-[#FF6B2C]/10 text-[#FF6B2C] px-1.5 py-0.2 rounded-full flex items-center gap-0.5">
+                  <span className="text-[9.5px] font-extrabold bg-[#F94001]/10 text-[#F94001] px-1.5 py-0.2 rounded-full flex items-center gap-0.5">
                     <Zap className="w-2.5 h-2.5" />
                     2-HR CONTINUOUS
                   </span>
                 )}
               </div>
-              <h2 className="text-[18px] font-black text-[#171717] mt-0.5">
+              <h2 className="text-[18px] font-black text-[#021526] mt-0.5">
                 {isContinuous ? continuousSpan : (slot.timeFull || slot.time)}
               </h2>
             </div>
@@ -119,7 +119,7 @@ export const SlotDetailsSheet: React.FC = () => {
                 setActiveModal(null);
                 haptics.tap();
               }}
-              className="w-8 h-8 rounded-full bg-[#F1F0EC] flex items-center justify-center text-[#777570] hover:text-[#171717] active-press cursor-pointer"
+              className="w-8 h-8 rounded-full bg-[#F3F4F4] flex items-center justify-center text-[#5F6368] hover:text-[#021526] active-press cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -130,33 +130,33 @@ export const SlotDetailsSheet: React.FC = () => {
             {/* Case 1: Available Slot */}
             {slot.state === 'available' && (
               <div className="space-y-3">
-                <div className="bg-[#F7F7F5] rounded-2xl p-3.5 border border-[#E8E6E1] flex justify-between items-center">
+                <div className="bg-[#F3F4F4] rounded-2xl p-3.5 border border-[#E5E7EB] flex justify-between items-center">
                   <div>
-                    <span className="text-[10.5px] font-bold text-[#777570] uppercase">Slot Status</span>
-                    <p className="text-[15px] font-bold text-[#171717] flex items-center gap-1.5 mt-0.5">
-                      <span className="w-2 h-2 rounded-full bg-[#2FA66A]" />
+                    <span className="text-[10.5px] font-bold text-[#5F6368] uppercase">Slot Status</span>
+                    <p className="text-[15px] font-bold text-[#021526] flex items-center gap-1.5 mt-0.5">
+                      <span className="w-2 h-2 rounded-full bg-[#16A34A]" />
                       Open for Booking
                     </p>
                   </div>
                   <div className="text-right">
-                    <span className="text-[10.5px] font-bold text-[#777570] uppercase">Hourly Rate</span>
-                    <p className="text-[19px] font-extrabold text-[#171717]">₹{slot.price || court.pricePerHour}</p>
+                    <span className="text-[10.5px] font-bold text-[#5F6368] uppercase">Hourly Rate</span>
+                    <p className="text-[19px] font-extrabold text-[#021526]">₹{slot.price || court.pricePerHour}</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2.5">
                   <button
                     onClick={handleCreateBookingForSlot}
-                    className="h-11 bg-[#FF6B2C] text-white rounded-xl font-bold text-[13px] flex items-center justify-center gap-1.5 shadow-xs hover:bg-[#e85b1e] active-press cursor-pointer"
+                    className="h-11 bg-[#F94001] text-white rounded-xl font-bold text-[13px] flex items-center justify-center gap-1.5 shadow-xs hover:bg-[#D93600] active-press cursor-pointer"
                   >
                     <Plus className="w-4 h-4" />
                     <span>Create Booking</span>
                   </button>
                   <button
                     onClick={handleBlockSlotForSlot}
-                    className="h-11 bg-white text-[#171717] border border-[#E8E6E1] rounded-xl font-bold text-[13px] flex items-center justify-center gap-1.5 hover:border-[#171717] active-press cursor-pointer"
+                    className="h-11 bg-white text-[#021526] border border-[#E5E7EB] rounded-xl font-bold text-[13px] flex items-center justify-center gap-1.5 hover:border-[#021526] active-press cursor-pointer"
                   >
-                    <Wrench className="w-4 h-4 text-[#777570]" />
+                    <Wrench className="w-4 h-4 text-[#5F6368]" />
                     <span>Block Maint.</span>
                   </button>
                 </div>
@@ -166,19 +166,19 @@ export const SlotDetailsSheet: React.FC = () => {
             {/* Case 2: Booked Slot */}
             {slot.state === 'booked' && (
               <div className="space-y-3">
-                <div className="bg-white rounded-2xl p-3.5 border border-[#2FA66A]/30 shadow-xs space-y-2.5">
+                <div className="bg-white rounded-2xl p-3.5 border border-[#16A34A]/30 shadow-xs space-y-2.5">
                   <div className="flex justify-between items-center">
-                    <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-[#2FA66A]/15 text-[#1E774A] flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#2FA66A]" />
+                    <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-[#16A34A]/15 text-[#15803D] flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A]" />
                       Confirmed {isContinuous ? '· 2h Continuous Booking' : ''}
                     </span>
-                    <span className="text-[14px] font-black text-[#171717]">₹{isContinuous ? (slot.price || 1000) * 2 : slot.price}</span>
+                    <span className="text-[14px] font-black text-[#021526]">₹{isContinuous ? (slot.price || 1000) * 2 : slot.price}</span>
                   </div>
 
                   <div>
-                    <span className="text-[10.5px] text-[#777570] uppercase font-bold">Player Name</span>
-                    <p className="text-[16px] font-black text-[#171717]">{slot.customerName || 'Rahul Kumar'}</p>
-                    <p className="text-[11.5px] text-[#777570] mt-0.5">{slot.customerPhone || '+91 98450 12345'}</p>
+                    <span className="text-[10.5px] text-[#5F6368] uppercase font-bold">Player Name</span>
+                    <p className="text-[16px] font-black text-[#021526]">{slot.customerName || 'Rahul Kumar'}</p>
+                    <p className="text-[11.5px] text-[#5F6368] mt-0.5">{slot.customerPhone || '+91 98450 12345'}</p>
                   </div>
 
                   {isContinuous && (
@@ -193,7 +193,7 @@ export const SlotDetailsSheet: React.FC = () => {
                   {slot.bookingId ? (
                     <button
                       onClick={handleViewRelatedBooking}
-                      className="col-span-2 h-11 bg-[#171717] text-white rounded-xl font-bold text-[13px] flex items-center justify-center gap-1.5 active-press cursor-pointer"
+                      className="col-span-2 h-11 bg-[#021526] text-white rounded-xl font-bold text-[13px] flex items-center justify-center gap-1.5 active-press cursor-pointer"
                     >
                       <span>View Full Booking Details</span>
                       <ChevronRight className="w-4 h-4" />
@@ -204,7 +204,7 @@ export const SlotDetailsSheet: React.FC = () => {
                         setActiveModal(null);
                         haptics.tap();
                       }}
-                      className="col-span-2 h-11 bg-[#171717] text-white rounded-xl font-bold text-[13px] flex items-center justify-center active-press cursor-pointer"
+                      className="col-span-2 h-11 bg-[#021526] text-white rounded-xl font-bold text-[13px] flex items-center justify-center active-press cursor-pointer"
                     >
                       Close Details
                     </button>
@@ -216,17 +216,17 @@ export const SlotDetailsSheet: React.FC = () => {
             {/* Case 3: Payment Pending / Hold Slot */}
             {slot.state === 'pending' && (
               <div className="space-y-3">
-                <div className="bg-[#E7A72F]/10 rounded-2xl p-3.5 border border-[#E7A72F]/30 space-y-2">
+                <div className="bg-[#F59E0B]/10 rounded-2xl p-3.5 border border-[#F59E0B]/30 space-y-2">
                   <div className="flex justify-between items-center">
-                    <span className="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-[#E7A72F]/20 text-[#B87C0D] flex items-center gap-1">
+                    <span className="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-[#F59E0B]/20 text-[#B87C0D] flex items-center gap-1">
                       <Clock className="w-3 h-3" />
                       Hold Expiring: {slot.countdown || '18:42'}
                     </span>
-                    <span className="text-[13.5px] font-extrabold text-[#171717]">₹{slot.price}</span>
+                    <span className="text-[13.5px] font-extrabold text-[#021526]">₹{slot.price}</span>
                   </div>
                   <div>
-                    <p className="text-[14.5px] font-bold text-[#171717]">{slot.customerName || 'Vikram Sethi'}</p>
-                    <p className="text-[11.5px] text-[#777570]">{slot.customerPhone || '+91 98450 11223'}</p>
+                    <p className="text-[14.5px] font-bold text-[#021526]">{slot.customerName || 'Vikram Sethi'}</p>
+                    <p className="text-[11.5px] text-[#5F6368]">{slot.customerPhone || '+91 98450 11223'}</p>
                   </div>
                 </div>
 
@@ -237,7 +237,7 @@ export const SlotDetailsSheet: React.FC = () => {
                       setActiveModal(null);
                       haptics.tap();
                     }}
-                    className="h-11 bg-[#FF6B2C] text-white rounded-xl font-bold text-[12.5px] flex items-center justify-center gap-1.5 shadow-xs hover:bg-[#e85b1e] active-press cursor-pointer"
+                    className="h-11 bg-[#F94001] text-white rounded-xl font-bold text-[12.5px] flex items-center justify-center gap-1.5 shadow-xs hover:bg-[#D93600] active-press cursor-pointer"
                   >
                     <Send className="w-3.5 h-3.5" />
                     <span>Send Pay Link</span>
@@ -247,7 +247,7 @@ export const SlotDetailsSheet: React.FC = () => {
                       unblockSlotAction(slot.id);
                       haptics.tap();
                     }}
-                    className="h-11 bg-white text-[#D94B4B] border border-[#D94B4B]/30 rounded-xl font-bold text-[12.5px] flex items-center justify-center gap-1.5 hover:bg-[#D94B4B]/10 active-press cursor-pointer"
+                    className="h-11 bg-white text-[#DC2626] border border-[#DC2626]/30 rounded-xl font-bold text-[12.5px] flex items-center justify-center gap-1.5 hover:bg-[#DC2626]/10 active-press cursor-pointer"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                     <span>Release Slot</span>
@@ -259,21 +259,21 @@ export const SlotDetailsSheet: React.FC = () => {
             {/* Case 4: Maintenance / Coaching / Tournament */}
             {(slot.state === 'maintenance' || slot.state === 'coaching' || slot.state === 'tournament') && (
               <div className="space-y-3">
-                <div className="bg-[#F7F7F5] rounded-2xl p-3.5 border border-[#E8E6E1] space-y-2">
+                <div className="bg-[#F3F4F4] rounded-2xl p-3.5 border border-[#E5E7EB] space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10.5px] font-bold text-[#777570] uppercase flex items-center gap-1">
+                    <span className="text-[10.5px] font-bold text-[#5F6368] uppercase flex items-center gap-1">
                       {slot.state === 'maintenance' ? <Wrench className="w-3 h-3" /> : null}
                       Blocked for {slot.state}
                     </span>
                     {isContinuous && (
-                      <span className="text-[9.5px] font-bold bg-[#171717]/10 text-[#171717] px-2 py-0.5 rounded-full">
+                      <span className="text-[9.5px] font-bold bg-[#021526]/10 text-[#021526] px-2 py-0.5 rounded-full">
                         2h Continuous Block
                       </span>
                     )}
                   </div>
-                  <p className="text-[15px] font-black text-[#171717]">{slot.reason || 'Pitch Maintenance'}</p>
+                  <p className="text-[15px] font-black text-[#021526]">{slot.reason || 'Pitch Maintenance'}</p>
                   {slot.notes && (
-                    <p className="text-[11.5px] text-[#777570] mt-0.5">{slot.notes}</p>
+                    <p className="text-[11.5px] text-[#5F6368] mt-0.5">{slot.notes}</p>
                   )}
                 </div>
 
@@ -282,9 +282,9 @@ export const SlotDetailsSheet: React.FC = () => {
                     unblockSlotAction(slot.id);
                     haptics.tap();
                   }}
-                  className="w-full h-11 bg-white text-[#171717] border border-[#E8E6E1] rounded-xl font-bold text-[13px] flex items-center justify-center gap-1.5 hover:border-[#171717] active-press cursor-pointer"
+                  className="w-full h-11 bg-white text-[#021526] border border-[#E5E7EB] rounded-xl font-bold text-[13px] flex items-center justify-center gap-1.5 hover:border-[#021526] active-press cursor-pointer"
                 >
-                  <Trash2 className="w-3.5 h-3.5 text-[#777570]" />
+                  <Trash2 className="w-3.5 h-3.5 text-[#5F6368]" />
                   <span>Unblock Slot</span>
                 </button>
               </div>

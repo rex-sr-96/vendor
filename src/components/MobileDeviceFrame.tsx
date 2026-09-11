@@ -17,7 +17,7 @@ export const MobileDeviceFrame: React.FC<MobileDeviceFrameProps> = ({
 }) => {
   if (deviceType === 'fluid') {
     return (
-      <div className="w-full min-h-screen bg-[#F6F5F2] flex flex-col justify-between max-w-md mx-auto relative shadow-2xl overflow-hidden">
+      <div className="w-full min-h-screen bg-[#F8F9FA] flex flex-col justify-between max-w-md mx-auto relative shadow-2xl overflow-hidden">
         <MobileStatusBar deviceType="iphone" />
         <div className="flex-1 w-full relative overflow-y-auto no-scrollbar">
           {children}
@@ -57,7 +57,7 @@ export const MobileDeviceFrame: React.FC<MobileDeviceFrameProps> = ({
 
         {/* Inner Screen Display */}
         <div
-          className={`w-full h-full bg-[#F6F5F2] flex flex-col justify-between overflow-hidden relative ${
+          className={`w-full h-full bg-[#F8F9FA] flex flex-col justify-between overflow-hidden relative ${
             isIphone ? 'sm:rounded-[44px]' : 'sm:rounded-[36px]'
           }`}
         >

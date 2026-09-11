@@ -111,8 +111,8 @@ export function exportBookingsToPDF(
   const totalPaid = bookings.reduce((acc, b) => acc + b.paidAmount, 0);
   const totalDue = bookings.reduce((acc, b) => acc + b.balanceAmount, 0);
 
-  const primaryDark = [23, 23, 23];
-  const neutralGray = [119, 117, 112];
+  const primaryDark = [2, 21, 38];
+  const neutralGray = [95, 99, 104];
 
   // 1. Header Banner
   doc.setFillColor(primaryDark[0], primaryDark[1], primaryDark[2]);
@@ -155,7 +155,7 @@ export function exportBookingsToPDF(
   const cardW = 175;
   const cardH = 45;
 
-  doc.setFillColor(245, 244, 240);
+  doc.setFillColor(243, 244, 244);
   doc.roundedRect(40, cardY, cardW, cardH, 6, 6, 'F');
   doc.setFontSize(8.5);
   doc.setFont('helvetica', 'bold');
@@ -165,7 +165,7 @@ export function exportBookingsToPDF(
   doc.setTextColor(primaryDark[0], primaryDark[1], primaryDark[2]);
   doc.text(`${bookings.length} Bookings`, 52, cardY + 36);
 
-  doc.setFillColor(245, 244, 240);
+  doc.setFillColor(243, 244, 244);
   doc.roundedRect(40 + cardW + 15, cardY, cardW, cardH, 6, 6, 'F');
   doc.setFontSize(8.5);
   doc.setTextColor(neutralGray[0], neutralGray[1], neutralGray[2]);
@@ -177,19 +177,19 @@ export function exportBookingsToPDF(
   doc.setFillColor(235, 248, 240);
   doc.roundedRect(40 + (cardW + 15) * 2, cardY, cardW, cardH, 6, 6, 'F');
   doc.setFontSize(8.5);
-  doc.setTextColor(47, 166, 106);
+  doc.setTextColor(22, 163, 74);
   doc.text('COLLECTED (PAID)', 52 + (cardW + 15) * 2, cardY + 16);
   doc.setFontSize(14);
-  doc.setTextColor(30, 119, 74);
+  doc.setTextColor(21, 128, 61);
   doc.text(`INR ${totalPaid.toLocaleString('en-IN')}`, 52 + (cardW + 15) * 2, cardY + 36);
 
-  doc.setFillColor(254, 245, 235);
+  doc.setFillColor(255, 241, 236);
   doc.roundedRect(40 + (cardW + 15) * 3, cardY, cardW, cardH, 6, 6, 'F');
   doc.setFontSize(8.5);
-  doc.setTextColor(255, 107, 44);
+  doc.setTextColor(249, 64, 1);
   doc.text('BALANCE DUE', 52 + (cardW + 15) * 3, cardY + 16);
   doc.setFontSize(14);
-  doc.setTextColor(200, 70, 20);
+  doc.setTextColor(217, 54, 0);
   doc.text(`INR ${totalDue.toLocaleString('en-IN')}`, 52 + (cardW + 15) * 3, cardY + 36);
 
   // 4. Data Table
@@ -289,7 +289,7 @@ export function exportSettlementsToPDF(
   const totalGross = settlements.reduce((sum, s) => sum + s.grossAmount, 0);
   const totalFees = settlements.reduce((sum, s) => sum + s.feeDeductions, 0);
 
-  const primaryDark = [23, 23, 23];
+  const primaryDark = [2, 21, 38];
 
   // 1. Header Banner
   doc.setFillColor(primaryDark[0], primaryDark[1], primaryDark[2]);
@@ -313,7 +313,7 @@ export function exportSettlementsToPDF(
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9.5);
-  doc.setTextColor(119, 117, 112);
+  doc.setTextColor(95, 99, 104);
   const printDate = new Date().toLocaleString('en-IN', {
     day: 'numeric',
     month: 'short',
@@ -724,8 +724,8 @@ export function exportPaymentsToPDF(
   const totalDue = bookings.reduce((acc, b) => acc + b.balanceAmount, 0);
   const collectionRate = totalFee > 0 ? Math.round((totalPaid / totalFee) * 100) : 100;
 
-  const primaryDark = [23, 23, 23];
-  const neutralGray = [119, 117, 112];
+  const primaryDark = [2, 21, 38];
+  const neutralGray = [95, 99, 104];
 
   // 1. Header Banner
   doc.setFillColor(primaryDark[0], primaryDark[1], primaryDark[2]);
@@ -738,7 +738,7 @@ export function exportPaymentsToPDF(
 
   doc.setFontSize(11);
   doc.setFont('helvetica', 'normal');
-  doc.setTextColor(74, 222, 128);
+  doc.setTextColor(255, 180, 150);
   doc.text('PAYMENT & REVENUE RECONCILIATION REPORT', 240, 35);
 
   doc.setFontSize(9);
@@ -772,19 +772,19 @@ export function exportPaymentsToPDF(
   doc.roundedRect(40, cardY, cardW, cardH, 6, 6, 'F');
   doc.setFontSize(8.5);
   doc.setFont('helvetica', 'bold');
-  doc.setTextColor(47, 166, 106);
+  doc.setTextColor(22, 163, 74);
   doc.text('TOTAL COLLECTED REVENUE', 52, cardY + 16);
   doc.setFontSize(14);
-  doc.setTextColor(30, 119, 74);
+  doc.setTextColor(21, 128, 61);
   doc.text(`INR ${totalPaid.toLocaleString('en-IN')}`, 52, cardY + 36);
 
-  doc.setFillColor(254, 245, 235);
+  doc.setFillColor(255, 241, 236);
   doc.roundedRect(40 + cardW + 15, cardY, cardW, cardH, 6, 6, 'F');
   doc.setFontSize(8.5);
-  doc.setTextColor(255, 107, 44);
+  doc.setTextColor(249, 64, 1);
   doc.text('OUTSTANDING DUES', 52 + cardW + 15, cardY + 16);
   doc.setFontSize(14);
-  doc.setTextColor(200, 70, 20);
+  doc.setTextColor(217, 54, 0);
   doc.text(`INR ${totalDue.toLocaleString('en-IN')}`, 52 + cardW + 15, cardY + 36);
 
   doc.setFillColor(245, 244, 240);

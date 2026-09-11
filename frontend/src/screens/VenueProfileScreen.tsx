@@ -355,20 +355,20 @@ export const VenueProfileScreen: React.FC = () => {
       />
 
       {/* Top Header & Back Navigation */}
-      <div className="flex items-center justify-between pb-2 border-b border-[#E8E6E1]/70">
+      <div className="flex items-center justify-between pb-2 border-b border-[#E5E7EB]/70">
         <button
           onClick={() => {
             haptics.tap();
             goBack();
           }}
-          className="flex items-center gap-1.5 text-[12.5px] font-bold text-[#FF6B2C] active-press cursor-pointer"
+          className="flex items-center gap-1.5 text-[12.5px] font-bold text-[#F94001] active-press cursor-pointer"
         >
           <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
           <span>Back to More</span>
         </button>
 
         <div className="flex items-center gap-1.5">
-          <span className="text-[11px] font-bold text-[#2FA66A] bg-[#2FA66A]/10 px-2.5 py-1 rounded-full flex items-center gap-1 border border-[#2FA66A]/20">
+          <span className="text-[11px] font-bold text-[#16A34A] bg-[#16A34A]/10 px-2.5 py-1 rounded-full flex items-center gap-1 border border-[#16A34A]/20">
             <ShieldCheck className="w-3.5 h-3.5" />
             <span>KYC Verified</span>
           </span>
@@ -378,33 +378,33 @@ export const VenueProfileScreen: React.FC = () => {
       {/* Screen Title */}
       <div>
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-[#FF6B2C]/10 text-[#FF6B2C] flex items-center justify-center border border-[#FF6B2C]/20">
+          <div className="w-8 h-8 rounded-xl bg-[#F94001]/10 text-[#F94001] flex items-center justify-center border border-[#F94001]/20">
             <Building2 className="w-4.5 h-4.5 stroke-[2.2]" />
           </div>
           <div>
-            <h1 className="text-[20px] font-black text-[#171717] tracking-tight">Venue Profile & Photos</h1>
-            <p className="text-[11.5px] text-[#777570]">Public arena details, location & player photo gallery</p>
+            <h1 className="text-[20px] font-black text-[#021526] tracking-tight">Venue Profile & Photos</h1>
+            <p className="text-[11.5px] text-[#5F6368]">Public arena details, location & player photo gallery</p>
           </div>
         </div>
       </div>
 
       {/* SECTION 1: VENUE PHOTO GALLERY */}
-      <div className="bg-white rounded-3xl border border-[#E8E6E1] p-4 shadow-2xs space-y-3.5">
-        <div className="flex items-center justify-between pb-2 border-b border-[#F1F0EC]">
+      <div className="bg-white rounded-3xl border border-[#E5E7EB] p-4 shadow-2xs space-y-3.5">
+        <div className="flex items-center justify-between pb-2 border-b border-[#F3F4F4]">
           <div>
             <div className="flex items-center gap-1.5">
-              <ImageIcon className="w-4 h-4 text-[#FF6B2C]" />
-              <h2 className="text-[14px] font-black text-[#171717]">Venue Photo Gallery</h2>
+              <ImageIcon className="w-4 h-4 text-[#F94001]" />
+              <h2 className="text-[14px] font-black text-[#021526]">Venue Photo Gallery</h2>
             </div>
-            <p className="text-[11px] text-[#777570]">High-res images shown to players on TurfTown</p>
+            <p className="text-[11px] text-[#5F6368]">High-res images shown to players on TurfTown</p>
           </div>
 
           <div className="flex items-center gap-1.5">
             <span
               className={`text-[11px] font-bold px-2 py-0.5 rounded-lg border ${
                 venuePhotos.length >= 4
-                  ? 'bg-[#2FA66A]/10 text-[#2FA66A] border-[#2FA66A]/20'
-                  : 'bg-[#E7A72F]/15 text-[#B87C0D] border-[#E7A72F]/30'
+                  ? 'bg-[#16A34A]/10 text-[#16A34A] border-[#16A34A]/20'
+                  : 'bg-[#F59E0B]/15 text-[#B87C0D] border-[#F59E0B]/30'
               }`}
             >
               {venuePhotos.length} / 8 Photos
@@ -413,8 +413,8 @@ export const VenueProfileScreen: React.FC = () => {
         </div>
 
         {/* Info Pill */}
-        <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[#FAF9F6] border border-[#E8E6E1] text-[11.5px] text-[#777570]">
-          <Info className="w-4 h-4 text-[#FF6B2C] shrink-0" />
+        <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[#F3F4F4] border border-[#E5E7EB] text-[11.5px] text-[#5F6368]">
+          <Info className="w-4 h-4 text-[#F94001] shrink-0" />
           <span>Minimum 4 photos required. Tap the trash icon to remove or add new court shots.</span>
         </div>
 
@@ -423,7 +423,7 @@ export const VenueProfileScreen: React.FC = () => {
           {venuePhotos.map((photo, index) => (
             <div
               key={photo.id}
-              className="relative group rounded-2xl overflow-hidden border border-[#E8E6E1] bg-[#171717]/5 aspect-[4/3] shadow-2xs"
+              className="relative group rounded-2xl overflow-hidden border border-[#E5E7EB] bg-[#021526]/5 aspect-[4/3] shadow-2xs"
             >
               <img src={photo.url} alt={photo.label} className="w-full h-full object-cover" />
 
@@ -432,7 +432,7 @@ export const VenueProfileScreen: React.FC = () => {
 
               {/* Cover Photo Tag on First Image */}
               {index === 0 && (
-                <div className="absolute top-2 left-2 bg-[#FF6B2C] text-white text-[9.5px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full flex items-center gap-1 shadow-xs">
+                <div className="absolute top-2 left-2 bg-[#F94001] text-white text-[9.5px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full flex items-center gap-1 shadow-xs">
                   <Star className="w-3 h-3 fill-current" />
                   <span>Cover Photo</span>
                 </div>
@@ -450,7 +450,7 @@ export const VenueProfileScreen: React.FC = () => {
                     removeVenuePhoto(photo.id);
                     haptics.tap();
                   }}
-                  className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 hover:bg-[#D94B4B] text-white flex items-center justify-center backdrop-blur-md active-press cursor-pointer transition-colors"
+                  className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 hover:bg-[#DC2626] text-white flex items-center justify-center backdrop-blur-md active-press cursor-pointer transition-colors"
                   title="Delete Photo"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -473,34 +473,34 @@ export const VenueProfileScreen: React.FC = () => {
                 haptics.tap();
                 setIsAddPhotoOpen(true);
               }}
-              className="aspect-[4/3] rounded-2xl border-2 border-dashed border-[#FF6B2C]/40 bg-[#FF6B2C]/5 hover:bg-[#FF6B2C]/10 flex flex-col items-center justify-center gap-1.5 text-[#FF6B2C] active-press cursor-pointer transition-colors"
+              className="aspect-[4/3] rounded-2xl border-2 border-dashed border-[#F94001]/40 bg-[#F94001]/5 hover:bg-[#F94001]/10 flex flex-col items-center justify-center gap-1.5 text-[#F94001] active-press cursor-pointer transition-colors"
             >
-              <div className="w-9 h-9 rounded-full bg-[#FF6B2C]/15 flex items-center justify-center">
+              <div className="w-9 h-9 rounded-full bg-[#F94001]/15 flex items-center justify-center">
                 <Plus className="w-5 h-5 stroke-[2.5]" />
               </div>
               <span className="text-[11.5px] font-black">Add New Photo</span>
-              <span className="text-[9.5px] text-[#777570]">Up to 8 max</span>
+              <span className="text-[9.5px] text-[#5F6368]">Up to 8 max</span>
             </button>
           )}
         </div>
       </div>
 
       {/* SECTION 2: ARENA & VENUE INFORMATION */}
-      <div className="bg-white rounded-3xl border border-[#E8E6E1] p-4 shadow-2xs space-y-3.5">
-        <div className="flex items-center justify-between pb-2 border-b border-[#F1F0EC]">
+      <div className="bg-white rounded-3xl border border-[#E5E7EB] p-4 shadow-2xs space-y-3.5">
+        <div className="flex items-center justify-between pb-2 border-b border-[#F3F4F4]">
           <div className="flex items-center gap-1.5">
-            <Building2 className="w-4 h-4 text-[#FF6B2C]" />
-            <h2 className="text-[14px] font-black text-[#171717]">Arena & Venue Information</h2>
+            <Building2 className="w-4 h-4 text-[#F94001]" />
+            <h2 className="text-[14px] font-black text-[#021526]">Arena & Venue Information</h2>
           </div>
-          <span className="text-[10px] font-bold text-[#FF6B2C] bg-[#FF6B2C]/10 px-2 py-0.5 rounded-full">
+          <span className="text-[10px] font-bold text-[#F94001] bg-[#F94001]/10 px-2 py-0.5 rounded-full">
             Public View
           </span>
         </div>
 
         <div className="space-y-3">
           <div>
-            <label className="block text-[11px] font-bold text-[#777570] mb-1">
-              Venue Name <span className="text-[#FF6B2C]">*</span>
+            <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+              Venue Name <span className="text-[#F94001]">*</span>
             </label>
             <div className="relative">
               <input
@@ -510,14 +510,14 @@ export const VenueProfileScreen: React.FC = () => {
                 value={vName}
                 onChange={(e) => setVName(e.target.value)}
                 placeholder="e.g. TurfTown Arena"
-                className="w-full bg-[#FAF9F6] disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
+                className="w-full bg-[#F3F4F4] disabled:bg-[#F3F4F4] disabled:text-[#5F6368] disabled:cursor-not-allowed border border-[#E5E7EB] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#021526] focus:bg-white focus:outline-none focus:border-[#F94001] transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-[#777570] mb-1">
-              City & Area <span className="text-[#FF6B2C]">*</span>
+            <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+              City & Area <span className="text-[#F94001]">*</span>
             </label>
             <div className="relative">
               <input
@@ -527,35 +527,35 @@ export const VenueProfileScreen: React.FC = () => {
                 value={vCity}
                 onChange={(e) => setVCity(e.target.value)}
                 placeholder="e.g. Koramangala, Bengaluru"
-                className="w-full bg-[#FAF9F6] disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
+                className="w-full bg-[#F3F4F4] disabled:bg-[#F3F4F4] disabled:text-[#5F6368] disabled:cursor-not-allowed border border-[#E5E7EB] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#021526] focus:bg-white focus:outline-none focus:border-[#F94001] transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-[#777570] mb-1">Street Address</label>
+            <label className="block text-[11px] font-bold text-[#5F6368] mb-1">Street Address</label>
             <input
               type="text"
               disabled={isStaff}
               value={vAddress}
               onChange={(e) => setVAddress(e.target.value)}
               placeholder="Plot or building number, street name"
-              className="w-full bg-[#FAF9F6] disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
+              className="w-full bg-[#F3F4F4] disabled:bg-[#F3F4F4] disabled:text-[#5F6368] disabled:cursor-not-allowed border border-[#E5E7EB] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#021526] focus:bg-white focus:outline-none focus:border-[#F94001] transition-colors"
             />
           </div>
 
           {/* GOOGLE MAPS LOCATION LINK */}
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="block text-[11px] font-bold text-[#777570]">
-                Google Maps Location Link <span className="text-[#FF6B2C]">*</span>
+              <label className="block text-[11px] font-bold text-[#5F6368]">
+                Google Maps Location Link <span className="text-[#F94001]">*</span>
               </label>
               {vGoogleMaps && (
                 <a
                   href={vGoogleMaps}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-[10.5px] font-bold text-[#FF6B2C] hover:underline flex items-center gap-1 cursor-pointer"
+                  className="text-[10.5px] font-bold text-[#F94001] hover:underline flex items-center gap-1 cursor-pointer"
                 >
                   <span>Open Map</span>
                   <ExternalLink className="w-3 h-3" />
@@ -563,7 +563,7 @@ export const VenueProfileScreen: React.FC = () => {
               )}
             </div>
             <div className="relative flex items-center">
-              <div className="absolute left-3.5 text-[#FF6B2C] pointer-events-none">
+              <div className="absolute left-3.5 text-[#F94001] pointer-events-none">
                 <MapPin className="w-4 h-4 stroke-[2.2]" />
               </div>
               <input
@@ -572,67 +572,67 @@ export const VenueProfileScreen: React.FC = () => {
                 value={vGoogleMaps}
                 onChange={(e) => setVGoogleMaps(e.target.value)}
                 placeholder="e.g. https://maps.app.goo.gl/uyJgU4DB7ushZsiv6"
-                className="w-full bg-[#FAF9F6] disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-2xl pl-10 pr-3.5 py-2.5 text-[13px] font-bold text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
+                className="w-full bg-[#F3F4F4] disabled:bg-[#F3F4F4] disabled:text-[#5F6368] disabled:cursor-not-allowed border border-[#E5E7EB] rounded-2xl pl-10 pr-3.5 py-2.5 text-[13px] font-bold text-[#021526] focus:bg-white focus:outline-none focus:border-[#F94001] transition-colors"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-2.5">
             <div>
-              <label className="block text-[11px] font-bold text-[#777570] mb-1">Pincode</label>
+              <label className="block text-[11px] font-bold text-[#5F6368] mb-1">Pincode</label>
               <input
                 type="text"
                 disabled={isStaff}
                 value={vPincode}
                 onChange={(e) => setVPincode(e.target.value)}
                 placeholder="560102"
-                className="w-full bg-[#FAF9F6] disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-2xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
+                className="w-full bg-[#F3F4F4] disabled:bg-[#F3F4F4] disabled:text-[#5F6368] disabled:cursor-not-allowed border border-[#E5E7EB] rounded-2xl px-3 py-2 text-[13px] font-bold text-[#021526] focus:bg-white focus:outline-none focus:border-[#F94001] transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold text-[#777570] mb-1">Established Year</label>
+              <label className="block text-[11px] font-bold text-[#5F6368] mb-1">Established Year</label>
               <input
                 type="text"
                 disabled={isStaff}
                 value={vEstablished}
                 onChange={(e) => setVEstablished(e.target.value)}
                 placeholder="2023"
-                className="w-full bg-[#FAF9F6] disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-2xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
+                className="w-full bg-[#F3F4F4] disabled:bg-[#F3F4F4] disabled:text-[#5F6368] disabled:cursor-not-allowed border border-[#E5E7EB] rounded-2xl px-3 py-2 text-[13px] font-bold text-[#021526] focus:bg-white focus:outline-none focus:border-[#F94001] transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-[#777570] mb-1">About the Arena (Public Bio)</label>
+            <label className="block text-[11px] font-bold text-[#5F6368] mb-1">About the Arena (Public Bio)</label>
             <textarea
               rows={3}
               disabled={isStaff}
               value={vDescription}
               onChange={(e) => setVDescription(e.target.value)}
               placeholder="Highlight turf grade, lighting, amenities, changing rooms..."
-              className="w-full bg-[#FAF9F6] disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-2xl p-3 text-[12.5px] font-medium text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors resize-none"
+              className="w-full bg-[#F3F4F4] disabled:bg-[#F3F4F4] disabled:text-[#5F6368] disabled:cursor-not-allowed border border-[#E5E7EB] rounded-2xl p-3 text-[12.5px] font-medium text-[#021526] focus:bg-white focus:outline-none focus:border-[#F94001] transition-colors resize-none"
             />
           </div>
         </div>
       </div>
 
       {/* SECTION 3: OWNER & LICENSEE DETAILS */}
-      <div className="bg-white rounded-3xl border border-[#E8E6E1] p-4 shadow-2xs space-y-3.5">
-        <div className="flex items-center justify-between pb-2 border-b border-[#F1F0EC]">
+      <div className="bg-white rounded-3xl border border-[#E5E7EB] p-4 shadow-2xs space-y-3.5">
+        <div className="flex items-center justify-between pb-2 border-b border-[#F3F4F4]">
           <div className="flex items-center gap-1.5">
-            <User className="w-4 h-4 text-[#2FA66A]" />
-            <h2 className="text-[14px] font-black text-[#171717]">Owner / Licensee Credentials</h2>
+            <User className="w-4 h-4 text-[#16A34A]" />
+            <h2 className="text-[14px] font-black text-[#021526]">Owner / Licensee Credentials</h2>
           </div>
-          <span className="text-[10px] font-bold text-[#2FA66A] bg-[#2FA66A]/10 px-2 py-0.5 rounded-full border border-[#2FA66A]/20">
+          <span className="text-[10px] font-bold text-[#16A34A] bg-[#16A34A]/10 px-2 py-0.5 rounded-full border border-[#16A34A]/20">
             Verified
           </span>
         </div>
 
         <div className="space-y-3">
           <div>
-            <label className="block text-[11px] font-bold text-[#777570] mb-1">
-              Owner Full Name <span className="text-[#FF6B2C]">*</span>
+            <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+              Owner Full Name <span className="text-[#F94001]">*</span>
             </label>
             <input
               type="text"
@@ -641,13 +641,13 @@ export const VenueProfileScreen: React.FC = () => {
               value={oName}
               onChange={(e) => setOName(e.target.value)}
               placeholder="Full legal name"
-              className="w-full bg-[#FAF9F6] disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
+              className="w-full bg-[#F3F4F4] disabled:bg-[#F3F4F4] disabled:text-[#5F6368] disabled:cursor-not-allowed border border-[#E5E7EB] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#021526] focus:bg-white focus:outline-none focus:border-[#F94001] transition-colors"
             />
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-[#777570] mb-1">
-              Registered Phone Number <span className="text-[#FF6B2C]">*</span>
+            <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+              Registered Phone Number <span className="text-[#F94001]">*</span>
             </label>
             <input
               type="tel"
@@ -656,59 +656,59 @@ export const VenueProfileScreen: React.FC = () => {
               value={oPhone}
               onChange={(e) => setOPhone(e.target.value)}
               placeholder="+91 98765 43210"
-              className="w-full bg-[#FAF9F6] disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
+              className="w-full bg-[#F3F4F4] disabled:bg-[#F3F4F4] disabled:text-[#5F6368] disabled:cursor-not-allowed border border-[#E5E7EB] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#021526] focus:bg-white focus:outline-none focus:border-[#F94001] transition-colors"
             />
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-[#777570] mb-1">Owner Email Address</label>
+            <label className="block text-[11px] font-bold text-[#5F6368] mb-1">Owner Email Address</label>
             <input
               type="email"
               disabled={isStaff}
               value={oEmail}
               onChange={(e) => setOEmail(e.target.value)}
               placeholder="owner@turftown.app"
-              className="w-full bg-[#FAF9F6] disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
+              className="w-full bg-[#F3F4F4] disabled:bg-[#F3F4F4] disabled:text-[#5F6368] disabled:cursor-not-allowed border border-[#E5E7EB] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#021526] focus:bg-white focus:outline-none focus:border-[#F94001] transition-colors"
             />
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-[#777570] mb-1">PAN / Government ID</label>
+            <label className="block text-[11px] font-bold text-[#5F6368] mb-1">PAN / Government ID</label>
             <input
               type="text"
               disabled={isStaff}
               value={oPan}
               onChange={(e) => setOPan(e.target.value)}
               placeholder="ABCDE1234F"
-              className="w-full bg-[#FAF9F6] disabled:bg-[#F1F0EC] disabled:text-[#777570] disabled:cursor-not-allowed border border-[#E8E6E1] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#171717] uppercase focus:bg-white focus:outline-none focus:border-[#FF6B2C] transition-colors"
+              className="w-full bg-[#F3F4F4] disabled:bg-[#F3F4F4] disabled:text-[#5F6368] disabled:cursor-not-allowed border border-[#E5E7EB] rounded-2xl px-3.5 py-2.5 text-[13px] font-bold text-[#021526] uppercase focus:bg-white focus:outline-none focus:border-[#F94001] transition-colors"
             />
           </div>
 
           {/* AADHAAR CARD DOCUMENT */}
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="block text-[11px] font-bold text-[#777570]">
-                Aadhaar Card Document <span className="text-[#FF6B2C]">*</span>
+              <label className="block text-[11px] font-bold text-[#5F6368]">
+                Aadhaar Card Document <span className="text-[#F94001]">*</span>
               </label>
-              <span className="text-[10px] font-mono text-[#777570] uppercase">PDF/JPG MAX 5MB</span>
+              <span className="text-[10px] font-mono text-[#5F6368] uppercase">PDF/JPG MAX 5MB</span>
             </div>
 
             {uploadingDoc === 'AADHAAR' ? (
-              <div className="flex items-center gap-2 p-2.5 rounded-2xl border border-dashed border-[#FF6B2C] bg-[#FF6B2C]/5 text-[12px] font-bold text-[#FF6B2C]">
+              <div className="flex items-center gap-2 p-2.5 rounded-2xl border border-dashed border-[#F94001] bg-[#F94001]/5 text-[12px] font-bold text-[#F94001]">
                 <Loader2 className="h-4 w-4 animate-spin" />
                 <span>Uploading Aadhaar document...</span>
               </div>
             ) : aadhaarDocId ? (
-              <div className="flex items-center justify-between gap-2 p-2.5 rounded-2xl border border-[#2FA66A]/30 bg-[#2FA66A]/5 shadow-2xs">
+              <div className="flex items-center justify-between gap-2 p-2.5 rounded-2xl border border-[#16A34A]/30 bg-[#16A34A]/5 shadow-2xs">
                 <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                  <div className="w-8 h-8 rounded-xl bg-white border border-[#2FA66A]/30 flex items-center justify-center shrink-0 text-[#2FA66A]">
+                  <div className="w-8 h-8 rounded-xl bg-white border border-[#16A34A]/30 flex items-center justify-center shrink-0 text-[#16A34A]">
                     <FileText className="w-4 h-4" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="font-mono text-[12px] font-bold text-[#171717] truncate">
+                    <p className="font-mono text-[12px] font-bold text-[#021526] truncate">
                       {aadhaarDocId}
                     </p>
-                    <span className="text-[10px] text-[#2FA66A] font-bold flex items-center gap-1">
+                    <span className="text-[10px] text-[#16A34A] font-bold flex items-center gap-1">
                       <CheckCircle2 className="w-3 h-3" /> Uploaded & Verified
                     </span>
                   </div>
@@ -726,9 +726,9 @@ export const VenueProfileScreen: React.FC = () => {
                         type: 'doc',
                       });
                     }}
-                    className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white border border-[#E8E6E1] text-[11px] font-bold text-[#171717] hover:bg-[#FAF9F6] active-press cursor-pointer shadow-2xs"
+                    className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white border border-[#E5E7EB] text-[11px] font-bold text-[#021526] hover:bg-[#F3F4F4] active-press cursor-pointer shadow-2xs"
                   >
-                    <Eye className="w-3.5 h-3.5 text-[#777570]" />
+                    <Eye className="w-3.5 h-3.5 text-[#5F6368]" />
                     <span>View</span>
                   </button>
 
@@ -736,7 +736,7 @@ export const VenueProfileScreen: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => aadhaarInputRef.current?.click()}
-                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-[#FF6B2C] text-white text-[11px] font-bold hover:bg-[#e85b1e] active-press cursor-pointer shadow-2xs"
+                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-[#F94001] text-white text-[11px] font-bold hover:bg-[#D93600] active-press cursor-pointer shadow-2xs"
                     >
                       <span>Change</span>
                     </button>
@@ -744,10 +744,10 @@ export const VenueProfileScreen: React.FC = () => {
                 </div>
               </div>
             ) : (
-              <div className="flex items-center justify-between gap-2 p-2 rounded-2xl border border-dashed border-[#CBD5E1] bg-[#FAF9F6]">
+              <div className="flex items-center justify-between gap-2 p-2 rounded-2xl border border-dashed border-[#CBD5E1] bg-[#F3F4F4]">
                 <div className="flex items-center gap-2 flex-1 min-w-0 px-1">
-                  <FileText className="h-4 w-4 text-[#777570] shrink-0" />
-                  <span className="font-mono text-[11px] text-[#777570] truncate">
+                  <FileText className="h-4 w-4 text-[#5F6368] shrink-0" />
+                  <span className="font-mono text-[11px] text-[#5F6368] truncate">
                     No Aadhaar document uploaded
                   </span>
                 </div>
@@ -755,7 +755,7 @@ export const VenueProfileScreen: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => aadhaarInputRef.current?.click()}
-                    className="px-3 py-1.5 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white text-[11px] font-bold transition-all shadow-xs shrink-0 active-press cursor-pointer"
+                    className="px-3 py-1.5 rounded-xl bg-[#F94001] hover:bg-[#D93600] text-white text-[11px] font-bold transition-all shadow-xs shrink-0 active-press cursor-pointer"
                   >
                     Upload Aadhaar
                   </button>
@@ -767,32 +767,32 @@ export const VenueProfileScreen: React.FC = () => {
           {/* PROFILE PHOTO ID */}
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="block text-[11px] font-bold text-[#777570]">
-                Profile Photo ID <span className="text-[#FF6B2C]">*</span>
+              <label className="block text-[11px] font-bold text-[#5F6368]">
+                Profile Photo ID <span className="text-[#F94001]">*</span>
               </label>
-              <span className="text-[10px] font-mono text-[#777570] uppercase">JPG/PNG MAX 5MB</span>
+              <span className="text-[10px] font-mono text-[#5F6368] uppercase">JPG/PNG MAX 5MB</span>
             </div>
 
             {uploadingDoc === 'PROFILE_PHOTO' ? (
-              <div className="flex items-center gap-2 p-2.5 rounded-2xl border border-dashed border-[#FF6B2C] bg-[#FF6B2C]/5 text-[12px] font-bold text-[#FF6B2C]">
+              <div className="flex items-center gap-2 p-2.5 rounded-2xl border border-dashed border-[#F94001] bg-[#F94001]/5 text-[12px] font-bold text-[#F94001]">
                 <Loader2 className="h-4 w-4 animate-spin" />
                 <span>Uploading profile photo...</span>
               </div>
             ) : profilePhotoDocId ? (
-              <div className="flex items-center justify-between gap-2 p-2.5 rounded-2xl border border-[#2FA66A]/30 bg-[#2FA66A]/5 shadow-2xs">
+              <div className="flex items-center justify-between gap-2 p-2.5 rounded-2xl border border-[#16A34A]/30 bg-[#16A34A]/5 shadow-2xs">
                 <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                  <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-[#2FA66A]/30 bg-white">
+                  <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-[#16A34A]/30 bg-white">
                     {profilePhotoUrl ? (
                       <img src={profilePhotoUrl} alt="Profile" className="w-full h-full object-cover" />
                     ) : (
-                      <User className="w-4 h-4 text-[#2FA66A] m-auto" />
+                      <User className="w-4 h-4 text-[#16A34A] m-auto" />
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="font-mono text-[12px] font-bold text-[#171717] truncate">
+                    <p className="font-mono text-[12px] font-bold text-[#021526] truncate">
                       {profilePhotoDocId}
                     </p>
-                    <span className="text-[10px] text-[#2FA66A] font-bold flex items-center gap-1">
+                    <span className="text-[10px] text-[#16A34A] font-bold flex items-center gap-1">
                       <CheckCircle2 className="w-3 h-3" /> Uploaded & Verified
                     </span>
                   </div>
@@ -810,9 +810,9 @@ export const VenueProfileScreen: React.FC = () => {
                         type: 'image',
                       });
                     }}
-                    className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white border border-[#E8E6E1] text-[11px] font-bold text-[#171717] hover:bg-[#FAF9F6] active-press cursor-pointer shadow-2xs"
+                    className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white border border-[#E5E7EB] text-[11px] font-bold text-[#021526] hover:bg-[#F3F4F4] active-press cursor-pointer shadow-2xs"
                   >
-                    <Eye className="w-3.5 h-3.5 text-[#777570]" />
+                    <Eye className="w-3.5 h-3.5 text-[#5F6368]" />
                     <span>View</span>
                   </button>
 
@@ -820,7 +820,7 @@ export const VenueProfileScreen: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => profilePhotoInputRef.current?.click()}
-                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-[#FF6B2C] text-white text-[11px] font-bold hover:bg-[#e85b1e] active-press cursor-pointer shadow-2xs"
+                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-[#F94001] text-white text-[11px] font-bold hover:bg-[#D93600] active-press cursor-pointer shadow-2xs"
                     >
                       <span>Change</span>
                     </button>
@@ -828,10 +828,10 @@ export const VenueProfileScreen: React.FC = () => {
                 </div>
               </div>
             ) : (
-              <div className="flex items-center justify-between gap-2 p-2 rounded-2xl border border-dashed border-[#CBD5E1] bg-[#FAF9F6]">
+              <div className="flex items-center justify-between gap-2 p-2 rounded-2xl border border-dashed border-[#CBD5E1] bg-[#F3F4F4]">
                 <div className="flex items-center gap-2 flex-1 min-w-0 px-1">
-                  <ImageIcon className="h-4 w-4 text-[#777570] shrink-0" />
-                  <span className="font-mono text-[11px] text-[#777570] truncate">
+                  <ImageIcon className="h-4 w-4 text-[#5F6368] shrink-0" />
+                  <span className="font-mono text-[11px] text-[#5F6368] truncate">
                     No profile photo uploaded
                   </span>
                 </div>
@@ -839,7 +839,7 @@ export const VenueProfileScreen: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => profilePhotoInputRef.current?.click()}
-                    className="px-3 py-1.5 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white text-[11px] font-bold transition-all shadow-xs shrink-0 active-press cursor-pointer"
+                    className="px-3 py-1.5 rounded-xl bg-[#F94001] hover:bg-[#D93600] text-white text-[11px] font-bold transition-all shadow-xs shrink-0 active-press cursor-pointer"
                   >
                     Upload Photo
                   </button>
@@ -851,67 +851,67 @@ export const VenueProfileScreen: React.FC = () => {
       </div>
 
       {/* SECTION 4: FINANCIAL SETTLEMENTS & BANK ACCOUNT */}
-      <div className="bg-white rounded-3xl border border-[#E8E6E1] p-4 shadow-2xs space-y-3.5">
-        <div className="flex items-center justify-between pb-2 border-b border-[#F1F0EC]">
+      <div className="bg-white rounded-3xl border border-[#E5E7EB] p-4 shadow-2xs space-y-3.5">
+        <div className="flex items-center justify-between pb-2 border-b border-[#F3F4F4]">
           <div className="flex items-center gap-1.5">
-            <Landmark className="w-4 h-4 text-[#FF6B2C]" />
-            <h2 className="text-[14px] font-black text-[#171717]">Bank Account & Settlement Proof</h2>
+            <Landmark className="w-4 h-4 text-[#F94001]" />
+            <h2 className="text-[14px] font-black text-[#021526]">Bank Account & Settlement Proof</h2>
           </div>
-          <span className="text-[10px] font-bold text-[#2FA66A] bg-[#2FA66A]/10 px-2 py-0.5 rounded-full border border-[#2FA66A]/20 flex items-center gap-1">
+          <span className="text-[10px] font-bold text-[#16A34A] bg-[#16A34A]/10 px-2 py-0.5 rounded-full border border-[#16A34A]/20 flex items-center gap-1">
             <ShieldCheck className="w-3 h-3" />
             <span>Verified Payouts</span>
           </span>
         </div>
 
-        <p className="text-[11.5px] text-[#777570]">
+        <p className="text-[11.5px] text-[#5F6368]">
           Official bank account for automated slot booking settlements, IMPS payouts, and banking proof verification.
         </p>
 
         {/* Bank Account Details Grid */}
-        <div className="grid grid-cols-2 gap-2.5 bg-[#FAF9F6] border border-[#E8E6E1] rounded-2xl p-3 text-[11.5px]">
+        <div className="grid grid-cols-2 gap-2.5 bg-[#F3F4F4] border border-[#E5E7EB] rounded-2xl p-3 text-[11.5px]">
           <div>
-            <span className="block font-bold text-[#777570]">Bank Name</span>
-            <span className="font-black text-[#171717]">{bankDetails.bankName || 'SBI BANK'}</span>
+            <span className="block font-bold text-[#5F6368]">Bank Name</span>
+            <span className="font-black text-[#021526]">{bankDetails.bankName || 'SBI BANK'}</span>
           </div>
           <div>
-            <span className="block font-bold text-[#777570]">Account Holder</span>
-            <span className="font-bold text-[#171717] truncate block">{bankDetails.accountHolder || oName}</span>
+            <span className="block font-bold text-[#5F6368]">Account Holder</span>
+            <span className="font-bold text-[#021526] truncate block">{bankDetails.accountHolder || oName}</span>
           </div>
           <div>
-            <span className="block font-bold text-[#777570]">Account Number</span>
-            <span className="font-mono font-bold text-[#171717]">{bankDetails.maskedNumber || '•••• •••• •••• 6914'}</span>
+            <span className="block font-bold text-[#5F6368]">Account Number</span>
+            <span className="font-mono font-bold text-[#021526]">{bankDetails.maskedNumber || '•••• •••• •••• 6914'}</span>
           </div>
           <div>
-            <span className="block font-bold text-[#777570]">IFSC Code</span>
-            <span className="font-mono font-bold text-[#171717]">{bankDetails.ifsc || 'SBIN0018111'}</span>
+            <span className="block font-bold text-[#5F6368]">IFSC Code</span>
+            <span className="font-mono font-bold text-[#021526]">{bankDetails.ifsc || 'SBIN0018111'}</span>
           </div>
         </div>
 
         {/* CANCELLED CHEQUE / PASSBOOK DOCUMENT */}
         <div>
           <div className="flex items-center justify-between mb-1">
-            <label className="block text-[11px] font-bold text-[#777570]">
-              Cancelled Cheque / Passbook <span className="text-[#FF6B2C]">*</span>
+            <label className="block text-[11px] font-bold text-[#5F6368]">
+              Cancelled Cheque / Passbook <span className="text-[#F94001]">*</span>
             </label>
-            <span className="text-[10px] font-mono text-[#777570] uppercase">PDF/JPG MAX 5MB</span>
+            <span className="text-[10px] font-mono text-[#5F6368] uppercase">PDF/JPG MAX 5MB</span>
           </div>
 
           {uploadingDoc === 'BANK_PROOF' ? (
-            <div className="flex items-center gap-2 p-2.5 rounded-2xl border border-dashed border-[#FF6B2C] bg-[#FF6B2C]/5 text-[12px] font-bold text-[#FF6B2C]">
+            <div className="flex items-center gap-2 p-2.5 rounded-2xl border border-dashed border-[#F94001] bg-[#F94001]/5 text-[12px] font-bold text-[#F94001]">
               <Loader2 className="h-4 w-4 animate-spin" />
               <span>Uploading bank proof...</span>
             </div>
           ) : branchProofDocId ? (
-            <div className="flex items-center justify-between gap-2 p-2.5 rounded-2xl border border-[#2FA66A]/30 bg-[#2FA66A]/5 shadow-2xs">
+            <div className="flex items-center justify-between gap-2 p-2.5 rounded-2xl border border-[#16A34A]/30 bg-[#16A34A]/5 shadow-2xs">
               <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                <div className="w-8 h-8 rounded-xl bg-white border border-[#2FA66A]/30 flex items-center justify-center shrink-0 text-[#2FA66A]">
+                <div className="w-8 h-8 rounded-xl bg-white border border-[#16A34A]/30 flex items-center justify-center shrink-0 text-[#16A34A]">
                   <FileText className="w-4 h-4" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="font-mono text-[12px] font-bold text-[#171717] truncate">
+                  <p className="font-mono text-[12px] font-bold text-[#021526] truncate">
                     {branchProofDocId}
                   </p>
-                  <span className="text-[10px] text-[#2FA66A] font-bold flex items-center gap-1">
+                  <span className="text-[10px] text-[#16A34A] font-bold flex items-center gap-1">
                     <CheckCircle2 className="w-3 h-3" /> Uploaded & Verified
                   </span>
                 </div>
@@ -929,9 +929,9 @@ export const VenueProfileScreen: React.FC = () => {
                       type: 'doc',
                     });
                   }}
-                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white border border-[#E8E6E1] text-[11px] font-bold text-[#171717] hover:bg-[#FAF9F6] active-press cursor-pointer shadow-2xs"
+                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white border border-[#E5E7EB] text-[11px] font-bold text-[#021526] hover:bg-[#F3F4F4] active-press cursor-pointer shadow-2xs"
                 >
-                  <Eye className="w-3.5 h-3.5 text-[#777570]" />
+                  <Eye className="w-3.5 h-3.5 text-[#5F6368]" />
                   <span>View</span>
                 </button>
 
@@ -939,7 +939,7 @@ export const VenueProfileScreen: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => bankProofInputRef.current?.click()}
-                    className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-[#FF6B2C] text-white text-[11px] font-bold hover:bg-[#e85b1e] active-press cursor-pointer shadow-2xs"
+                    className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-[#F94001] text-white text-[11px] font-bold hover:bg-[#D93600] active-press cursor-pointer shadow-2xs"
                   >
                     <span>Change</span>
                   </button>
@@ -947,10 +947,10 @@ export const VenueProfileScreen: React.FC = () => {
               </div>
             </div>
           ) : (
-            <div className="flex items-center justify-between gap-2 p-2 rounded-2xl border border-dashed border-[#CBD5E1] bg-[#FAF9F6]">
+            <div className="flex items-center justify-between gap-2 p-2 rounded-2xl border border-dashed border-[#CBD5E1] bg-[#F3F4F4]">
               <div className="flex items-center gap-2 flex-1 min-w-0 px-1">
-                <FileText className="h-4 w-4 text-[#777570] shrink-0" />
-                <span className="font-mono text-[11px] text-[#777570] truncate">
+                <FileText className="h-4 w-4 text-[#5F6368] shrink-0" />
+                <span className="font-mono text-[11px] text-[#5F6368] truncate">
                   No bank proof uploaded
                 </span>
               </div>
@@ -958,7 +958,7 @@ export const VenueProfileScreen: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => bankProofInputRef.current?.click()}
-                  className="px-3 py-1.5 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white text-[11px] font-bold transition-all shadow-xs shrink-0 active-press cursor-pointer"
+                  className="px-3 py-1.5 rounded-xl bg-[#F94001] hover:bg-[#D93600] text-white text-[11px] font-bold transition-all shadow-xs shrink-0 active-press cursor-pointer"
                 >
                   Upload File
                 </button>
@@ -971,19 +971,19 @@ export const VenueProfileScreen: React.FC = () => {
       {/* DOCUMENT PREVIEW MODAL */}
       {previewDoc && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-[440px] rounded-3xl border border-[#E8E6E1] shadow-2xl overflow-hidden max-h-[85vh] flex flex-col">
-            <div className="p-4 border-b border-[#E8E6E1] flex items-center justify-between bg-[#FAF9F6]">
+          <div className="bg-white w-full max-w-[440px] rounded-3xl border border-[#E5E7EB] shadow-2xl overflow-hidden max-h-[85vh] flex flex-col">
+            <div className="p-4 border-b border-[#E5E7EB] flex items-center justify-between bg-[#F3F4F4]">
               <div>
-                <h3 className="text-[14px] font-black text-[#171717] flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-[#2FA66A]" />
+                <h3 className="text-[14px] font-black text-[#021526] flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4 text-[#16A34A]" />
                   <span>{previewDoc.title}</span>
                 </h3>
-                <p className="text-[10.5px] font-mono text-[#777570] truncate">{previewDoc.docId}</p>
+                <p className="text-[10.5px] font-mono text-[#5F6368] truncate">{previewDoc.docId}</p>
               </div>
               <button
                 type="button"
                 onClick={() => setPreviewDoc(null)}
-                className="w-8 h-8 rounded-full bg-white border border-[#E8E6E1] flex items-center justify-center text-[#777570] hover:text-[#171717] active-press cursor-pointer"
+                className="w-8 h-8 rounded-full bg-white border border-[#E5E7EB] flex items-center justify-center text-[#5F6368] hover:text-[#021526] active-press cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -994,26 +994,26 @@ export const VenueProfileScreen: React.FC = () => {
                 <img
                   src={previewDoc.url}
                   alt={previewDoc.title}
-                  className="max-h-[60vh] max-w-full rounded-2xl object-contain shadow-xs border border-[#E8E6E1]"
+                  className="max-h-[60vh] max-w-full rounded-2xl object-contain shadow-xs border border-[#E5E7EB]"
                 />
               ) : (
                 <iframe
                   src={previewDoc.url}
                   title={previewDoc.title}
-                  className="w-full h-[60vh] rounded-2xl border border-[#E8E6E1] bg-white"
+                  className="w-full h-[60vh] rounded-2xl border border-[#E5E7EB] bg-white"
                 />
               )}
             </div>
 
-            <div className="p-3 border-t border-[#E8E6E1] bg-white flex items-center justify-between">
-              <span className="text-[11px] font-bold text-[#2FA66A] bg-[#2FA66A]/10 px-2.5 py-1 rounded-full border border-[#2FA66A]/20">
+            <div className="p-3 border-t border-[#E5E7EB] bg-white flex items-center justify-between">
+              <span className="text-[11px] font-bold text-[#16A34A] bg-[#16A34A]/10 px-2.5 py-1 rounded-full border border-[#16A34A]/20">
                 ✓ Document Verified & Valid
               </span>
               <a
                 href={previewDoc.url}
                 target="_blank"
                 rel="noreferrer"
-                className="text-[11px] font-bold text-[#FF6B2C] hover:underline flex items-center gap-1"
+                className="text-[11px] font-bold text-[#F94001] hover:underline flex items-center gap-1"
               >
                 <span>Full View</span>
                 <ExternalLink className="w-3 h-3" />
@@ -1024,14 +1024,14 @@ export const VenueProfileScreen: React.FC = () => {
       )}
 
       {/* DOCKED SAVE BUTTON BAR */}
-      <div className="fixed bottom-0 left-0 right-0 p-3 bg-white/95 backdrop-blur-md border-t border-[#E8E6E1] flex items-center justify-between gap-3 z-40 max-w-[440px] mx-auto">
+      <div className="fixed bottom-0 left-0 right-0 p-3 bg-white/95 backdrop-blur-md border-t border-[#E5E7EB] flex items-center justify-between gap-3 z-40 max-w-[440px] mx-auto">
         <button
           type="button"
           onClick={() => {
             haptics.tap();
             goBack();
           }}
-          className="h-11 px-4 rounded-2xl border border-[#E8E6E1] bg-[#FAF9F6] text-[#171717] text-[12.5px] font-bold active-press cursor-pointer"
+          className="h-11 px-4 rounded-2xl border border-[#E5E7EB] bg-[#F3F4F4] text-[#021526] text-[12.5px] font-bold active-press cursor-pointer"
         >
           Cancel
         </button>
@@ -1040,7 +1040,7 @@ export const VenueProfileScreen: React.FC = () => {
           <button
             type="button"
             disabled
-            className="flex-1 h-11 rounded-2xl bg-[#F1F0EC] text-[#777570] text-[12px] font-bold flex items-center justify-center gap-1.5 border border-[#E8E6E1] cursor-not-allowed"
+            className="flex-1 h-11 rounded-2xl bg-[#F3F4F4] text-[#5F6368] text-[12px] font-bold flex items-center justify-center gap-1.5 border border-[#E5E7EB] cursor-not-allowed"
           >
             <Lock className="w-3.5 h-3.5" />
             <span>View Only (Staff)</span>
@@ -1049,7 +1049,7 @@ export const VenueProfileScreen: React.FC = () => {
           <button
             type="button"
             onClick={handleSave}
-            className="flex-1 h-11 rounded-2xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white text-[13px] font-black flex items-center justify-center gap-2 shadow-sm active-press cursor-pointer"
+            className="flex-1 h-11 rounded-2xl bg-[#F94001] hover:bg-[#D93600] text-white text-[13px] font-black flex items-center justify-center gap-2 shadow-sm active-press cursor-pointer"
           >
             <Save className="w-4 h-4" />
             <span>Save Profile & Photos</span>
@@ -1060,17 +1060,17 @@ export const VenueProfileScreen: React.FC = () => {
       {/* ADD PHOTO MODAL */}
       {isAddPhotoOpen && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-[440px] rounded-t-3xl sm:rounded-3xl border border-[#E8E6E1] shadow-2xl overflow-hidden max-h-[88vh] flex flex-col">
+          <div className="bg-white w-full max-w-[440px] rounded-t-3xl sm:rounded-3xl border border-[#E5E7EB] shadow-2xl overflow-hidden max-h-[88vh] flex flex-col">
             {/* Sheet Header */}
-            <div className="p-4 border-b border-[#E8E6E1] flex items-center justify-between bg-[#FAF9F6]">
+            <div className="p-4 border-b border-[#E5E7EB] flex items-center justify-between bg-[#F3F4F4]">
               <div>
-                <h3 className="text-[15px] font-black text-[#171717]">Add Photo to Gallery</h3>
-                <p className="text-[11.5px] text-[#777570]">Select a facility area or enter photo label</p>
+                <h3 className="text-[15px] font-black text-[#021526]">Add Photo to Gallery</h3>
+                <p className="text-[11.5px] text-[#5F6368]">Select a facility area or enter photo label</p>
               </div>
               <button
                 type="button"
                 onClick={() => setIsAddPhotoOpen(false)}
-                className="w-8 h-8 rounded-full bg-white border border-[#E8E6E1] flex items-center justify-center text-[#777570] hover:text-[#171717] active-press cursor-pointer"
+                className="w-8 h-8 rounded-full bg-white border border-[#E5E7EB] flex items-center justify-center text-[#5F6368] hover:text-[#021526] active-press cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -1079,7 +1079,7 @@ export const VenueProfileScreen: React.FC = () => {
             {/* Sheet Content */}
             <form onSubmit={handleAddPhotoSubmit} className="p-4 space-y-4 overflow-y-auto flex-1">
               <div>
-                <label className="block text-[11px] font-bold text-[#777570] mb-1.5">
+                <label className="block text-[11px] font-bold text-[#5F6368] mb-1.5">
                   Select Photo Sample / View
                 </label>
                 <div className="grid grid-cols-2 gap-2">
@@ -1094,7 +1094,7 @@ export const VenueProfileScreen: React.FC = () => {
                           if (!newPhotoLabel) setNewPhotoLabel(preset.title);
                         }}
                         className={`relative rounded-xl overflow-hidden border-2 cursor-pointer active-press transition-all aspect-[16/10] ${
-                          isSelected ? 'border-[#FF6B2C] ring-2 ring-[#FF6B2C]/20' : 'border-[#E8E6E1]'
+                          isSelected ? 'border-[#F94001] ring-2 ring-[#F94001]/20' : 'border-[#E5E7EB]'
                         }`}
                       >
                         <img src={preset.url} alt={preset.title} className="w-full h-full object-cover" />
@@ -1103,7 +1103,7 @@ export const VenueProfileScreen: React.FC = () => {
                           {preset.title}
                         </span>
                         {isSelected && (
-                          <div className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-[#FF6B2C] text-white flex items-center justify-center">
+                          <div className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-[#F94001] text-white flex items-center justify-center">
                             <CheckCircle2 className="w-3 h-3 stroke-[3]" />
                           </div>
                         )}
@@ -1114,20 +1114,20 @@ export const VenueProfileScreen: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-[#777570] mb-1">Photo Caption / Label</label>
+                <label className="block text-[11px] font-bold text-[#5F6368] mb-1">Photo Caption / Label</label>
                 <input
                   type="text"
                   value={newPhotoLabel}
                   onChange={(e) => setNewPhotoLabel(e.target.value)}
                   placeholder="e.g. Main Pitch 1 (Floodlit)"
-                  className="w-full bg-[#FAF9F6] border border-[#E8E6E1] rounded-xl px-3.5 py-2.5 text-[13px] font-bold text-[#171717] focus:bg-white focus:outline-none focus:border-[#FF6B2C]"
+                  className="w-full bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-3.5 py-2.5 text-[13px] font-bold text-[#021526] focus:bg-white focus:outline-none focus:border-[#F94001]"
                 />
               </div>
 
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full h-11 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white text-[13px] font-black flex items-center justify-center gap-1.5 shadow-sm active-press cursor-pointer"
+                  className="w-full h-11 rounded-xl bg-[#F94001] hover:bg-[#D93600] text-white text-[13px] font-black flex items-center justify-center gap-1.5 shadow-sm active-press cursor-pointer"
                 >
                   <Plus className="w-4 h-4 stroke-[2.5]" />
                   <span>Add Photo to Gallery</span>

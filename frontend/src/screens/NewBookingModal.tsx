@@ -20,6 +20,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { haptics } from '../utils/haptics';
 import { parseTimeToMinutes, parseBookingRangeToMinutes, formatMinutesToTime } from '../utils/extensionSlots';
+import { CustomSelect } from '../components/CustomSelect';
 
 // Standard 30-min & 1-hour operating time slots
 const ALL_TIME_SLOTS = [
@@ -608,17 +609,17 @@ export const NewBookingModal: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: '100%' }}
           transition={{ type: 'spring', damping: 28, stiffness: 320 }}
-          className="relative w-full max-h-[90vh] md:max-w-lg md:rounded-3xl overflow-y-auto no-scrollbar bg-white rounded-t-3xl p-5 pb-6 shadow-2xl border border-[#E8E6E1]"
+          className="relative w-full max-h-[90vh] md:max-w-lg md:rounded-3xl overflow-y-auto no-scrollbar bg-white rounded-t-3xl p-5 pb-6 shadow-2xl border border-[#E5E7EB]"
         >
           {/* Mobile Native Handle Bar */}
           <div className="md:hidden w-10 h-1 rounded-full bg-[#D4D2CD] mx-auto mb-3 shrink-0" />
 
           {/* Header */}
-          <div className="flex items-center justify-between pb-3 border-b border-[#F1F0EC]">
-            <h2 className="text-[17px] font-black text-[#171717]">New Booking</h2>
+          <div className="flex items-center justify-between pb-3 border-b border-[#F3F4F4]">
+            <h2 className="text-[17px] font-black text-[#021526]">New Booking</h2>
             <button
               onClick={handleCloseModal}
-              className="w-8 h-8 rounded-full bg-[#F1F0EC] flex items-center justify-center text-[#777570] hover:text-[#171717] cursor-pointer"
+              className="w-8 h-8 rounded-full bg-[#F3F4F4] flex items-center justify-center text-[#5F6368] hover:text-[#021526] cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -630,11 +631,11 @@ export const NewBookingModal: React.FC = () => {
             {/* 1. Mobile Number (First) & Customer Name (Next) */}
             <div className="grid grid-cols-2 gap-2.5">
               <div>
-                <label className="block text-[11px] font-bold text-[#777570] mb-1">
-                  Mobile Number <span className="text-[#FF6B2C]">*</span>
+                <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                  Mobile Number <span className="text-[#F94001]">*</span>
                 </label>
                 <div className="relative flex items-center">
-                  <span className="absolute left-2.5 text-[12px] font-black text-[#777570] pointer-events-none">
+                  <span className="absolute left-2.5 text-[12px] font-black text-[#5F6368] pointer-events-none">
                     +91
                   </span>
                   <input
@@ -661,14 +662,14 @@ export const NewBookingModal: React.FC = () => {
                         e.preventDefault();
                       }
                     }}
-                    className="w-full bg-[#F7F7F5] border border-[#E8E6E1] rounded-xl pl-9 pr-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none focus:border-[#FF6B2C]"
+                    className="w-full bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl pl-9 pr-3 py-2 text-[13px] font-bold text-[#021526] focus:outline-none focus:border-[#F94001]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-[#777570] mb-1">
-                  Customer Name <span className="text-[#FF6B2C]">*</span>
+                <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                  Customer Name <span className="text-[#F94001]">*</span>
                 </label>
                 <input
                   type="text"
@@ -676,7 +677,7 @@ export const NewBookingModal: React.FC = () => {
                   placeholder="Rahul Kumar"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  className="w-full bg-[#F7F7F5] border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none focus:border-[#FF6B2C]"
+                  className="w-full bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-3 py-2 text-[13px] font-bold text-[#021526] focus:outline-none focus:border-[#F94001]"
                 />
               </div>
             </div>
@@ -684,36 +685,29 @@ export const NewBookingModal: React.FC = () => {
             {/* 2. Sport & Court */}
             <div className="grid grid-cols-2 gap-2.5">
               <div>
-                <label className="block text-[11px] font-bold text-[#777570] mb-1">Sport</label>
-                <select
+                <label className="block text-[11px] font-bold text-[#5F6368] mb-1">Sport</label>
+                <CustomSelect
                   value={selectedSport}
-                  onChange={(e) => handleSportChange(e.target.value)}
-                  className="w-full bg-[#F7F7F5] border border-[#E8E6E1] rounded-xl px-2.5 py-2 text-[12.5px] font-bold text-[#171717] focus:outline-none"
-                >
-                  {availableSports.map((s) => (
-                    <option key={s} value={s}>
-                      {s}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(val) => handleSportChange(val)}
+                  options={availableSports}
+                  className="w-full bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-2.5 py-2 text-[12.5px] font-bold text-[#021526] focus:outline-none"
+                />
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-[#777570] mb-1">Court</label>
-                <select
+                <label className="block text-[11px] font-bold text-[#5F6368] mb-1">Court</label>
+                <CustomSelect
                   value={courtId}
-                  onChange={(e) => {
+                  onChange={(val) => {
                     haptics.tap();
-                    setCourtId(e.target.value);
+                    setCourtId(val);
                   }}
-                  className="w-full bg-[#F7F7F5] border border-[#E8E6E1] rounded-xl px-2.5 py-2 text-[12.5px] font-bold text-[#171717] focus:outline-none"
-                >
-                  {courtsForSelectedSport.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name} (₹{c.pricePerHour}/hr)
-                    </option>
-                  ))}
-                </select>
+                  options={courtsForSelectedSport.map((c) => ({
+                    value: c.id,
+                    label: `${c.name} (₹${c.pricePerHour}/hr)`,
+                  }))}
+                  className="w-full bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-2.5 py-2 text-[12.5px] font-bold text-[#021526] focus:outline-none"
+                />
               </div>
             </div>
 
@@ -722,8 +716,8 @@ export const NewBookingModal: React.FC = () => {
               {/* Row A: Date Picker Trigger */}
               <div className="flex items-center justify-between gap-2">
                 <div className="relative flex-1" ref={datePickerRef}>
-                  <label className="block text-[11px] font-bold text-[#777570] mb-1">
-                    Booking Date <span className="text-[#FF6B2C]">*</span>
+                  <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                    Booking Date <span className="text-[#F94001]">*</span>
                   </label>
                   <button
                     type="button"
@@ -733,20 +727,20 @@ export const NewBookingModal: React.FC = () => {
                       setIsStartTimeOpen(false);
                       setIsEndTimeOpen(false);
                     }}
-                    className="w-full bg-[#F7F7F5] border border-[#E8E6E1] hover:border-[#FF6B2C] rounded-xl px-2.5 py-2 text-left flex items-center justify-between cursor-pointer transition-all"
+                    className="w-full bg-[#F3F4F4] border border-[#E5E7EB] hover:border-[#F94001] rounded-xl px-2.5 py-2 text-left flex items-center justify-between cursor-pointer transition-all"
                   >
                     <div className="flex items-center gap-2 min-w-0">
-                      <CalendarIcon className="w-3.5 h-3.5 text-[#FF6B2C] shrink-0" />
-                      <span className="text-[12px] font-black text-[#171717] truncate">
+                      <CalendarIcon className="w-3.5 h-3.5 text-[#F94001] shrink-0" />
+                      <span className="text-[12px] font-black text-[#021526] truncate">
                         {bookingDate}
                       </span>
                       {isSelectedDateToday && (
-                        <span className="text-[9px] font-black bg-[#FF6B2C]/15 text-[#FF6B2C] px-1.5 py-0.2 rounded">
+                        <span className="text-[9px] font-black bg-[#F94001]/15 text-[#F94001] px-1.5 py-0.2 rounded">
                           Today
                         </span>
                       )}
                     </div>
-                    <ChevronDown className="w-3.5 h-3.5 text-[#777570] shrink-0" />
+                    <ChevronDown className="w-3.5 h-3.5 text-[#5F6368] shrink-0" />
                   </button>
 
                   {/* Calendar Popover */}
@@ -757,11 +751,11 @@ export const NewBookingModal: React.FC = () => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 4, scale: 0.98 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute left-0 top-full mt-1.5 w-72 bg-white rounded-2xl border border-[#E8E6E1] shadow-2xl p-3 z-50"
+                        className="absolute left-0 top-full mt-1.5 w-72 bg-white rounded-2xl border border-[#E5E7EB] shadow-2xl p-3 z-50"
                       >
                         {/* Month Navigation */}
-                        <div className="flex items-center justify-between pb-2 border-b border-[#F1F0EC] mb-2">
-                          <span className="text-[12px] font-black text-[#171717]">
+                        <div className="flex items-center justify-between pb-2 border-b border-[#F3F4F4] mb-2">
+                          <span className="text-[12px] font-black text-[#021526]">
                             {MONTH_NAMES[selectedMonth]} {selectedYear}
                           </span>
                           <div className="flex items-center gap-1">
@@ -779,10 +773,10 @@ export const NewBookingModal: React.FC = () => {
                                   return prev - 1;
                                 });
                               }}
-                              className={`w-6 h-6 rounded-lg bg-[#FAF9F6] flex items-center justify-center transition-all ${
+                              className={`w-6 h-6 rounded-lg bg-[#F3F4F4] flex items-center justify-center transition-all ${
                                 isCurrentMonthOrPast
-                                  ? 'opacity-25 cursor-not-allowed text-[#A3A099]'
-                                  : 'text-[#777570] hover:text-[#171717] cursor-pointer'
+                                  ? 'opacity-25 cursor-not-allowed text-[#5F6368]'
+                                  : 'text-[#5F6368] hover:text-[#021526] cursor-pointer'
                               }`}
                             >
                               <ChevronLeft className="w-3.5 h-3.5" />
@@ -799,7 +793,7 @@ export const NewBookingModal: React.FC = () => {
                                   return prev + 1;
                                 });
                               }}
-                              className="w-6 h-6 rounded-lg bg-[#FAF9F6] flex items-center justify-center text-[#777570] hover:text-[#171717] cursor-pointer"
+                              className="w-6 h-6 rounded-lg bg-[#F3F4F4] flex items-center justify-center text-[#5F6368] hover:text-[#021526] cursor-pointer"
                             >
                               <ChevronRight className="w-3.5 h-3.5" />
                             </button>
@@ -809,7 +803,7 @@ export const NewBookingModal: React.FC = () => {
                         {/* Weekday Header */}
                         <div className="grid grid-cols-7 gap-1 text-center mb-1">
                           {DAYS_SHORT.map((d) => (
-                            <span key={d} className="text-[9.5px] font-bold text-[#A3A099]">
+                            <span key={d} className="text-[9.5px] font-bold text-[#5F6368]">
                               {d}
                             </span>
                           ))}
@@ -842,12 +836,12 @@ export const NewBookingModal: React.FC = () => {
                                 }}
                                 className={`w-7 h-7 rounded-lg text-[11px] font-extrabold flex items-center justify-center transition-all ${
                                   isSelected
-                                    ? 'bg-[#171717] text-white shadow-xs cursor-pointer'
+                                    ? 'bg-[#F94001] text-white shadow-sm shadow-[#F94001]/20 cursor-pointer'
                                     : isPast
                                     ? 'text-[#C5C3BD] bg-transparent line-through cursor-not-allowed opacity-35'
                                     : isToday
-                                    ? 'bg-[#FF6B2C]/15 text-[#FF6B2C] hover:bg-[#FF6B2C]/25 cursor-pointer'
-                                    : 'text-[#171717] hover:bg-[#FAF9F6] cursor-pointer'
+                                    ? 'bg-[#F94001]/15 text-[#F94001] hover:bg-[#F94001]/25 cursor-pointer'
+                                    : 'text-[#021526] hover:bg-[#F3F4F4] cursor-pointer'
                                 }`}
                               >
                                 {dNum}
@@ -857,7 +851,7 @@ export const NewBookingModal: React.FC = () => {
                         </div>
 
                         {/* Quick Date Chips */}
-                        <div className="flex items-center justify-between pt-2.5 mt-2 border-t border-[#F1F0EC]">
+                        <div className="flex items-center justify-between pt-2.5 mt-2 border-t border-[#F3F4F4]">
                           <button
                             type="button"
                             onClick={() => {
@@ -867,7 +861,7 @@ export const NewBookingModal: React.FC = () => {
                               setSelectedYear(TODAY_YEAR);
                               setIsDatePickerOpen(false);
                             }}
-                            className="text-[10px] font-extrabold text-[#FF6B2C] hover:underline cursor-pointer"
+                            className="text-[10px] font-extrabold text-[#F94001] hover:underline cursor-pointer"
                           >
                             Today
                           </button>
@@ -880,7 +874,7 @@ export const NewBookingModal: React.FC = () => {
                               setSelectedYear(TODAY_YEAR);
                               setIsDatePickerOpen(false);
                             }}
-                            className="text-[10px] font-bold text-[#777570] hover:text-[#171717] cursor-pointer"
+                            className="text-[10px] font-bold text-[#5F6368] hover:text-[#021526] cursor-pointer"
                           >
                             Tomorrow
                           </button>
@@ -893,7 +887,7 @@ export const NewBookingModal: React.FC = () => {
                               setSelectedYear(TODAY_YEAR);
                               setIsDatePickerOpen(false);
                             }}
-                            className="text-[10px] font-bold text-[#777570] hover:text-[#171717] cursor-pointer"
+                            className="text-[10px] font-bold text-[#5F6368] hover:text-[#021526] cursor-pointer"
                           >
                             Sun (Weekend)
                           </button>
@@ -904,31 +898,31 @@ export const NewBookingModal: React.FC = () => {
                 </div>
 
                 <div className="text-right shrink-0 pt-3">
-                  <span className="block text-[10px] font-bold text-[#777570]">Rate</span>
-                  <span className="text-[12.5px] font-black text-[#171717]">₹{effectiveRate}/hr</span>
+                  <span className="block text-[10px] font-bold text-[#5F6368]">Rate</span>
+                  <span className="text-[12.5px] font-black text-[#021526]">₹{effectiveRate}/hr</span>
                 </div>
               </div>
 
               {/* Row B: Interactive 2-Row Timeline Slot Selection */}
-              <div className="bg-[#FAF9F6] border border-[#E8E6E1] rounded-2xl p-3 space-y-2.5">
+              <div className="bg-[#F3F4F4] border border-[#E5E7EB] rounded-2xl p-3 space-y-2.5">
                 {/* Header & Comprehensive Status Legend */}
-                <div className="flex items-center justify-between flex-wrap gap-1.5 pb-2 border-b border-[#E8E6E1]">
+                <div className="flex items-center justify-between flex-wrap gap-1.5 pb-2 border-b border-[#E5E7EB]">
                   <div className="flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5 text-[#FF6B2C]" />
-                    <span className="text-[11px] font-black text-[#171717]">Timeline Slot Selection (2-Row View)</span>
+                    <Clock className="w-3.5 h-3.5 text-[#F94001]" />
+                    <span className="text-[11px] font-black text-[#021526]">Timeline Slot Selection (2-Row View)</span>
                   </div>
-                  <div className="flex items-center gap-2 text-[9px] font-bold text-[#777570] flex-wrap">
+                  <div className="flex items-center gap-2 text-[9px] font-bold text-[#5F6368] flex-wrap">
                     <span className="flex items-center gap-1">
-                      <span className="w-2 h-2 rounded-full bg-[#FF6B2C]" /> Selected
+                      <span className="w-2 h-2 rounded-full bg-[#F94001]" /> Selected
                     </span>
                     <span className="flex items-center gap-1">
-                      <span className="w-2 h-2 rounded-full bg-[#2FA66A]" /> Available
+                      <span className="w-2 h-2 rounded-full bg-[#16A34A]" /> Available
                     </span>
                     <span className="flex items-center gap-1">
                       <span className="w-2 h-2 rounded-full bg-[#F59E0B]" /> Hold
                     </span>
                     <span className="flex items-center gap-1">
-                      <span className="w-2 h-2 rounded-full bg-[#171717]" /> Booked
+                      <span className="w-2 h-2 rounded-full bg-[#021526]" /> Booked
                     </span>
                     <span className="flex items-center gap-1">
                       <span className="w-2 h-2 rounded-full bg-[#94A3B8]" /> Blocked
@@ -952,16 +946,16 @@ export const NewBookingModal: React.FC = () => {
                         onClick={() => handleTimelineSlotClick(slot)}
                         className={`px-2.5 py-1.5 rounded-xl text-center transition-all shrink-0 flex flex-col items-center justify-center min-w-[60px] select-none ${
                           slot.isSelected
-                            ? 'bg-gradient-to-r from-[#FF6B2C] to-[#FA5A14] text-white shadow-xs ring-1 ring-[#FF6B2C] cursor-pointer active:scale-95'
+                            ? 'bg-gradient-to-r from-[#F94001] to-[#D93600] text-white shadow-xs ring-1 ring-[#F94001] cursor-pointer active:scale-95'
                             : slot.isPassed
-                            ? 'bg-[#ECEAE4]/50 border border-[#E8E6E1] text-[#A3A099] line-through cursor-not-allowed opacity-50'
+                            ? 'bg-[#E5E7EB]/50 border border-[#E5E7EB] text-[#5F6368] line-through cursor-not-allowed opacity-50'
                             : slot.isHold
                             ? 'bg-[#FFFBEB] border-2 border-[#F59E0B] text-[#B45309] shadow-2xs cursor-not-allowed'
                             : slot.isBooked
-                            ? 'bg-[#171717] text-white border border-[#171717] cursor-not-allowed shadow-2xs'
+                            ? 'bg-[#021526] text-white border border-[#021526] cursor-not-allowed shadow-2xs'
                             : slot.isBlocked
                             ? 'bg-[#F1F5F9] text-[#475569] border border-[#CBD5E1] cursor-not-allowed'
-                            : 'bg-white border border-[#E8E6E1] hover:border-[#FF6B2C] text-[#171717] hover:bg-white/80 cursor-pointer active:scale-95 shadow-2xs'
+                            : 'bg-white border border-[#E5E7EB] hover:border-[#F94001] text-[#021526] hover:bg-white/80 cursor-pointer active:scale-95 shadow-2xs'
                         }`}
                       >
                         <span className={`text-[10px] font-black leading-tight ${slot.isSelected ? 'text-white' : ''}`}>
@@ -971,14 +965,14 @@ export const NewBookingModal: React.FC = () => {
                           slot.isSelected
                             ? 'text-white/95 font-black'
                             : slot.isPassed
-                            ? 'text-[#A3A099]'
+                            ? 'text-[#5F6368]'
                             : slot.isHold
-                            ? 'text-[#D97706] font-black uppercase'
+                            ? 'text-[#F59E0B] font-black uppercase'
                             : slot.isBooked
-                            ? 'text-[#FF6B2C] font-bold'
+                            ? 'text-[#F94001] font-bold'
                             : slot.isBlocked
                             ? 'text-[#475569] font-bold'
-                            : 'text-[#777570]'
+                            : 'text-[#5F6368]'
                         }`}>
                           {slot.isSelected ? (
                             slot.isSelectionStart ? 'Start' : slot.isSelectionEnd ? 'End' : 'Selected'
@@ -1002,11 +996,11 @@ export const NewBookingModal: React.FC = () => {
                     <div className="space-y-2.5">
                       {/* Row 1: Morning & Afternoon */}
                       <div className="space-y-1">
-                        <div className="flex items-center justify-between text-[9.5px] font-bold text-[#777570] px-0.5">
-                          <span className="flex items-center gap-1 text-[#D97706] font-black">
+                        <div className="flex items-center justify-between text-[9.5px] font-bold text-[#5F6368] px-0.5">
+                          <span className="flex items-center gap-1 text-[#F59E0B] font-black">
                             <Sun className="w-3 h-3 text-[#F59E0B]" /> Morning & Afternoon (06:00 AM – 02:00 PM)
                           </span>
-                          <span className="text-[9px] text-[#A3A099] font-extrabold">Row 1</span>
+                          <span className="text-[9px] text-[#5F6368] font-extrabold">Row 1</span>
                         </div>
                         <div className="overflow-x-auto no-scrollbar py-0.5">
                           <div className="flex items-center gap-1.5 min-w-max">
@@ -1016,12 +1010,12 @@ export const NewBookingModal: React.FC = () => {
                       </div>
 
                       {/* Row 2: Evening & Prime Night */}
-                      <div className="space-y-1 pt-1.5 border-t border-[#E8E6E1]/60">
-                        <div className="flex items-center justify-between text-[9.5px] font-bold text-[#777570] px-0.5">
+                      <div className="space-y-1 pt-1.5 border-t border-[#E5E7EB]/60">
+                        <div className="flex items-center justify-between text-[9.5px] font-bold text-[#5F6368] px-0.5">
                           <span className="flex items-center gap-1 text-[#4F46E5] font-black">
                             <Moon className="w-3 h-3 text-[#6366F1]" /> Evening & Prime Time (02:00 PM – 11:00 PM)
                           </span>
-                          <span className="text-[9px] text-[#A3A099] font-extrabold">Row 2</span>
+                          <span className="text-[9px] text-[#5F6368] font-extrabold">Row 2</span>
                         </div>
                         <div className="overflow-x-auto no-scrollbar py-0.5">
                           <div className="flex items-center gap-1.5 min-w-max">
@@ -1031,9 +1025,9 @@ export const NewBookingModal: React.FC = () => {
                       </div>
 
                       {/* Multi-Slot Quick Duration Chips */}
-                      <div className="pt-1.5 border-t border-[#E8E6E1]/60 flex items-center justify-between flex-wrap gap-2">
+                      <div className="pt-1.5 border-t border-[#E5E7EB]/60 flex items-center justify-between flex-wrap gap-2">
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="text-[9.5px] font-black text-[#777570] uppercase tracking-wider shrink-0 mr-0.5">
+                          <span className="text-[9.5px] font-black text-[#5F6368] uppercase tracking-wider shrink-0 mr-0.5">
                             Duration:
                           </span>
                           {[1, 2, 3, 4, 5, 6].map((hrs) => {
@@ -1045,8 +1039,8 @@ export const NewBookingModal: React.FC = () => {
                                 onClick={() => handleQuickDuration(hrs)}
                                 className={`px-2 py-0.5 rounded-lg text-[10.5px] font-black transition-all cursor-pointer ${
                                   isCurrent
-                                    ? 'bg-[#171717] text-white shadow-2xs ring-1 ring-[#171717]'
-                                    : 'bg-white border border-[#E8E6E1] text-[#55534E] hover:border-[#FF6B2C] hover:text-[#FF6B2C]'
+                                    ? 'bg-[#F94001] text-white shadow-sm shadow-[#F94001]/20 ring-1 ring-[#F94001]'
+                                    : 'bg-white border border-[#E5E7EB] text-[#5F6368] hover:border-[#F94001] hover:text-[#F94001]'
                                 }`}
                               >
                                 {hrs} hr{hrs > 1 ? 's' : ''}
@@ -1060,12 +1054,12 @@ export const NewBookingModal: React.FC = () => {
                 })()}
 
                 {/* Range Timing Display & Start/End Dropdown Controls */}
-                <div className="flex items-center justify-between gap-2 pt-1 border-t border-[#E8E6E1]/60">
+                <div className="flex items-center justify-between gap-2 pt-1 border-t border-[#E5E7EB]/60">
                   <div className="flex items-center gap-1.5 min-w-0">
-                    <span className="text-[11px] font-black text-[#171717] truncate">
+                    <span className="text-[11px] font-black text-[#021526] truncate">
                       {startTime} – {endTime}
                     </span>
-                    <span className="text-[9.5px] font-black bg-[#FF6B2C]/15 text-[#FF6B2C] px-1.5 py-0.2 rounded-md shrink-0">
+                    <span className="text-[9.5px] font-black bg-[#F94001]/15 text-[#F94001] px-1.5 py-0.2 rounded-md shrink-0">
                       {durationHours} hr{durationHours !== 1 ? 's' : ''}
                     </span>
                   </div>
@@ -1081,7 +1075,7 @@ export const NewBookingModal: React.FC = () => {
                           setIsEndTimeOpen(false);
                           setIsDatePickerOpen(false);
                         }}
-                        className="text-[10px] font-extrabold text-[#777570] hover:text-[#171717] bg-white border border-[#E8E6E1] px-2 py-1 rounded-lg flex items-center gap-1 cursor-pointer"
+                        className="text-[10px] font-extrabold text-[#5F6368] hover:text-[#021526] bg-white border border-[#E5E7EB] px-2 py-1 rounded-lg flex items-center gap-1 cursor-pointer"
                       >
                         <span>Start: {startTime}</span>
                         <ChevronDown className="w-2.5 h-2.5" />
@@ -1094,9 +1088,9 @@ export const NewBookingModal: React.FC = () => {
                             initial={{ opacity: 0, y: 4, scale: 0.98 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: 4, scale: 0.98 }}
-                            className="absolute right-0 bottom-full mb-1.5 w-60 max-h-52 overflow-y-auto no-scrollbar bg-white rounded-2xl border border-[#E8E6E1] shadow-2xl p-2 z-50"
+                            className="absolute right-0 bottom-full mb-1.5 w-60 max-h-52 overflow-y-auto no-scrollbar bg-white rounded-2xl border border-[#E5E7EB] shadow-2xl p-2 z-50"
                           >
-                            <div className="px-1.5 py-1 text-[9.5px] font-bold uppercase tracking-wider text-[#A3A099]">
+                            <div className="px-1.5 py-1 text-[9.5px] font-bold uppercase tracking-wider text-[#5F6368]">
                               Select Start Time
                             </div>
                             <div className="grid grid-cols-2 gap-1 pt-1">
@@ -1112,14 +1106,14 @@ export const NewBookingModal: React.FC = () => {
                                     onClick={() => handleSelectStartTime(s.value)}
                                     className={`px-2 py-1 rounded-lg text-[10.5px] font-bold flex items-center justify-between transition-all ${
                                       isSelected
-                                        ? 'bg-[#171717] text-white shadow-xs cursor-pointer'
+                                        ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 font-black cursor-pointer'
                                         : isSlotPassed
                                         ? 'bg-transparent text-[#C5C3BD] line-through cursor-not-allowed opacity-35'
-                                        : 'bg-[#FAF9F6] text-[#171717] hover:bg-[#F1F0EC] cursor-pointer'
+                                        : 'bg-[#F3F4F4] text-[#021526] hover:bg-[#F3F4F4] cursor-pointer'
                                     }`}
                                   >
                                     <span>{s.value}</span>
-                                    {isSlotPassed && <span className="text-[7.5px] text-[#A3A099]">Passed</span>}
+                                    {isSlotPassed && <span className="text-[7.5px] text-[#5F6368]">Passed</span>}
                                   </button>
                                 );
                               })}
@@ -1139,7 +1133,7 @@ export const NewBookingModal: React.FC = () => {
                           setIsStartTimeOpen(false);
                           setIsDatePickerOpen(false);
                         }}
-                        className="text-[10px] font-extrabold text-[#777570] hover:text-[#171717] bg-white border border-[#E8E6E1] px-2 py-1 rounded-lg flex items-center gap-1 cursor-pointer"
+                        className="text-[10px] font-extrabold text-[#5F6368] hover:text-[#021526] bg-white border border-[#E5E7EB] px-2 py-1 rounded-lg flex items-center gap-1 cursor-pointer"
                       >
                         <span>End: {endTime}</span>
                         <ChevronDown className="w-2.5 h-2.5" />
@@ -1152,9 +1146,9 @@ export const NewBookingModal: React.FC = () => {
                             initial={{ opacity: 0, y: 4, scale: 0.98 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: 4, scale: 0.98 }}
-                            className="absolute right-0 bottom-full mb-1.5 w-60 max-h-52 overflow-y-auto no-scrollbar bg-white rounded-2xl border border-[#E8E6E1] shadow-2xl p-2 z-50"
+                            className="absolute right-0 bottom-full mb-1.5 w-60 max-h-52 overflow-y-auto no-scrollbar bg-white rounded-2xl border border-[#E5E7EB] shadow-2xl p-2 z-50"
                           >
-                            <div className="px-1.5 py-1 text-[9.5px] font-bold uppercase tracking-wider text-[#A3A099]">
+                            <div className="px-1.5 py-1 text-[9.5px] font-bold uppercase tracking-wider text-[#5F6368]">
                               Select End Time
                             </div>
                             <div className="grid grid-cols-2 gap-1 pt-1">
@@ -1167,8 +1161,8 @@ export const NewBookingModal: React.FC = () => {
                                     onClick={() => handleSelectEndTime(s.value)}
                                     className={`px-2 py-1 rounded-lg text-[10.5px] font-bold flex items-center justify-between transition-all cursor-pointer ${
                                       isSelected
-                                        ? 'bg-[#171717] text-white shadow-xs'
-                                        : 'bg-[#FAF9F6] text-[#171717] hover:bg-[#F1F0EC]'
+                                        ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 font-black'
+                                        : 'bg-[#F3F4F4] text-[#021526] hover:bg-[#F3F4F4]'
                                     }`}
                                   >
                                     <span>{s.value}</span>
@@ -1186,12 +1180,12 @@ export const NewBookingModal: React.FC = () => {
             </div>
 
             {/* 4. Payment on Booking */}
-            <div className="bg-[#FAF9F6] border border-[#E8E6E1] rounded-2xl p-3 space-y-2.5">
-              <div className="flex items-center justify-between pb-1 border-b border-[#F1F0EC]">
-                <span className="text-[11px] font-bold text-[#777570] uppercase tracking-wider">
+            <div className="bg-[#F3F4F4] border border-[#E5E7EB] rounded-2xl p-3 space-y-2.5">
+              <div className="flex items-center justify-between pb-1 border-b border-[#F3F4F4]">
+                <span className="text-[11px] font-bold text-[#5F6368] uppercase tracking-wider">
                   Payment Collection
                 </span>
-                <span className="text-[11.5px] font-black text-[#171717]">
+                <span className="text-[11.5px] font-black text-[#021526]">
                   Total: ₹{computedTotal.toLocaleString('en-IN')}
                 </span>
               </div>
@@ -1205,8 +1199,8 @@ export const NewBookingModal: React.FC = () => {
                   }}
                   className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
                     paymentOption === 'full'
-                      ? 'bg-[#171717] text-white border-[#171717] shadow-xs'
-                      : 'bg-white border-[#E8E6E1] text-[#171717] hover:bg-[#F1F0EC]'
+                      ? 'bg-[#FFF1EC] text-[#021526] border-2 border-[#F94001] shadow-2xs'
+                      : 'bg-white border-[#E5E7EB] text-[#021526] hover:bg-[#F3F4F4]'
                   }`}
                 >
                   <span className="text-[10px] font-bold uppercase tracking-wider block opacity-80">
@@ -1215,7 +1209,7 @@ export const NewBookingModal: React.FC = () => {
                   <span className="text-[15px] font-black block mt-0.5">
                     ₹{computedTotal.toLocaleString('en-IN')}
                   </span>
-                  <span className={`text-[9px] block mt-0.5 ${paymentOption === 'full' ? 'text-white/80' : 'text-[#777570]'}`}>
+                  <span className={`text-[9px] block mt-0.5 ${paymentOption === 'full' ? 'text-[#021526]/70' : 'text-[#5F6368]'}`}>
                     Due ₹0
                   </span>
                 </button>
@@ -1228,8 +1222,8 @@ export const NewBookingModal: React.FC = () => {
                   }}
                   className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
                     paymentOption === 'advance'
-                      ? 'bg-[#171717] text-white border-[#171717] shadow-xs'
-                      : 'bg-white border-[#E8E6E1] text-[#171717] hover:bg-[#F1F0EC]'
+                      ? 'bg-[#FFF1EC] text-[#021526] border-2 border-[#F94001] shadow-2xs'
+                      : 'bg-white border-[#E5E7EB] text-[#021526] hover:bg-[#F3F4F4]'
                   }`}
                 >
                   <span className="text-[10px] font-bold uppercase tracking-wider block opacity-80">
@@ -1238,7 +1232,7 @@ export const NewBookingModal: React.FC = () => {
                   <span className="text-[15px] font-black block mt-0.5">
                     ₹{computedAdvance.toLocaleString('en-IN')}
                   </span>
-                  <span className={`text-[9px] block mt-0.5 ${paymentOption === 'advance' ? 'text-amber-300' : 'text-[#FF6B2C]'}`}>
+                  <span className={`text-[9px] block mt-0.5 ${paymentOption === 'advance' ? 'text-[#B45309] font-bold' : 'text-[#F94001]'}`}>
                     Due ₹{computedTotal - computedAdvance}
                   </span>
                 </button>
@@ -1248,7 +1242,7 @@ export const NewBookingModal: React.FC = () => {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full h-11 bg-[#FF6B2C] hover:bg-[#e85b1e] text-white font-extrabold text-[13px] rounded-xl flex items-center justify-center gap-1.5 shadow-sm active-press cursor-pointer transition-all mt-2"
+              className="w-full h-11 bg-[#F94001] hover:bg-[#D93600] text-white font-extrabold text-[13px] rounded-xl flex items-center justify-center gap-1.5 shadow-sm active-press cursor-pointer transition-all mt-2"
             >
               <CheckCircle2 className="w-4 h-4" />
               <span>

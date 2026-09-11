@@ -72,17 +72,17 @@ export const PrivacyPolicyScreen: React.FC = () => {
             haptics.tap();
             goBack();
           }}
-          className="w-9 h-9 -ml-1 rounded-xl flex items-center justify-center text-[#171717] hover:bg-[#E8E6E1]/50 active-press transition-colors cursor-pointer"
+          className="w-9 h-9 -ml-1 rounded-xl flex items-center justify-center text-[#021526] hover:bg-[#E5E7EB]/50 active-press transition-colors cursor-pointer"
           aria-label="Back"
         >
           <ChevronLeft className="w-5 h-5 stroke-[2.4]" />
         </button>
 
         <div className="text-center">
-          <h1 className="text-[17px] font-extrabold text-[#171717] leading-none">
+          <h1 className="text-[17px] font-extrabold text-[#021526] leading-none">
             Privacy Policy
           </h1>
-          <span className="text-[11px] text-[#777570] mt-0.5 block">
+          <span className="text-[11px] text-[#5F6368] mt-0.5 block">
             TurfTown Partner Privacy Standards
           </span>
         </div>
@@ -93,7 +93,7 @@ export const PrivacyPolicyScreen: React.FC = () => {
       {/* Hero Overview Card */}
       <div className="relative overflow-hidden bg-gradient-to-br from-[#1C1C20] via-[#141417] to-[#0E0E10] text-white rounded-[22px] p-4 shadow-md space-y-2.5 border border-white/[0.08]">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-[#2FA66A]/20 text-[#2FA66A] flex items-center justify-center">
+          <div className="w-8 h-8 rounded-xl bg-[#16A34A]/20 text-[#16A34A] flex items-center justify-center">
             <Shield className="w-4.5 h-4.5" />
           </div>
           <div>
@@ -119,17 +119,17 @@ export const PrivacyPolicyScreen: React.FC = () => {
           return (
             <div
               key={sec.id}
-              className="bg-white rounded-2xl p-4 border border-[#E8E6E1] shadow-2xs space-y-2"
+              className="bg-white rounded-2xl p-4 border border-[#E5E7EB] shadow-2xs space-y-2"
             >
               <div className="flex items-center gap-2.5">
-                <div className="w-7 h-7 rounded-lg bg-[#F7F7F5] text-[#171717] flex items-center justify-center border border-[#E8E6E1]">
+                <div className="w-7 h-7 rounded-lg bg-[#F3F4F4] text-[#021526] flex items-center justify-center border border-[#E5E7EB]">
                   <Icon className="w-3.5 h-3.5" />
                 </div>
-                <h3 className="text-[13.5px] font-extrabold text-[#171717]">
+                <h3 className="text-[13.5px] font-extrabold text-[#021526]">
                   {sec.title}
                 </h3>
               </div>
-              <p className="text-[12px] text-[#55534E] leading-relaxed pl-9.5">
+              <p className="text-[12px] text-[#5F6368] leading-relaxed pl-9.5">
                 {sec.content}
               </p>
             </div>
@@ -138,24 +138,24 @@ export const PrivacyPolicyScreen: React.FC = () => {
       </div>
 
       {/* Grievance & Privacy Contact Card */}
-      <div className="bg-[#FAF9F6] rounded-2xl p-4 border border-[#E8E6E1] space-y-2.5">
+      <div className="bg-[#F3F4F4] rounded-2xl p-4 border border-[#E5E7EB] space-y-2.5">
         <div className="flex items-center gap-2">
-          <HelpCircle className="w-4 h-4 text-[#FF6B2C]" />
-          <span className="text-[12.5px] font-bold text-[#171717]">
+          <HelpCircle className="w-4 h-4 text-[#F94001]" />
+          <span className="text-[12.5px] font-bold text-[#021526]">
             Privacy Grievance & Compliance
           </span>
         </div>
-        <p className="text-[11.5px] text-[#777570] leading-relaxed">
+        <p className="text-[11.5px] text-[#5F6368] leading-relaxed">
           For data access inquiries, consent withdrawal, or privacy compliance
           questions, reach out directly to our Data Protection team.
         </p>
-        <div className="pt-1 flex flex-col gap-1.5 text-[11.5px] font-semibold text-[#171717]">
+        <div className="pt-1 flex flex-col gap-1.5 text-[11.5px] font-semibold text-[#021526]">
           <div className="flex items-center gap-2">
-            <Mail className="w-3.5 h-3.5 text-[#777570]" />
+            <Mail className="w-3.5 h-3.5 text-[#5F6368]" />
             <span>privacy@turftown.app</span>
           </div>
           <div className="flex items-center gap-2">
-            <Phone className="w-3.5 h-3.5 text-[#777570]" />
+            <Phone className="w-3.5 h-3.5 text-[#5F6368]" />
             <span>+91 80 4567 8900 (Mon–Fri, 9 AM – 6 PM)</span>
           </div>
         </div>

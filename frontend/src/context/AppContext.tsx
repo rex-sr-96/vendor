@@ -447,6 +447,155 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   }, [courts, bookings, operatingHours]);
 
+  // Real-time synchronization between vendor court requests & admin review status
+  // (Admin Approve -> Court ID generated & Court becomes Active on vendor side;
+  //  Admin Reject -> Shows rejection notes & enables Edit & Resubmit button)
+  useEffect(() => {
+    let isSubscribed = true;
+    const syncCourtRequests = async () => {
+      try {
+        const res = await fetch('http://localhost:4000/api/v1/court-requests');
+        if (!res.ok) return;
+        const backendRequests = await res.json();
+        if (!Array.isArray(backendRequests) || !isSubscribed) return;
+
+        setCourts((prevCourts) => {
+          let hasChanges = false;
+          const updated = prevCourts.map((c) => {
+            const reqId = c.requestId || c.id;
+            const bReq = backendRequests.find(
+              (r: any) => r.id === reqId || (r.court_id && (r.court_id === c.id || r.court_id === c.courtId))
+            );
+            if (!bReq) return c;
+
+            if (bReq.status === 'APPROVED') {
+              const assignedCourtId = bReq.court_id || c.courtId || `CRT-${Math.floor(1000 + Math.random() * 9000)}`;
+              if (c.status !== 'Approved' || !c.isActive || c.id !== assignedCourtId || c.courtId !== assignedCourtId) {
+                hasChanges = true;
+                return {
+                  ...c,
+                  id: assignedCourtId,
+                  courtId: assignedCourtId,
+                  status: 'Approved' as const,
+                  isActive: true,
+                  statusDetails: `Active · Court ID: ${assignedCourtId}`,
+                  rejectionReason: undefined,
+                };
+              }
+            } else if (bReq.status === 'REJECTED') {
+              const reason = bReq.rejection_reason || 'Court specifications require revision.';
+              if (c.status !== 'Rejected' || c.rejectionReason !== reason || c.isActive) {
+                hasChanges = true;
+                return {
+                  ...c,
+                  status: 'Rejected' as const,
+                  isActive: false,
+                  rejectionReason: reason,
+                  statusDetails: `Declined by Admin · Feedback issued`,
+                };
+              }
+            } else if (bReq.status === 'PENDING') {
+              if (c.status !== 'Pending Approval' || c.isActive) {
+                hasChanges = true;
+                return {
+                  ...c,
+                  status: 'Pending Approval' as const,
+                  isActive: false,
+                  statusDetails: `Awaiting Admin Approval · Request ID: ${bReq.id}`,
+                  rejectionReason: undefined,
+                };
+              }
+            }
+            return c;
+          });
+
+          // Also merge any backend requests for this vendor that aren't yet in local courts
+          const existingIds = new Set(updated.map((c) => c.requestId || c.id || c.courtId));
+          backendRequests.forEach((bReq: any) => {
+            if (!existingIds.has(bReq.id) && (!bReq.court_id || !existingIds.has(bReq.court_id))) {
+              hasChanges = true;
+              if (bReq.status === 'APPROVED') {
+                const assignedCourtId = bReq.court_id || `CRT-${Math.floor(1000 + Math.random() * 9000)}`;
+                updated.push({
+                  id: assignedCourtId,
+                  courtId: assignedCourtId,
+                  name: bReq.court_name,
+                  displayName: bReq.display_name,
+                  sports: bReq.sports || ['Football'],
+                  pricePerHour: bReq.price_per_hour,
+                  minBookingDuration: bReq.min_booking_duration,
+                  peakHoursStart: bReq.peak_hours_start,
+                  peakHoursEnd: bReq.peak_hours_end,
+                  peakHoursPrice: bReq.peak_hours_price,
+                  peakDays: bReq.peak_days,
+                  weekendPrice: bReq.weekend_price,
+                  status: 'Approved',
+                  isActive: true,
+                  statusDetails: `Active · Court ID: ${assignedCourtId}`,
+                  operatingHours: '06:00 AM – 11:00 PM',
+                  type: bReq.type || 'Outdoor',
+                  requestId: bReq.id,
+                });
+              } else if (bReq.status === 'REJECTED') {
+                updated.push({
+                  id: bReq.id,
+                  courtId: undefined,
+                  name: bReq.court_name,
+                  displayName: bReq.display_name,
+                  sports: bReq.sports || ['Football'],
+                  pricePerHour: bReq.price_per_hour,
+                  minBookingDuration: bReq.min_booking_duration,
+                  peakHoursStart: bReq.peak_hours_start,
+                  peakHoursEnd: bReq.peak_hours_end,
+                  peakHoursPrice: bReq.peak_hours_price,
+                  peakDays: bReq.peak_days,
+                  weekendPrice: bReq.weekend_price,
+                  status: 'Rejected',
+                  isActive: false,
+                  rejectionReason: bReq.rejection_reason || 'Court specifications require revision.',
+                  statusDetails: 'Declined by Admin · Feedback issued',
+                  operatingHours: '06:00 AM – 11:00 PM',
+                  type: bReq.type || 'Outdoor',
+                  requestId: bReq.id,
+                });
+              } else {
+                updated.push({
+                  id: bReq.id,
+                  courtId: undefined,
+                  name: bReq.court_name,
+                  displayName: bReq.display_name,
+                  sports: bReq.sports || ['Football'],
+                  pricePerHour: bReq.price_per_hour,
+                  minBookingDuration: bReq.min_booking_duration,
+                  peakHoursStart: bReq.peak_hours_start,
+                  peakHoursEnd: bReq.peak_hours_end,
+                  peakHoursPrice: bReq.peak_hours_price,
+                  peakDays: bReq.peak_days,
+                  weekendPrice: bReq.weekend_price,
+                  status: 'Pending Approval',
+                  isActive: false,
+                  statusDetails: `Awaiting Admin Approval · Request ID: ${bReq.id}`,
+                  operatingHours: '06:00 AM – 11:00 PM',
+                  type: bReq.type || 'Outdoor',
+                  requestId: bReq.id,
+                });
+              }
+            }
+          });
+
+          return hasChanges ? updated : prevCourts;
+        });
+      } catch (e) {}
+    };
+
+    syncCourtRequests();
+    const interval = setInterval(syncCourtRequests, 3500);
+    return () => {
+      isSubscribed = false;
+      clearInterval(interval);
+    };
+  }, []);
+
   // Staff Members State with LocalStorage Persistence
   const [staffMembers, setStaffMembers] = useState<StaffMember[]>(() => {
     if (typeof window !== 'undefined') {
@@ -1357,7 +1506,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
 
     const court: Court = {
-      id: `court-${Date.now()}`,
+      id: generatedRequestId,
+      courtId: undefined,
       name: newCourt.name || 'New Turf',
       displayName: newCourt.displayName || undefined,
       samePhysicalSports: newCourt.samePhysicalSports ?? false,
@@ -1560,8 +1710,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     );
   };
 
-  const createSupportTicket = (ticket: Omit<SupportTicket, 'id' | 'status' | 'date'>) => {
-    let prefix = 'SUP';
+  const createSupportTicket = async (ticket: Omit<SupportTicket, 'id' | 'status' | 'date'>) => {
+    let prefix = 'SUP-';
     let label = 'Support Ticket';
     if (ticket.requestType === 'bank_change' || ticket.category === 'Bank Account') {
       prefix = 'REQ-BNK';
@@ -1575,15 +1725,46 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
 
     const randomNum = Math.floor(10240 + Math.random() * 50);
+    const tempTicketId = `${prefix}${randomNum}`;
     const newTicket: SupportTicket = {
       ...ticket,
-      id: `${prefix}${randomNum}`,
+      id: tempTicketId,
       status: 'Open',
       date: 'Today',
     };
     setSupportTickets((prev) => [newTicket, ...prev]);
     showToast(`${label} Submitted`, `Request #${newTicket.id} is queued for operations review.`, 'success');
     navigateTo('support');
+
+    // Live dispatch to backend API & trigger email template
+    try {
+      const cleanPhone = (ownerPhone || '9876543210').replace(/\D/g, '').slice(-10);
+      const res = await fetch('http://localhost:4000/api/v1/support', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          venue_id: 'ven_1001',
+          venue_name: venueName || 'Sky Sports Arena & Box Turf',
+          person_name: ownerName || 'Venue Manager',
+          contact_number: cleanPhone,
+          email: ownerEmail || 'partner@ibooksports.com',
+          category: ticket.category,
+          priority: ticket.priority || 'Low',
+          subject: ticket.subject,
+          description: ticket.description,
+          booking_id: ticket.bookingId,
+          attachment_name: ticket.attachmentName,
+        }),
+      });
+      if (res.ok) {
+        const created = await res.json();
+        setSupportTickets((prev) =>
+          prev.map((t) => (t.id === tempTicketId ? { ...t, id: created.ticket_number || created.id } : t))
+        );
+      }
+    } catch (e) {
+      console.warn('Backend support sync fallback:', e);
+    }
   };
 
   const updateBookingSettings = (settings: Partial<BookingSettingsConfig>) => {
@@ -1716,29 +1897,52 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     showToast('Policy Saved', 'Cancellation and refund rules updated.', 'success');
   };
 
-  const addStaffMember = (member: Omit<StaffMember, 'id'>) => {
-    const raw = member.phone || '';
+  const addStaffMember = async (member: Omit<StaffMember, 'id'>) => {
+    const raw = member.phone || (member as any).phone_number || '';
     const cleanDigits = raw.replace(/\D/g, '').slice(-10);
     const formattedPhone = cleanDigits.length === 10
       ? `+91 ${cleanDigits.slice(0, 5)} ${cleanDigits.slice(5)}`
       : raw.trim();
 
+    const tempId = `st-${Date.now()}`;
     const newStaff: StaffMember = {
       ...member,
       phone: formattedPhone,
-      id: `st-${Date.now()}`,
+      phone_number: cleanDigits || formattedPhone,
+      id: tempId,
     };
-    setStaffMembers((prev) => [...prev, newStaff]);
+    setStaffMembers((prev) => [newStaff, ...prev]);
+
+    try {
+      const res = await fetch('http://localhost:4000/api/v1/staff', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: member.name,
+          email: member.email,
+          phone_number: cleanDigits || '9876543210',
+          role: member.role || 'OPERATIONS_MANAGER',
+        }),
+      });
+      if (res.ok) {
+        const created = await res.json();
+        setStaffMembers((prev) =>
+          prev.map((s) => (s.id === tempId ? { ...s, ...created, phone: formattedPhone, phone_number: cleanDigits } : s))
+        );
+      }
+    } catch (e) {
+      // Local fallback
+    }
+
     showToast('Staff Added', `${newStaff.name} added as ${newStaff.role}.`, 'success');
   };
 
-  const updateStaffMember = (id: string, updatedData: Partial<StaffMember>) => {
-    let formattedPhone = updatedData.phone;
-    if (updatedData.phone) {
-      const cleanDigits = updatedData.phone.replace(/\D/g, '').slice(-10);
-      if (cleanDigits.length === 10) {
-        formattedPhone = `+91 ${cleanDigits.slice(0, 5)} ${cleanDigits.slice(5)}`;
-      }
+  const updateStaffMember = async (id: string, updatedData: Partial<StaffMember>) => {
+    const raw = updatedData.phone || (updatedData as any).phone_number || '';
+    let formattedPhone = raw;
+    let cleanDigits = raw.replace(/\D/g, '').slice(-10);
+    if (cleanDigits.length === 10) {
+      formattedPhone = `+91 ${cleanDigits.slice(0, 5)} ${cleanDigits.slice(5)}`;
     }
 
     setStaffMembers((prev) =>
@@ -1747,15 +1951,48 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
           ? {
               ...s,
               ...updatedData,
-              ...(formattedPhone ? { phone: formattedPhone } : {}),
+              phone: formattedPhone || s.phone || (s as any).phone_number || '',
+              phone_number: cleanDigits || (s as any).phone_number || formattedPhone,
             }
           : s
       )
     );
+
+    try {
+      const payload: any = {};
+      if (updatedData.name) payload.name = updatedData.name;
+      if (updatedData.email) payload.email = updatedData.email;
+      if (cleanDigits && cleanDigits.length === 10) payload.phone_number = cleanDigits;
+      if (updatedData.role) payload.role = updatedData.role;
+
+      const res = await fetch(`http://localhost:4000/api/v1/staff/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setStaffMembers((prev) =>
+          prev.map((s) =>
+            s.id === id
+              ? {
+                  ...s,
+                  ...updated,
+                  phone: formattedPhone || (updated.phone_number ? `+91 ${updated.phone_number.slice(0, 5)} ${updated.phone_number.slice(5)}` : s.phone),
+                  phone_number: updated.phone_number || cleanDigits || s.phone_number,
+                }
+              : s
+          )
+        );
+      }
+    } catch (e) {
+      // Local fallback
+    }
+
     showToast('Staff Updated', 'Staff role & details updated successfully.', 'success');
   };
 
-  const toggleStaffStatus = (id: string) => {
+  const toggleStaffStatus = async (id: string) => {
     setStaffMembers((prev) =>
       prev.map((s) => {
         if (s.id === id) {
@@ -1765,6 +2002,14 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         return s;
       })
     );
+
+    try {
+      await fetch(`http://localhost:4000/api/v1/staff/${id}/status`, {
+        method: 'PATCH',
+      });
+    } catch (e) {
+      // Local fallback
+    }
   };
 
   const updateStaffPermissions = (id: string, permKey: keyof StaffMember['permissions']) => {
@@ -2116,7 +2361,20 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         if (staffRes.ok) {
           const staffData = await staffRes.json();
           if (Array.isArray(staffData)) {
-            setStaffMembers(staffData);
+            setStaffMembers(
+              staffData.map((s: any) => {
+                const rawPhone = s.phone || s.phone_number || '';
+                const cleanDigits = String(rawPhone).replace(/\D/g, '').slice(-10);
+                const formatted = cleanDigits.length === 10
+                  ? `+91 ${cleanDigits.slice(0, 5)} ${cleanDigits.slice(5)}`
+                  : rawPhone;
+                return {
+                  ...s,
+                  phone: formatted,
+                  phone_number: s.phone_number || rawPhone,
+                };
+              })
+            );
           }
         }
       } catch (e) {
@@ -2244,9 +2502,67 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
+  const syncSupportTickets = async () => {
+    try {
+      const cleanPhone = (ownerPhone || '9876543210').replace(/\D/g, '').slice(-10);
+      const res = await fetch(`http://localhost:4000/api/v1/support?mobile=${cleanPhone}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      if (!Array.isArray(data) || data.length === 0) return;
+
+      setSupportTickets((prev) => {
+        const mapped: SupportTicket[] = data.map((t: any) => {
+          let mappedStatus: SupportTicket['status'] = 'Open';
+          if (t.status === 'IN_PROGRESS') mappedStatus = 'In Progress';
+          else if (t.status === 'RESOLVED' || t.status === 'CLOSED') mappedStatus = 'Resolved';
+
+          let mappedCategory = t.category || 'General';
+          if (t.category === 'PAYMENT') mappedCategory = 'Payment';
+          else if (t.category === 'BOOKING') mappedCategory = 'Booking';
+          else if (t.category === 'TECHNICAL') mappedCategory = 'Technical';
+          else if (t.category === 'SETTLEMENTS') mappedCategory = 'Settlements';
+          else if (t.category === 'GENERAL') mappedCategory = 'General';
+
+          let mappedPriority: SupportTicket['priority'] = 'Low';
+          if (t.priority === 'URGENT') mappedPriority = 'Urgent';
+          else if (t.priority === 'HIGH') mappedPriority = 'High';
+          else if (t.priority === 'LOW') mappedPriority = 'Low';
+
+          return {
+            id: t.ticket_number?.replace(/^SUP-\d+-/i, '') || t.ticket_number || t.id,
+            category: mappedCategory,
+            subject: t.subject,
+            description: t.description,
+            bookingId: t.related_booking_code,
+            status: mappedStatus,
+            priority: mappedPriority,
+            attachmentName: t.attachment_name,
+            date: t.created_at ? t.created_at.split(' ')[0] : 'Today',
+            adminReply: t.resolution_notes,
+          };
+        });
+
+        // Merge with existing local tickets
+        const merged = [...mapped];
+        for (const local of prev) {
+          if (!merged.some((m) => m.id === local.id || m.subject === local.subject)) {
+            merged.push(local);
+          }
+        }
+        return merged;
+      });
+    } catch (e) {
+      // Ignore background sync error
+    }
+  };
+
   useEffect(() => {
     fetchOnboardingProfile();
-    const interval = setInterval(syncCourtRequests, 10000);
+    syncSupportTickets();
+    const interval = setInterval(() => {
+      syncCourtRequests();
+      syncSupportTickets();
+    }, 10000);
     return () => clearInterval(interval);
   }, []);
 

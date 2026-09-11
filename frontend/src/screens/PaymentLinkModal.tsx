@@ -83,27 +83,27 @@ export const PaymentLinkModal: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: '100%' }}
           transition={{ type: 'spring', damping: 28, stiffness: 320 }}
-          className="relative w-full max-h-[92vh] md:max-w-lg md:rounded-3xl overflow-y-auto no-scrollbar bg-white rounded-t-3xl p-5 md:p-6 shadow-2xl border border-[#E8E6E1] space-y-3.5"
+          className="relative w-full max-h-[92vh] md:max-w-lg md:rounded-3xl overflow-y-auto no-scrollbar bg-white rounded-t-3xl p-5 md:p-6 shadow-2xl border border-[#E5E7EB] space-y-3.5"
         >
           {/* Top Bar */}
-          <div className="flex items-center justify-between pb-3 border-b border-[#F1F0EC]">
+          <div className="flex items-center justify-between pb-3 border-b border-[#F3F4F4]">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-[#FF6B2C]/10 text-[#FF6B2C] flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-[#F94001]/10 text-[#F94001] flex items-center justify-center">
                 <Link2 className="w-4 h-4 stroke-[2.5]" />
               </div>
               <div>
-                <h2 className="text-[16px] font-black text-[#171717]">
+                <h2 className="text-[16px] font-black text-[#021526]">
                   {isRemainingBalanceFlow ? 'Collect Balance Payment Link' : 'Customer Payment Link'}
                 </h2>
-                <div className="flex items-center gap-1.5 text-[11px] text-[#777570]">
+                <div className="flex items-center gap-1.5 text-[11px] text-[#5F6368]">
                   <span>Booking #{selectedBooking.id}</span>
                   <span>·</span>
                   {isRemainingBalanceFlow ? (
-                    <span className="text-[#2FA66A] font-bold">
+                    <span className="text-[#16A34A] font-bold">
                       Advance Paid ₹{selectedBooking.paidAmount.toLocaleString('en-IN')} · Due ₹{selectedBooking.balanceAmount.toLocaleString('en-IN')}
                     </span>
                   ) : (
-                    <span className="text-[#FF6B2C] font-bold flex items-center gap-0.5">
+                    <span className="text-[#F94001] font-bold flex items-center gap-0.5">
                       <Clock className="w-3 h-3" />
                       Slot Locked ({holdMins}m Hold Active)
                     </span>
@@ -117,52 +117,52 @@ export const PaymentLinkModal: React.FC = () => {
                 setActiveModal(null);
                 haptics.tap();
               }}
-              className="w-8 h-8 rounded-full bg-[#F1F0EC] flex items-center justify-center text-[#777570] hover:text-[#171717] cursor-pointer"
+              className="w-8 h-8 rounded-full bg-[#F3F4F4] flex items-center justify-center text-[#5F6368] hover:text-[#021526] cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
           {/* Booking & Financial Breakdown Box */}
-          <div className="bg-[#FAF9F6] p-3.5 rounded-2xl border border-[#E8E6E1] space-y-2.5 text-[12px]">
+          <div className="bg-[#F3F4F4] p-3.5 rounded-2xl border border-[#E5E7EB] space-y-2.5 text-[12px]">
             <div className="flex items-center justify-between">
               <div>
-                <span className="font-bold text-[#171717] text-[13px] block">
+                <span className="font-bold text-[#021526] text-[13px] block">
                   {selectedBooking.customerName}
                 </span>
-                <span className="font-mono text-[#777570] text-[11px]">
+                <span className="font-mono text-[#5F6368] text-[11px]">
                   {selectedBooking.customerPhone}
                 </span>
               </div>
-              <span className="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-[#FF6B2C]/10 text-[#FF6B2C]">
+              <span className="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-[#F94001]/10 text-[#F94001]">
                 {selectedBooking.sport} · {selectedBooking.courtName}
               </span>
             </div>
 
-            <div className="space-y-1.5 pt-2 border-t border-[#E8E6E1] text-[11.5px]">
-              <div className="flex justify-between text-[#777570]">
+            <div className="space-y-1.5 pt-2 border-t border-[#E5E7EB] text-[11.5px]">
+              <div className="flex justify-between text-[#5F6368]">
                 <span>Base Court Cost:</span>
-                <strong className="text-[#171717]">₹{fin.baseCourtCost.toLocaleString('en-IN')}</strong>
+                <strong className="text-[#021526]">₹{fin.baseCourtCost.toLocaleString('en-IN')}</strong>
               </div>
-              <div className="flex justify-between text-[#777570]">
+              <div className="flex justify-between text-[#5F6368]">
                 <span>Venue GST (18%):</span>
-                <strong className="text-[#171717]">₹{fin.courtGst18.toLocaleString('en-IN')}</strong>
+                <strong className="text-[#021526]">₹{fin.courtGst18.toLocaleString('en-IN')}</strong>
               </div>
-              <div className="flex justify-between text-[#171717] font-bold bg-white p-1.5 rounded-lg border border-[#E8E6E1]">
+              <div className="flex justify-between text-[#021526] font-bold bg-white p-1.5 rounded-lg border border-[#E5E7EB]">
                 <span>Total Turf Court Cost:</span>
                 <span>₹{fin.courtTotal.toLocaleString('en-IN')}</span>
               </div>
               
               {isRemainingBalanceFlow ? (
                 <>
-                  <div className="flex justify-between text-[#2FA66A] font-semibold">
+                  <div className="flex justify-between text-[#16A34A] font-semibold">
                     <span>Advance Already Paid Online:</span>
                     <span>-₹{selectedBooking.paidAmount.toLocaleString('en-IN')}</span>
                   </div>
-                  <div className="pt-2 border-t border-[#E8E6E1] flex items-center justify-between font-bold">
+                  <div className="pt-2 border-t border-[#E5E7EB] flex items-center justify-between font-bold">
                     <div className="text-left">
-                      <span className="text-[#171717] block">Remaining Due Amount to Collect:</span>
-                      <span className="text-[10px] text-[#2FA66A] font-semibold flex items-center gap-0.5">
+                      <span className="text-[#021526] block">Remaining Due Amount to Collect:</span>
+                      <span className="text-[10px] text-[#16A34A] font-semibold flex items-center gap-0.5">
                         <ShieldCheck className="w-3 h-3" />
                         100% credited to your venue ledger
                       </span>
@@ -174,24 +174,24 @@ export const PaymentLinkModal: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <div className="flex justify-between text-[#777570] pt-0.5">
+                  <div className="flex justify-between text-[#5F6368] pt-0.5">
                     <span>Platform Convenience Fee (5% of Turf):</span>
                     <strong className="text-[#B87C0D]">+₹{fin.convenienceFee5Percent.toLocaleString('en-IN')}</strong>
                   </div>
-                  <div className="flex justify-between text-[#777570]">
+                  <div className="flex justify-between text-[#5F6368]">
                     <span>Convenience GST (18% on 5% fee):</span>
                     <strong className="text-[#B87C0D]">+₹{fin.convenienceGst18Percent.toLocaleString('en-IN')}</strong>
                   </div>
 
-                  <div className="pt-2 border-t border-[#E8E6E1] flex items-center justify-between font-bold">
+                  <div className="pt-2 border-t border-[#E5E7EB] flex items-center justify-between font-bold">
                     <div className="text-left">
-                      <span className="text-[#171717] block">Total Amount Payable by Customer:</span>
-                      <span className="text-[10px] text-[#2FA66A] font-semibold flex items-center gap-0.5">
+                      <span className="text-[#021526] block">Total Amount Payable by Customer:</span>
+                      <span className="text-[10px] text-[#16A34A] font-semibold flex items-center gap-0.5">
                         <ShieldCheck className="w-3 h-3" />
                         Venue Owner credited full ₹{fin.courtTotal.toLocaleString('en-IN')} (0 deduction)
                       </span>
                     </div>
-                    <span className="text-[17px] font-black text-[#171717]">
+                    <span className="text-[17px] font-black text-[#021526]">
                       ₹{fin.totalCustomerPayable.toLocaleString('en-IN')}
                     </span>
                   </div>
@@ -202,23 +202,23 @@ export const PaymentLinkModal: React.FC = () => {
 
           {/* Shareable Link Box */}
           <div className="space-y-1.5">
-            <label className="text-[11px] font-bold text-[#777570] uppercase tracking-wider block">
+            <label className="text-[11px] font-bold text-[#5F6368] uppercase tracking-wider block">
               Active Payment Link (Valid for {holdMins} mins)
             </label>
-            <div className="flex items-center gap-2 bg-[#F7F6F2] p-2 rounded-2xl border border-[#E8E6E1]">
+            <div className="flex items-center gap-2 bg-[#F7F6F2] p-2 rounded-2xl border border-[#E5E7EB]">
               <input
                 type="text"
                 readOnly
                 value={paymentUrl}
-                className="w-full bg-transparent text-[12px] font-mono text-[#171717] outline-hidden px-1 truncate"
+                className="w-full bg-transparent text-[12px] font-mono text-[#021526] outline-hidden px-1 truncate"
               />
               <button
                 type="button"
                 onClick={handleCopyLink}
                 className={`px-3 py-1.5 rounded-xl font-bold text-[11px] flex items-center gap-1 cursor-pointer transition-all shrink-0 ${
                   copied
-                    ? 'bg-[#2FA66A] text-white'
-                    : 'bg-white border border-[#E8E6E1] text-[#171717] hover:bg-[#FAF9F6]'
+                    ? 'bg-[#16A34A] text-white'
+                    : 'bg-white border border-[#E5E7EB] text-[#021526] hover:bg-[#F3F4F4]'
                 }`}
               >
                 {copied ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : <Copy className="w-3.5 h-3.5" />}
@@ -241,22 +241,22 @@ export const PaymentLinkModal: React.FC = () => {
             <button
               type="button"
               onClick={handleCopyLink}
-              className="h-10 rounded-xl bg-[#FAF9F6] hover:bg-[#F1F0EC] border border-[#E8E6E1] text-[#171717] font-bold text-[11.5px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+              className="h-10 rounded-xl bg-[#F3F4F4] hover:bg-[#F3F4F4] border border-[#E5E7EB] text-[#021526] font-bold text-[11.5px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
             >
-              <Copy className="w-3.5 h-3.5 text-[#FF6B2C]" />
+              <Copy className="w-3.5 h-3.5 text-[#F94001]" />
               <span>Copy Link Only</span>
             </button>
           </div>
 
           {/* Customer Online Payment Simulation Actions */}
-          <div className="bg-[#2FA66A]/10 border border-[#2FA66A]/30 rounded-2xl p-3.5 space-y-2.5">
+          <div className="bg-[#16A34A]/10 border border-[#16A34A]/30 rounded-2xl p-3.5 space-y-2.5">
             <div className="flex items-start gap-2">
-              <Zap className="w-4 h-4 text-[#2FA66A] shrink-0 mt-0.5" />
+              <Zap className="w-4 h-4 text-[#16A34A] shrink-0 mt-0.5" />
               <div>
-                <span className="text-[12px] font-black text-[#1E774A] block">
+                <span className="text-[12px] font-black text-[#15803D] block">
                   Automatic Confirmation on Payment
                 </span>
-                <p className="text-[10.5px] text-[#2FA66A]">
+                <p className="text-[10.5px] text-[#16A34A]">
                   When customer pays online, booking immediately transitions to <strong>Confirmed</strong> and court fee ₹{fin.courtTotal.toLocaleString('en-IN')} is added to your ledger.
                 </p>
               </div>
@@ -267,7 +267,7 @@ export const PaymentLinkModal: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleCustomerPayFull}
-                  className="w-full h-11 rounded-xl bg-[#2FA66A] hover:bg-[#258756] text-white font-black text-[12.5px] flex items-center justify-center gap-2 shadow-xs cursor-pointer active-press transition-colors text-center"
+                  className="w-full h-11 rounded-xl bg-[#16A34A] hover:bg-[#258756] text-white font-black text-[12.5px] flex items-center justify-center gap-2 shadow-xs cursor-pointer active-press transition-colors text-center"
                 >
                   <CheckCircle2 className="w-4 h-4 shrink-0" />
                   <span>Simulate Customer Paying Due (₹{selectedBooking.balanceAmount.toLocaleString('en-IN')})</span>
@@ -277,7 +277,7 @@ export const PaymentLinkModal: React.FC = () => {
                   <button
                     type="button"
                     onClick={handleCustomerPayFull}
-                    className="h-10 rounded-xl bg-[#2FA66A] hover:bg-[#258756] text-white font-black text-[11.5px] flex items-center justify-center gap-1.5 shadow-xs cursor-pointer active-press transition-colors text-center"
+                    className="h-10 rounded-xl bg-[#16A34A] hover:bg-[#258756] text-white font-black text-[11.5px] flex items-center justify-center gap-1.5 shadow-xs cursor-pointer active-press transition-colors text-center"
                   >
                     <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
                     <span>Simulate Pay Full (₹{fin.totalCustomerPayable.toLocaleString('en-IN')})</span>
@@ -286,9 +286,9 @@ export const PaymentLinkModal: React.FC = () => {
                   <button
                     type="button"
                     onClick={handleCustomerPayAdvance}
-                    className="h-10 rounded-xl bg-[#171717] hover:bg-black text-white font-black text-[11.5px] flex items-center justify-center gap-1.5 shadow-xs cursor-pointer active-press transition-colors text-center"
+                    className="h-10 rounded-xl bg-[#021526] hover:bg-black text-white font-black text-[11.5px] flex items-center justify-center gap-1.5 shadow-xs cursor-pointer active-press transition-colors text-center"
                   >
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#2FA66A] shrink-0" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#16A34A] shrink-0" />
                     <span>Simulate Advance 50% (₹{fin.advanceCustomerPayable.toLocaleString('en-IN')})</span>
                   </button>
                 </div>

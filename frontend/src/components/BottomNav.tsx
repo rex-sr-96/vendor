@@ -36,7 +36,7 @@ export const BottomNav: React.FC = () => {
   return (
     <nav
       id="bottom-nav-bar"
-      className="w-full z-40 bg-white/95 backdrop-blur-xl border-t border-[#E8E6E1] shrink-0 select-none shadow-[0_-4px_20px_rgba(0,0,0,0.05)] pb-safe"
+      className="w-full z-40 bg-white/95 backdrop-blur-xl border-t border-[#E5E7EB] shrink-0 select-none shadow-[0_-4px_20px_rgba(0,0,0,0.05)] pb-safe"
     >
       <div className="w-full px-2 h-16 flex items-center justify-around">
         {navItems.map((item) => {
@@ -52,23 +52,23 @@ export const BottomNav: React.FC = () => {
             >
               <div
                 className={`relative flex items-center justify-center w-12 h-7.5 rounded-full transition-all duration-200 ${
-                  isActive ? 'bg-[#FF6B2C]/15 scale-105' : 'hover:bg-[#FAF9F6]'
+                  isActive ? 'bg-[#F94001]/15 scale-105' : 'hover:bg-[#F3F4F4]'
                 }`}
               >
                 <Icon
                   className={`w-5 h-5 transition-all duration-150 ${
-                    isActive ? 'text-[#FF6B2C] stroke-[2.4]' : 'text-[#777570] stroke-[1.8]'
+                    isActive ? 'text-[#F94001] stroke-[2.4]' : 'text-[#5F6368] stroke-[1.8]'
                   }`}
                 />
                 {item.badge && (
-                  <span className="absolute -top-0.5 -right-1 min-w-[17px] h-[17px] px-1 rounded-full bg-[#FF6B2C] text-white text-[9.5px] font-black flex items-center justify-center ring-2 ring-white shadow-xs animate-in zoom-in-50 duration-200">
+                  <span className="absolute -top-0.5 -right-1 min-w-[17px] h-[17px] px-1 rounded-full bg-[#F94001] text-white text-[9.5px] font-black flex items-center justify-center ring-2 ring-white shadow-xs animate-in zoom-in-50 duration-200">
                     {item.badge}
                   </span>
                 )}
               </div>
               <span
                 className={`text-[10.5px] mt-0.5 transition-all duration-150 tracking-tight ${
-                  isActive ? 'text-[#FF6B2C] font-black scale-105' : 'text-[#777570] font-semibold'
+                  isActive ? 'text-[#F94001] font-black scale-105' : 'text-[#5F6368] font-semibold'
                 }`}
               >
                 {item.label}

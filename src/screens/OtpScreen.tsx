@@ -60,26 +60,26 @@ export const OtpScreen: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F6F5F2] flex flex-col justify-between p-5 pt-8 pb-safe">
+    <div className="min-h-screen bg-[#F8F9FA] flex flex-col justify-between p-5 pt-8 pb-safe">
       {/* Top Section with Back */}
       <div className="w-full max-w-sm mx-auto">
         <button
           onClick={() => navigateTo('login')}
-          className="w-10 h-10 -ml-2 rounded-xl flex items-center justify-center text-[#171717] hover:bg-[#E8E6E1]/50 active-press transition-colors"
+          className="w-10 h-10 -ml-2 rounded-xl flex items-center justify-center text-[#021526] hover:bg-[#E5E7EB]/50 active-press transition-colors"
           aria-label="Back to login"
         >
           <ChevronLeft className="w-6 h-6 stroke-[2.2]" />
         </button>
 
         <div className="mt-6 mb-8">
-          <h1 className="text-[28px] font-bold text-[#171717] tracking-tight leading-tight mb-2">
+          <h1 className="text-[28px] font-bold text-[#021526] tracking-tight leading-tight mb-2">
             Enter OTP
           </h1>
-          <div className="flex items-center gap-2 text-[15px] text-[#777570]">
+          <div className="flex items-center gap-2 text-[15px] text-[#5F6368]">
             <span>Sent to +91 {ownerPhone || '98765 43210'}</span>
             <button
               onClick={() => navigateTo('login')}
-              className="text-[#FF6B2C] font-semibold hover:underline"
+              className="text-[#F94001] font-semibold hover:underline"
             >
               Change
             </button>
@@ -98,12 +98,12 @@ export const OtpScreen: React.FC = () => {
               onFocus={() => setActiveIdx(index)}
               onChange={(e) => handleChange(index, e.target.value)}
               onKeyDown={(e) => handleKeyDown(index, e)}
-              className={`w-12 h-14 text-center text-[22px] font-bold rounded-[12px] bg-[#F7F7F5] border transition-all focus:outline-none ${
+              className={`w-12 h-14 text-center text-[22px] font-bold rounded-[12px] bg-[#F3F4F4] border transition-all focus:outline-none ${
                 activeIdx === index
-                  ? 'border-[#FF6B2C] bg-white ring-2 ring-[#FF6B2C]/20 shadow-sm'
+                  ? 'border-[#F94001] bg-white ring-2 ring-[#F94001]/20 shadow-sm'
                   : digit
-                  ? 'border-[#171717] bg-white text-[#171717]'
-                  : 'border-[#E8E6E1] text-[#171717]'
+                  ? 'border-[#021526] bg-white text-[#021526]'
+                  : 'border-[#E5E7EB] text-[#021526]'
               }`}
             />
           ))}
@@ -112,13 +112,13 @@ export const OtpScreen: React.FC = () => {
         {/* Countdown / Resend */}
         <div className="flex items-center justify-between text-[13px] font-medium pt-2">
           {countdown > 0 ? (
-            <span className="text-[#777570]">
-              Resend OTP in <span className="font-bold text-[#171717]">00:{countdown < 10 ? `0${countdown}` : countdown}</span>
+            <span className="text-[#5F6368]">
+              Resend OTP in <span className="font-bold text-[#021526]">00:{countdown < 10 ? `0${countdown}` : countdown}</span>
             </span>
           ) : (
             <button
               onClick={() => setCountdown(30)}
-              className="text-[#FF6B2C] font-bold hover:underline"
+              className="text-[#F94001] font-bold hover:underline"
             >
               Resend OTP
             </button>
@@ -135,8 +135,8 @@ export const OtpScreen: React.FC = () => {
           disabled={!isComplete}
           className={`w-full h-13 rounded-2xl font-bold text-[15px] flex items-center justify-center gap-2 transition-all active-press ${
             isComplete
-              ? 'bg-[#FF6B2C] text-white shadow-md hover:bg-[#e85b1e] cursor-pointer'
-              : 'bg-[#E8E6E1] text-[#A3A099] cursor-not-allowed'
+              ? 'bg-[#F94001] text-white shadow-md hover:bg-[#D93600] cursor-pointer'
+              : 'bg-[#E5E7EB] text-[#5F6368] cursor-not-allowed'
           }`}
         >
           <span>Verify & Continue</span>

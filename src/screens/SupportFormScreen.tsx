@@ -36,14 +36,14 @@ export const SupportFormScreen: React.FC = () => {
       <div className="flex items-center gap-2 pt-2">
         <button
           onClick={goBack}
-          className="w-10 h-10 -ml-2 rounded-xl flex items-center justify-center text-[#171717] hover:bg-[#E8E6E1]/50 active-press"
+          className="w-10 h-10 -ml-2 rounded-xl flex items-center justify-center text-[#021526] hover:bg-[#E5E7EB]/50 active-press"
         >
           <ChevronLeft className="w-6 h-6 stroke-[2.2]" />
         </button>
-        <h1 className="text-[22px] font-bold text-[#171717]">Raise a Support Request</h1>
+        <h1 className="text-[22px] font-bold text-[#021526]">Raise a Support Request</h1>
       </div>
 
-      <p className="text-[13px] text-[#777570] -mt-2">
+      <p className="text-[13px] text-[#5F6368] -mt-2">
         Our TurfTown merchant operations team will respond within 30 minutes.
       </p>
 
@@ -51,7 +51,7 @@ export const SupportFormScreen: React.FC = () => {
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Category Pill Selection */}
         <div>
-          <label className="block text-[13px] font-bold text-[#171717] mb-2">
+          <label className="block text-[13px] font-bold text-[#021526] mb-2">
             Select Category
           </label>
           <div className="flex flex-wrap gap-2">
@@ -62,8 +62,8 @@ export const SupportFormScreen: React.FC = () => {
                 onClick={() => setCategory(cat)}
                 className={`h-9 px-3.5 rounded-full text-[13px] font-bold transition-all active-press ${
                   category === cat
-                    ? 'bg-[#171717] text-white shadow-xs'
-                    : 'bg-white text-[#777570] border border-[#E8E6E1]'
+                    ? 'bg-[#021526] text-white shadow-xs'
+                    : 'bg-white text-[#5F6368] border border-[#E5E7EB]'
                 }`}
               >
                 {cat}
@@ -74,63 +74,63 @@ export const SupportFormScreen: React.FC = () => {
 
         {/* Subject Line */}
         <div>
-          <label className="block text-[13px] font-bold text-[#171717] mb-1.5">
+          <label className="block text-[13px] font-bold text-[#021526] mb-1.5">
             Subject
           </label>
-          <div className="bg-[#F7F7F5] border border-[#E8E6E1] rounded-[14px] px-3.5 py-3 focus-within:border-[#171717] focus-within:bg-white transition-all">
+          <div className="bg-[#F3F4F4] border border-[#E5E7EB] rounded-[14px] px-3.5 py-3 focus-within:border-[#021526] focus-within:bg-white transition-all">
             <input
               type="text"
               required
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               placeholder="e.g. UPI balance settlement query for Turf 1"
-              className="w-full text-[14px] font-semibold text-[#171717] bg-transparent focus:outline-none placeholder-[#A3A099]"
+              className="w-full text-[14px] font-semibold text-[#021526] bg-transparent focus:outline-none placeholder-[#5F6368]"
             />
           </div>
         </div>
 
         {/* Detailed Description */}
         <div>
-          <label className="block text-[13px] font-bold text-[#171717] mb-1.5">
+          <label className="block text-[13px] font-bold text-[#021526] mb-1.5">
             Description
           </label>
-          <div className="bg-[#F7F7F5] border border-[#E8E6E1] rounded-[14px] p-3.5 focus-within:border-[#171717] focus-within:bg-white transition-all">
+          <div className="bg-[#F3F4F4] border border-[#E5E7EB] rounded-[14px] p-3.5 focus-within:border-[#021526] focus-within:bg-white transition-all">
             <textarea
               rows={4}
               required
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Provide exact booking ID, transaction timestamp, or court details to help us investigate immediately..."
-              className="w-full text-[14px] font-medium text-[#171717] bg-transparent focus:outline-none placeholder-[#A3A099] resize-none"
+              className="w-full text-[14px] font-medium text-[#021526] bg-transparent focus:outline-none placeholder-[#5F6368] resize-none"
             />
           </div>
         </div>
 
         {/* Attachment Box (Drag & drop / click upload) */}
         <div>
-          <label className="block text-[13px] font-bold text-[#171717] mb-1.5">
+          <label className="block text-[13px] font-bold text-[#021526] mb-1.5">
             Attach Screenshot / Receipt (Optional)
           </label>
           <div
             onClick={() => setHasAttachment(!hasAttachment)}
             className={`border-2 border-dashed rounded-2xl p-4 text-center cursor-pointer transition-all ${
               hasAttachment
-                ? 'border-[#2FA66A] bg-[#2FA66A]/5'
-                : 'border-[#E8E6E1] bg-[#F7F7F5] hover:border-[#171717]'
+                ? 'border-[#16A34A] bg-[#16A34A]/5'
+                : 'border-[#E5E7EB] bg-[#F3F4F4] hover:border-[#021526]'
             }`}
           >
             {hasAttachment ? (
-              <div className="flex items-center justify-center gap-2 text-[#2FA66A]">
+              <div className="flex items-center justify-center gap-2 text-[#16A34A]">
                 <Check className="w-5 h-5" />
                 <span className="text-[13px] font-bold">Screenshot attached (upi_payment_ref.png)</span>
               </div>
             ) : (
               <div className="space-y-1">
-                <Upload className="w-5 h-5 text-[#777570] mx-auto" />
-                <p className="text-[13px] font-bold text-[#171717]">
+                <Upload className="w-5 h-5 text-[#5F6368] mx-auto" />
+                <p className="text-[13px] font-bold text-[#021526]">
                   Tap to upload screenshot or slip
                 </p>
-                <p className="text-[11px] text-[#777570]">PNG, JPG, PDF up to 10MB</p>
+                <p className="text-[11px] text-[#5F6368]">PNG, JPG, PDF up to 10MB</p>
               </div>
             )}
           </div>
@@ -140,7 +140,7 @@ export const SupportFormScreen: React.FC = () => {
         <div className="pt-3">
           <button
             type="submit"
-            className="w-full h-13 rounded-2xl bg-[#FF6B2C] text-white font-bold text-[15px] flex items-center justify-center shadow-md hover:bg-[#e85b1e] active-press transition-all cursor-pointer"
+            className="w-full h-13 rounded-2xl bg-[#F94001] text-white font-bold text-[15px] flex items-center justify-center shadow-md hover:bg-[#D93600] active-press transition-all cursor-pointer"
           >
             Submit Support Request
           </button>

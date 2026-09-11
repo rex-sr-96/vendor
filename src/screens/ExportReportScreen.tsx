@@ -425,17 +425,17 @@ export const ExportReportScreen: React.FC = () => {
             haptics.tap();
             goBack();
           }}
-          className="w-9 h-9 -ml-1 rounded-xl flex items-center justify-center text-[#171717] hover:bg-[#E8E6E1]/50 active-press transition-colors cursor-pointer"
+          className="w-9 h-9 -ml-1 rounded-xl flex items-center justify-center text-[#021526] hover:bg-[#E5E7EB]/50 active-press transition-colors cursor-pointer"
           aria-label="Back"
         >
           <ChevronLeft className="w-5 h-5 stroke-[2.4]" />
         </button>
 
         <div className="text-center">
-          <h1 className="text-[17px] font-extrabold text-[#171717] leading-none">
+          <h1 className="text-[17px] font-extrabold text-[#021526] leading-none">
             Export Reports
           </h1>
-          <span className="text-[11px] text-[#777570] mt-0.5 block">
+          <span className="text-[11px] text-[#5F6368] mt-0.5 block">
             Generate printable & spreadsheet data
           </span>
         </div>
@@ -444,8 +444,8 @@ export const ExportReportScreen: React.FC = () => {
       </div>
 
       {/* 1. PRIMARY REPORT DOMAIN SELECTOR: BOOKING VS PAYMENT */}
-      <div className="bg-white rounded-2xl p-1.5 border border-[#E8E6E1] shadow-xs">
-        <div className="grid grid-cols-2 gap-1.5 p-0.5 bg-[#F7F7F5] rounded-[14px]">
+      <div className="bg-white rounded-2xl p-1.5 border border-[#E5E7EB] shadow-xs">
+        <div className="grid grid-cols-2 gap-1.5 p-0.5 bg-[#F3F4F4] rounded-[14px]">
           <button
             type="button"
             id="tab-domain-bookings"
@@ -455,8 +455,8 @@ export const ExportReportScreen: React.FC = () => {
             }}
             className={`py-2.5 px-2 rounded-xl font-extrabold text-[12.5px] flex items-center justify-center gap-1.5 transition-all duration-200 cursor-pointer whitespace-nowrap active-press ${
               reportDomain === 'bookings'
-                ? 'bg-[#171717] text-white shadow-xs'
-                : 'text-[#777570] hover:text-[#171717] hover:bg-white/60'
+                ? 'bg-[#021526] text-white shadow-xs'
+                : 'text-[#5F6368] hover:text-[#021526] hover:bg-white/60'
             }`}
           >
             <CalendarDays className="w-4 h-4 shrink-0" />
@@ -465,7 +465,7 @@ export const ExportReportScreen: React.FC = () => {
               className={`text-[10px] font-bold px-1.5 py-0.2 rounded-md shrink-0 ${
                 reportDomain === 'bookings'
                   ? 'bg-white/20 text-white'
-                  : 'bg-[#E8E6E1] text-[#777570]'
+                  : 'bg-[#E5E7EB] text-[#5F6368]'
               }`}
             >
               {bookings.length}
@@ -481,8 +481,8 @@ export const ExportReportScreen: React.FC = () => {
             }}
             className={`py-2.5 px-2 rounded-xl font-extrabold text-[12.5px] flex items-center justify-center gap-1.5 transition-all duration-200 cursor-pointer whitespace-nowrap active-press ${
               reportDomain === 'payments'
-                ? 'bg-[#2FA66A] text-white shadow-xs'
-                : 'text-[#777570] hover:text-[#171717] hover:bg-white/60'
+                ? 'bg-[#16A34A] text-white shadow-xs'
+                : 'text-[#5F6368] hover:text-[#021526] hover:bg-white/60'
             }`}
           >
             <Wallet className="w-4 h-4 shrink-0" />
@@ -491,7 +491,7 @@ export const ExportReportScreen: React.FC = () => {
               className={`text-[10px] font-bold px-1.5 py-0.2 rounded-md shrink-0 ${
                 reportDomain === 'payments'
                   ? 'bg-white/25 text-white'
-                  : 'bg-[#E8E6E1] text-[#777570]'
+                  : 'bg-[#E5E7EB] text-[#5F6368]'
               }`}
             >
               ₹
@@ -502,17 +502,17 @@ export const ExportReportScreen: React.FC = () => {
 
       {/* 2. SUB-DOMAIN SELECTOR FOR PAYMENT REPORTS (BOOKING PAYMENTS VS SETTLEMENT) */}
       {reportDomain === 'payments' && (
-        <div className="bg-white rounded-2xl p-2 border border-[#E8E6E1] shadow-2xs space-y-1.5 animate-fadeIn">
+        <div className="bg-white rounded-2xl p-2 border border-[#E5E7EB] shadow-2xs space-y-1.5 animate-fadeIn">
           <div className="flex items-center justify-between px-1">
-            <span className="text-[11px] font-bold text-[#777570] uppercase tracking-wider">
+            <span className="text-[11px] font-bold text-[#5F6368] uppercase tracking-wider">
               Select Payment Domain
             </span>
-            <span className="text-[10px] font-bold text-[#2FA66A] bg-[#2FA66A]/10 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-bold text-[#16A34A] bg-[#16A34A]/10 px-2 py-0.5 rounded-full">
               {paymentSubtype === 'booking_payments' ? 'Customer Transactions' : 'Bank Transfers'}
             </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-1.5 p-1 bg-[#F1F0EC] rounded-xl">
+          <div className="grid grid-cols-2 gap-1.5 p-1 bg-[#F3F4F4] rounded-xl">
             <button
               type="button"
               id="subtab-booking-payments"
@@ -522,8 +522,8 @@ export const ExportReportScreen: React.FC = () => {
               }}
               className={`py-2 px-2.5 rounded-lg font-extrabold text-[12px] flex items-center justify-center gap-1.5 transition-all cursor-pointer whitespace-nowrap active-press ${
                 paymentSubtype === 'booking_payments'
-                  ? 'bg-white text-[#171717] shadow-xs'
-                  : 'text-[#777570] hover:text-[#171717]'
+                  ? 'bg-white text-[#021526] shadow-xs'
+                  : 'text-[#5F6368] hover:text-[#021526]'
               }`}
             >
               <IndianRupee className="w-3.5 h-3.5 shrink-0" />
@@ -539,8 +539,8 @@ export const ExportReportScreen: React.FC = () => {
               }}
               className={`py-2 px-2.5 rounded-lg font-extrabold text-[12px] flex items-center justify-center gap-1.5 transition-all cursor-pointer whitespace-nowrap active-press ${
                 paymentSubtype === 'settlement'
-                  ? 'bg-[#2FA66A] text-white shadow-xs'
-                  : 'text-[#777570] hover:text-[#171717]'
+                  ? 'bg-[#16A34A] text-white shadow-xs'
+                  : 'text-[#5F6368] hover:text-[#021526]'
               }`}
             >
               <Building2 className="w-3.5 h-3.5 shrink-0" />
@@ -554,20 +554,20 @@ export const ExportReportScreen: React.FC = () => {
       <div
         className={`p-3.5 rounded-2xl border flex items-center justify-between shadow-2xs ${
           reportDomain === 'bookings'
-            ? 'bg-[#FAF9F6] border-[#E8E6E1]'
+            ? 'bg-[#F3F4F4] border-[#E5E7EB]'
             : paymentSubtype === 'booking_payments'
-            ? 'bg-[#2FA66A]/5 border-[#2FA66A]/20'
-            : 'bg-[#171717]/5 border-[#171717]/15'
+            ? 'bg-[#16A34A]/5 border-[#16A34A]/20'
+            : 'bg-[#021526]/5 border-[#021526]/15'
         }`}
       >
         <div className="flex items-center gap-2.5">
           <div
             className={`w-9 h-9 rounded-xl flex items-center justify-center ${
               reportDomain === 'bookings'
-                ? 'bg-[#FF6B2C]/10 text-[#FF6B2C]'
+                ? 'bg-[#F94001]/10 text-[#F94001]'
                 : paymentSubtype === 'booking_payments'
-                ? 'bg-[#2FA66A]/10 text-[#2FA66A]'
-                : 'bg-[#171717]/10 text-[#171717]'
+                ? 'bg-[#16A34A]/10 text-[#16A34A]'
+                : 'bg-[#021526]/10 text-[#021526]'
             }`}
           >
             {reportDomain === 'bookings' ? (
@@ -579,14 +579,14 @@ export const ExportReportScreen: React.FC = () => {
             )}
           </div>
           <div>
-            <h3 className="text-[13.5px] font-extrabold text-[#171717]">
+            <h3 className="text-[13.5px] font-extrabold text-[#021526]">
               {reportDomain === 'bookings'
                 ? 'Pitch Schedule & Player Records'
                 : paymentSubtype === 'booking_payments'
                 ? 'Customer Collections & Dues'
                 : 'Bank Payouts & UTR Records'}
             </h3>
-            <p className="text-[11px] text-[#777570]">
+            <p className="text-[11px] text-[#5F6368]">
               {reportDomain === 'bookings'
                 ? `${filteredBookings.length} court bookings in selected period`
                 : paymentSubtype === 'booking_payments'
@@ -599,10 +599,10 @@ export const ExportReportScreen: React.FC = () => {
         <span
           className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-md ${
             reportDomain === 'bookings'
-              ? 'bg-[#FF6B2C]/10 text-[#FF6B2C]'
+              ? 'bg-[#F94001]/10 text-[#F94001]'
               : paymentSubtype === 'booking_payments'
-              ? 'bg-[#2FA66A]/10 text-[#2FA66A]'
-              : 'bg-[#171717]/10 text-[#171717]'
+              ? 'bg-[#16A34A]/10 text-[#16A34A]'
+              : 'bg-[#021526]/10 text-[#021526]'
           }`}
         >
           {reportDomain === 'bookings'
@@ -614,28 +614,28 @@ export const ExportReportScreen: React.FC = () => {
       </div>
 
       {/* 4. REPORT TIMEFRAME SELECTOR (DAILY / WEEKLY / MONTHLY / CUSTOM) */}
-      <div className="bg-white rounded-2xl p-4 border border-[#E8E6E1] shadow-xs space-y-3.5">
+      <div className="bg-white rounded-2xl p-4 border border-[#E5E7EB] shadow-xs space-y-3.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-[#FAF9F6] text-[#171717] flex items-center justify-center border border-[#E8E6E1]">
+            <div className="w-7 h-7 rounded-lg bg-[#F3F4F4] text-[#021526] flex items-center justify-center border border-[#E5E7EB]">
               <Calendar className="w-3.5 h-3.5" />
             </div>
             <div>
-              <span className="text-[13px] font-bold text-[#171717] block leading-tight">
+              <span className="text-[13px] font-bold text-[#021526] block leading-tight">
                 Report Period
               </span>
-              <span className="text-[10.5px] text-[#777570]">
+              <span className="text-[10.5px] text-[#5F6368]">
                 Choose day, week, month, or custom scope
               </span>
             </div>
           </div>
-          <span className="text-[11px] font-extrabold text-[#171717] uppercase bg-[#F1F0EC] px-2 py-0.5 rounded-lg">
+          <span className="text-[11px] font-extrabold text-[#021526] uppercase bg-[#F3F4F4] px-2 py-0.5 rounded-lg">
             {periodType}
           </span>
         </div>
 
         {/* 4 Period Tabs */}
-        <div className="grid grid-cols-4 gap-1 bg-[#F1F0EC] p-1 rounded-xl">
+        <div className="grid grid-cols-4 gap-1 bg-[#F3F4F4] p-1 rounded-xl">
           {(
             [
               { id: 'daily', label: 'Day' },
@@ -655,8 +655,8 @@ export const ExportReportScreen: React.FC = () => {
                 }}
                 className={`py-1.5 rounded-lg text-[12px] font-bold transition-all active-press cursor-pointer flex items-center justify-center ${
                   isActive
-                    ? 'bg-white text-[#171717] shadow-xs'
-                    : 'text-[#777570] hover:text-[#171717]'
+                    ? 'bg-white text-[#021526] shadow-xs'
+                    : 'text-[#5F6368] hover:text-[#021526]'
                 }`}
               >
                 {tab.label}
@@ -666,12 +666,12 @@ export const ExportReportScreen: React.FC = () => {
         </div>
 
         {/* Dynamic Period Configuration */}
-        <div className="bg-[#FAF9F6] p-3 rounded-xl border border-[#E8E6E1] space-y-2.5">
+        <div className="bg-[#F3F4F4] p-3 rounded-xl border border-[#E5E7EB] space-y-2.5">
           {/* Day (Daily) Mode */}
           {periodType === 'daily' && (
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold text-[#777570]">Select Day</span>
+                <span className="text-[11px] font-bold text-[#5F6368]">Select Day</span>
                 <div className="flex items-center gap-1">
                   <button
                     onClick={() => {
@@ -680,8 +680,8 @@ export const ExportReportScreen: React.FC = () => {
                     }}
                     className={`text-[10.5px] font-bold px-2 py-0.5 rounded-lg border transition-all cursor-pointer ${
                       selectedDay === '2026-08-28'
-                        ? 'bg-[#171717] text-white border-transparent'
-                        : 'bg-white text-[#777570] border-[#E8E6E1]'
+                        ? 'bg-[#021526] text-white border-transparent'
+                        : 'bg-white text-[#5F6368] border-[#E5E7EB]'
                     }`}
                   >
                     Today (28 Aug)
@@ -693,8 +693,8 @@ export const ExportReportScreen: React.FC = () => {
                     }}
                     className={`text-[10.5px] font-bold px-2 py-0.5 rounded-lg border transition-all cursor-pointer ${
                       selectedDay === '2026-08-27'
-                        ? 'bg-[#171717] text-white border-transparent'
-                        : 'bg-white text-[#777570] border-[#E8E6E1]'
+                        ? 'bg-[#021526] text-white border-transparent'
+                        : 'bg-white text-[#5F6368] border-[#E5E7EB]'
                     }`}
                   >
                     Yesterday (27 Aug)
@@ -708,7 +708,7 @@ export const ExportReportScreen: React.FC = () => {
                   haptics.tap();
                   setSelectedDay(e.target.value);
                 }}
-                className="w-full bg-white border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none focus:border-[#FF6B2C]"
+                className="w-full bg-white border border-[#E5E7EB] rounded-xl px-3 py-2 text-[13px] font-bold text-[#021526] focus:outline-none focus:border-[#F94001]"
               />
             </div>
           )}
@@ -716,7 +716,7 @@ export const ExportReportScreen: React.FC = () => {
           {/* Week (Weekly) Mode */}
           {periodType === 'weekly' && (
             <div className="space-y-2">
-              <span className="text-[11px] font-bold text-[#777570]">Select 7-Day Week Cycle</span>
+              <span className="text-[11px] font-bold text-[#5F6368]">Select 7-Day Week Cycle</span>
               <div className="space-y-1.5">
                 {WEEK_OPTIONS.map((w, idx) => {
                   const isSelected = selectedWeekIndex === idx;
@@ -729,19 +729,19 @@ export const ExportReportScreen: React.FC = () => {
                       }}
                       className={`p-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
                         isSelected
-                          ? 'bg-white border-[#2FA66A] shadow-xs text-[#171717]'
-                          : 'bg-white border-[#E8E6E1] text-[#777570] hover:bg-[#F1F0EC]'
+                          ? 'bg-white border-[#16A34A] shadow-xs text-[#021526]'
+                          : 'bg-white border-[#E5E7EB] text-[#5F6368] hover:bg-[#F3F4F4]'
                       }`}
                     >
                       <div className="flex items-center gap-2">
                         <span
                           className={`w-2 h-2 rounded-full ${
-                            isSelected ? 'bg-[#2FA66A]' : 'bg-[#D1CFCA]'
+                            isSelected ? 'bg-[#16A34A]' : 'bg-[#E5E7EB]'
                           }`}
                         />
-                        <span className="text-[12.5px] font-bold text-[#171717]">{w.label}</span>
+                        <span className="text-[12.5px] font-bold text-[#021526]">{w.label}</span>
                       </div>
-                      {isSelected && <CheckCircle2 className="w-4 h-4 text-[#2FA66A]" />}
+                      {isSelected && <CheckCircle2 className="w-4 h-4 text-[#16A34A]" />}
                     </div>
                   );
                 })}
@@ -752,7 +752,7 @@ export const ExportReportScreen: React.FC = () => {
           {/* Month (Monthly) Mode */}
           {periodType === 'monthly' && (
             <div className="space-y-2">
-              <span className="text-[11px] font-bold text-[#777570]">Select Month Statement</span>
+              <span className="text-[11px] font-bold text-[#5F6368]">Select Month Statement</span>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                 {MONTH_OPTIONS.map((m) => {
                   const isSelected = selectedMonth === m.value;
@@ -765,17 +765,17 @@ export const ExportReportScreen: React.FC = () => {
                       }}
                       className={`p-2.5 rounded-xl border text-left transition-all active-press cursor-pointer flex items-center justify-between ${
                         isSelected
-                          ? 'bg-white border-[#2FA66A] text-[#171717] shadow-xs'
-                          : 'bg-white border-[#E8E6E1] text-[#777570] hover:bg-[#F1F0EC]'
+                          ? 'bg-white border-[#16A34A] text-[#021526] shadow-xs'
+                          : 'bg-white border-[#E5E7EB] text-[#5F6368] hover:bg-[#F3F4F4]'
                       }`}
                     >
                       <div>
-                        <span className="text-[12.5px] font-bold block text-[#171717]">
+                        <span className="text-[12.5px] font-bold block text-[#021526]">
                           {m.label}
                         </span>
-                        <span className="text-[10px] text-[#777570]">{m.desc}</span>
+                        <span className="text-[10px] text-[#5F6368]">{m.desc}</span>
                       </div>
-                      {isSelected && <CheckCircle2 className="w-4 h-4 text-[#2FA66A] shrink-0" />}
+                      {isSelected && <CheckCircle2 className="w-4 h-4 text-[#16A34A] shrink-0" />}
                     </button>
                   );
                 })}
@@ -786,10 +786,10 @@ export const ExportReportScreen: React.FC = () => {
           {/* Custom Date Pickers */}
           {periodType === 'custom' && (
             <div className="space-y-2">
-              <span className="text-[11px] font-bold text-[#777570]">Choose Start & End Date</span>
+              <span className="text-[11px] font-bold text-[#5F6368]">Choose Start & End Date</span>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="text-[10px] font-bold text-[#A3A099] block mb-1">
+                  <label className="text-[10px] font-bold text-[#5F6368] block mb-1">
                     START DATE
                   </label>
                   <input
@@ -799,11 +799,11 @@ export const ExportReportScreen: React.FC = () => {
                       haptics.tap();
                       setCustomStartDate(e.target.value);
                     }}
-                    className="w-full bg-white border border-[#E8E6E1] rounded-xl px-2.5 py-2 text-[12px] font-bold text-[#171717] focus:outline-none focus:border-[#2FA66A]"
+                    className="w-full bg-white border border-[#E5E7EB] rounded-xl px-2.5 py-2 text-[12px] font-bold text-[#021526] focus:outline-none focus:border-[#16A34A]"
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] font-bold text-[#A3A099] block mb-1">
+                  <label className="text-[10px] font-bold text-[#5F6368] block mb-1">
                     END DATE
                   </label>
                   <input
@@ -813,7 +813,7 @@ export const ExportReportScreen: React.FC = () => {
                       haptics.tap();
                       setCustomEndDate(e.target.value);
                     }}
-                    className="w-full bg-white border border-[#E8E6E1] rounded-xl px-2.5 py-2 text-[12px] font-bold text-[#171717] focus:outline-none focus:border-[#2FA66A]"
+                    className="w-full bg-white border border-[#E5E7EB] rounded-xl px-2.5 py-2 text-[12px] font-bold text-[#021526] focus:outline-none focus:border-[#16A34A]"
                   />
                 </div>
               </div>
@@ -824,10 +824,10 @@ export const ExportReportScreen: React.FC = () => {
 
       {/* 5. DOMAIN-SPECIFIC SUB-FILTERS */}
       {reportDomain === 'bookings' ? (
-        <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-xs space-y-2">
+        <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-xs space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[12px] font-bold text-[#171717]">Filter by Sport</span>
-            <span className="text-[11px] text-[#777570]">
+            <span className="text-[12px] font-bold text-[#021526]">Filter by Sport</span>
+            <span className="text-[11px] text-[#5F6368]">
               {selectedSport === 'All' ? 'All sports' : selectedSport}
             </span>
           </div>
@@ -844,8 +844,8 @@ export const ExportReportScreen: React.FC = () => {
                   }}
                   className={`px-3 py-1.5 rounded-xl text-[11.5px] font-bold shrink-0 transition-all cursor-pointer ${
                     isActive
-                      ? 'bg-[#171717] text-white shadow-xs'
-                      : 'bg-[#FAF9F6] border border-[#E8E6E1] text-[#777570] hover:text-[#171717]'
+                      ? 'bg-[#021526] text-white shadow-xs'
+                      : 'bg-[#F3F4F4] border border-[#E5E7EB] text-[#5F6368] hover:text-[#021526]'
                   }`}
                 >
                   {sport}
@@ -855,10 +855,10 @@ export const ExportReportScreen: React.FC = () => {
           </div>
         </div>
       ) : paymentSubtype === 'booking_payments' ? (
-        <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-xs space-y-2.5">
+        <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-xs space-y-2.5">
           <div className="flex items-center justify-between">
-            <span className="text-[12px] font-bold text-[#171717]">Filter by Payment Mode</span>
-            <span className="text-[11px] text-[#777570]">
+            <span className="text-[12px] font-bold text-[#021526]">Filter by Payment Mode</span>
+            <span className="text-[11px] text-[#5F6368]">
               {selectedPaymentMode === 'All' ? 'All modes' : selectedPaymentMode}
             </span>
           </div>
@@ -875,8 +875,8 @@ export const ExportReportScreen: React.FC = () => {
                   }}
                   className={`px-3 py-1.5 rounded-xl text-[11.5px] font-bold shrink-0 transition-all cursor-pointer ${
                     isActive
-                      ? 'bg-[#2FA66A] text-white shadow-xs'
-                      : 'bg-[#FAF9F6] border border-[#E8E6E1] text-[#777570] hover:text-[#171717]'
+                      ? 'bg-[#16A34A] text-white shadow-xs'
+                      : 'bg-[#F3F4F4] border border-[#E5E7EB] text-[#5F6368] hover:text-[#021526]'
                   }`}
                 >
                   {mode}
@@ -886,27 +886,27 @@ export const ExportReportScreen: React.FC = () => {
           </div>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-xs space-y-2.5">
+        <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-xs space-y-2.5">
           <div className="flex items-center justify-between">
-            <span className="text-[12px] font-bold text-[#171717]">Linked Bank Account</span>
-            <span className="text-[11px] font-bold text-[#2FA66A] flex items-center gap-1">
+            <span className="text-[12px] font-bold text-[#021526]">Linked Bank Account</span>
+            <span className="text-[11px] font-bold text-[#16A34A] flex items-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5" />
               Verified Auto-NEFT
             </span>
           </div>
-          <div className="p-2.5 rounded-xl bg-[#FAF9F6] border border-[#E8E6E1] flex items-center justify-between">
+          <div className="p-2.5 rounded-xl bg-[#F3F4F4] border border-[#E5E7EB] flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Building2 className="w-4 h-4 text-[#171717]" />
+              <Building2 className="w-4 h-4 text-[#021526]" />
               <div>
-                <span className="text-[12.5px] font-extrabold text-[#171717] block leading-none">
+                <span className="text-[12.5px] font-extrabold text-[#021526] block leading-none">
                   HDFC Bank · A/c •••• 4321
                 </span>
-                <span className="text-[10px] text-[#777570] mt-0.5 block">
+                <span className="text-[10px] text-[#5F6368] mt-0.5 block">
                   IFSC: HDFC0001234 · Daily 6:00 AM Settlement
                 </span>
               </div>
             </div>
-            <span className="text-[10px] font-bold bg-white px-2 py-1 rounded-md border border-[#E8E6E1] text-[#171717]">
+            <span className="text-[10px] font-bold bg-white px-2 py-1 rounded-md border border-[#E5E7EB] text-[#021526]">
               Active
             </span>
           </div>
@@ -914,28 +914,28 @@ export const ExportReportScreen: React.FC = () => {
       )}
 
       {/* 6. LIVE METRIC PREVIEW CARDS */}
-      <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-xs space-y-2">
-        <span className="text-[11px] font-bold text-[#777570] uppercase tracking-wider block">
+      <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-xs space-y-2">
+        <span className="text-[11px] font-bold text-[#5F6368] uppercase tracking-wider block">
           Statement Data Preview
         </span>
 
         {reportDomain === 'bookings' ? (
           <div className="grid grid-cols-3 gap-2">
-            <div className="bg-[#FAF9F6] p-2.5 rounded-xl border border-[#E8E6E1] text-center">
-              <span className="text-[9.5px] font-semibold text-[#777570] block">Bookings</span>
-              <span className="text-[15px] font-black text-[#171717] mt-0.5 block">
+            <div className="bg-[#F3F4F4] p-2.5 rounded-xl border border-[#E5E7EB] text-center">
+              <span className="text-[9.5px] font-semibold text-[#5F6368] block">Bookings</span>
+              <span className="text-[15px] font-black text-[#021526] mt-0.5 block">
                 {filteredBookings.length}
               </span>
             </div>
-            <div className="bg-[#FAF9F6] p-2.5 rounded-xl border border-[#E8E6E1] text-center">
-              <span className="text-[9.5px] font-semibold text-[#777570] block">Gross Value</span>
-              <span className="text-[15px] font-black text-[#171717] mt-0.5 block">
+            <div className="bg-[#F3F4F4] p-2.5 rounded-xl border border-[#E5E7EB] text-center">
+              <span className="text-[9.5px] font-semibold text-[#5F6368] block">Gross Value</span>
+              <span className="text-[15px] font-black text-[#021526] mt-0.5 block">
                 ₹{totalRevenue.toLocaleString('en-IN')}
               </span>
             </div>
-            <div className="bg-[#FAF9F6] p-2.5 rounded-xl border border-[#E8E6E1] text-center">
-              <span className="text-[9.5px] font-semibold text-[#777570] block">Avg / Slot</span>
-              <span className="text-[15px] font-black text-[#2FA66A] mt-0.5 block">
+            <div className="bg-[#F3F4F4] p-2.5 rounded-xl border border-[#E5E7EB] text-center">
+              <span className="text-[9.5px] font-semibold text-[#5F6368] block">Avg / Slot</span>
+              <span className="text-[15px] font-black text-[#16A34A] mt-0.5 block">
                 ₹
                 {filteredBookings.length > 0
                   ? Math.round(totalRevenue / filteredBookings.length).toLocaleString('en-IN')
@@ -945,41 +945,41 @@ export const ExportReportScreen: React.FC = () => {
           </div>
         ) : paymentSubtype === 'booking_payments' ? (
           <div className="grid grid-cols-3 gap-2">
-            <div className="bg-[#2FA66A]/5 p-2.5 rounded-xl border border-[#2FA66A]/20 text-center">
-              <span className="text-[9.5px] font-bold text-[#2FA66A] block">Collected</span>
-              <span className="text-[15px] font-black text-[#1E774A] mt-0.5 block">
+            <div className="bg-[#16A34A]/5 p-2.5 rounded-xl border border-[#16A34A]/20 text-center">
+              <span className="text-[9.5px] font-bold text-[#16A34A] block">Collected</span>
+              <span className="text-[15px] font-black text-[#15803D] mt-0.5 block">
                 ₹{totalCollected.toLocaleString('en-IN')}
               </span>
             </div>
-            <div className="bg-[#FF6B2C]/5 p-2.5 rounded-xl border border-[#FF6B2C]/20 text-center">
-              <span className="text-[9.5px] font-bold text-[#FF6B2C] block">Dues</span>
+            <div className="bg-[#F94001]/5 p-2.5 rounded-xl border border-[#F94001]/20 text-center">
+              <span className="text-[9.5px] font-bold text-[#F94001] block">Dues</span>
               <span className="text-[15px] font-black text-[#C84614] mt-0.5 block">
                 ₹{totalDue.toLocaleString('en-IN')}
               </span>
             </div>
-            <div className="bg-[#FAF9F6] p-2.5 rounded-xl border border-[#E8E6E1] text-center">
-              <span className="text-[9.5px] font-semibold text-[#777570] block">Realization</span>
-              <span className="text-[15px] font-black text-[#171717] mt-0.5 block">
+            <div className="bg-[#F3F4F4] p-2.5 rounded-xl border border-[#E5E7EB] text-center">
+              <span className="text-[9.5px] font-semibold text-[#5F6368] block">Realization</span>
+              <span className="text-[15px] font-black text-[#021526] mt-0.5 block">
                 {realizationRate}%
               </span>
             </div>
           </div>
         ) : (
           <div className="grid grid-cols-3 gap-2">
-            <div className="bg-[#2FA66A]/5 p-2.5 rounded-xl border border-[#2FA66A]/20 text-center">
-              <span className="text-[9.5px] font-bold text-[#2FA66A] block">Total Settled</span>
-              <span className="text-[15px] font-black text-[#1E774A] mt-0.5 block">
+            <div className="bg-[#16A34A]/5 p-2.5 rounded-xl border border-[#16A34A]/20 text-center">
+              <span className="text-[9.5px] font-bold text-[#16A34A] block">Total Settled</span>
+              <span className="text-[15px] font-black text-[#15803D] mt-0.5 block">
                 ₹{totalSettledAmount.toLocaleString('en-IN')}
               </span>
             </div>
-            <div className="bg-[#FAF9F6] p-2.5 rounded-xl border border-[#E8E6E1] text-center">
-              <span className="text-[9.5px] font-semibold text-[#777570] block">Transfers</span>
-              <span className="text-[15px] font-black text-[#171717] mt-0.5 block">
+            <div className="bg-[#F3F4F4] p-2.5 rounded-xl border border-[#E5E7EB] text-center">
+              <span className="text-[9.5px] font-semibold text-[#5F6368] block">Transfers</span>
+              <span className="text-[15px] font-black text-[#021526] mt-0.5 block">
                 {filteredSettlements.length}
               </span>
             </div>
-            <div className="bg-[#FAF9F6] p-2.5 rounded-xl border border-[#E8E6E1] text-center">
-              <span className="text-[9.5px] font-semibold text-[#777570] block">Deductions</span>
+            <div className="bg-[#F3F4F4] p-2.5 rounded-xl border border-[#E5E7EB] text-center">
+              <span className="text-[9.5px] font-semibold text-[#5F6368] block">Deductions</span>
               <span className="text-[15px] font-black text-[#3DD68C] mt-0.5 block">₹0</span>
             </div>
           </div>
@@ -987,20 +987,20 @@ export const ExportReportScreen: React.FC = () => {
       </div>
 
       {/* 7. DOCUMENT FORMAT PICKER (PDF / EXCEL / CSV) */}
-      <div className="bg-white rounded-2xl p-4 border border-[#E8E6E1] shadow-xs space-y-3.5">
+      <div className="bg-white rounded-2xl p-4 border border-[#E5E7EB] shadow-xs space-y-3.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-[#FAF9F6] text-[#171717] flex items-center justify-center border border-[#E8E6E1]">
+            <div className="w-7 h-7 rounded-lg bg-[#F3F4F4] text-[#021526] flex items-center justify-center border border-[#E5E7EB]">
               <FileSpreadsheet className="w-3.5 h-3.5" />
             </div>
             <div>
-              <span className="text-[13px] font-bold text-[#171717] block leading-tight">
+              <span className="text-[13px] font-bold text-[#021526] block leading-tight">
                 Document Format
               </span>
-              <span className="text-[10.5px] text-[#777570]">Select export file type</span>
+              <span className="text-[10.5px] text-[#5F6368]">Select export file type</span>
             </div>
           </div>
-          <span className="text-[11px] font-extrabold text-[#171717] uppercase bg-[#F1F0EC] px-2 py-0.5 rounded-lg">
+          <span className="text-[11px] font-extrabold text-[#021526] uppercase bg-[#F3F4F4] px-2 py-0.5 rounded-lg">
             {documentFormat.toUpperCase()}
           </span>
         </div>
@@ -1016,26 +1016,26 @@ export const ExportReportScreen: React.FC = () => {
             className={`p-3 rounded-2xl border transition-all cursor-pointer active-press flex flex-col justify-between ${
               documentFormat === 'pdf'
                 ? reportDomain === 'bookings'
-                  ? 'bg-[#FF6B2C]/5 border-[#FF6B2C] shadow-xs'
-                  : 'bg-[#2FA66A]/5 border-[#2FA66A] shadow-xs'
-                : 'bg-[#FAF9F6] border-[#E8E6E1] hover:bg-[#F1F0EC]'
+                  ? 'bg-[#F94001]/5 border-[#F94001] shadow-xs'
+                  : 'bg-[#16A34A]/5 border-[#16A34A] shadow-xs'
+                : 'bg-[#F3F4F4] border-[#E5E7EB] hover:bg-[#F3F4F4]'
             }`}
           >
             <div className="flex items-start justify-between">
-              <div className="w-8 h-8 rounded-xl bg-[#D94B4B]/10 text-[#D94B4B] flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-[#DC2626]/10 text-[#DC2626] flex items-center justify-center">
                 <FileText className="w-4.5 h-4.5" />
               </div>
               {documentFormat === 'pdf' && (
                 <span
                   className={`w-2 h-2 rounded-full ${
-                    reportDomain === 'bookings' ? 'bg-[#FF6B2C]' : 'bg-[#2FA66A]'
+                    reportDomain === 'bookings' ? 'bg-[#F94001]' : 'bg-[#16A34A]'
                   }`}
                 />
               )}
             </div>
             <div className="mt-2.5">
-              <h4 className="text-[12.5px] font-bold text-[#171717]">PDF</h4>
-              <p className="text-[10px] text-[#777570] mt-0.5 leading-tight">
+              <h4 className="text-[12.5px] font-bold text-[#021526]">PDF</h4>
+              <p className="text-[10px] text-[#5F6368] mt-0.5 leading-tight">
                 Official statement layout
               </p>
             </div>
@@ -1050,21 +1050,21 @@ export const ExportReportScreen: React.FC = () => {
             }}
             className={`p-3 rounded-2xl border transition-all cursor-pointer active-press flex flex-col justify-between ${
               documentFormat === 'excel'
-                ? 'bg-[#2FA66A]/5 border-[#2FA66A] shadow-xs'
-                : 'bg-[#FAF9F6] border-[#E8E6E1] hover:bg-[#F1F0EC]'
+                ? 'bg-[#16A34A]/5 border-[#16A34A] shadow-xs'
+                : 'bg-[#F3F4F4] border-[#E5E7EB] hover:bg-[#F3F4F4]'
             }`}
           >
             <div className="flex items-start justify-between">
-              <div className="w-8 h-8 rounded-xl bg-[#2FA66A]/10 text-[#2FA66A] flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-[#16A34A]/10 text-[#16A34A] flex items-center justify-center">
                 <FileSpreadsheet className="w-4.5 h-4.5" />
               </div>
               {documentFormat === 'excel' && (
-                <span className="w-2 h-2 rounded-full bg-[#2FA66A]" />
+                <span className="w-2 h-2 rounded-full bg-[#16A34A]" />
               )}
             </div>
             <div className="mt-2.5">
-              <h4 className="text-[12.5px] font-bold text-[#171717]">Excel (.xlsx)</h4>
-              <p className="text-[10px] text-[#777570] mt-0.5 leading-tight">Formatted workbook</p>
+              <h4 className="text-[12.5px] font-bold text-[#021526]">Excel (.xlsx)</h4>
+              <p className="text-[10px] text-[#5F6368] mt-0.5 leading-tight">Formatted workbook</p>
             </div>
           </div>
 
@@ -1077,21 +1077,21 @@ export const ExportReportScreen: React.FC = () => {
             }}
             className={`p-3 rounded-2xl border transition-all cursor-pointer active-press flex flex-col justify-between ${
               documentFormat === 'csv'
-                ? 'bg-[#171717]/5 border-[#171717] shadow-xs'
-                : 'bg-[#FAF9F6] border-[#E8E6E1] hover:bg-[#F1F0EC]'
+                ? 'bg-[#021526]/5 border-[#021526] shadow-xs'
+                : 'bg-[#F3F4F4] border-[#E5E7EB] hover:bg-[#F3F4F4]'
             }`}
           >
             <div className="flex items-start justify-between">
-              <div className="w-8 h-8 rounded-xl bg-[#171717]/10 text-[#171717] flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-[#021526]/10 text-[#021526] flex items-center justify-center">
                 <FileCode className="w-4.5 h-4.5" />
               </div>
               {documentFormat === 'csv' && (
-                <span className="w-2 h-2 rounded-full bg-[#171717]" />
+                <span className="w-2 h-2 rounded-full bg-[#021526]" />
               )}
             </div>
             <div className="mt-2.5">
-              <h4 className="text-[12.5px] font-bold text-[#171717]">CSV</h4>
-              <p className="text-[10px] text-[#777570] mt-0.5 leading-tight">Universal raw data</p>
+              <h4 className="text-[12.5px] font-bold text-[#021526]">CSV</h4>
+              <p className="text-[10px] text-[#5F6368] mt-0.5 leading-tight">Universal raw data</p>
             </div>
           </div>
         </div>
@@ -1105,10 +1105,10 @@ export const ExportReportScreen: React.FC = () => {
           disabled={isExporting || getActiveItemCount() === 0}
           className={`w-full h-12 rounded-2xl font-bold text-[14px] flex items-center justify-center gap-2 shadow-md active-press transition-all cursor-pointer ${
             getActiveItemCount() === 0
-              ? 'bg-[#E8E6E1] text-[#A3A099] cursor-not-allowed'
+              ? 'bg-[#E5E7EB] text-[#5F6368] cursor-not-allowed'
               : reportDomain === 'bookings'
-              ? 'bg-[#FF6B2C] text-white hover:bg-[#e85b1e]'
-              : 'bg-[#2FA66A] text-white hover:bg-[#268c59]'
+              ? 'bg-[#F94001] text-white hover:bg-[#D93600]'
+              : 'bg-[#16A34A] text-white hover:bg-[#268c59]'
           }`}
         >
           {isExporting ? (

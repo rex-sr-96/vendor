@@ -78,24 +78,18 @@ export const DateMonthPickerSheet: React.FC<DateMonthPickerSheetProps> = ({
 
   const accentColorClass =
     themeColor === 'green'
-      ? 'bg-[#2FA66A] text-white hover:bg-[#268c59]'
-      : themeColor === 'black'
-      ? 'bg-[#171717] text-white hover:bg-[#333333]'
-      : 'bg-[#FF6B2C] text-white hover:bg-[#e5591e]';
+      ? 'bg-[#16A34A] text-white hover:bg-[#268c59]'
+      : 'bg-[#F94001] text-white hover:bg-[#e5591e]';
 
   const accentBgLightClass =
     themeColor === 'green'
-      ? 'bg-[#2FA66A]/10 text-[#2FA66A] border-[#2FA66A]/30'
-      : themeColor === 'black'
-      ? 'bg-[#171717]/10 text-[#171717] border-[#171717]/30'
-      : 'bg-[#FF6B2C]/10 text-[#FF6B2C] border-[#FF6B2C]/30';
+      ? 'bg-[#16A34A]/10 text-[#16A34A] border-[#16A34A]/30'
+      : 'bg-[#F94001]/10 text-[#F94001] border-[#F94001]/30';
 
   const dotColorClass =
     themeColor === 'green'
-      ? 'bg-[#2FA66A]'
-      : themeColor === 'black'
-      ? 'bg-[#171717]'
-      : 'bg-[#FF6B2C]';
+      ? 'bg-[#16A34A]'
+      : 'bg-[#F94001]';
 
   // Date Mode calculations
   const daysInCurrentMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
@@ -181,24 +175,24 @@ export const DateMonthPickerSheet: React.FC<DateMonthPickerSheetProps> = ({
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: '100%', opacity: 0 }}
           transition={{ type: 'spring', damping: 26, stiffness: 320 }}
-          className="relative w-full md:max-w-md md:rounded-3xl bg-white rounded-t-3xl p-5 pb-7 shadow-2xl border border-[#E8E6E1] max-h-[92vh] overflow-y-auto no-scrollbar z-10"
+          className="relative w-full md:max-w-md md:rounded-3xl bg-white rounded-t-3xl p-5 pb-7 shadow-2xl border border-[#E5E7EB] max-h-[92vh] overflow-y-auto no-scrollbar z-10"
         >
           {/* Sheet Grab Handle for mobile */}
-          <div className="w-10 h-1 bg-[#D1CFCA] rounded-full mx-auto mb-3.5 md:hidden" />
+          <div className="w-10 h-1 bg-[#E5E7EB] rounded-full mx-auto mb-3.5 md:hidden" />
 
           {/* Header */}
-          <div className="flex items-center justify-between pb-3 border-b border-[#F1F0EC]">
+          <div className="flex items-center justify-between pb-3 border-b border-[#F3F4F4]">
             <div className="flex items-center gap-2.5">
               <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${accentBgLightClass}`}>
                 <CalendarIcon className="w-4.5 h-4.5" />
               </div>
               <div>
-                <h2 className="text-[16px] font-black text-[#171717] tracking-tight">
+                <h2 className="text-[16px] font-black text-[#021526] tracking-tight">
                   {title}
                 </h2>
-                <p className="text-[11px] text-[#777570] font-medium">
+                <p className="text-[11px] text-[#5F6368] font-medium">
                   Active selection:{' '}
-                  <span className="font-bold text-[#171717]">
+                  <span className="font-bold text-[#021526]">
                     {activeSelection}
                   </span>
                 </p>
@@ -209,7 +203,7 @@ export const DateMonthPickerSheet: React.FC<DateMonthPickerSheetProps> = ({
                 haptics.tap();
                 onClose();
               }}
-              className="w-7 h-7 rounded-full bg-[#F1F0EC] flex items-center justify-center text-[#777570] hover:text-[#171717] active-press cursor-pointer"
+              className="w-7 h-7 rounded-full bg-[#F3F4F4] flex items-center justify-center text-[#5F6368] hover:text-[#021526] active-press cursor-pointer"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -218,7 +212,7 @@ export const DateMonthPickerSheet: React.FC<DateMonthPickerSheetProps> = ({
           {/* Mode Switcher: Date vs Month vs Year */}
           {showModeTabs && (
             <div className="pt-3 pb-2">
-              <div className="flex items-center bg-[#FAF9F6] p-1 rounded-xl border border-[#E8E6E1]">
+              <div className="flex items-center bg-[#F3F4F4] p-1 rounded-xl border border-[#E5E7EB]">
                 {tabsList.map(({ tab, label }) => {
                   const isActive = activeTab === tab;
                   return (
@@ -230,8 +224,8 @@ export const DateMonthPickerSheet: React.FC<DateMonthPickerSheetProps> = ({
                       }}
                       className={`flex-1 py-1.5 rounded-lg text-[12px] font-bold transition-all active-press cursor-pointer flex items-center justify-center gap-1.5 ${
                         isActive
-                          ? 'bg-[#171717] text-white shadow-xs'
-                          : 'text-[#777570] hover:text-[#171717]'
+                          ? 'bg-[#F94001] text-white shadow-sm shadow-[#F94001]/20'
+                          : 'text-[#5F6368] hover:text-[#021526]'
                       }`}
                     >
                       <span>{label}</span>
@@ -250,8 +244,8 @@ export const DateMonthPickerSheet: React.FC<DateMonthPickerSheetProps> = ({
                   onClick={() => handleSelectPreset('2026')}
                   className={`px-3 py-1.5 rounded-xl text-[11.5px] font-bold shrink-0 border transition-all active-press cursor-pointer ${
                     activeSelection === '2026'
-                      ? 'bg-[#171717] text-white border-[#171717]'
-                      : 'bg-[#FAF9F6] border-[#E8E6E1] text-[#171717] hover:bg-[#F1F0EC]'
+                      ? 'bg-[#F94001] text-white border-[#F94001] shadow-sm shadow-[#F94001]/20'
+                      : 'bg-[#F3F4F4] border-[#E5E7EB] text-[#021526] hover:bg-[#F3F4F4]'
                   }`}
                 >
                   2026 (Current FY)
@@ -260,8 +254,8 @@ export const DateMonthPickerSheet: React.FC<DateMonthPickerSheetProps> = ({
                   onClick={() => handleSelectPreset('2025')}
                   className={`px-3 py-1.5 rounded-xl text-[11.5px] font-bold shrink-0 border transition-all active-press cursor-pointer ${
                     activeSelection === '2025'
-                      ? 'bg-[#171717] text-white border-[#171717]'
-                      : 'bg-[#FAF9F6] border-[#E8E6E1] text-[#171717] hover:bg-[#F1F0EC]'
+                      ? 'bg-[#F94001] text-white border-[#F94001] shadow-sm shadow-[#F94001]/20'
+                      : 'bg-[#F3F4F4] border-[#E5E7EB] text-[#021526] hover:bg-[#F3F4F4]'
                   }`}
                 >
                   2025 (FY 24-25)
@@ -270,8 +264,8 @@ export const DateMonthPickerSheet: React.FC<DateMonthPickerSheetProps> = ({
                   onClick={() => handleSelectPreset('2024')}
                   className={`px-3 py-1.5 rounded-xl text-[11.5px] font-bold shrink-0 border transition-all active-press cursor-pointer ${
                     activeSelection === '2024'
-                      ? 'bg-[#171717] text-white border-[#171717]'
-                      : 'bg-[#FAF9F6] border-[#E8E6E1] text-[#171717] hover:bg-[#F1F0EC]'
+                      ? 'bg-[#F94001] text-white border-[#F94001] shadow-sm shadow-[#F94001]/20'
+                      : 'bg-[#F3F4F4] border-[#E5E7EB] text-[#021526] hover:bg-[#F3F4F4]'
                   }`}
                 >
                   2024
@@ -283,8 +277,8 @@ export const DateMonthPickerSheet: React.FC<DateMonthPickerSheetProps> = ({
                   onClick={() => handleSelectPreset('28 Aug 2026')}
                   className={`px-3 py-1.5 rounded-xl text-[11.5px] font-bold shrink-0 border transition-all active-press cursor-pointer ${
                     activeSelection.includes('28 Aug')
-                      ? 'bg-[#171717] text-white border-[#171717]'
-                      : 'bg-[#FAF9F6] border-[#E8E6E1] text-[#171717] hover:bg-[#F1F0EC]'
+                      ? 'bg-[#F94001] text-white border-[#F94001] shadow-sm shadow-[#F94001]/20'
+                      : 'bg-[#F3F4F4] border-[#E5E7EB] text-[#021526] hover:bg-[#F3F4F4]'
                   }`}
                 >
                   Today (28 Aug)
@@ -293,8 +287,8 @@ export const DateMonthPickerSheet: React.FC<DateMonthPickerSheetProps> = ({
                   onClick={() => handleSelectPreset('29 Aug 2026')}
                   className={`px-3 py-1.5 rounded-xl text-[11.5px] font-bold shrink-0 border transition-all active-press cursor-pointer ${
                     activeSelection.includes('29 Aug')
-                      ? 'bg-[#171717] text-white border-[#171717]'
-                      : 'bg-[#FAF9F6] border-[#E8E6E1] text-[#171717] hover:bg-[#F1F0EC]'
+                      ? 'bg-[#F94001] text-white border-[#F94001] shadow-sm shadow-[#F94001]/20'
+                      : 'bg-[#F3F4F4] border-[#E5E7EB] text-[#021526] hover:bg-[#F3F4F4]'
                   }`}
                 >
                   Tomorrow (29 Aug)
@@ -303,8 +297,8 @@ export const DateMonthPickerSheet: React.FC<DateMonthPickerSheetProps> = ({
                   onClick={() => handleSelectPreset('Aug 2026')}
                   className={`px-3 py-1.5 rounded-xl text-[11.5px] font-bold shrink-0 border transition-all active-press cursor-pointer ${
                     activeSelection === 'Aug 2026'
-                      ? 'bg-[#171717] text-white border-[#171717]'
-                      : 'bg-[#FAF9F6] border-[#E8E6E1] text-[#171717] hover:bg-[#F1F0EC]'
+                      ? 'bg-[#F94001] text-white border-[#F94001] shadow-sm shadow-[#F94001]/20'
+                      : 'bg-[#F3F4F4] border-[#E5E7EB] text-[#021526] hover:bg-[#F3F4F4]'
                   }`}
                 >
                   August 2026
@@ -313,8 +307,8 @@ export const DateMonthPickerSheet: React.FC<DateMonthPickerSheetProps> = ({
                   onClick={() => handleSelectPreset('Jul 2026')}
                   className={`px-3 py-1.5 rounded-xl text-[11.5px] font-bold shrink-0 border transition-all active-press cursor-pointer ${
                     activeSelection === 'Jul 2026'
-                      ? 'bg-[#171717] text-white border-[#171717]'
-                      : 'bg-[#FAF9F6] border-[#E8E6E1] text-[#171717] hover:bg-[#F1F0EC]'
+                      ? 'bg-[#F94001] text-white border-[#F94001] shadow-sm shadow-[#F94001]/20'
+                      : 'bg-[#F3F4F4] border-[#E5E7EB] text-[#021526] hover:bg-[#F3F4F4]'
                   }`}
                 >
                   July 2026
@@ -328,19 +322,19 @@ export const DateMonthPickerSheet: React.FC<DateMonthPickerSheetProps> = ({
             <div className="space-y-3">
               {/* Month Navigation */}
               <div className="flex items-center justify-between px-1">
-                <span className="text-[14px] font-black text-[#171717]">
+                <span className="text-[14px] font-black text-[#021526]">
                   {MONTH_NAMES[viewMonth]} {viewYear}
                 </span>
                 <div className="flex items-center gap-1">
                   <button
                     onClick={handlePrevMonth}
-                    className="w-7 h-7 rounded-lg bg-[#FAF9F6] border border-[#E8E6E1] flex items-center justify-center text-[#171717] hover:bg-[#F1F0EC] cursor-pointer"
+                    className="w-7 h-7 rounded-lg bg-[#F3F4F4] border border-[#E5E7EB] flex items-center justify-center text-[#021526] hover:bg-[#F3F4F4] cursor-pointer"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </button>
                   <button
                     onClick={handleNextMonth}
-                    className="w-7 h-7 rounded-lg bg-[#FAF9F6] border border-[#E8E6E1] flex items-center justify-center text-[#171717] hover:bg-[#F1F0EC] cursor-pointer"
+                    className="w-7 h-7 rounded-lg bg-[#F3F4F4] border border-[#E5E7EB] flex items-center justify-center text-[#021526] hover:bg-[#F3F4F4] cursor-pointer"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </button>
@@ -350,7 +344,7 @@ export const DateMonthPickerSheet: React.FC<DateMonthPickerSheetProps> = ({
               {/* Day of Week Labels */}
               <div className="grid grid-cols-7 gap-1 text-center">
                 {DAYS_OF_WEEK.map((d) => (
-                  <span key={d} className="text-[11px] font-black text-[#777570] py-1">
+                  <span key={d} className="text-[11px] font-black text-[#5F6368] py-1">
                     {d}
                   </span>
                 ))}
@@ -377,15 +371,15 @@ export const DateMonthPickerSheet: React.FC<DateMonthPickerSheetProps> = ({
                       onClick={() => handleSelectDay(dayNum)}
                       className={`py-2 rounded-xl text-[12px] font-extrabold transition-all cursor-pointer flex flex-col items-center justify-center relative ${
                         isSelected
-                          ? 'bg-[#171717] text-white shadow-xs'
+                          ? 'bg-[#F94001] text-white shadow-sm shadow-[#F94001]/20'
                           : isToday
-                          ? 'bg-[#FF6B2C]/15 text-[#FF6B2C] font-black hover:bg-[#FF6B2C]/25'
-                          : 'text-[#171717] hover:bg-[#FAF9F6]'
+                          ? 'bg-[#F94001]/15 text-[#F94001] font-black hover:bg-[#F94001]/25'
+                          : 'text-[#021526] hover:bg-[#F3F4F4]'
                       }`}
                     >
                       <span>{dayNum}</span>
                       {isToday && !isSelected && (
-                        <span className="w-1 h-1 rounded-full bg-[#FF6B2C] absolute bottom-1" />
+                        <span className="w-1 h-1 rounded-full bg-[#F94001] absolute bottom-1" />
                       )}
                     </button>
                   );
@@ -405,7 +399,7 @@ export const DateMonthPickerSheet: React.FC<DateMonthPickerSheetProps> = ({
                       haptics.tap();
                       setViewYear((y) => y - 1);
                     }}
-                    className="w-6 h-6 rounded-lg bg-[#FAF9F6] border border-[#E8E6E1] flex items-center justify-center text-[#171717] hover:bg-[#F1F0EC] cursor-pointer"
+                    className="w-6 h-6 rounded-lg bg-[#F3F4F4] border border-[#E5E7EB] flex items-center justify-center text-[#021526] hover:bg-[#F3F4F4] cursor-pointer"
                   >
                     <ChevronLeft className="w-3.5 h-3.5" />
                   </button>
@@ -415,7 +409,7 @@ export const DateMonthPickerSheet: React.FC<DateMonthPickerSheetProps> = ({
                       haptics.tap();
                       setActiveTab('year');
                     }}
-                    className="text-[14px] font-black text-[#171717] hover:text-[#2FA66A] cursor-pointer px-1 rounded hover:bg-[#FAF9F6] transition-colors"
+                    className="text-[14px] font-black text-[#021526] hover:text-[#16A34A] cursor-pointer px-1 rounded hover:bg-[#F3F4F4] transition-colors"
                     title="Switch to Year Picker"
                   >
                     {viewYear}
@@ -426,12 +420,12 @@ export const DateMonthPickerSheet: React.FC<DateMonthPickerSheetProps> = ({
                       haptics.tap();
                       setViewYear((y) => y + 1);
                     }}
-                    className="w-6 h-6 rounded-lg bg-[#FAF9F6] border border-[#E8E6E1] flex items-center justify-center text-[#171717] hover:bg-[#F1F0EC] cursor-pointer"
+                    className="w-6 h-6 rounded-lg bg-[#F3F4F4] border border-[#E5E7EB] flex items-center justify-center text-[#021526] hover:bg-[#F3F4F4] cursor-pointer"
                   >
                     <ChevronRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
-                <span className="text-[10px] font-bold text-[#2FA66A] bg-[#2FA66A]/10 px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-bold text-[#16A34A] bg-[#16A34A]/10 px-2 py-0.5 rounded-full">
                   Financial Year {viewYear}
                 </span>
               </div>
@@ -448,8 +442,8 @@ export const DateMonthPickerSheet: React.FC<DateMonthPickerSheetProps> = ({
                       onClick={() => handleSelectMonth(idx)}
                       className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${
                         isSelected
-                          ? 'bg-[#171717] text-white border-[#171717] shadow-xs'
-                          : 'bg-[#FAF9F6] border-[#E8E6E1] text-[#171717] hover:bg-[#F1F0EC]'
+                          ? 'bg-[#F94001] text-white border-[#F94001] shadow-sm shadow-[#F94001]/20'
+                          : 'bg-[#F3F4F4] border-[#E5E7EB] text-[#021526] hover:bg-[#F3F4F4]'
                       }`}
                     >
                       <span className="text-[13px] font-black block">{m}</span>
@@ -458,8 +452,8 @@ export const DateMonthPickerSheet: React.FC<DateMonthPickerSheetProps> = ({
                           isSelected
                             ? 'text-white/80'
                             : isCurrent
-                            ? 'text-[#FF6B2C]'
-                            : 'text-[#777570]'
+                            ? 'text-[#F94001]'
+                            : 'text-[#5F6368]'
                         }`}
                       >
                         {isCurrent ? 'Current Month' : `${MONTH_NAMES[idx]}`}
@@ -482,11 +476,11 @@ export const DateMonthPickerSheet: React.FC<DateMonthPickerSheetProps> = ({
                       haptics.tap();
                       setDecadeStart((d) => d - 10);
                     }}
-                    className="w-7 h-7 rounded-lg bg-[#FAF9F6] border border-[#E8E6E1] flex items-center justify-center text-[#171717] hover:bg-[#F1F0EC] cursor-pointer"
+                    className="w-7 h-7 rounded-lg bg-[#F3F4F4] border border-[#E5E7EB] flex items-center justify-center text-[#021526] hover:bg-[#F3F4F4] cursor-pointer"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </button>
-                  <span className="text-[14px] font-black text-[#171717]">
+                  <span className="text-[14px] font-black text-[#021526]">
                     {decadeStart} – {decadeStart + 9}
                   </span>
                   <button
@@ -495,12 +489,12 @@ export const DateMonthPickerSheet: React.FC<DateMonthPickerSheetProps> = ({
                       haptics.tap();
                       setDecadeStart((d) => d + 10);
                     }}
-                    className="w-7 h-7 rounded-lg bg-[#FAF9F6] border border-[#E8E6E1] flex items-center justify-center text-[#171717] hover:bg-[#F1F0EC] cursor-pointer"
+                    className="w-7 h-7 rounded-lg bg-[#F3F4F4] border border-[#E5E7EB] flex items-center justify-center text-[#021526] hover:bg-[#F3F4F4] cursor-pointer"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </button>
                 </div>
-                <span className="text-[10px] font-bold text-[#2FA66A] bg-[#2FA66A]/10 px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-bold text-[#16A34A] bg-[#16A34A]/10 px-2 py-0.5 rounded-full">
                   Annual Statements
                 </span>
               </div>
@@ -519,25 +513,25 @@ export const DateMonthPickerSheet: React.FC<DateMonthPickerSheetProps> = ({
                       onClick={() => handleSelectYear(yr)}
                       className={`p-3 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                         isSelected
-                          ? 'bg-[#171717] text-white border-[#171717] shadow-xs ring-2 ring-[#2FA66A]/30'
-                          : 'bg-[#FAF9F6] border-[#E8E6E1] text-[#171717] hover:bg-[#F1F0EC]'
+                          ? 'bg-[#F94001] text-white border-[#F94001] shadow-sm shadow-[#F94001]/20'
+                          : 'bg-[#F3F4F4] border-[#E5E7EB] text-[#021526] hover:bg-[#F3F4F4]'
                       }`}
                     >
                       <div className="flex items-center justify-between">
                         <span className="text-[14px] font-black">{yr}</span>
                         {isSelected ? (
-                          <div className="w-4 h-4 rounded-full bg-[#2FA66A] text-white flex items-center justify-center text-[10px]">
+                          <div className="w-4 h-4 rounded-full bg-[#16A34A] text-white flex items-center justify-center text-[10px]">
                             ✓
                           </div>
                         ) : isCurrent ? (
-                          <span className="text-[8.5px] font-bold text-[#2FA66A] bg-[#2FA66A]/15 px-1 py-0.2 rounded">
+                          <span className="text-[8.5px] font-bold text-[#16A34A] bg-[#16A34A]/15 px-1 py-0.2 rounded">
                             Active
                           </span>
                         ) : null}
                       </div>
                       <span
                         className={`text-[9px] font-bold block mt-1 ${
-                          isSelected ? 'text-white/75' : 'text-[#777570]'
+                          isSelected ? 'text-white/75' : 'text-[#5F6368]'
                         }`}
                       >
                         {isCurrent ? 'Current Fiscal' : `FY ${yr - 1}-${String(yr).slice(-2)}`}
@@ -550,8 +544,8 @@ export const DateMonthPickerSheet: React.FC<DateMonthPickerSheetProps> = ({
           )}
 
           {/* Footer Action */}
-          <div className="pt-3 mt-3 border-t border-[#F1F0EC] flex items-center justify-between">
-            <span className="text-[11px] text-[#777570] flex items-center gap-1">
+          <div className="pt-3 mt-3 border-t border-[#F3F4F4] flex items-center justify-between">
+            <span className="text-[11px] text-[#5F6368] flex items-center gap-1">
               <span className={`w-1.5 h-1.5 rounded-full ${dotColorClass}`} />
               <span>TurfTown Live System Time</span>
             </span>
@@ -561,7 +555,7 @@ export const DateMonthPickerSheet: React.FC<DateMonthPickerSheetProps> = ({
                 haptics.tap();
                 onClose();
               }}
-              className="px-4 py-1.5 rounded-xl bg-[#171717] text-white text-[12px] font-bold cursor-pointer"
+              className="px-4 py-1.5 rounded-xl bg-[#021526] text-white text-[12px] font-bold cursor-pointer"
             >
               Done
             </button>

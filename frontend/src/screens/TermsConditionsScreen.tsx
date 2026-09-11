@@ -102,17 +102,17 @@ export const TermsConditionsScreen: React.FC = () => {
             haptics.tap();
             goBack();
           }}
-          className="md:hidden w-9 h-9 -ml-1 rounded-xl flex items-center justify-center text-[#171717] hover:bg-[#E8E6E1]/50 active-press transition-colors cursor-pointer"
+          className="md:hidden w-9 h-9 -ml-1 rounded-xl flex items-center justify-center text-[#021526] hover:bg-[#E5E7EB]/50 active-press transition-colors cursor-pointer"
           aria-label="Back"
         >
           <ChevronLeft className="w-5 h-5 stroke-[2.4]" />
         </button>
 
         <div className="text-center">
-          <h1 className="text-[17px] font-extrabold text-[#171717] leading-none">
+          <h1 className="text-[17px] font-extrabold text-[#021526] leading-none">
             Terms & Conditions
           </h1>
-          <span className="text-[11px] text-[#777570] mt-0.5 block">
+          <span className="text-[11px] text-[#5F6368] mt-0.5 block">
             Partner Agreement & Service Terms
           </span>
         </div>
@@ -123,7 +123,7 @@ export const TermsConditionsScreen: React.FC = () => {
       {/* Hero Overview Card */}
       <div className="relative overflow-hidden bg-gradient-to-br from-[#1C1C20] via-[#141417] to-[#0E0E10] text-white rounded-[22px] p-4 shadow-md space-y-2.5 border border-white/[0.08]">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-[#FF6B2C]/20 text-[#FF6B2C] flex items-center justify-center">
+          <div className="w-8 h-8 rounded-xl bg-[#F94001]/20 text-[#F94001] flex items-center justify-center">
             <FileText className="w-4.5 h-4.5" />
           </div>
           <div>
@@ -143,17 +143,17 @@ export const TermsConditionsScreen: React.FC = () => {
       </div>
 
       {termsData?.rich_text_html ? (
-        <div className="bg-white rounded-2xl p-5 border border-[#E8E6E1] shadow-2xs">
+        <div className="bg-white rounded-2xl p-5 border border-[#E5E7EB] shadow-2xs">
           <div
             className="prose prose-sm max-w-none text-[#262524] leading-relaxed
-              [&_h1]:text-[18px] [&_h1]:font-black [&_h1]:text-[#171717] [&_h1]:mb-2
-              [&_h2]:text-[16px] [&_h2]:font-extrabold [&_h2]:text-[#171717] [&_h2]:mb-2
-              [&_h3]:text-[14px] [&_h3]:font-bold [&_h3]:text-[#171717] [&_h3]:mb-1.5 [&_h3]:mt-3
-              [&_p]:mb-2.5 [&_p]:text-[#55534E] [&_p]:text-[12.5px]
-              [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-2.5 [&_ul]:space-y-1 [&_ul]:text-[12.5px] [&_ul]:text-[#55534E]
-              [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-2.5 [&_ol]:space-y-1 [&_ol]:text-[12.5px] [&_ol]:text-[#55534E]
-              [&_blockquote]:border-l-3 [&_blockquote]:border-[#FF6B2C] [&_blockquote]:bg-[#FAF9F6] [&_blockquote]:p-3 [&_blockquote]:rounded-r-xl [&_blockquote]:text-[12px] [&_blockquote]:text-[#403E3B] [&_blockquote]:italic [&_blockquote]:my-3
-              [&_strong]:text-[#171717]"
+              [&_h1]:text-[18px] [&_h1]:font-black [&_h1]:text-[#021526] [&_h1]:mb-2
+              [&_h2]:text-[16px] [&_h2]:font-extrabold [&_h2]:text-[#021526] [&_h2]:mb-2
+              [&_h3]:text-[14px] [&_h3]:font-bold [&_h3]:text-[#021526] [&_h3]:mb-1.5 [&_h3]:mt-3
+              [&_p]:mb-2.5 [&_p]:text-[#5F6368] [&_p]:text-[12.5px]
+              [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-2.5 [&_ul]:space-y-1 [&_ul]:text-[12.5px] [&_ul]:text-[#5F6368]
+              [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-2.5 [&_ol]:space-y-1 [&_ol]:text-[12.5px] [&_ol]:text-[#5F6368]
+              [&_blockquote]:border-l-3 [&_blockquote]:border-[#F94001] [&_blockquote]:bg-[#F3F4F4] [&_blockquote]:p-3 [&_blockquote]:rounded-r-xl [&_blockquote]:text-[12px] [&_blockquote]:text-[#403E3B] [&_blockquote]:italic [&_blockquote]:my-3
+              [&_strong]:text-[#021526]"
             dangerouslySetInnerHTML={{ __html: termsData.rich_text_html }}
           />
         </div>
@@ -165,17 +165,17 @@ export const TermsConditionsScreen: React.FC = () => {
           return (
             <div
               key={item.id}
-              className="bg-white rounded-2xl p-4 border border-[#E8E6E1] shadow-2xs space-y-2"
+              className="bg-white rounded-2xl p-4 border border-[#E5E7EB] shadow-2xs space-y-2"
             >
               <div className="flex items-center gap-2.5">
-                <div className="w-7 h-7 rounded-lg bg-[#FAF9F6] text-[#171717] flex items-center justify-center border border-[#E8E6E1]">
+                <div className="w-7 h-7 rounded-lg bg-[#F3F4F4] text-[#021526] flex items-center justify-center border border-[#E5E7EB]">
                   <Icon className="w-3.5 h-3.5" />
                 </div>
-                <h3 className="text-[13.5px] font-extrabold text-[#171717]">
+                <h3 className="text-[13.5px] font-extrabold text-[#021526]">
                   {item.title}
                 </h3>
               </div>
-              <p className="text-[12px] text-[#55534E] leading-relaxed pl-9.5">
+              <p className="text-[12px] text-[#5F6368] leading-relaxed pl-9.5">
                 {item.content}
               </p>
             </div>
@@ -185,17 +185,17 @@ export const TermsConditionsScreen: React.FC = () => {
       )}
 
       {/* Support & Legal Queries */}
-      <div className="bg-[#FAF9F6] rounded-2xl p-4 border border-[#E8E6E1] space-y-2">
+      <div className="bg-[#F3F4F4] rounded-2xl p-4 border border-[#E5E7EB] space-y-2">
         <div className="flex items-center gap-2">
-          <Scale className="w-4 h-4 text-[#FF6B2C]" />
-          <span className="text-[12.5px] font-bold text-[#171717]">
+          <Scale className="w-4 h-4 text-[#F94001]" />
+          <span className="text-[12.5px] font-bold text-[#021526]">
             Legal & Partner Inquiries
           </span>
         </div>
-        <p className="text-[11.5px] text-[#777570] leading-relaxed">
+        <p className="text-[11.5px] text-[#5F6368] leading-relaxed">
           Questions regarding your partner contract, commercial rates, or dispute
           resolution can be submitted through partner legal support at{' '}
-          <span className="font-bold text-[#171717]">legal@turftown.app</span>.
+          <span className="font-bold text-[#021526]">legal@turftown.app</span>.
         </p>
       </div>
     </div>

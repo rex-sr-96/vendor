@@ -327,24 +327,24 @@ export const ExportReportScreen: React.FC = () => {
           haptics.tap();
           goBack();
         }}
-        className="md:hidden flex items-center gap-1.5 text-[12.5px] font-bold text-[#FF6B2C] active-press cursor-pointer pb-1"
+        className="md:hidden flex items-center gap-1.5 text-[12.5px] font-bold text-[#F94001] active-press cursor-pointer pb-1"
       >
         <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
         <span>Back to Settings</span>
       </button>
 
       {/* Header */}
-      <div className="flex items-center justify-between pb-2 border-b border-[#E8E6E1]">
+      <div className="flex items-center justify-between pb-2 border-b border-[#E5E7EB]">
         <div>
-          <h1 className="text-[21px] font-black text-[#171717] tracking-tight">
+          <h1 className="text-[21px] font-black text-[#021526] tracking-tight">
             Export Audit Reports
           </h1>
-          <p className="text-[11.5px] font-medium text-[#777570]">
+          <p className="text-[11.5px] font-medium text-[#5F6368]">
             Verified financial statements for bookings, customer collections & bank settlements
           </p>
         </div>
 
-        <div className="w-9 h-9 rounded-xl bg-[#2FA66A]/10 text-[#2FA66A] flex items-center justify-center">
+        <div className="w-9 h-9 rounded-xl bg-[#16A34A]/10 text-[#16A34A] flex items-center justify-center">
           <FileSpreadsheet className="w-4.5 h-4.5" />
         </div>
       </div>
@@ -358,8 +358,8 @@ export const ExportReportScreen: React.FC = () => {
         {/* ========================================== */}
         <div className="w-full lg:w-[410px] shrink-0 space-y-4">
           {/* STEP 1: REPORT DOMAIN */}
-          <div className="bg-white rounded-2xl p-4 border border-[#E8E6E1] shadow-2xs space-y-3">
-            <label className="text-[11px] font-black text-[#777570] uppercase tracking-wider block">
+          <div className="bg-white rounded-2xl p-4 border border-[#E5E7EB] shadow-2xs space-y-3">
+            <label className="text-[11px] font-black text-[#5F6368] uppercase tracking-wider block">
               1. Report Category
             </label>
             <div className="grid grid-cols-2 gap-2">
@@ -374,11 +374,11 @@ export const ExportReportScreen: React.FC = () => {
                 }}
                 className={`py-2 px-3 rounded-xl font-black text-[12.5px] flex items-center justify-center gap-2 transition-all border cursor-pointer ${
                   reportDomain === 'bookings'
-                    ? 'bg-[#171717] text-white border-[#171717] shadow-xs'
-                    : 'bg-[#FAF9F6] text-[#777570] border-[#E8E6E1] hover:text-[#171717]'
+                    ? 'bg-[#021526] text-white border-[#021526] shadow-sm'
+                    : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:text-[#021526]'
                 }`}
               >
-                <CalendarIcon className="w-4 h-4 text-[#FF6B2C]" />
+                <CalendarIcon className={`w-4 h-4 ${reportDomain === 'bookings' ? 'text-[#F94001]' : 'text-[#5F6368]'}`} />
                 <span>Bookings</span>
               </button>
 
@@ -390,19 +390,19 @@ export const ExportReportScreen: React.FC = () => {
                 }}
                 className={`py-2 px-3 rounded-xl font-black text-[12.5px] flex items-center justify-center gap-2 transition-all border cursor-pointer ${
                   reportDomain === 'revenue'
-                    ? 'bg-[#171717] text-white border-[#171717] shadow-xs'
-                    : 'bg-[#FAF9F6] text-[#777570] border-[#E8E6E1] hover:text-[#171717]'
+                    ? 'bg-[#021526] text-white border-[#021526] shadow-sm'
+                    : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:text-[#021526]'
                 }`}
               >
-                <Wallet className="w-4 h-4 text-[#2FA66A]" />
+                <Wallet className={`w-4 h-4 ${reportDomain === 'revenue' ? 'text-[#F94001]' : 'text-[#5F6368]'}`} />
                 <span>Revenue & Payouts</span>
               </button>
             </div>
 
             {/* REVENUE HAS 2 TYPES: BOOKING PAYMENTS VS SETTLEMENTS */}
             {reportDomain === 'revenue' && (
-              <div className="pt-2 border-t border-[#F1F0EC] space-y-2">
-                <span className="text-[10px] font-extrabold text-[#777570] uppercase block">
+              <div className="pt-2 border-t border-[#F3F4F4] space-y-2">
+                <span className="text-[10px] font-extrabold text-[#5F6368] uppercase block">
                   Select Revenue Report Type:
                 </span>
                 <div className="grid grid-cols-2 gap-2">
@@ -417,15 +417,15 @@ export const ExportReportScreen: React.FC = () => {
                     }}
                     className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
                       revenueType === 'booking_payments'
-                        ? 'bg-[#171717] text-white border-[#171717] shadow-xs'
-                        : 'bg-[#FAF9F6] border-[#E8E6E1] text-[#171717] hover:bg-[#F1F0EC]'
+                        ? 'bg-[#FFF1EC] text-[#021526] border-2 border-[#F94001] shadow-2xs'
+                        : 'bg-[#F3F4F4] border-[#E5E7EB] text-[#021526] hover:bg-white'
                     }`}
                   >
                     <div className="flex items-center gap-1.5">
-                      <CreditCard className={`w-3.5 h-3.5 ${revenueType === 'booking_payments' ? 'text-[#FF6B2C]' : 'text-[#777570]'}`} />
+                      <CreditCard className="w-3.5 h-3.5 text-[#F94001]" />
                       <span className="text-[11.5px] font-black">Booking Payments</span>
                     </div>
-                    <span className={`text-[9.5px] block mt-0.5 ${revenueType === 'booking_payments' ? 'text-white/70' : 'text-[#777570]'}`}>
+                    <span className={`text-[9.5px] block mt-0.5 ${revenueType === 'booking_payments' ? 'text-[#021526]/70 font-medium' : 'text-[#5F6368]'}`}>
                       Customer Collections (UPI/Cash)
                     </span>
                   </button>
@@ -441,15 +441,15 @@ export const ExportReportScreen: React.FC = () => {
                     }}
                     className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
                       revenueType === 'bank_settlements'
-                        ? 'bg-[#171717] text-white border-[#171717] shadow-xs'
-                        : 'bg-[#FAF9F6] border-[#E8E6E1] text-[#171717] hover:bg-[#F1F0EC]'
+                        ? 'bg-[#FFF1EC] text-[#021526] border-2 border-[#F94001] shadow-2xs'
+                        : 'bg-[#F3F4F4] border-[#E5E7EB] text-[#021526] hover:bg-white'
                     }`}
                   >
                     <div className="flex items-center gap-1.5">
-                      <Building className={`w-3.5 h-3.5 ${revenueType === 'bank_settlements' ? 'text-[#2FA66A]' : 'text-[#777570]'}`} />
+                      <Building className="w-3.5 h-3.5 text-[#16A34A]" />
                       <span className="text-[11.5px] font-black">Bank Settlements</span>
                     </div>
-                    <span className={`text-[9.5px] block mt-0.5 ${revenueType === 'bank_settlements' ? 'text-white/70' : 'text-[#777570]'}`}>
+                    <span className={`text-[9.5px] block mt-0.5 ${revenueType === 'bank_settlements' ? 'text-[#021526]/70 font-medium' : 'text-[#5F6368]'}`}>
                       Net Bank Payouts Credited
                     </span>
                   </button>
@@ -459,12 +459,12 @@ export const ExportReportScreen: React.FC = () => {
           </div>
 
           {/* STEP 2: TIMEFRAME (For Settlements: Strictly Monthly & Yearly; For others: Day, Month, Custom) */}
-          <div className="bg-white rounded-2xl p-4 border border-[#E8E6E1] shadow-2xs space-y-3">
-            <div className="flex items-center justify-between pb-1 border-b border-[#F1F0EC]">
-              <label className="text-[11px] font-black text-[#777570] uppercase tracking-wider">
+          <div className="bg-white rounded-2xl p-4 border border-[#E5E7EB] shadow-2xs space-y-3">
+            <div className="flex items-center justify-between pb-1 border-b border-[#F3F4F4]">
+              <label className="text-[11px] font-black text-[#5F6368] uppercase tracking-wider">
                 2. Audit Timeframe
               </label>
-              <span className="text-[10px] font-bold text-[#FF6B2C] bg-[#FF6B2C]/10 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] font-bold text-[#F94001] bg-[#F94001]/10 px-2 py-0.5 rounded-full">
                 {timeframe === 'day' ? 'Single Day' : timeframe === 'month' ? 'Monthly Audit' : timeframe === 'year' ? 'Annual Payouts' : 'Date Range'}
               </span>
             </div>
@@ -481,8 +481,8 @@ export const ExportReportScreen: React.FC = () => {
                     }}
                     className={`py-2 px-3 rounded-xl font-black text-[12px] transition-all border cursor-pointer capitalize text-center ${
                       timeframe === 'day'
-                        ? 'bg-[#171717] text-white border-[#171717] shadow-xs'
-                        : 'bg-[#FAF9F6] text-[#777570] border-[#E8E6E1] hover:text-[#171717]'
+                        ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 shadow-2xs font-black'
+                        : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:text-[#021526]'
                     }`}
                   >
                     Day
@@ -496,8 +496,8 @@ export const ExportReportScreen: React.FC = () => {
                     }}
                     className={`py-2 px-3 rounded-xl font-black text-[12px] transition-all border cursor-pointer capitalize text-center ${
                       timeframe === 'month'
-                        ? 'bg-[#171717] text-white border-[#171717] shadow-xs'
-                        : 'bg-[#FAF9F6] text-[#777570] border-[#E8E6E1] hover:text-[#171717]'
+                        ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 shadow-2xs font-black'
+                        : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:text-[#021526]'
                     }`}
                   >
                     Monthly
@@ -511,8 +511,8 @@ export const ExportReportScreen: React.FC = () => {
                     }}
                     className={`py-2 px-3 rounded-xl font-black text-[12px] transition-all border cursor-pointer capitalize text-center ${
                       timeframe === 'custom'
-                        ? 'bg-[#171717] text-white border-[#171717] shadow-xs'
-                        : 'bg-[#FAF9F6] text-[#777570] border-[#E8E6E1] hover:text-[#171717]'
+                        ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 shadow-2xs font-black'
+                        : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:text-[#021526]'
                     }`}
                   >
                     Custom Range
@@ -528,8 +528,8 @@ export const ExportReportScreen: React.FC = () => {
                     }}
                     className={`py-2 px-3 rounded-xl font-black text-[12px] transition-all border cursor-pointer capitalize text-center ${
                       timeframe === 'month'
-                        ? 'bg-[#171717] text-white border-[#171717] shadow-xs'
-                        : 'bg-[#FAF9F6] text-[#777570] border-[#E8E6E1] hover:text-[#171717]'
+                        ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 shadow-2xs font-black'
+                        : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:text-[#021526]'
                     }`}
                   >
                     Monthly
@@ -544,8 +544,8 @@ export const ExportReportScreen: React.FC = () => {
                     }}
                     className={`py-2 px-3 rounded-xl font-black text-[12px] transition-all border cursor-pointer capitalize text-center ${
                       timeframe === 'year'
-                        ? 'bg-[#171717] text-white border-[#171717] shadow-xs'
-                        : 'bg-[#FAF9F6] text-[#777570] border-[#E8E6E1] hover:text-[#171717]'
+                        ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 shadow-2xs font-black'
+                        : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:text-[#021526]'
                     }`}
                   >
                     Yearly
@@ -558,10 +558,10 @@ export const ExportReportScreen: React.FC = () => {
             <div className="pt-1">
               {timeframe === 'day' && (
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between p-2.5 bg-[#FAF9F6] rounded-xl border border-[#E8E6E1]">
+                  <div className="flex items-center justify-between p-2.5 bg-[#F3F4F4] rounded-xl border border-[#E5E7EB]">
                     <div className="flex items-center gap-2">
-                      <CalendarIcon className="w-4 h-4 text-[#FF6B2C]" />
-                      <span className="text-[13px] font-black text-[#171717]">{selectedDayText}</span>
+                      <CalendarIcon className="w-4 h-4 text-[#F94001]" />
+                      <span className="text-[13px] font-black text-[#021526]">{selectedDayText}</span>
                     </div>
 
                     <button
@@ -570,23 +570,23 @@ export const ExportReportScreen: React.FC = () => {
                         haptics.tap();
                         setIsDatePickerOpen(true);
                       }}
-                      className="h-7 px-3 rounded-lg bg-[#171717] hover:bg-[#2b2b2b] text-white text-[11px] font-bold cursor-pointer transition-colors"
+                      className="h-7 px-3 rounded-lg bg-[#021526] hover:bg-black text-white text-[11px] font-bold cursor-pointer transition-colors shadow-2xs"
                     >
                       Change Date
                     </button>
                   </div>
 
                   <div className="flex items-center gap-1.5 pt-0.5">
-                    <span className="text-[10.5px] font-bold text-[#777570]">Presets:</span>
+                    <span className="text-[10.5px] font-bold text-[#5F6368]">Presets:</span>
                     {['28 Aug 2026', '27 Aug 2026', '26 Aug 2026'].map((p) => (
                       <button
                         key={p}
                         type="button"
                         onClick={() => setSelectedDayText(p)}
-                        className={`px-2 py-0.5 rounded-lg text-[10.5px] font-bold border cursor-pointer ${
+                        className={`px-2 py-0.5 rounded-lg text-[10.5px] font-bold border cursor-pointer transition-colors ${
                           selectedDayText === p
-                            ? 'bg-[#171717] text-white border-[#171717]'
-                            : 'bg-[#FAF9F6] text-[#777570] border-[#E8E6E1]'
+                            ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 shadow-2xs'
+                            : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:text-[#021526]'
                         }`}
                       >
                         {p.slice(0, 6)}
@@ -598,10 +598,10 @@ export const ExportReportScreen: React.FC = () => {
 
               {timeframe === 'month' && (
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between p-2.5 bg-[#FAF9F6] rounded-xl border border-[#E8E6E1]">
+                  <div className="flex items-center justify-between p-2.5 bg-[#F3F4F4] rounded-xl border border-[#E5E7EB]">
                     <div className="flex items-center gap-2">
-                      <CalendarIcon className="w-4 h-4 text-[#2FA66A]" />
-                      <span className="text-[13px] font-black text-[#171717]">
+                      <CalendarIcon className="w-4 h-4 text-[#16A34A]" />
+                      <span className="text-[13px] font-black text-[#021526]">
                         {selectedMonthText === '2026' ? 'Full Year 2026' : `Month: ${selectedMonthText}`}
                       </span>
                     </div>
@@ -612,7 +612,7 @@ export const ExportReportScreen: React.FC = () => {
                         haptics.tap();
                         setIsMonthPickerOpen(true);
                       }}
-                      className="h-7 px-3 rounded-lg bg-[#171717] hover:bg-[#2b2b2b] text-white text-[11px] font-bold cursor-pointer transition-colors"
+                      className="h-7 px-3 rounded-lg bg-[#021526] hover:bg-black text-white text-[11px] font-bold cursor-pointer transition-colors shadow-2xs"
                     >
                       Change Month
                     </button>
@@ -629,10 +629,10 @@ export const ExportReportScreen: React.FC = () => {
                         key={m.value}
                         type="button"
                         onClick={() => setSelectedMonthText(m.value)}
-                        className={`py-1.5 rounded-lg text-[10.5px] font-bold border text-center cursor-pointer ${
+                        className={`py-1.5 rounded-lg text-[10.5px] font-bold border text-center cursor-pointer transition-colors ${
                           selectedMonthText === m.value
-                            ? 'bg-[#171717] text-white border-[#171717]'
-                            : 'bg-[#FAF9F6] text-[#777570] border-[#E8E6E1]'
+                            ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 shadow-2xs font-black'
+                            : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:text-[#021526]'
                         }`}
                       >
                         {m.label}
@@ -650,15 +650,15 @@ export const ExportReportScreen: React.FC = () => {
                       haptics.tap();
                       setIsYearPickerOpen(true);
                     }}
-                    className="flex items-center justify-between p-2.5 bg-[#FAF9F6] rounded-xl border border-[#E8E6E1] cursor-pointer hover:bg-[#F1F0EC] transition-colors"
+                    className="flex items-center justify-between p-2.5 bg-[#F3F4F4] rounded-xl border border-[#E5E7EB] cursor-pointer hover:bg-[#F3F4F4] transition-colors"
                   >
                     <div className="flex items-center gap-2">
-                      <Building className="w-4 h-4 text-[#2FA66A]" />
+                      <Building className="w-4 h-4 text-[#16A34A]" />
                       <div>
-                        <span className="text-[13px] font-black text-[#171717] block">
+                        <span className="text-[13px] font-black text-[#021526] block">
                           Financial Year {selectedYearText}
                         </span>
-                        <span className="text-[10px] text-[#777570] font-medium">
+                        <span className="text-[10px] text-[#5F6368] font-medium">
                           Annual 12-Month Settlement Ledger
                         </span>
                       </div>
@@ -671,7 +671,7 @@ export const ExportReportScreen: React.FC = () => {
                         haptics.tap();
                         setIsYearPickerOpen(true);
                       }}
-                      className="h-7 px-3 rounded-lg bg-[#171717] hover:bg-[#2b2b2b] text-white text-[11px] font-bold cursor-pointer transition-colors"
+                      className="h-7 px-3 rounded-lg bg-[#021526] hover:bg-black text-white text-[11px] font-bold cursor-pointer transition-colors shadow-2xs"
                     >
                       Change Year
                     </button>
@@ -688,8 +688,8 @@ export const ExportReportScreen: React.FC = () => {
                         }}
                         className={`py-1.5 rounded-lg text-[10.5px] font-bold border text-center cursor-pointer transition-all ${
                           selectedYearText === yr
-                            ? 'bg-[#171717] text-white border-[#171717] shadow-2xs'
-                            : 'bg-[#FAF9F6] text-[#777570] border-[#E8E6E1] hover:text-[#171717] hover:bg-[#F1F0EC]'
+                            ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 shadow-2xs font-black'
+                            : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:text-[#021526] hover:bg-[#F3F4F4]'
                         }`}
                       >
                         {yr} {yr === '2026' ? '★' : ''}
@@ -707,10 +707,10 @@ export const ExportReportScreen: React.FC = () => {
                       setCustomPickingTarget('start');
                       setIsDatePickerOpen(true);
                     }}
-                    className="p-2.5 bg-[#FAF9F6] rounded-xl border border-[#E8E6E1] cursor-pointer"
+                    className="p-2.5 bg-[#F3F4F4] rounded-xl border border-[#E5E7EB] cursor-pointer"
                   >
-                    <span className="text-[9.5px] font-bold text-[#777570] uppercase block">Start Date</span>
-                    <span className="text-[12px] font-black text-[#171717]">{customStartText}</span>
+                    <span className="text-[9.5px] font-bold text-[#5F6368] uppercase block">Start Date</span>
+                    <span className="text-[12px] font-black text-[#021526]">{customStartText}</span>
                   </div>
 
                   <div
@@ -719,10 +719,10 @@ export const ExportReportScreen: React.FC = () => {
                       setCustomPickingTarget('end');
                       setIsDatePickerOpen(true);
                     }}
-                    className="p-2.5 bg-[#FAF9F6] rounded-xl border border-[#E8E6E1] cursor-pointer"
+                    className="p-2.5 bg-[#F3F4F4] rounded-xl border border-[#E5E7EB] cursor-pointer"
                   >
-                    <span className="text-[9.5px] font-bold text-[#777570] uppercase block">End Date</span>
-                    <span className="text-[12px] font-black text-[#171717]">{customEndText}</span>
+                    <span className="text-[9.5px] font-bold text-[#5F6368] uppercase block">End Date</span>
+                    <span className="text-[12px] font-black text-[#021526]">{customEndText}</span>
                   </div>
                 </div>
               )}
@@ -730,14 +730,14 @@ export const ExportReportScreen: React.FC = () => {
           </div>
 
           {/* STEP 3: EXPORT DOCUMENT FORMAT */}
-          <div className="bg-white rounded-2xl p-4 border border-[#E8E6E1] shadow-2xs space-y-2.5">
-            <label className="text-[11px] font-black text-[#777570] uppercase tracking-wider block">
+          <div className="bg-white rounded-2xl p-4 border border-[#E5E7EB] shadow-2xs space-y-2.5">
+            <label className="text-[11px] font-black text-[#5F6368] uppercase tracking-wider block">
               3. Document Format
             </label>
             <div className="grid grid-cols-3 gap-2">
               {[
-                { id: 'pdf' as const, label: 'PDF Statement', icon: FileText, color: 'text-[#D94B4B]' },
-                { id: 'excel' as const, label: 'Excel (.xlsx)', icon: FileSpreadsheet, color: 'text-[#2FA66A]' },
+                { id: 'pdf' as const, label: 'PDF Statement', icon: FileText, color: 'text-[#DC2626]' },
+                { id: 'excel' as const, label: 'Excel (.xlsx)', icon: FileSpreadsheet, color: 'text-[#16A34A]' },
                 { id: 'csv' as const, label: 'CSV File', icon: FileText, color: 'text-[#3B82F6]' },
               ].map((fmt) => {
                 const isSelected = format === fmt.id;
@@ -752,11 +752,11 @@ export const ExportReportScreen: React.FC = () => {
                     }}
                     className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
                       isSelected
-                        ? 'bg-[#171717] text-white border-[#171717] shadow-xs'
-                        : 'bg-[#FAF9F6] border-[#E8E6E1] text-[#171717] hover:bg-[#F1F0EC]'
+                        ? 'bg-[#FFF1EC] text-[#021526] border-2 border-[#F94001] shadow-2xs'
+                        : 'bg-[#F3F4F4] border-[#E5E7EB] text-[#021526] hover:bg-white'
                     }`}
                   >
-                    <Icon className={`w-4 h-4 mx-auto mb-1 ${isSelected ? 'text-[#FF6B2C]' : fmt.color}`} />
+                    <Icon className={`w-4 h-4 mx-auto mb-1 ${fmt.color}`} />
                     <span className="text-[11.5px] font-black block">{fmt.label}</span>
                   </button>
                 );
@@ -771,8 +771,8 @@ export const ExportReportScreen: React.FC = () => {
             onClick={handleExport}
             className={`w-full h-11 rounded-xl font-black text-[13px] flex items-center justify-center gap-2 shadow-sm active-press cursor-pointer transition-all ${
               activeRecordCount === 0
-                ? 'bg-[#E8E6E1] text-[#A3A099] cursor-not-allowed'
-                : 'bg-[#FF6B2C] hover:bg-[#e85b1e] text-white'
+                ? 'bg-[#E5E7EB] text-[#5F6368] cursor-not-allowed'
+                : 'bg-[#F94001] hover:bg-[#D93600] text-white'
             }`}
           >
             {isExporting ? (
@@ -799,64 +799,64 @@ export const ExportReportScreen: React.FC = () => {
           <div className="grid grid-cols-3 gap-3">
             {reportDomain === 'bookings' && (
               <>
-                <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-2xs">
-                  <span className="text-[10px] font-bold text-[#777570] uppercase block">Total Bookings</span>
-                  <span className="text-[18px] font-black text-[#171717] mt-0.5 block">{filteredBookings.length} Matches</span>
+                <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-2xs">
+                  <span className="text-[10px] font-bold text-[#5F6368] uppercase block">Total Bookings</span>
+                  <span className="text-[18px] font-black text-[#021526] mt-0.5 block">{filteredBookings.length} Matches</span>
                 </div>
-                <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-2xs">
-                  <span className="text-[10px] font-bold text-[#777570] uppercase block">Total Value</span>
-                  <span className="text-[18px] font-black text-[#171717] mt-0.5 block">₹{bookingTotalAmount.toLocaleString('en-IN')}</span>
+                <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-2xs">
+                  <span className="text-[10px] font-bold text-[#5F6368] uppercase block">Total Value</span>
+                  <span className="text-[18px] font-black text-[#021526] mt-0.5 block">₹{bookingTotalAmount.toLocaleString('en-IN')}</span>
                 </div>
-                <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-2xs">
-                  <span className="text-[10px] font-bold text-[#777570] uppercase block">Advance Collected</span>
-                  <span className="text-[18px] font-black text-[#2FA66A] mt-0.5 block">₹{bookingTotalCollected.toLocaleString('en-IN')}</span>
+                <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-2xs">
+                  <span className="text-[10px] font-bold text-[#5F6368] uppercase block">Advance Collected</span>
+                  <span className="text-[18px] font-black text-[#16A34A] mt-0.5 block">₹{bookingTotalCollected.toLocaleString('en-IN')}</span>
                 </div>
               </>
             )}
 
             {reportDomain === 'revenue' && revenueType === 'booking_payments' && (
               <>
-                <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-2xs">
-                  <span className="text-[10px] font-bold text-[#777570] uppercase block">Collections Count</span>
-                  <span className="text-[18px] font-black text-[#171717] mt-0.5 block">{filteredBookings.length} Payments</span>
+                <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-2xs">
+                  <span className="text-[10px] font-bold text-[#5F6368] uppercase block">Collections Count</span>
+                  <span className="text-[18px] font-black text-[#021526] mt-0.5 block">{filteredBookings.length} Payments</span>
                 </div>
-                <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-2xs">
-                  <span className="text-[10px] font-bold text-[#777570] uppercase block">Total Collected</span>
-                  <span className="text-[18px] font-black text-[#2FA66A] mt-0.5 block">₹{bookingTotalCollected.toLocaleString('en-IN')}</span>
+                <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-2xs">
+                  <span className="text-[10px] font-bold text-[#5F6368] uppercase block">Total Collected</span>
+                  <span className="text-[18px] font-black text-[#16A34A] mt-0.5 block">₹{bookingTotalCollected.toLocaleString('en-IN')}</span>
                 </div>
-                <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-2xs">
-                  <span className="text-[10px] font-bold text-[#777570] uppercase block">Pending Balance</span>
-                  <span className="text-[18px] font-black text-[#FF6B2C] mt-0.5 block">₹{bookingTotalBalance.toLocaleString('en-IN')}</span>
+                <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-2xs">
+                  <span className="text-[10px] font-bold text-[#5F6368] uppercase block">Pending Balance</span>
+                  <span className="text-[18px] font-black text-[#F94001] mt-0.5 block">₹{bookingTotalBalance.toLocaleString('en-IN')}</span>
                 </div>
               </>
             )}
 
             {reportDomain === 'revenue' && revenueType === 'bank_settlements' && (
               <>
-                <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-2xs">
-                  <span className="text-[10px] font-bold text-[#777570] uppercase block">Bank Payouts</span>
-                  <span className="text-[18px] font-black text-[#171717] mt-0.5 block">{filteredSettlements.length} Transfers</span>
+                <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-2xs">
+                  <span className="text-[10px] font-bold text-[#5F6368] uppercase block">Bank Payouts</span>
+                  <span className="text-[18px] font-black text-[#021526] mt-0.5 block">{filteredSettlements.length} Transfers</span>
                 </div>
-                <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-2xs">
-                  <span className="text-[10px] font-bold text-[#777570] uppercase block">Gross Turnaround</span>
-                  <span className="text-[18px] font-black text-[#171717] mt-0.5 block">₹{settlementTotalGross.toLocaleString('en-IN')}</span>
+                <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-2xs">
+                  <span className="text-[10px] font-bold text-[#5F6368] uppercase block">Gross Turnaround</span>
+                  <span className="text-[18px] font-black text-[#021526] mt-0.5 block">₹{settlementTotalGross.toLocaleString('en-IN')}</span>
                 </div>
-                <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-2xs">
-                  <span className="text-[10px] font-bold text-[#777570] uppercase block">Net Settled to Bank</span>
-                  <span className="text-[18px] font-black text-[#2FA66A] mt-0.5 block">₹{settlementTotalNet.toLocaleString('en-IN')}</span>
+                <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-2xs">
+                  <span className="text-[10px] font-bold text-[#5F6368] uppercase block">Net Settled to Bank</span>
+                  <span className="text-[18px] font-black text-[#16A34A] mt-0.5 block">₹{settlementTotalNet.toLocaleString('en-IN')}</span>
                 </div>
               </>
             )}
           </div>
 
           {/* Live Data Preview Table */}
-          <div className="bg-white rounded-2xl p-4 border border-[#E8E6E1] shadow-2xs space-y-3">
-            <div className="flex items-center justify-between pb-2 border-b border-[#F1F0EC]">
+          <div className="bg-white rounded-2xl p-4 border border-[#E5E7EB] shadow-2xs space-y-3">
+            <div className="flex items-center justify-between pb-2 border-b border-[#F3F4F4]">
               <div>
-                <h3 className="text-[13px] font-black text-[#171717] uppercase tracking-wider">
+                <h3 className="text-[13px] font-black text-[#021526] uppercase tracking-wider">
                   Audit Preview ({activeRecordCount} entries for {getTimeframeLabel()})
                 </h3>
-                <p className="text-[11px] text-[#777570]">
+                <p className="text-[11px] text-[#5F6368]">
                   {reportDomain === 'bookings'
                     ? 'Schedule of verified court bookings'
                     : revenueType === 'booking_payments'
@@ -865,13 +865,13 @@ export const ExportReportScreen: React.FC = () => {
                 </p>
               </div>
 
-              <span className="text-[10.5px] font-bold text-[#777570] bg-[#FAF9F6] px-2 py-0.5 rounded border border-[#E8E6E1]">
+              <span className="text-[10.5px] font-bold text-[#5F6368] bg-[#F3F4F4] px-2 py-0.5 rounded border border-[#E5E7EB]">
                 Showing top 6
               </span>
             </div>
 
             {activeRecordCount === 0 ? (
-              <div className="py-10 text-center text-[#777570] text-[12px]">
+              <div className="py-10 text-center text-[#5F6368] text-[12px]">
                 No records found for the selected {timeframe}.
               </div>
             ) : (
@@ -879,7 +879,7 @@ export const ExportReportScreen: React.FC = () => {
                 <table className="w-full text-[12px] text-left">
                   {/* Table Header */}
                   <thead>
-                    <tr className="border-b border-[#F1F0EC] text-[#777570] font-bold text-[11px]">
+                    <tr className="border-b border-[#F3F4F4] text-[#5F6368] font-bold text-[11px]">
                       {reportDomain === 'bookings' && (
                         <>
                           <th className="pb-2">Booking ID</th>
@@ -916,17 +916,17 @@ export const ExportReportScreen: React.FC = () => {
                   </thead>
 
                   {/* Table Body */}
-                  <tbody className="divide-y divide-[#F1F0EC]">
+                  <tbody className="divide-y divide-[#F3F4F4]">
                     {reportDomain === 'bookings' &&
                       filteredBookings.slice(0, 6).map((b) => (
-                        <tr key={b.id} className="text-[#171717]">
-                          <td className="py-2.5 font-mono font-bold text-[#FF6B2C]">{b.id}</td>
+                        <tr key={b.id} className="text-[#021526]">
+                          <td className="py-2.5 font-mono font-bold text-[#F94001]">{b.id}</td>
                           <td className="py-2.5 font-bold">{b.customerName}</td>
-                          <td className="py-2.5 text-[#777570]">{b.sport} · {b.courtName}</td>
-                          <td className="py-2.5 text-[#777570]">{b.date} ({b.timeSlot})</td>
+                          <td className="py-2.5 text-[#5F6368]">{b.sport} · {b.courtName}</td>
+                          <td className="py-2.5 text-[#5F6368]">{b.date} ({b.timeSlot})</td>
                           <td className="py-2.5 font-black text-right">₹{b.totalAmount}</td>
                           <td className="py-2.5 text-right">
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#2FA66A]/10 text-[#2FA66A]">
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#16A34A]/10 text-[#16A34A]">
                               {b.status}
                             </span>
                           </td>
@@ -936,18 +936,18 @@ export const ExportReportScreen: React.FC = () => {
                     {reportDomain === 'revenue' &&
                       revenueType === 'booking_payments' &&
                       filteredBookings.slice(0, 6).map((b) => (
-                        <tr key={b.id} className="text-[#171717]">
-                          <td className="py-2.5 font-mono font-bold text-[#FF6B2C]">{b.id}</td>
+                        <tr key={b.id} className="text-[#021526]">
+                          <td className="py-2.5 font-mono font-bold text-[#F94001]">{b.id}</td>
                           <td className="py-2.5 font-bold">{b.customerName}</td>
                           <td className="py-2.5">
-                            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#FAF9F6] border border-[#E8E6E1]">
+                            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#F3F4F4] border border-[#E5E7EB]">
                               {b.paymentMethod || 'UPI'}
                             </span>
                           </td>
-                          <td className="py-2.5 text-[#777570]">{b.date}</td>
-                          <td className="py-2.5 font-black text-right text-[#2FA66A]">₹{b.paidAmount}</td>
+                          <td className="py-2.5 text-[#5F6368]">{b.date}</td>
+                          <td className="py-2.5 font-black text-right text-[#16A34A]">₹{b.paidAmount}</td>
                           <td className="py-2.5 text-right">
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#2FA66A]/10 text-[#2FA66A]">
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#16A34A]/10 text-[#16A34A]">
                               {b.paymentStatus}
                             </span>
                           </td>
@@ -957,17 +957,17 @@ export const ExportReportScreen: React.FC = () => {
                     {reportDomain === 'revenue' &&
                       revenueType === 'bank_settlements' &&
                       filteredSettlements.slice(0, 6).map((s) => (
-                        <tr key={s.id} className="text-[#171717]">
-                          <td className="py-2.5 font-mono font-bold text-[#2FA66A]">{s.id}</td>
+                        <tr key={s.id} className="text-[#021526]">
+                          <td className="py-2.5 font-mono font-bold text-[#16A34A]">{s.id}</td>
                           <td className="py-2.5">
                             <span className="font-bold block">{s.bankName}</span>
-                            <span className="text-[10px] font-mono text-[#777570]">{s.utrNumber}</span>
+                            <span className="text-[10px] font-mono text-[#5F6368]">{s.utrNumber}</span>
                           </td>
-                          <td className="py-2.5 text-[#777570]">{s.date}</td>
-                          <td className="py-2.5 font-bold text-right text-[#777570]">₹{s.grossAmount}</td>
-                          <td className="py-2.5 font-black text-right text-[#2FA66A]">₹{s.settledAmount}</td>
+                          <td className="py-2.5 text-[#5F6368]">{s.date}</td>
+                          <td className="py-2.5 font-bold text-right text-[#5F6368]">₹{s.grossAmount}</td>
+                          <td className="py-2.5 font-black text-right text-[#16A34A]">₹{s.settledAmount}</td>
                           <td className="py-2.5 text-right">
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#2FA66A]/10 text-[#2FA66A]">
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#16A34A]/10 text-[#16A34A]">
                               {s.status}
                             </span>
                           </td>
@@ -993,23 +993,23 @@ export const ExportReportScreen: React.FC = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-sm bg-white rounded-3xl p-5 border border-[#E8E6E1] shadow-2xl space-y-4"
+              className="relative w-full max-w-sm bg-white rounded-3xl p-5 border border-[#E5E7EB] shadow-2xl space-y-4"
             >
-              <div className="flex items-center justify-between pb-2 border-b border-[#F1F0EC]">
+              <div className="flex items-center justify-between pb-2 border-b border-[#F3F4F4]">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-xl bg-[#FF6B2C]/10 text-[#FF6B2C] flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-xl bg-[#F94001]/10 text-[#F94001] flex items-center justify-center">
                     <CalendarIcon className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="text-[15px] font-black text-[#171717]">Select Date</h3>
-                    <p className="text-[11px] text-[#777570]">TurfTown Calendar Theme</p>
+                    <h3 className="text-[15px] font-black text-[#021526]">Select Date</h3>
+                    <p className="text-[11px] text-[#5F6368]">TurfTown Calendar Theme</p>
                   </div>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setIsDatePickerOpen(false)}
-                  className="w-7 h-7 rounded-full bg-[#F1F0EC] flex items-center justify-center text-[#777570] hover:text-[#171717] cursor-pointer"
+                  className="w-7 h-7 rounded-full bg-[#F3F4F4] flex items-center justify-center text-[#5F6368] hover:text-[#021526] cursor-pointer"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -1017,7 +1017,7 @@ export const ExportReportScreen: React.FC = () => {
 
               {/* Month Navigation */}
               <div className="flex items-center justify-between px-1">
-                <span className="text-[14px] font-black text-[#171717]">
+                <span className="text-[14px] font-black text-[#021526]">
                   {MONTH_NAMES[calMonth]} {calYear}
                 </span>
 
@@ -1033,7 +1033,7 @@ export const ExportReportScreen: React.FC = () => {
                         setCalMonth(calMonth - 1);
                       }
                     }}
-                    className="w-7 h-7 rounded-lg bg-[#FAF9F6] border border-[#E8E6E1] flex items-center justify-center text-[#171717] hover:bg-[#F1F0EC] cursor-pointer"
+                    className="w-7 h-7 rounded-lg bg-[#F3F4F4] border border-[#E5E7EB] flex items-center justify-center text-[#021526] hover:bg-[#F3F4F4] cursor-pointer"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </button>
@@ -1048,7 +1048,7 @@ export const ExportReportScreen: React.FC = () => {
                         setCalMonth(calMonth + 1);
                       }
                     }}
-                    className="w-7 h-7 rounded-lg bg-[#FAF9F6] border border-[#E8E6E1] flex items-center justify-center text-[#171717] hover:bg-[#F1F0EC] cursor-pointer"
+                    className="w-7 h-7 rounded-lg bg-[#F3F4F4] border border-[#E5E7EB] flex items-center justify-center text-[#021526] hover:bg-[#F3F4F4] cursor-pointer"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </button>
@@ -1056,7 +1056,7 @@ export const ExportReportScreen: React.FC = () => {
               </div>
 
               {/* Days Header */}
-              <div className="grid grid-cols-7 gap-1 text-center text-[10.5px] font-extrabold text-[#777570]">
+              <div className="grid grid-cols-7 gap-1 text-center text-[10.5px] font-extrabold text-[#5F6368]">
                 {DAYS_OF_WEEK.map((d) => (
                   <div key={d} className="py-1">
                     {d}
@@ -1103,8 +1103,8 @@ export const ExportReportScreen: React.FC = () => {
                       }}
                       className={`py-2 rounded-xl transition-all cursor-pointer text-center ${
                         isSelected
-                          ? 'bg-[#171717] text-white font-black shadow-xs'
-                          : 'text-[#171717] hover:bg-[#FAF9F6]'
+                          ? 'bg-[#F94001] text-white font-black shadow-xs'
+                          : 'text-[#021526] hover:bg-[#F3F4F4]'
                       }`}
                     >
                       {dayNum}
@@ -1114,7 +1114,7 @@ export const ExportReportScreen: React.FC = () => {
               </div>
 
               {/* Quick Today */}
-              <div className="pt-2 border-t border-[#F1F0EC] flex items-center justify-between">
+              <div className="pt-2 border-t border-[#F3F4F4] flex items-center justify-between">
                 <button
                   type="button"
                   onClick={() => {
@@ -1124,7 +1124,7 @@ export const ExportReportScreen: React.FC = () => {
                     else setSelectedDayText('28 Aug 2026');
                     setIsDatePickerOpen(false);
                   }}
-                  className="text-[11.5px] font-bold text-[#FF6B2C] hover:underline cursor-pointer"
+                  className="text-[11.5px] font-bold text-[#F94001] hover:underline cursor-pointer"
                 >
                   Today (28 Aug)
                 </button>
@@ -1132,7 +1132,7 @@ export const ExportReportScreen: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsDatePickerOpen(false)}
-                  className="px-3 py-1 rounded-lg bg-[#171717] text-white text-[11.5px] font-bold cursor-pointer"
+                  className="px-3 py-1 rounded-lg bg-[#F94001] hover:bg-[#D93600] text-white text-[11.5px] font-bold cursor-pointer transition-colors shadow-2xs"
                 >
                   Done
                 </button>
@@ -1154,32 +1154,32 @@ export const ExportReportScreen: React.FC = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-sm bg-white rounded-3xl p-5 border border-[#E8E6E1] shadow-2xl space-y-4"
+              className="relative w-full max-w-sm bg-white rounded-3xl p-5 border border-[#E5E7EB] shadow-2xl space-y-4"
             >
-              <div className="flex items-center justify-between pb-2 border-b border-[#F1F0EC]">
+              <div className="flex items-center justify-between pb-2 border-b border-[#F3F4F4]">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-xl bg-[#2FA66A]/10 text-[#2FA66A] flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-xl bg-[#16A34A]/10 text-[#16A34A] flex items-center justify-center">
                     <CalendarIcon className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="text-[15px] font-black text-[#171717]">Select Statement Month</h3>
-                    <p className="text-[11px] text-[#777570]">TurfTown Financial Calendar</p>
+                    <h3 className="text-[15px] font-black text-[#021526]">Select Statement Month</h3>
+                    <p className="text-[11px] text-[#5F6368]">TurfTown Financial Calendar</p>
                   </div>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setIsMonthPickerOpen(false)}
-                  className="w-7 h-7 rounded-full bg-[#F1F0EC] flex items-center justify-center text-[#777570] hover:text-[#171717] cursor-pointer"
+                  className="w-7 h-7 rounded-full bg-[#F3F4F4] flex items-center justify-center text-[#5F6368] hover:text-[#021526] cursor-pointer"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
               </div>
 
               {/* Financial Year Selector with interactive Prev/Next Year */}
-              <div className="bg-[#FAF9F6] p-2.5 rounded-2xl border border-[#E8E6E1] space-y-2">
+              <div className="bg-[#F3F4F4] p-2.5 rounded-2xl border border-[#E5E7EB] space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11.5px] font-black text-[#777570] uppercase pl-1">Financial Year</span>
+                  <span className="text-[11.5px] font-black text-[#5F6368] uppercase pl-1">Financial Year</span>
                   <div className="flex items-center gap-1.5">
                     <button
                       type="button"
@@ -1187,13 +1187,13 @@ export const ExportReportScreen: React.FC = () => {
                         haptics.tap();
                         setSelectedPickerYear((y) => y - 1);
                       }}
-                      className="w-7 h-7 rounded-lg bg-white border border-[#E8E6E1] flex items-center justify-center text-[#171717] hover:bg-[#F1F0EC] cursor-pointer"
+                      className="w-7 h-7 rounded-lg bg-white border border-[#E5E7EB] flex items-center justify-center text-[#021526] hover:bg-[#F3F4F4] cursor-pointer"
                       title="Previous Year"
                     >
                       <ChevronLeft className="w-4 h-4" />
                     </button>
 
-                    <span className="text-[14px] font-black text-[#171717] px-1">{selectedPickerYear}</span>
+                    <span className="text-[14px] font-black text-[#021526] px-1">{selectedPickerYear}</span>
 
                     <button
                       type="button"
@@ -1201,14 +1201,14 @@ export const ExportReportScreen: React.FC = () => {
                         haptics.tap();
                         setSelectedPickerYear((y) => y + 1);
                       }}
-                      className="w-7 h-7 rounded-lg bg-white border border-[#E8E6E1] flex items-center justify-center text-[#171717] hover:bg-[#F1F0EC] cursor-pointer"
+                      className="w-7 h-7 rounded-lg bg-white border border-[#E5E7EB] flex items-center justify-center text-[#021526] hover:bg-[#F3F4F4] cursor-pointer"
                       title="Next Year"
                     >
                       <ChevronRight className="w-4 h-4" />
                     </button>
 
                     {selectedPickerYear === 2026 && (
-                      <span className="text-[9.5px] font-bold text-[#2FA66A] bg-[#2FA66A]/10 px-1.5 py-0.5 rounded">Active</span>
+                      <span className="text-[9.5px] font-bold text-[#16A34A] bg-[#16A34A]/10 px-1.5 py-0.5 rounded">Active</span>
                     )}
                   </div>
                 </div>
@@ -1225,8 +1225,8 @@ export const ExportReportScreen: React.FC = () => {
                       }}
                       className={`px-2.5 py-1 rounded-lg text-[10.5px] font-bold border transition-all cursor-pointer ${
                         selectedPickerYear === yr
-                          ? 'bg-[#171717] text-white border-[#171717]'
-                          : 'bg-white text-[#777570] border-[#E8E6E1] hover:text-[#171717]'
+                          ? 'bg-[#F94001] text-white border-[#F94001] shadow-2xs'
+                          : 'bg-white text-[#5F6368] border-[#E5E7EB] hover:text-[#021526]'
                       }`}
                     >
                       {yr} {yr === 2026 ? '(Current)' : ''}
@@ -1253,14 +1253,14 @@ export const ExportReportScreen: React.FC = () => {
                       }}
                       className={`py-2.5 rounded-xl text-[12.5px] font-black transition-all border cursor-pointer text-center ${
                         isSelected
-                          ? 'bg-[#171717] text-white border-[#171717] shadow-xs'
-                          : 'bg-[#FAF9F6] text-[#171717] border-[#E8E6E1] hover:bg-[#F1F0EC]'
+                          ? 'bg-[#F94001] text-white border-[#F94001] shadow-sm'
+                          : 'bg-[#F3F4F4] text-[#021526] border-[#E5E7EB] hover:bg-[#F3F4F4]'
                       }`}
                     >
                       <div className="flex flex-col items-center">
                         <span>{m}</span>
                         {isCurrent && (
-                          <span className={`text-[8.5px] font-bold mt-0.5 ${isSelected ? 'text-[#FF6B2C]' : 'text-[#2FA66A]'}`}>
+                          <span className={`text-[8.5px] font-bold mt-0.5 ${isSelected ? 'text-white' : 'text-[#16A34A]'}`}>
                             Current
                           </span>
                         )}
@@ -1271,7 +1271,7 @@ export const ExportReportScreen: React.FC = () => {
               </div>
 
               {/* Full Year */}
-              <div className="pt-2 border-t border-[#F1F0EC]">
+              <div className="pt-2 border-t border-[#F3F4F4]">
                 <button
                   type="button"
                   onClick={() => {
@@ -1281,8 +1281,8 @@ export const ExportReportScreen: React.FC = () => {
                   }}
                   className={`w-full py-2 rounded-xl text-[12px] font-bold border transition-all cursor-pointer ${
                     selectedMonthText === `${selectedPickerYear}`
-                      ? 'bg-[#171717] text-white border-[#171717]'
-                      : 'bg-[#FAF9F6] text-[#171717] border-[#E8E6E1] hover:bg-[#F1F0EC]'
+                      ? 'bg-[#F94001] text-white border-[#F94001] shadow-sm'
+                      : 'bg-[#F3F4F4] text-[#021526] border-[#E5E7EB] hover:bg-[#F3F4F4]'
                   }`}
                 >
                   Full Financial Year {selectedPickerYear} (All Records)
@@ -1305,31 +1305,31 @@ export const ExportReportScreen: React.FC = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-sm bg-white rounded-3xl p-5 border border-[#E8E6E1] shadow-2xl space-y-4"
+              className="relative w-full max-w-sm bg-white rounded-3xl p-5 border border-[#E5E7EB] shadow-2xl space-y-4"
             >
               {/* Modal Header */}
-              <div className="flex items-center justify-between pb-2 border-b border-[#F1F0EC]">
+              <div className="flex items-center justify-between pb-2 border-b border-[#F3F4F4]">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-xl bg-[#2FA66A]/10 text-[#2FA66A] flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-xl bg-[#16A34A]/10 text-[#16A34A] flex items-center justify-center">
                     <Building className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="text-[15px] font-black text-[#171717]">Select Financial Year</h3>
-                    <p className="text-[11px] text-[#777570]">Bank Settlement Payout Audits</p>
+                    <h3 className="text-[15px] font-black text-[#021526]">Select Financial Year</h3>
+                    <p className="text-[11px] text-[#5F6368]">Bank Settlement Payout Audits</p>
                   </div>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setIsYearPickerOpen(false)}
-                  className="w-7 h-7 rounded-full bg-[#F1F0EC] flex items-center justify-center text-[#777570] hover:text-[#171717] cursor-pointer"
+                  className="w-7 h-7 rounded-full bg-[#F3F4F4] flex items-center justify-center text-[#5F6368] hover:text-[#021526] cursor-pointer"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
               </div>
 
               {/* Decade Navigation */}
-              <div className="flex items-center justify-between px-1 bg-[#FAF9F6] p-2 rounded-2xl border border-[#E8E6E1]">
+              <div className="flex items-center justify-between px-1 bg-[#F3F4F4] p-2 rounded-2xl border border-[#E5E7EB]">
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
@@ -1337,12 +1337,12 @@ export const ExportReportScreen: React.FC = () => {
                       haptics.tap();
                       setExportDecadeStart((d) => d - 10);
                     }}
-                    className="w-7 h-7 rounded-xl bg-white border border-[#E8E6E1] flex items-center justify-center text-[#171717] hover:bg-[#F1F0EC] cursor-pointer"
+                    className="w-7 h-7 rounded-xl bg-white border border-[#E5E7EB] flex items-center justify-center text-[#021526] hover:bg-[#F3F4F4] cursor-pointer"
                     title="Previous Decade"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </button>
-                  <span className="text-[13.5px] font-black text-[#171717]">
+                  <span className="text-[13.5px] font-black text-[#021526]">
                     {exportDecadeStart} – {exportDecadeStart + 9}
                   </span>
                   <button
@@ -1351,13 +1351,13 @@ export const ExportReportScreen: React.FC = () => {
                       haptics.tap();
                       setExportDecadeStart((d) => d + 10);
                     }}
-                    className="w-7 h-7 rounded-xl bg-white border border-[#E8E6E1] flex items-center justify-center text-[#171717] hover:bg-[#F1F0EC] cursor-pointer"
+                    className="w-7 h-7 rounded-xl bg-white border border-[#E5E7EB] flex items-center justify-center text-[#021526] hover:bg-[#F3F4F4] cursor-pointer"
                     title="Next Decade"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </button>
                 </div>
-                <span className="text-[10px] font-bold text-[#2FA66A] bg-[#2FA66A]/10 px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-bold text-[#16A34A] bg-[#16A34A]/10 px-2 py-0.5 rounded-full">
                   Decade Statements
                 </span>
               </div>
@@ -1384,25 +1384,25 @@ export const ExportReportScreen: React.FC = () => {
                       }}
                       className={`p-2.5 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                         isSelected
-                          ? 'bg-[#171717] text-white border-[#171717] shadow-sm ring-2 ring-[#2FA66A]/30'
-                          : 'bg-[#FAF9F6] text-[#171717] border-[#E8E6E1] hover:bg-[#F1F0EC]'
+                          ? 'bg-[#F94001] text-white border-[#F94001] shadow-sm ring-2 ring-[#F94001]/30'
+                          : 'bg-[#F3F4F4] text-[#021526] border-[#E5E7EB] hover:bg-[#F3F4F4]'
                       }`}
                     >
                       <div className="flex items-center justify-between">
                         <span className="text-[15px] font-black">{yr}</span>
                         {isSelected ? (
-                          <div className="w-4.5 h-4.5 rounded-full bg-[#2FA66A] text-white flex items-center justify-center">
+                          <div className="w-4.5 h-4.5 rounded-full bg-white text-[#F94001] flex items-center justify-center shadow-2xs">
                             <Check className="w-3 h-3 stroke-[3]" />
                           </div>
                         ) : isCurrent ? (
-                          <span className="text-[8.5px] font-bold text-[#2FA66A] bg-[#2FA66A]/10 px-1.5 py-0.5 rounded">
+                          <span className="text-[8.5px] font-bold text-[#16A34A] bg-[#16A34A]/10 px-1.5 py-0.5 rounded">
                             Active
                           </span>
                         ) : null}
                       </div>
                       <span
                         className={`text-[9.5px] font-medium mt-1 ${
-                          isSelected ? 'text-white/75' : 'text-[#777570]'
+                          isSelected ? 'text-white/80 font-semibold' : 'text-[#5F6368]'
                         }`}
                       >
                         {fyLabel}
@@ -1413,7 +1413,7 @@ export const ExportReportScreen: React.FC = () => {
               </div>
 
               {/* Quick Actions Footer */}
-              <div className="pt-2 border-t border-[#F1F0EC] flex items-center justify-between">
+              <div className="pt-2 border-t border-[#F3F4F4] flex items-center justify-between">
                 <button
                   type="button"
                   onClick={() => {
@@ -1421,7 +1421,7 @@ export const ExportReportScreen: React.FC = () => {
                     setSelectedYearText('2026');
                     setIsYearPickerOpen(false);
                   }}
-                  className="text-[11.5px] font-bold text-[#2FA66A] hover:underline cursor-pointer"
+                  className="text-[11.5px] font-bold text-[#F94001] hover:underline cursor-pointer"
                 >
                   Current FY (2026)
                 </button>
@@ -1429,7 +1429,7 @@ export const ExportReportScreen: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsYearPickerOpen(false)}
-                  className="px-4 py-1.5 rounded-xl bg-[#171717] text-white text-[11.5px] font-bold cursor-pointer hover:bg-[#2b2b2b] transition-colors"
+                  className="px-4 py-1.5 rounded-xl bg-[#F94001] text-white text-[11.5px] font-bold cursor-pointer hover:bg-[#D93600] transition-colors shadow-2xs"
                 >
                   Done
                 </button>

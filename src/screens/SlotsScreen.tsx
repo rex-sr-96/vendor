@@ -264,10 +264,10 @@ export const SlotsScreen: React.FC = () => {
 
   // Status Filter options with unified dot indicators and counts
   const filterOptions = [
-    { id: 'all', label: 'All', count: slotStats.all, dotColor: 'bg-[#171717]' },
+    { id: 'all', label: 'All', count: slotStats.all, dotColor: 'bg-[#021526]' },
     { id: 'available', label: 'Open', count: slotStats.available, dotColor: 'bg-neutral-400' },
     { id: 'booked', label: 'Booked', count: slotStats.booked, dotColor: 'bg-emerald-500' },
-    { id: 'pending', label: 'Hold', count: slotStats.pending, dotColor: 'bg-[#FF6B2C]' },
+    { id: 'pending', label: 'Hold', count: slotStats.pending, dotColor: 'bg-[#F94001]' },
     { id: 'coaching', label: 'Coaching', count: slotStats.coaching, dotColor: 'bg-blue-500' },
     { id: 'tournament', label: 'Tournament', count: slotStats.tournament, dotColor: 'bg-purple-500' },
     { id: 'maintenance', label: 'Maintenance', count: slotStats.maintenance, dotColor: 'bg-neutral-400' },
@@ -280,7 +280,7 @@ export const SlotsScreen: React.FC = () => {
          ========================================================================= */}
       <div className="flex items-center justify-between gap-3 pt-1">
         <div className="min-w-0">
-          <h1 className="text-[22px] font-extrabold text-[#171717] tracking-tight leading-tight whitespace-nowrap">
+          <h1 className="text-[22px] font-extrabold text-[#021526] tracking-tight leading-tight whitespace-nowrap">
             Slots Schedule
           </h1>
           <p className="text-[12.5px] font-normal text-neutral-500 mt-0.5 whitespace-nowrap">
@@ -308,7 +308,7 @@ export const SlotsScreen: React.FC = () => {
               haptics.tap();
               setActiveModal('new_booking');
             }}
-            className="h-9 px-3.5 rounded-xl bg-[#FF6B2C] hover:bg-[#e85b1e] text-white font-semibold text-[12px] flex items-center gap-1.5 shadow-xs active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+            className="h-9 px-3.5 rounded-xl bg-[#F94001] hover:bg-[#D93600] text-white font-semibold text-[12px] flex items-center gap-1.5 shadow-xs active:scale-95 transition-all cursor-pointer whitespace-nowrap"
           >
             <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
             <span>Booking</span>
@@ -319,7 +319,7 @@ export const SlotsScreen: React.FC = () => {
       {/* =========================================================================
           DATE NAVIGATION STRIP
          ========================================================================= */}
-      <div className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-xs space-y-3">
+      <div className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-xs space-y-3">
         <div className="flex items-center justify-between px-1">
           <button
             id="btn-prev-date"
@@ -334,10 +334,10 @@ export const SlotsScreen: React.FC = () => {
           </button>
 
           <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-[#FF6B2C]" />
+            <Calendar className="w-4 h-4 text-[#F94001]" />
             <span className="text-[14px] font-semibold text-neutral-900">{currentDate}</span>
             {currentDateObj.isToday && (
-              <span className="text-[10px] font-semibold bg-[#FF6B2C]/10 text-[#FF6B2C] px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span className="text-[10px] font-semibold bg-[#F94001]/10 text-[#F94001] px-2 py-0.5 rounded-full uppercase tracking-wider">
                 Today
               </span>
             )}
@@ -370,7 +370,7 @@ export const SlotsScreen: React.FC = () => {
                 }}
                 className={`py-2 rounded-xl flex flex-col items-center justify-center transition-all cursor-pointer active:scale-95 border ${
                   isSelected
-                    ? 'bg-[#171717] text-white border-[#171717] shadow-xs'
+                    ? 'bg-[#021526] text-white border-[#021526] shadow-xs'
                     : 'bg-neutral-50 text-neutral-500 border-transparent hover:bg-neutral-100'
                 }`}
               >
@@ -392,7 +392,7 @@ export const SlotsScreen: React.FC = () => {
           <span className="text-[11px] font-semibold text-neutral-500 uppercase tracking-wider">
             Select Court / Turf
           </span>
-          <span className="text-[11.5px] font-medium text-[#FF6B2C]">
+          <span className="text-[11.5px] font-medium text-[#F94001]">
             ₹{currentCourt.pricePerHour}/hr base
           </span>
         </div>
@@ -410,14 +410,14 @@ export const SlotsScreen: React.FC = () => {
                 }}
                 className={`p-3 rounded-xl text-left transition-all active:scale-98 cursor-pointer flex flex-col justify-between border ${
                   isSelected
-                    ? 'bg-[#171717] text-white border-[#171717] shadow-sm'
-                    : 'bg-white text-neutral-800 border-[#E8E6E1] hover:border-neutral-400'
+                    ? 'bg-[#021526] text-white border-[#021526] shadow-sm'
+                    : 'bg-white text-neutral-800 border-[#E5E7EB] hover:border-neutral-400'
                 }`}
               >
                 <div className="flex items-center justify-between w-full mb-1">
                   <span className="text-[13px] font-semibold leading-tight">{court.name}</span>
                   {isSelected && (
-                    <span className="w-2 h-2 rounded-full bg-[#FF6B2C]" />
+                    <span className="w-2 h-2 rounded-full bg-[#F94001]" />
                   )}
                 </div>
                 <span
@@ -449,8 +449,8 @@ export const SlotsScreen: React.FC = () => {
               }}
               className={`px-3 py-1 rounded-full text-[11.5px] font-bold whitespace-nowrap transition-all active-press cursor-pointer flex items-center gap-1.5 shrink-0 ${
                 isSelected
-                  ? 'bg-[#171717] text-white shadow-xs'
-                  : 'bg-white text-[#777570] border border-[#E8E6E1] hover:text-[#171717]'
+                  ? 'bg-[#021526] text-white shadow-xs'
+                  : 'bg-white text-[#5F6368] border border-[#E5E7EB] hover:text-[#021526]'
               }`}
             >
               {opt.id !== 'all' && (
@@ -463,7 +463,7 @@ export const SlotsScreen: React.FC = () => {
               <span>{opt.label}</span>
               <span
                 className={`text-[10.5px] ${
-                  isSelected ? 'text-white/70 font-semibold' : 'text-[#A3A099] font-medium'
+                  isSelected ? 'text-white/70 font-semibold' : 'text-[#5F6368] font-medium'
                 }`}
               >
                 {opt.count}
@@ -480,7 +480,7 @@ export const SlotsScreen: React.FC = () => {
           - Right: Category color dot indicator + price
           - 2-Hour Continuous Booking prominently displayed with subtle category tint
          ========================================================================= */}
-      <div className="bg-white rounded-2xl border border-[#E8E6E1] shadow-xs divide-y divide-[#F0EFEA] overflow-hidden">
+      <div className="bg-white rounded-2xl border border-[#E5E7EB] shadow-xs divide-y divide-[#F0EFEA] overflow-hidden">
         {groupedScheduleItems.map((item) => {
           if (selectedStateFilter !== 'all' && selectedStateFilter !== item.state) {
             return null;
@@ -519,7 +519,7 @@ export const SlotsScreen: React.FC = () => {
           } else if (item.state === 'pending') {
             title = item.customerName || 'Aditya Sharma';
             subtitle = `Hold expires in ${item.countdown || '14:20'} · ₹${item.priceTotal} due`;
-            dotColor = 'bg-[#FF6B2C]'; // Orange terracotta matching reference image
+            dotColor = 'bg-[#F94001]'; // Orange terracotta matching reference image
             categoryBadgeBg = 'bg-[#FFF3EC]';
             categoryBadgeText = 'text-[#D45017]';
             categoryBadgeBorder = 'border-[#FDCBB3]';
@@ -608,7 +608,7 @@ export const SlotsScreen: React.FC = () => {
                   )}
 
                   {item.peak && item.state === 'available' && (
-                    <span className="px-1.5 py-0.2 rounded bg-[#FF6B2C]/10 text-[#FF6B2C] text-[9.5px] font-medium shrink-0">
+                    <span className="px-1.5 py-0.2 rounded bg-[#F94001]/10 text-[#F94001] text-[9.5px] font-medium shrink-0">
                       Peak
                     </span>
                   )}
@@ -628,7 +628,7 @@ export const SlotsScreen: React.FC = () => {
                     </span>
                     <button
                       onClick={(e) => handleQuickBook(e, item)}
-                      className="h-7 px-2.5 rounded-lg bg-[#FF6B2C] hover:bg-[#e85b1e] text-white font-medium text-[11px] flex items-center gap-1 shadow-2xs active:scale-95 transition-all cursor-pointer"
+                      className="h-7 px-2.5 rounded-lg bg-[#F94001] hover:bg-[#D93600] text-white font-medium text-[11px] flex items-center gap-1 shadow-2xs active:scale-95 transition-all cursor-pointer"
                     >
                       <Plus className="w-3 h-3 stroke-[2]" />
                       <span>Book</span>

@@ -30,27 +30,27 @@ export const MobileDeviceFrame: React.FC<MobileDeviceFrameProps> = ({
   const isAuthScreen = authScreens.includes(currentScreen);
 
   return (
-    <div className="min-h-screen w-full bg-[#F6F5F2] text-[#171717] flex flex-col antialiased overflow-x-hidden">
+    <div className="min-h-screen w-full bg-[#F8F9FA] text-[#021526] flex flex-col antialiased overflow-x-hidden">
       {/* ========================================================================= */}
       {/* 1. DESKTOP VIEW (>= 768px): Modern SaaS Sidebar + Content Canvas Layout    */}
       {/* ========================================================================= */}
       <div className="hidden md:flex min-h-screen w-full overflow-x-hidden">
         {isAuthScreen ? (
           /* Modern Focused Desktop Auth Experience - Clean & Distraction-Free Model */
-          <div className="min-h-screen w-full flex flex-col items-center justify-center p-6 lg:p-8 bg-[#FAF9F6] relative overflow-hidden">
+          <div className="min-h-screen w-full flex flex-col items-center justify-center p-6 lg:p-8 bg-[#F3F4F4] relative overflow-hidden">
             {/* Subtle atmospheric ambient glow */}
-            <div className="absolute -top-36 left-1/2 -translate-x-1/2 w-[640px] h-[340px] bg-gradient-to-b from-[#FF6B2C]/10 via-[#FF6B2C]/5 to-transparent rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute -bottom-28 right-1/4 w-[420px] h-[280px] bg-[#2FA66A]/7 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -top-36 left-1/2 -translate-x-1/2 w-[640px] h-[340px] bg-gradient-to-b from-[#F94001]/10 via-[#F94001]/5 to-transparent rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-28 right-1/4 w-[420px] h-[280px] bg-[#16A34A]/7 rounded-full blur-3xl pointer-events-none" />
 
             {/* Centered Modern Model Card */}
-            <div className="w-full max-w-[440px] bg-white rounded-3xl border border-[#E8E6E1]/90 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.06),0_2px_10px_rgba(0,0,0,0.02)] p-8 sm:p-9 relative z-10">
+            <div className="w-full max-w-[440px] bg-white rounded-3xl border border-[#E5E7EB]/90 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.06),0_2px_10px_rgba(0,0,0,0.02)] p-8 sm:p-9 relative z-10">
               {children}
             </div>
 
             {/* Minimalist Trust & Security Footer */}
-            <div className="mt-8 text-center text-xs text-[#8E8B85] space-y-1.5 relative z-10">
-              <div className="flex items-center justify-center gap-1.5 font-medium text-[#777570]">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#2FA66A]" />
+            <div className="mt-8 text-center text-xs text-[#5F6368] space-y-1.5 relative z-10">
+              <div className="flex items-center justify-center gap-1.5 font-medium text-[#5F6368]">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#16A34A]" />
                 <span>256-bit encrypted authentication • TurfTown Arena OS</span>
               </div>
               <p className="text-[11.5px] text-[#A8A59E]">
@@ -60,7 +60,7 @@ export const MobileDeviceFrame: React.FC<MobileDeviceFrameProps> = ({
           </div>
         ) : (
           /* Desktop Dashboard Layout with Modern Collapsible SaaS Sidebar */
-          <div className="flex min-h-screen w-full bg-[#F6F5F2] overflow-x-hidden">
+          <div className="flex min-h-screen w-full bg-[#F8F9FA] overflow-x-hidden">
             {/* Left SaaS Sidebar */}
             <DesktopSidebar />
 
@@ -76,7 +76,7 @@ export const MobileDeviceFrame: React.FC<MobileDeviceFrameProps> = ({
               <DesktopHeader />
 
               {/* Scrollable Page Body with Perfect Responsive Padding */}
-              <main className="flex-1 w-full px-5 lg:px-8 py-6 overflow-x-hidden">
+              <main className="flex-1 w-full px-5 lg:px-8 py-6 overflow-x-clip">
                 {children}
               </main>
             </div>
@@ -90,9 +90,9 @@ export const MobileDeviceFrame: React.FC<MobileDeviceFrameProps> = ({
       {/* ========================================================================= */}
       {/* 2. MOBILE VIEW (< 768px): Native full-screen mobile app layout             */}
       {/* ========================================================================= */}
-      <div className="flex md:hidden flex-col fixed inset-0 w-full h-full bg-[#F6F5F2] overflow-hidden select-none">
+      <div className="flex md:hidden flex-col fixed inset-0 w-full h-full bg-[#F8F9FA] overflow-hidden select-none">
         {/* Mobile Native Status Bar */}
-        <div className="shrink-0 z-30 bg-[#F6F5F2]">
+        <div className="shrink-0 z-30 bg-[#F8F9FA]">
           <MobileStatusBar deviceType="iphone" />
         </div>
 

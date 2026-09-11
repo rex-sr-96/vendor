@@ -30,23 +30,23 @@ export const AddCourtModal: React.FC<AddCourtModalProps> = ({ isOpen, onClose })
       }}
     >
       <div
-        className="relative bg-[#F7F7F5] w-full sm:max-w-2xl rounded-t-[28px] sm:rounded-3xl shadow-2xl border border-[#E8E6E1] overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[88vh]"
+        className="relative bg-[#F3F4F4] w-full sm:max-w-2xl rounded-t-[28px] sm:rounded-3xl shadow-2xl border border-[#E5E7EB] overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[88vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Mobile Drag Indicator Handle */}
-        <div className="w-10 h-1 bg-[#D1CFCA] rounded-full mx-auto mt-2.5 mb-1 sm:hidden shrink-0" />
+        <div className="w-10 h-1 bg-[#E5E7EB] rounded-full mx-auto mt-2.5 mb-1 sm:hidden shrink-0" />
 
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-4 pt-2 pb-3 sm:px-6 sm:py-4 border-b border-[#E8E6E1] bg-white shrink-0">
+        <div className="flex items-center justify-between px-4 pt-2 pb-3 sm:px-6 sm:py-4 border-b border-[#E5E7EB] bg-white shrink-0">
           <div className="flex items-center gap-2.5 sm:gap-3">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#FF6B2C]/10 text-[#FF6B2C] flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#F94001]/10 text-[#F94001] flex items-center justify-center shrink-0">
               <Layers className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-[16px] sm:text-[18px] font-black text-[#171717] tracking-tight leading-tight">
+              <h2 className="text-[16px] sm:text-[18px] font-black text-[#021526] tracking-tight leading-tight">
                 Add New Court / Turf
               </h2>
-              <p className="text-[11px] sm:text-[11.5px] font-medium text-[#777570]">
+              <p className="text-[11px] sm:text-[11.5px] font-medium text-[#5F6368]">
                 Configure specs, pricing and cancellation policy
               </p>
             </div>
@@ -54,7 +54,7 @@ export const AddCourtModal: React.FC<AddCourtModalProps> = ({ isOpen, onClose })
           <button
             id="btn-close-add-court-modal"
             onClick={onClose}
-            className="w-8 h-8 rounded-xl bg-[#FAF9F6] hover:bg-[#EBE9E3] border border-[#E8E6E1] flex items-center justify-center text-[#777570] hover:text-[#171717] transition-all cursor-pointer"
+            className="w-8 h-8 rounded-xl bg-[#F3F4F4] hover:bg-[#EBE9E3] border border-[#E5E7EB] flex items-center justify-center text-[#5F6368] hover:text-[#021526] transition-all cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>

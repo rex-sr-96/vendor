@@ -35,17 +35,17 @@ export const RecordCashModal: React.FC = () => {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 0.2 }}
-          className="relative w-full max-w-md bg-white rounded-3xl p-5 shadow-2xl border border-[#E8E6E1] space-y-3.5"
+          className="relative w-full max-w-md bg-white rounded-3xl p-5 shadow-2xl border border-[#E5E7EB] space-y-3.5"
         >
           {/* Header */}
-          <div className="flex items-center justify-between pb-3 border-b border-[#F1F0EC]">
+          <div className="flex items-center justify-between pb-3 border-b border-[#F3F4F4]">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-[#2FA66A]/10 text-[#2FA66A] flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-[#16A34A]/10 text-[#16A34A] flex items-center justify-center">
                 <Banknote className="w-4 h-4" />
               </div>
               <div>
-                <h2 className="text-[17px] font-bold text-[#171717]">Record Cash Payment</h2>
-                <p className="text-[11px] text-[#777570]">Physical Counter Payment</p>
+                <h2 className="text-[17px] font-bold text-[#021526]">Record Cash Payment</h2>
+                <p className="text-[11px] text-[#5F6368]">Physical Counter Payment</p>
               </div>
             </div>
             <button
@@ -53,7 +53,7 @@ export const RecordCashModal: React.FC = () => {
                 setActiveModal(null);
                 haptics.tap();
               }}
-              className="w-8 h-8 rounded-full bg-[#F1F0EC] flex items-center justify-center text-[#777570] hover:text-[#171717] cursor-pointer"
+              className="w-8 h-8 rounded-full bg-[#F3F4F4] flex items-center justify-center text-[#5F6368] hover:text-[#021526] cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -61,69 +61,69 @@ export const RecordCashModal: React.FC = () => {
 
           <div className="space-y-3">
             {/* Customer & Fee Breakdown Card */}
-            <div className="bg-[#FAF9F6] p-3 rounded-2xl border border-[#E8E6E1] space-y-2 text-[12px]">
+            <div className="bg-[#F3F4F4] p-3 rounded-2xl border border-[#E5E7EB] space-y-2 text-[12px]">
               <div className="flex justify-between items-center">
                 <div>
-                  <span className="font-bold text-[#171717]">{selectedBooking.customerName}</span>
-                  <span className="text-[11px] text-[#777570] block font-mono">#{selectedBooking.id} · {selectedBooking.sport}</span>
+                  <span className="font-bold text-[#021526]">{selectedBooking.customerName}</span>
+                  <span className="text-[11px] text-[#5F6368] block font-mono">#{selectedBooking.id} · {selectedBooking.sport}</span>
                 </div>
-                <span className="text-[10px] font-bold bg-[#2FA66A]/10 text-[#2FA66A] px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-bold bg-[#16A34A]/10 text-[#16A34A] px-2 py-0.5 rounded-full">
                   Cash Counter
                 </span>
               </div>
 
-              <div className="space-y-1.5 pt-1.5 border-t border-[#E8E6E1] text-[11.5px]">
-                <div className="flex justify-between text-[#777570]">
+              <div className="space-y-1.5 pt-1.5 border-t border-[#E5E7EB] text-[11.5px]">
+                <div className="flex justify-between text-[#5F6368]">
                   <span>Court Base Fee:</span>
-                  <strong className="text-[#171717]">₹{fin.baseCourtCost.toLocaleString('en-IN')}</strong>
+                  <strong className="text-[#021526]">₹{fin.baseCourtCost.toLocaleString('en-IN')}</strong>
                 </div>
-                <div className="flex justify-between text-[#777570]">
+                <div className="flex justify-between text-[#5F6368]">
                   <span>Venue GST (18% on court):</span>
-                  <strong className="text-[#171717]">₹{fin.courtGst18.toLocaleString('en-IN')}</strong>
+                  <strong className="text-[#021526]">₹{fin.courtGst18.toLocaleString('en-IN')}</strong>
                 </div>
-                <div className="flex justify-between text-[#171717] font-bold bg-white p-1.5 rounded-lg border border-[#E8E6E1]">
+                <div className="flex justify-between text-[#021526] font-bold bg-white p-1.5 rounded-lg border border-[#E5E7EB]">
                   <span>Court Total (Venue Revenue):</span>
                   <span>₹{fin.courtTotal.toLocaleString('en-IN')}</span>
                 </div>
-                <div className="flex justify-between text-[#777570] pt-0.5">
+                <div className="flex justify-between text-[#5F6368] pt-0.5">
                   <span>Platform Convenience Fee (5%):</span>
                   <strong className="text-[#B87C0D]">+₹{fin.convenienceFee5Percent.toLocaleString('en-IN')}</strong>
                 </div>
-                <div className="flex justify-between text-[#777570]">
+                <div className="flex justify-between text-[#5F6368]">
                   <span>Convenience GST (18% on 5% fee):</span>
                   <strong className="text-[#B87C0D]">+₹{fin.convenienceGst18Percent.toLocaleString('en-IN')}</strong>
                 </div>
-                <div className="flex justify-between items-baseline pt-1.5 border-t border-[#E8E6E1] font-bold text-[#171717]">
+                <div className="flex justify-between items-baseline pt-1.5 border-t border-[#E5E7EB] font-bold text-[#021526]">
                   <span>Total Cash to Collect from Customer:</span>
-                  <span className="text-[16px] font-black text-[#2FA66A]">₹{fin.totalCustomerPayable.toLocaleString('en-IN')}</span>
+                  <span className="text-[16px] font-black text-[#16A34A]">₹{fin.totalCustomerPayable.toLocaleString('en-IN')}</span>
                 </div>
               </div>
             </div>
 
             {/* Next Settlement Deduction Alert */}
-            <div className="bg-[#E7A72F]/10 border border-[#E7A72F]/30 rounded-2xl p-3 space-y-1">
+            <div className="bg-[#F59E0B]/10 border border-[#F59E0B]/30 rounded-2xl p-3 space-y-1">
               <span className="text-[11px] font-black text-[#B87C0D] uppercase tracking-wider flex items-center gap-1">
                 <AlertTriangle className="w-3.5 h-3.5" />
                 Settlement Deduction Notice
               </span>
-              <p className="text-[11px] text-[#777570] leading-snug">
+              <p className="text-[11px] text-[#5F6368] leading-snug">
                 The <strong>₹{fin.totalConvenienceWithGst} platform convenience fee (5% fee ₹{fin.convenienceFee5Percent} + 18% GST ₹{fin.convenienceGst18Percent})</strong> collected in physical cash at your counter will be <strong>automatically deducted from your next automated bank settlement payout</strong>.
               </p>
             </div>
 
             <form onSubmit={handleConfirm} className="space-y-3">
               <div>
-                <label className="block text-[12px] font-bold text-[#171717] mb-1">
+                <label className="block text-[12px] font-bold text-[#021526] mb-1">
                   Cash Amount Received (₹)
                 </label>
-                <div className="relative flex items-center bg-[#F7F7F5] border border-[#E8E6E1] rounded-[14px] px-3.5 py-2 focus-within:border-[#2FA66A] focus-within:bg-white transition-all">
-                  <span className="text-[16px] font-bold text-[#171717] mr-1.5">₹</span>
+                <div className="relative flex items-center bg-[#F3F4F4] border border-[#E5E7EB] rounded-[14px] px-3.5 py-2 focus-within:border-[#16A34A] focus-within:bg-white transition-all">
+                  <span className="text-[16px] font-bold text-[#021526] mr-1.5">₹</span>
                   <input
                     type="number"
                     required
                     value={cashAmount}
                     onChange={(e) => setCashAmount(e.target.value)}
-                    className="w-full text-[16px] font-black text-[#171717] bg-transparent focus:outline-none"
+                    className="w-full text-[16px] font-black text-[#021526] bg-transparent focus:outline-none"
                     placeholder={fin.totalCustomerPayable.toString()}
                   />
                 </div>
@@ -133,7 +133,7 @@ export const RecordCashModal: React.FC = () => {
               <div className="space-y-2 pt-1">
                 <button
                   type="submit"
-                  className="w-full h-11 rounded-xl bg-[#2FA66A] text-white font-bold text-[13px] flex items-center justify-center shadow-xs hover:bg-[#278e5b] active-press transition-all cursor-pointer"
+                  className="w-full h-11 rounded-xl bg-[#16A34A] text-white font-bold text-[13px] flex items-center justify-center shadow-xs hover:bg-[#278e5b] active-press transition-all cursor-pointer"
                 >
                   Confirm ₹{cashAmount} Cash Received
                 </button>
@@ -143,7 +143,7 @@ export const RecordCashModal: React.FC = () => {
                     setActiveModal(null);
                     haptics.tap();
                   }}
-                  className="w-full h-8 rounded-xl bg-transparent text-[#777570] hover:text-[#171717] font-semibold text-[11.5px] cursor-pointer"
+                  className="w-full h-8 rounded-xl bg-transparent text-[#5F6368] hover:text-[#021526] font-semibold text-[11.5px] cursor-pointer"
                 >
                   Cancel
                 </button>

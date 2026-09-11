@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { haptics } from '../utils/haptics';
+import { CustomSelect } from '../components/CustomSelect';
 
 const TIME_OPTIONS = [
   '05:00 AM',
@@ -155,22 +156,22 @@ export const OperatingHoursScreen: React.FC = () => {
           haptics.tap();
           goBack();
         }}
-        className="md:hidden flex items-center gap-1.5 text-[12.5px] font-bold text-[#FF6B2C] active-press cursor-pointer pb-1"
+        className="md:hidden flex items-center gap-1.5 text-[12.5px] font-bold text-[#F94001] active-press cursor-pointer pb-1"
       >
         <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
         <span>Back to Settings</span>
       </button>
 
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#E8E6E1]/70">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#E5E7EB]/70">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-[24px] font-black text-[#171717] tracking-tight">Operating Hours</h1>
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-[#2FA66A]/10 text-[#2FA66A]">
+            <h1 className="text-[24px] font-black text-[#021526] tracking-tight">Operating Hours</h1>
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-[#16A34A]/10 text-[#16A34A]">
               {openDaysCount}/7 Days Open
             </span>
           </div>
-          <p className="text-[12.5px] font-medium text-[#777570]">
+          <p className="text-[12.5px] font-medium text-[#5F6368]">
             Venue operating timetable & slot availability rules
           </p>
         </div>
@@ -182,9 +183,9 @@ export const OperatingHoursScreen: React.FC = () => {
             await refreshFromOnboarding();
             showToast('Operating Hours Synced', 'Schedule synchronized with verified onboarding records.', 'success');
           }}
-          className="h-10 px-4 rounded-xl bg-[#171717] hover:bg-[#2A2A2A] text-white font-bold text-[12.5px] flex items-center justify-center gap-2 shadow-xs active-press cursor-pointer transition-colors self-start sm:self-auto"
+          className="h-10 px-4 rounded-xl bg-[#021526] hover:bg-[#061D33] text-white font-bold text-[12.5px] flex items-center justify-center gap-2 shadow-xs active-press cursor-pointer transition-colors self-start sm:self-auto"
         >
-          <Clock className="w-4 h-4 text-[#FF6B2C]" />
+          <Clock className="w-4 h-4 text-[#F94001]" />
           <span>Sync Onboarding Schedule</span>
         </button>
       </div>
@@ -194,21 +195,21 @@ export const OperatingHoursScreen: React.FC = () => {
         {/* Left Column: 7-Day Timetable Schedule List */}
         <div className="lg:col-span-7 space-y-3">
           <div className="flex items-center justify-between px-1">
-            <span className="text-[13px] font-black text-[#171717] uppercase tracking-wider">
+            <span className="text-[13px] font-black text-[#021526] uppercase tracking-wider">
               Weekly Day Schedule
             </span>
-            <span className="text-[11.5px] text-[#777570] font-medium">Click any day to customize</span>
+            <span className="text-[11.5px] text-[#5F6368] font-medium">Click any day to customize</span>
           </div>
 
-          <div className="bg-white rounded-3xl border border-[#E8E6E1] shadow-2xs divide-y divide-[#F1F0EC] overflow-hidden">
+          <div className="bg-white rounded-3xl border border-[#E5E7EB] shadow-2xs divide-y divide-[#F3F4F4] overflow-hidden">
             {operatingHours.map((item) => {
               const isToday = item.day === 'Friday'; // 28 Aug 2026 is Friday
               return (
                 <div
                   key={item.day}
                   onClick={() => handleOpenEdit(item)}
-                  className={`p-4 flex items-center justify-between hover:bg-[#F7F7F5] active-press transition-colors cursor-pointer group ${
-                    isToday ? 'bg-[#FF6B2C]/[0.02]' : ''
+                  className={`p-4 flex items-center justify-between hover:bg-[#F3F4F4] active-press transition-colors cursor-pointer group ${
+                    isToday ? 'bg-[#F94001]/[0.02]' : ''
                   }`}
                 >
                   <div className="flex items-center gap-3.5">
@@ -217,9 +218,9 @@ export const OperatingHoursScreen: React.FC = () => {
                       className={`w-11 h-11 rounded-2xl flex flex-col items-center justify-center font-bold text-center border ${
                         item.isOpen
                           ? isToday
-                            ? 'bg-[#FF6B2C] text-white border-[#FF6B2C] shadow-sm'
-                            : 'bg-[#FAF9F6] border-[#E8E6E1] text-[#171717]'
-                          : 'bg-[#F1F0EC] border-[#E8E6E1] text-[#A3A099]'
+                            ? 'bg-[#F94001] text-white border-[#F94001] shadow-sm'
+                            : 'bg-[#F3F4F4] border-[#E5E7EB] text-[#021526]'
+                          : 'bg-[#F3F4F4] border-[#E5E7EB] text-[#5F6368]'
                       }`}
                     >
                       <span className="text-[12px] font-black uppercase tracking-tight leading-none">
@@ -230,11 +231,11 @@ export const OperatingHoursScreen: React.FC = () => {
                     {/* Day Timing Details */}
                     <div>
                       <div className="flex items-center gap-2">
-                        <h3 className="text-[14.5px] font-black text-[#171717]">
+                        <h3 className="text-[14.5px] font-black text-[#021526]">
                           {item.day}
                         </h3>
                         {isToday && (
-                          <span className="px-2 py-0.5 rounded-md bg-[#FF6B2C]/10 text-[#FF6B2C] text-[9.5px] font-black uppercase tracking-wider">
+                          <span className="px-2 py-0.5 rounded-md bg-[#F94001]/10 text-[#F94001] text-[9.5px] font-black uppercase tracking-wider">
                             Today
                           </span>
                         )}
@@ -242,11 +243,11 @@ export const OperatingHoursScreen: React.FC = () => {
 
                       <div className="flex items-center gap-1.5 mt-0.5">
                         {item.isOpen ? (
-                          <span className="text-[13px] font-semibold text-[#55534E]">
+                          <span className="text-[13px] font-semibold text-[#5F6368]">
                             {item.openTime} – {item.closeTime}
                           </span>
                         ) : (
-                          <span className="text-[13px] font-semibold text-[#D94B4B]">
+                          <span className="text-[13px] font-semibold text-[#DC2626]">
                             Closed all day
                           </span>
                         )}
@@ -259,14 +260,14 @@ export const OperatingHoursScreen: React.FC = () => {
                     <span
                       className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${
                         item.isOpen
-                          ? 'bg-[#2FA66A]/10 text-[#1E774A]'
-                          : 'bg-[#D94B4B]/10 text-[#D94B4B]'
+                          ? 'bg-[#16A34A]/10 text-[#15803D]'
+                          : 'bg-[#DC2626]/10 text-[#DC2626]'
                       }`}
                     >
                       {item.isOpen ? 'Open' : 'Closed'}
                     </span>
 
-                    <div className="w-7 h-7 rounded-xl bg-[#FAF9F6] group-hover:bg-[#171717] group-hover:text-white transition-colors flex items-center justify-center text-[#777570]">
+                    <div className="w-7 h-7 rounded-xl bg-[#F3F4F4] group-hover:bg-[#021526] group-hover:text-white transition-colors flex items-center justify-center text-[#5F6368]">
                       <ChevronRight className="w-4 h-4" />
                     </div>
                   </div>
@@ -279,11 +280,11 @@ export const OperatingHoursScreen: React.FC = () => {
         {/* Right Column: Presets, Breaks & Policies */}
         <div className="lg:col-span-5 space-y-5">
           {/* Quick Schedule Presets */}
-          <div className="bg-white rounded-3xl p-5 border border-[#E8E6E1] shadow-2xs space-y-3">
-            <h3 className="text-[14px] font-black text-[#171717] uppercase tracking-wider">
+          <div className="bg-white rounded-3xl p-5 border border-[#E5E7EB] shadow-2xs space-y-3">
+            <h3 className="text-[14px] font-black text-[#021526] uppercase tracking-wider">
               Quick Schedule Templates
             </h3>
-            <p className="text-[12px] text-[#777570]">
+            <p className="text-[12px] text-[#5F6368]">
               Apply standard commercial schedules across all days in one click.
             </p>
 
@@ -292,23 +293,23 @@ export const OperatingHoursScreen: React.FC = () => {
                 <div
                   key={preset.label}
                   onClick={() => handleApplyPresetToAll(preset)}
-                  className="p-3 rounded-2xl bg-[#FAF9F6] hover:bg-[#F1F0EC] border border-[#E8E6E1] flex items-center justify-between cursor-pointer active-press transition-all group"
+                  className="p-3 rounded-2xl bg-[#F3F4F4] hover:bg-[#F3F4F4] border border-[#E5E7EB] flex items-center justify-between cursor-pointer active-press transition-all group"
                 >
                   <div>
-                    <p className="text-[13px] font-extrabold text-[#171717] group-hover:text-[#FF6B2C] transition-colors">
+                    <p className="text-[13px] font-extrabold text-[#021526] group-hover:text-[#F94001] transition-colors">
                       {preset.label}
                     </p>
-                    <p className="text-[11px] text-[#777570] mt-0.5">{preset.desc}</p>
+                    <p className="text-[11px] text-[#5F6368] mt-0.5">{preset.desc}</p>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-[#777570] group-hover:translate-x-0.5 transition-transform" />
+                  <ChevronRight className="w-4 h-4 text-[#5F6368] group-hover:translate-x-0.5 transition-transform" />
                 </div>
               ))}
             </div>
           </div>
 
           {/* Break & Maintenance Windows */}
-          <div className="bg-white rounded-3xl p-5 border border-[#E8E6E1] shadow-2xs space-y-3">
-            <h3 className="text-[14px] font-black text-[#171717] uppercase tracking-wider">
+          <div className="bg-white rounded-3xl p-5 border border-[#E5E7EB] shadow-2xs space-y-3">
+            <h3 className="text-[14px] font-black text-[#021526] uppercase tracking-wider">
               Maintenance & Special Hours
             </h3>
 
@@ -319,16 +320,16 @@ export const OperatingHoursScreen: React.FC = () => {
                   haptics.tap();
                   showToast('Maintenance Slot Set', '1:00 PM – 2:00 PM daily turf rest.', 'success');
                 }}
-                className="p-3.5 bg-[#FAF9F6] text-[#171717] border border-[#E8E6E1] rounded-2xl flex flex-col items-start gap-1.5 hover:border-[#171717] active-press transition-all cursor-pointer text-left"
+                className="p-3.5 bg-[#F3F4F4] text-[#021526] border border-[#E5E7EB] rounded-2xl flex flex-col items-start gap-1.5 hover:border-[#021526] active-press transition-all cursor-pointer text-left"
               >
-                <div className="w-8 h-8 rounded-xl bg-white border border-[#E8E6E1] flex items-center justify-center text-[#171717]">
+                <div className="w-8 h-8 rounded-xl bg-white border border-[#E5E7EB] flex items-center justify-center text-[#021526]">
                   <Coffee className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="text-[13px] font-extrabold text-[#171717] block leading-tight">
+                  <span className="text-[13px] font-extrabold text-[#021526] block leading-tight">
                     Daily Turf Rest
                   </span>
-                  <span className="text-[11px] text-[#777570] block mt-0.5">
+                  <span className="text-[11px] text-[#5F6368] block mt-0.5">
                     1:00 PM – 2:00 PM
                   </span>
                 </div>
@@ -340,16 +341,16 @@ export const OperatingHoursScreen: React.FC = () => {
                   haptics.tap();
                   showToast('Holiday Schedule', 'Public holiday closures configured.', 'info');
                 }}
-                className="p-3.5 bg-[#FAF9F6] text-[#171717] border border-[#E8E6E1] rounded-2xl flex flex-col items-start gap-1.5 hover:border-[#171717] active-press transition-all cursor-pointer text-left"
+                className="p-3.5 bg-[#F3F4F4] text-[#021526] border border-[#E5E7EB] rounded-2xl flex flex-col items-start gap-1.5 hover:border-[#021526] active-press transition-all cursor-pointer text-left"
               >
-                <div className="w-8 h-8 rounded-xl bg-white border border-[#E8E6E1] flex items-center justify-center text-[#777570]">
+                <div className="w-8 h-8 rounded-xl bg-white border border-[#E5E7EB] flex items-center justify-center text-[#5F6368]">
                   <Moon className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="text-[13px] font-extrabold text-[#171717] block leading-tight">
+                  <span className="text-[13px] font-extrabold text-[#021526] block leading-tight">
                     Holiday Blackout
                   </span>
-                  <span className="text-[11px] text-[#777570] block mt-0.5">
+                  <span className="text-[11px] text-[#5F6368] block mt-0.5">
                     Special closure dates
                   </span>
                 </div>
@@ -370,27 +371,27 @@ export const OperatingHoursScreen: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: '100%' }}
               transition={{ type: 'spring', damping: 28, stiffness: 320 }}
-              className="relative w-full max-h-[90vh] md:max-w-lg md:rounded-[28px] overflow-y-auto no-scrollbar bg-white rounded-t-[28px] p-6 pb-8 shadow-2xl border border-[#E8E6E1] space-y-4"
+              className="relative w-full max-h-[90vh] md:max-w-lg md:rounded-[28px] overflow-y-auto no-scrollbar bg-white rounded-t-[28px] p-6 pb-8 shadow-2xl border border-[#E5E7EB] space-y-4"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
-              <div className="flex items-center justify-between pb-3 border-b border-[#F1F0EC]">
+              <div className="flex items-center justify-between pb-3 border-b border-[#F3F4F4]">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-10 h-10 rounded-2xl bg-[#FF6B2C]/10 text-[#FF6B2C] flex items-center justify-center font-bold text-[14px]">
+                  <div className="w-10 h-10 rounded-2xl bg-[#F94001]/10 text-[#F94001] flex items-center justify-center font-bold text-[14px]">
                     <Clock className="w-5 h-5" />
                   </div>
                   <div>
-                    <h2 className="text-[18px] font-black text-[#171717] tracking-tight">
+                    <h2 className="text-[18px] font-black text-[#021526] tracking-tight">
                       Edit {editingDay} Hours
                     </h2>
-                    <p className="text-[11.5px] text-[#777570]">Customize opening and closing time</p>
+                    <p className="text-[11.5px] text-[#5F6368]">Customize opening and closing time</p>
                   </div>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setEditingDay(null)}
-                  className="w-8 h-8 rounded-full bg-[#F7F7F5] flex items-center justify-center text-[#777570] hover:text-[#171717] cursor-pointer"
+                  className="w-8 h-8 rounded-full bg-[#F3F4F4] flex items-center justify-center text-[#5F6368] hover:text-[#021526] cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -399,10 +400,10 @@ export const OperatingHoursScreen: React.FC = () => {
               {/* Form */}
               <form onSubmit={handleSaveDayHours} className="space-y-4">
                 {/* Open / Closed Toggle */}
-                <div className="flex items-center justify-between p-3.5 rounded-2xl bg-[#FAF9F6] border border-[#E8E6E1]">
+                <div className="flex items-center justify-between p-3.5 rounded-2xl bg-[#F3F4F4] border border-[#E5E7EB]">
                   <div>
-                    <p className="text-[13.5px] font-extrabold text-[#171717]">Venue Open on {editingDay}</p>
-                    <p className="text-[11px] text-[#777570]">Allow online and walk-in slot locking</p>
+                    <p className="text-[13.5px] font-extrabold text-[#021526]">Venue Open on {editingDay}</p>
+                    <p className="text-[11px] text-[#5F6368]">Allow online and walk-in slot locking</p>
                   </div>
                   <button
                     type="button"
@@ -411,7 +412,7 @@ export const OperatingHoursScreen: React.FC = () => {
                       setEditIsOpen(!editIsOpen);
                     }}
                     className={`w-12 h-7 rounded-full transition-colors relative cursor-pointer ${
-                      editIsOpen ? 'bg-[#2FA66A]' : 'bg-[#D1CFCA]'
+                      editIsOpen ? 'bg-[#16A34A]' : 'bg-[#E5E7EB]'
                     }`}
                   >
                     <div
@@ -426,37 +427,27 @@ export const OperatingHoursScreen: React.FC = () => {
                 {editIsOpen && (
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="text-[11.5px] font-bold text-[#777570] block mb-1">
+                      <label className="text-[11.5px] font-bold text-[#5F6368] block mb-1">
                         Opening Time
                       </label>
-                      <select
+                      <CustomSelect
                         value={editOpenTime}
-                        onChange={(e) => setEditOpenTime(e.target.value)}
-                        className="w-full h-11 px-3 rounded-xl bg-[#FAF9F6] border border-[#E8E6E1] text-[13px] font-extrabold text-[#171717] focus:outline-none focus:border-[#FF6B2C] cursor-pointer"
-                      >
-                        {Array.from(new Set([editOpenTime, ...TIME_OPTIONS])).map((t) => (
-                          <option key={t} value={t}>
-                            {t}
-                          </option>
-                        ))}
-                      </select>
+                        onChange={(val) => setEditOpenTime(val)}
+                        options={Array.from(new Set([editOpenTime, ...TIME_OPTIONS]))}
+                        className="w-full h-11 px-3 rounded-xl bg-[#F3F4F4] border text-[13px] font-extrabold cursor-pointer"
+                      />
                     </div>
 
                     <div>
-                      <label className="text-[11.5px] font-bold text-[#777570] block mb-1">
+                      <label className="text-[11.5px] font-bold text-[#5F6368] block mb-1">
                         Closing Time
                       </label>
-                      <select
+                      <CustomSelect
                         value={editCloseTime}
-                        onChange={(e) => setEditCloseTime(e.target.value)}
-                        className="w-full h-11 px-3 rounded-xl bg-[#FAF9F6] border border-[#E8E6E1] text-[13px] font-extrabold text-[#171717] focus:outline-none focus:border-[#FF6B2C] cursor-pointer"
-                      >
-                        {Array.from(new Set([editCloseTime, ...TIME_OPTIONS])).map((t) => (
-                          <option key={t} value={t}>
-                            {t}
-                          </option>
-                        ))}
-                      </select>
+                        onChange={(val) => setEditCloseTime(val)}
+                        options={Array.from(new Set([editCloseTime, ...TIME_OPTIONS]))}
+                        className="w-full h-11 px-3 rounded-xl bg-[#F3F4F4] border text-[13px] font-extrabold cursor-pointer"
+                      />
                     </div>
                   </div>
                 )}
@@ -464,18 +455,18 @@ export const OperatingHoursScreen: React.FC = () => {
                 {/* Apply to All Days Checkbox */}
                 <div
                   onClick={() => setApplyToAll(!applyToAll)}
-                  className="flex items-center gap-2.5 p-3 rounded-xl bg-[#FAF9F6] border border-[#E8E6E1] cursor-pointer"
+                  className="flex items-center gap-2.5 p-3 rounded-xl bg-[#F3F4F4] border border-[#E5E7EB] cursor-pointer"
                 >
                   <div
                     className={`w-5 h-5 rounded-md flex items-center justify-center border transition-colors ${
                       applyToAll
-                        ? 'bg-[#FF6B2C] border-[#FF6B2C] text-white'
-                        : 'border-[#D1CFCA] bg-white'
+                        ? 'bg-[#F94001] border-[#F94001] text-white'
+                        : 'border-[#E5E7EB] bg-white'
                     }`}
                   >
                     {applyToAll && <Check className="w-3.5 h-3.5 stroke-[3]" />}
                   </div>
-                  <span className="text-[12.5px] font-bold text-[#171717]">
+                  <span className="text-[12.5px] font-bold text-[#021526]">
                     Apply these hours to all 7 days of the week
                   </span>
                 </div>
@@ -483,7 +474,7 @@ export const OperatingHoursScreen: React.FC = () => {
                 {/* Submit CTA */}
                 <button
                   type="submit"
-                  className="w-full h-11 rounded-xl bg-gradient-to-r from-[#FF6B2C] to-[#FF5410] hover:from-[#e85b1e] hover:to-[#db4a0b] text-white font-extrabold text-[13px] shadow-sm active-press cursor-pointer transition-all"
+                  className="w-full h-11 rounded-xl bg-gradient-to-r from-[#F94001] to-[#FF5410] hover:from-[#D93600] hover:to-[#db4a0b] text-white font-extrabold text-[13px] shadow-sm active-press cursor-pointer transition-all"
                 >
                   Save Schedule
                 </button>

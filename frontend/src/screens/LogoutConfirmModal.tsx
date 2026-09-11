@@ -47,48 +47,48 @@ export const LogoutConfirmModal: React.FC = () => {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.94, y: 8 }}
           transition={{ type: 'spring', damping: 26, stiffness: 320 }}
-          className="relative w-full max-w-sm bg-white rounded-3xl p-6 shadow-2xl border border-[#E8E6E1] space-y-4"
+          className="relative w-full max-w-sm bg-white rounded-3xl p-6 shadow-2xl border border-[#E5E7EB] space-y-4"
         >
           {/* Top Close Button */}
           <button
             onClick={handleCancel}
-            className="absolute top-4 right-4 w-7 h-7 rounded-full bg-[#FAF9F6] hover:bg-[#F1F0EC] border border-[#E8E6E1] flex items-center justify-center text-[#777570] hover:text-[#171717] cursor-pointer transition-colors"
+            className="absolute top-4 right-4 w-7 h-7 rounded-full bg-[#F3F4F4] hover:bg-[#F3F4F4] border border-[#E5E7EB] flex items-center justify-center text-[#5F6368] hover:text-[#021526] cursor-pointer transition-colors"
           >
             <X className="w-3.5 h-3.5" />
           </button>
 
           {/* Icon & Title */}
           <div className="flex flex-col items-center text-center space-y-2 pt-1">
-            <div className="w-14 h-14 rounded-2xl bg-[#D94B4B]/10 border border-[#D94B4B]/20 text-[#D94B4B] flex items-center justify-center shadow-xs">
+            <div className="w-14 h-14 rounded-2xl bg-[#DC2626]/10 border border-[#DC2626]/20 text-[#DC2626] flex items-center justify-center shadow-xs">
               <LogOut className="w-6 h-6 ml-0.5" />
             </div>
             <div>
-              <h3 className="text-[18px] font-black text-[#171717] tracking-tight">
+              <h3 className="text-[18px] font-black text-[#021526] tracking-tight">
                 Confirm Sign Out?
               </h3>
-              <p className="text-[12px] text-[#777570] mt-1 leading-snug">
-                Are you sure you want to sign out of <strong className="text-[#171717]">{venueName}</strong>?
+              <p className="text-[12px] text-[#5F6368] mt-1 leading-snug">
+                Are you sure you want to sign out of <strong className="text-[#021526]">{venueName}</strong>?
               </p>
             </div>
           </div>
 
           {/* User Account Info Chip */}
-          <div className="bg-[#FAF9F6] p-3 rounded-2xl border border-[#E8E6E1] flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#171717] text-white flex items-center justify-center font-black text-[12px] shrink-0">
+          <div className="bg-[#F3F4F4] p-3 rounded-2xl border border-[#E5E7EB] flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-[#021526] text-white flex items-center justify-center font-black text-[12px] shrink-0">
               {currentUser?.name ? currentUser.name.slice(0, 2).toUpperCase() : 'TT'}
             </div>
             <div className="min-w-0 text-left">
-              <p className="text-[12.5px] font-black text-[#171717] leading-none truncate">
+              <p className="text-[12.5px] font-black text-[#021526] leading-none truncate">
                 {currentUser?.name || ownerName}
               </p>
-              <p className="text-[11px] text-[#777570] mt-1 font-mono truncate">
+              <p className="text-[11px] text-[#5F6368] mt-1 font-mono truncate">
                 {currentUser?.phone || ownerPhone} · {currentUser?.type === 'staff' ? currentUser.role : 'Arena Director'}
               </p>
             </div>
           </div>
 
           {/* Safety Notice */}
-          <div className="flex items-center gap-2 text-[11px] text-[#2FA66A] bg-[#2FA66A]/10 border border-[#2FA66A]/20 px-3 py-2 rounded-xl">
+          <div className="flex items-center gap-2 text-[11px] text-[#16A34A] bg-[#16A34A]/10 border border-[#16A34A]/20 px-3 py-2 rounded-xl">
             <ShieldCheck className="w-4 h-4 shrink-0" />
             <span>Active match timers and booked slots will continue uninterrupted.</span>
           </div>
@@ -98,14 +98,14 @@ export const LogoutConfirmModal: React.FC = () => {
             <button
               type="button"
               onClick={handleCancel}
-              className="h-11 rounded-xl bg-[#FAF9F6] hover:bg-[#F1F0EC] border border-[#E8E6E1] text-[#171717] font-bold text-[12.5px] active-press cursor-pointer transition-colors"
+              className="h-11 rounded-xl bg-[#F3F4F4] hover:bg-[#F3F4F4] border border-[#E5E7EB] text-[#021526] font-bold text-[12.5px] active-press cursor-pointer transition-colors"
             >
               Stay Logged In
             </button>
             <button
               type="button"
               onClick={handleConfirmLogout}
-              className="h-11 rounded-xl bg-[#D94B4B] hover:bg-[#c03939] text-white font-black text-[12.5px] flex items-center justify-center gap-1.5 shadow-xs active-press cursor-pointer transition-colors"
+              className="h-11 rounded-xl bg-[#DC2626] hover:bg-[#c03939] text-white font-black text-[12.5px] flex items-center justify-center gap-1.5 shadow-xs active-press cursor-pointer transition-colors"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>Sign Out</span>

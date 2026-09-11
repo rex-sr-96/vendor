@@ -41,7 +41,7 @@ export const BookingListScreen: React.FC = () => {
   const getStatusBadge = (status: BookingStatus, paymentStatus: PaymentStatus) => {
     if (status === 'Confirmed' || paymentStatus === 'Paid') {
       return (
-        <span className="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-[#2FA66A]/15 text-[#1E774A] inline-flex items-center gap-1">
+        <span className="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-[#16A34A]/15 text-[#15803D] inline-flex items-center gap-1">
           <CheckCircle2 className="w-3 h-3" />
           Paid
         </span>
@@ -49,7 +49,7 @@ export const BookingListScreen: React.FC = () => {
     }
     if (status === 'Partially Paid' || paymentStatus === 'Partially Paid') {
       return (
-        <span className="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-[#E7A72F]/15 text-[#B87C0D] inline-flex items-center gap-1">
+        <span className="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-[#F59E0B]/15 text-[#B87C0D] inline-flex items-center gap-1">
           <Clock className="w-3 h-3" />
           Partially Paid
         </span>
@@ -57,13 +57,13 @@ export const BookingListScreen: React.FC = () => {
     }
     if (status === 'Completed') {
       return (
-        <span className="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-[#F1F0EC] text-[#777570]">
+        <span className="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-[#F3F4F4] text-[#5F6368]">
           Completed
         </span>
       );
     }
     return (
-      <span className="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-[#D94B4B]/15 text-[#B52B2B] inline-flex items-center gap-1">
+      <span className="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-[#DC2626]/15 text-[#B52B2B] inline-flex items-center gap-1">
         <AlertCircle className="w-3 h-3" />
         Payment Pending
       </span>
@@ -75,10 +75,10 @@ export const BookingListScreen: React.FC = () => {
       {/* Top Title & Actions */}
       <div className="flex items-center justify-between pt-1">
         <div>
-          <h1 className="text-[22px] font-extrabold text-[#171717] tracking-tight leading-none">
+          <h1 className="text-[22px] font-extrabold text-[#021526] tracking-tight leading-none">
             Bookings
           </h1>
-          <p className="text-[12px] text-[#777570] mt-0.5 font-medium">
+          <p className="text-[12px] text-[#5F6368] mt-0.5 font-medium">
             {filteredBookings.length} active & upcoming reservations
           </p>
         </div>
@@ -86,10 +86,10 @@ export const BookingListScreen: React.FC = () => {
           <button
             id="btn-export-bookings"
             onClick={handleOpenExportPage}
-            className="h-9 px-2.5 rounded-xl bg-white border border-[#E8E6E1] text-[#171717] font-bold text-[12px] flex items-center gap-1.5 shadow-2xs hover:border-[#171717]/40 active-press cursor-pointer"
+            className="h-9 px-2.5 rounded-xl bg-white border border-[#E5E7EB] text-[#021526] font-bold text-[12px] flex items-center gap-1.5 shadow-2xs hover:border-[#021526]/40 active-press cursor-pointer"
             title="Export bookings report (PDF / Excel / CSV)"
           >
-            <Download className="w-3.5 h-3.5 text-[#171717]" />
+            <Download className="w-3.5 h-3.5 text-[#021526]" />
             <span>Export</span>
           </button>
           <button
@@ -97,7 +97,7 @@ export const BookingListScreen: React.FC = () => {
               haptics.tap();
               setActiveModal('new_booking');
             }}
-            className="h-9 px-3 rounded-xl bg-[#FF6B2C] text-white font-bold text-[12px] flex items-center gap-1 shadow-xs hover:bg-[#e85b1e] active-press cursor-pointer"
+            className="h-9 px-3 rounded-xl bg-[#F94001] text-white font-bold text-[12px] flex items-center gap-1 shadow-xs hover:bg-[#D93600] active-press cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
             <span>+ Booking</span>
@@ -106,14 +106,14 @@ export const BookingListScreen: React.FC = () => {
       </div>
 
       {/* Search Input */}
-      <div className="relative flex items-center bg-[#F7F7F5] border border-[#E8E6E1] rounded-[14px] px-3.5 py-2 focus-within:border-[#171717] focus-within:bg-white transition-all shadow-xs">
-        <Search className="w-4 h-4 text-[#777570] mr-2 shrink-0" />
+      <div className="relative flex items-center bg-[#F3F4F4] border border-[#E5E7EB] rounded-[14px] px-3.5 py-2 focus-within:border-[#021526] focus-within:bg-white transition-all shadow-xs">
+        <Search className="w-4 h-4 text-[#5F6368] mr-2 shrink-0" />
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search by name, ID or court..."
-          className="w-full text-[13px] font-medium text-[#171717] bg-transparent focus:outline-none placeholder-[#A3A099]"
+          className="w-full text-[13px] font-medium text-[#021526] bg-transparent focus:outline-none placeholder-[#5F6368]"
         />
       </div>
 
@@ -128,15 +128,15 @@ export const BookingListScreen: React.FC = () => {
             }}
             className={`px-3 py-1 rounded-full text-[11.5px] font-bold whitespace-nowrap transition-all active-press cursor-pointer ${
               selectedStatus === status
-                ? 'bg-[#171717] text-white shadow-xs'
-                : 'bg-white text-[#777570] border border-[#E8E6E1] hover:text-[#171717]'
+                ? 'bg-[#021526] text-white shadow-xs'
+                : 'bg-white text-[#5F6368] border border-[#E5E7EB] hover:text-[#021526]'
             }`}
           >
             {status}
           </button>
         ))}
 
-        <div className="w-px h-4 bg-[#E8E6E1] mx-0.5 shrink-0" />
+        <div className="w-px h-4 bg-[#E5E7EB] mx-0.5 shrink-0" />
 
         {['All', 'Football', 'Cricket', 'Badminton'].map((sport) => (
           <button
@@ -147,8 +147,8 @@ export const BookingListScreen: React.FC = () => {
             }}
             className={`px-3 py-1 rounded-full text-[11.5px] font-bold whitespace-nowrap transition-all active-press cursor-pointer ${
               selectedSport === sport
-                ? 'bg-[#171717] text-white shadow-xs'
-                : 'bg-white text-[#777570] border border-[#E8E6E1] hover:text-[#171717]'
+                ? 'bg-[#021526] text-white shadow-xs'
+                : 'bg-white text-[#5F6368] border border-[#E5E7EB] hover:text-[#021526]'
             }`}
           >
             {sport}
@@ -162,42 +162,42 @@ export const BookingListScreen: React.FC = () => {
           <div
             key={b.id}
             onClick={() => handleCardClick(b.id)}
-            className="bg-white rounded-2xl p-3.5 border border-[#E8E6E1] shadow-xs active-press cursor-pointer hover:border-[#171717]/40 transition-all space-y-2.5"
+            className="bg-white rounded-2xl p-3.5 border border-[#E5E7EB] shadow-xs active-press cursor-pointer hover:border-[#021526]/40 transition-all space-y-2.5"
           >
             {/* Header: ID + Status badge */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5">
-                <span className="text-[11.5px] font-extrabold text-[#777570] font-mono tracking-tight">
+                <span className="text-[11.5px] font-extrabold text-[#5F6368] font-mono tracking-tight">
                   {b.id}
                 </span>
-                <span className="w-1 h-1 rounded-full bg-[#E8E6E1]" />
-                <span className="text-[11.5px] font-semibold text-[#171717]">{b.sport}</span>
+                <span className="w-1 h-1 rounded-full bg-[#E5E7EB]" />
+                <span className="text-[11.5px] font-semibold text-[#021526]">{b.sport}</span>
               </div>
               {getStatusBadge(b.status, b.paymentStatus)}
             </div>
 
             {/* Customer & Slot details */}
             <div>
-              <h3 className="text-[15px] font-bold text-[#171717] leading-tight">
+              <h3 className="text-[15px] font-bold text-[#021526] leading-tight">
                 {b.customerName}
               </h3>
-              <p className="text-[12px] text-[#777570] mt-0.5">
+              <p className="text-[12px] text-[#5F6368] mt-0.5">
                 {b.courtName} · {b.date} · {b.timeSlot}
               </p>
             </div>
 
             {/* Financial summary & Action */}
-            <div className="pt-2.5 border-t border-[#F1F0EC] flex items-center justify-between">
+            <div className="pt-2.5 border-t border-[#F3F4F4] flex items-center justify-between">
               <div>
-                <span className="text-[14px] font-extrabold text-[#171717]">
+                <span className="text-[14px] font-extrabold text-[#021526]">
                   ₹{b.totalAmount.toLocaleString('en-IN')}
                 </span>
                 {b.balanceAmount > 0 ? (
-                  <p className="text-[10.5px] text-[#E7A72F] font-bold">
+                  <p className="text-[10.5px] text-[#F59E0B] font-bold">
                     Paid ₹{b.paidAmount.toLocaleString('en-IN')} · Balance ₹{b.balanceAmount.toLocaleString('en-IN')}
                   </p>
                 ) : (
-                  <p className="text-[10.5px] text-[#2FA66A] font-semibold">
+                  <p className="text-[10.5px] text-[#16A34A] font-semibold">
                     Fully Paid via {b.paymentMethod || 'UPI'}
                   </p>
                 )}
@@ -210,7 +210,7 @@ export const BookingListScreen: React.FC = () => {
                     haptics.tap();
                     sendPaymentLink(b.id);
                   }}
-                  className="px-2.5 py-1.5 rounded-xl bg-[#FF6B2C] text-white text-[11.5px] font-bold flex items-center gap-1 shadow-xs hover:bg-[#e85b1e] active-press cursor-pointer"
+                  className="px-2.5 py-1.5 rounded-xl bg-[#F94001] text-white text-[11.5px] font-bold flex items-center gap-1 shadow-xs hover:bg-[#D93600] active-press cursor-pointer"
                 >
                   <Send className="w-3 h-3" />
                   <span>Send Link</span>
@@ -218,7 +218,7 @@ export const BookingListScreen: React.FC = () => {
               ) : (
                 <button
                   onClick={() => handleCardClick(b.id)}
-                  className="px-2.5 py-1.5 rounded-xl bg-[#F1F0EC] text-[#171717] text-[11.5px] font-bold flex items-center gap-0.5 hover:bg-[#E8E6E1] active-press cursor-pointer"
+                  className="px-2.5 py-1.5 rounded-xl bg-[#F3F4F4] text-[#021526] text-[11.5px] font-bold flex items-center gap-0.5 hover:bg-[#E5E7EB] active-press cursor-pointer"
                 >
                   <span>View</span>
                   <ChevronRight className="w-3 h-3" />
@@ -229,9 +229,9 @@ export const BookingListScreen: React.FC = () => {
         ))}
 
         {filteredBookings.length === 0 && (
-          <div className="text-center py-10 bg-white rounded-2xl border border-[#E8E6E1] p-5">
-            <p className="text-[14px] font-bold text-[#171717]">No bookings found</p>
-            <p className="text-[12px] text-[#777570] mt-0.5">Try adjusting your filters or search query.</p>
+          <div className="text-center py-10 bg-white rounded-2xl border border-[#E5E7EB] p-5">
+            <p className="text-[14px] font-bold text-[#021526]">No bookings found</p>
+            <p className="text-[12px] text-[#5F6368] mt-0.5">Try adjusting your filters or search query.</p>
           </div>
         )}
       </div>

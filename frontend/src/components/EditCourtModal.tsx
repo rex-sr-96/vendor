@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { haptics } from '../utils/haptics';
+import { CustomSelect } from './CustomSelect';
 
 const AVAILABLE_SPORTS = [
   'Football',
@@ -173,13 +174,13 @@ export const EditCourtModal: React.FC<EditCourtModalProps> = ({ court, isOpen, o
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: '100%' }}
           transition={{ type: 'spring', damping: 28, stiffness: 320 }}
-          className="relative w-full max-h-[92vh] md:max-w-2xl md:rounded-3xl overflow-y-auto no-scrollbar bg-white rounded-t-3xl p-5 pb-6 shadow-2xl border border-[#E8E6E1]"
+          className="relative w-full max-h-[92vh] md:max-w-2xl md:rounded-3xl overflow-y-auto no-scrollbar bg-white rounded-t-3xl p-5 pb-6 shadow-2xl border border-[#E5E7EB]"
         >
           {/* Modal Header */}
-          <div className="flex items-center justify-between pb-3 border-b border-[#F1F0EC]">
+          <div className="flex items-center justify-between pb-3 border-b border-[#F3F4F4]">
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-[18px] font-black text-[#171717] tracking-tight">
+                <h2 className="text-[18px] font-black text-[#021526] tracking-tight">
                   {isRejected ? `Edit & Resubmit Court: ${court.name}` : `Edit Court: ${court.name}`}
                 </h2>
                 {isRejected && (
@@ -188,7 +189,7 @@ export const EditCourtModal: React.FC<EditCourtModalProps> = ({ court, isOpen, o
                   </span>
                 )}
               </div>
-              <p className="text-[11.5px] text-[#777570] font-medium mt-0.5">
+              <p className="text-[11.5px] text-[#5F6368] font-medium mt-0.5">
                 {isRejected
                   ? 'Update rejected court details and resubmit for admin approval'
                   : 'Update rates, duration, peak schedules & cancellation policy'}
@@ -196,7 +197,7 @@ export const EditCourtModal: React.FC<EditCourtModalProps> = ({ court, isOpen, o
             </div>
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-full bg-[#F1F0EC] flex items-center justify-center text-[#777570] hover:text-[#171717] cursor-pointer"
+              className="w-8 h-8 rounded-full bg-[#F3F4F4] flex items-center justify-center text-[#5F6368] hover:text-[#021526] cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -204,11 +205,11 @@ export const EditCourtModal: React.FC<EditCourtModalProps> = ({ court, isOpen, o
 
           {/* Rejection reason banner */}
           {isRejected && court.rejectionReason && (
-            <div className="mt-3 p-3 rounded-xl bg-rose-50 border border-rose-200 text-[11.5px] text-rose-800 flex items-start gap-2.5">
-              <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+            <div className="mt-3 p-3 rounded-xl bg-[#DC2626]/8 border border-[#DC2626]/30 text-[11.5px] flex items-start gap-2.5">
+              <AlertTriangle className="w-4 h-4 text-[#DC2626] shrink-0 mt-0.5" />
               <div>
-                <strong className="font-bold text-rose-900 block">Admin Feedback for Rejection:</strong>
-                <p className="text-rose-700 mt-0.5 leading-relaxed">{court.rejectionReason}</p>
+                <strong className="font-bold text-[#DC2626] block">Admin Feedback for Rejection:</strong>
+                <p className="text-[#991B1B] mt-0.5 leading-relaxed">{court.rejectionReason}</p>
               </div>
             </div>
           )}
@@ -217,28 +218,28 @@ export const EditCourtModal: React.FC<EditCourtModalProps> = ({ court, isOpen, o
             {/* 1. Court Name & Display Name */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-[11px] font-bold text-[#777570] mb-1">
-                  Court Name <span className="text-[#FF6B2C]">*</span>
+                <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                  Court Name <span className="text-[#F94001]">*</span>
                 </label>
                 <input
                   type="text"
                   required
                   value={courtName}
                   onChange={(e) => setCourtName(e.target.value)}
-                  className="w-full bg-[#F7F7F5] border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none focus:border-[#171717]"
+                  className="w-full bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-3 py-2 text-[13px] font-bold text-[#021526] focus:outline-none focus:border-[#021526]"
                 />
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-[#777570] mb-1">
-                  Display Name <span className="text-[10px] text-[#A3A099] font-normal">(Customer-Facing)</span>
+                <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                  Display Name <span className="text-[10px] text-[#5F6368] font-normal">(Customer-Facing)</span>
                 </label>
                 <input
                   type="text"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                   placeholder="e.g. Main Arena Pitch 1"
-                  className="w-full bg-[#F7F7F5] border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none focus:border-[#171717]"
+                  className="w-full bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-3 py-2 text-[13px] font-bold text-[#021526] focus:outline-none focus:border-[#021526]"
                 />
               </div>
             </div>
@@ -246,37 +247,31 @@ export const EditCourtModal: React.FC<EditCourtModalProps> = ({ court, isOpen, o
             {/* 2. Sport & Surface Spec */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-[11px] font-bold text-[#777570] mb-1">Sport</label>
-                <div className="relative">
-                  <select
-                    value={selectedSports[0] || 'Football'}
-                    onChange={(e) => setSelectedSports([e.target.value])}
-                    className="w-full bg-[#F7F7F5] border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none appearance-none cursor-pointer pr-9"
-                  >
-                    {AVAILABLE_SPORTS.map((sp) => (
-                      <option key={sp} value={sp}>{sp}</option>
-                    ))}
-                  </select>
-                  <ChevronDown className="w-3.5 h-3.5 text-[#777570] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                </div>
+                <label className="block text-[11px] font-bold text-[#5F6368] mb-1">Sport</label>
+                <CustomSelect
+                  value={selectedSports[0] || 'Football'}
+                  onChange={(val) => setSelectedSports([val])}
+                  options={AVAILABLE_SPORTS}
+                  className="w-full bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-3 py-2 text-[13px] font-bold text-[#021526] focus:outline-none cursor-pointer"
+                />
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-[#777570] mb-1">Surface Specification</label>
+                <label className="block text-[11px] font-bold text-[#5F6368] mb-1">Surface Specification</label>
                 <input
                   type="text"
                   value={statusDetails}
                   onChange={(e) => setStatusDetails(e.target.value)}
                   placeholder="e.g. FIFA Grade 5G Synthetic Turf"
-                  className="w-full bg-[#F7F7F5] border border-[#E8E6E1] rounded-xl px-3 py-2 text-[13px] font-bold text-[#171717] focus:outline-none"
+                  className="w-full bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-3 py-2 text-[13px] font-bold text-[#021526] focus:outline-none"
                 />
               </div>
             </div>
 
             {/* 3. Duration & Hourly Rates */}
-            <div className="bg-[#FAF9F6] p-3 rounded-2xl border border-[#E8E6E1] space-y-2.5">
+            <div className="bg-[#F3F4F4] p-3 rounded-2xl border border-[#E5E7EB] space-y-2.5">
               <div>
-                <label className="block text-[11px] font-bold text-[#777570] mb-1">
+                <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
                   Minimum Booking Duration
                 </label>
                 <div className="grid grid-cols-5 gap-1.5">
@@ -290,8 +285,8 @@ export const EditCourtModal: React.FC<EditCourtModalProps> = ({ court, isOpen, o
                       }}
                       className={`py-1 px-1.5 rounded-lg text-[11px] font-bold transition-all border cursor-pointer text-center ${
                         minBookingDuration.toLowerCase() === dur.toLowerCase()
-                          ? 'bg-[#171717] text-white border-[#171717]'
-                          : 'bg-white text-[#777570] border-[#E8E6E1]'
+                          ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 font-black shadow-2xs'
+                          : 'bg-white text-[#5F6368] border-[#E5E7EB]'
                       }`}
                     >
                       {dur}
@@ -302,40 +297,40 @@ export const EditCourtModal: React.FC<EditCourtModalProps> = ({ court, isOpen, o
 
               <div className="grid grid-cols-3 gap-2 pt-1">
                 <div>
-                  <label className="block text-[10.5px] font-bold text-[#777570] mb-1">Standard Rate (₹/hr)</label>
+                  <label className="block text-[10.5px] font-bold text-[#5F6368] mb-1">Standard Rate (₹/hr)</label>
                   <div className="relative flex items-center">
-                    <span className="absolute left-2.5 text-[#777570] font-bold text-[12px]">₹</span>
+                    <span className="absolute left-2.5 text-[#5F6368] font-bold text-[12px]">₹</span>
                     <input
                       type="number"
                       value={pricePerHour}
                       onChange={(e) => setPricePerHour(e.target.value)}
-                      className="w-full bg-white border border-[#E8E6E1] rounded-xl pl-6 pr-2 py-1.5 text-[12.5px] font-bold text-[#171717] focus:outline-none"
+                      className="w-full bg-white border border-[#E5E7EB] rounded-xl pl-6 pr-2 py-1.5 text-[12.5px] font-bold text-[#021526] focus:outline-none"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[10.5px] font-bold text-[#FF6B2C] mb-1">Peak Rate (₹/hr)</label>
+                  <label className="block text-[10.5px] font-bold text-[#F94001] mb-1">Peak Rate (₹/hr)</label>
                   <div className="relative flex items-center">
-                    <span className="absolute left-2.5 text-[#FF6B2C] font-bold text-[12px]">₹</span>
+                    <span className="absolute left-2.5 text-[#F94001] font-bold text-[12px]">₹</span>
                     <input
                       type="number"
                       value={peakHoursPrice}
                       onChange={(e) => setPeakHoursPrice(e.target.value)}
-                      className="w-full bg-white border border-[#E8E6E1] rounded-xl pl-6 pr-2 py-1.5 text-[12.5px] font-bold text-[#171717] focus:outline-none"
+                      className="w-full bg-white border border-[#E5E7EB] rounded-xl pl-6 pr-2 py-1.5 text-[12.5px] font-bold text-[#021526] focus:outline-none"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[10.5px] font-bold text-[#171717] mb-1">Weekend Rate (₹/hr)</label>
+                  <label className="block text-[10.5px] font-bold text-[#021526] mb-1">Weekend Rate (₹/hr)</label>
                   <div className="relative flex items-center">
-                    <span className="absolute left-2.5 text-[#171717] font-bold text-[12px]">₹</span>
+                    <span className="absolute left-2.5 text-[#021526] font-bold text-[12px]">₹</span>
                     <input
                       type="number"
                       value={weekendPrice}
                       onChange={(e) => setWeekendPrice(e.target.value)}
-                      className="w-full bg-white border border-[#E8E6E1] rounded-xl pl-6 pr-2 py-1.5 text-[12.5px] font-bold text-[#171717] focus:outline-none"
+                      className="w-full bg-white border border-[#E5E7EB] rounded-xl pl-6 pr-2 py-1.5 text-[12.5px] font-bold text-[#021526] focus:outline-none"
                     />
                   </div>
                 </div>
@@ -345,47 +340,41 @@ export const EditCourtModal: React.FC<EditCourtModalProps> = ({ court, isOpen, o
             {/* 4. Peak Hours Schedule */}
             <div className="grid grid-cols-2 gap-2.5">
               <div>
-                <span className="text-[10px] font-bold text-[#777570] block mb-1">PEAK START TIME</span>
-                <select
+                <span className="text-[10px] font-bold text-[#5F6368] block mb-1">PEAK START TIME</span>
+                <CustomSelect
                   value={peakHoursStart}
-                  onChange={(e) => setPeakHoursStart(e.target.value)}
-                  className="w-full bg-[#F7F7F5] border border-[#E8E6E1] rounded-xl px-2.5 py-1.5 text-[12px] font-bold text-[#171717] focus:outline-none cursor-pointer"
-                >
-                  {TIME_SLOTS.map((slot) => (
-                    <option key={`peak-start-${slot}`} value={slot}>{slot}</option>
-                  ))}
-                </select>
+                  onChange={(val) => setPeakHoursStart(val)}
+                  options={TIME_SLOTS}
+                  className="w-full bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-2.5 py-1.5 text-[12px] font-bold text-[#021526] focus:outline-none cursor-pointer"
+                />
               </div>
 
               <div>
-                <span className="text-[10px] font-bold text-[#777570] block mb-1">PEAK END TIME</span>
-                <select
+                <span className="text-[10px] font-bold text-[#5F6368] block mb-1">PEAK END TIME</span>
+                <CustomSelect
                   value={peakHoursEnd}
-                  onChange={(e) => setPeakHoursEnd(e.target.value)}
-                  className="w-full bg-[#F7F7F5] border border-[#E8E6E1] rounded-xl px-2.5 py-1.5 text-[12px] font-bold text-[#171717] focus:outline-none cursor-pointer"
-                >
-                  {TIME_SLOTS.map((slot) => (
-                    <option key={`peak-end-${slot}`} value={slot}>{slot}</option>
-                  ))}
-                </select>
+                  onChange={(val) => setPeakHoursEnd(val)}
+                  options={TIME_SLOTS}
+                  className="w-full bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-2.5 py-1.5 text-[12px] font-bold text-[#021526] focus:outline-none cursor-pointer"
+                />
               </div>
             </div>
 
             {/* 5. Cancellation & Refund Policy */}
-            <div className="bg-[#FAF9F6] p-3 rounded-2xl border border-[#E8E6E1] space-y-2.5">
-              <div className="flex items-center justify-between pb-1 border-b border-[#E8E6E1]/70">
-                <span className="text-[11.5px] font-black text-[#171717] flex items-center gap-1">
-                  <ShieldCheck className="w-3.5 h-3.5 text-[#2FA66A]" />
+            <div className="bg-[#F3F4F4] p-3 rounded-2xl border border-[#E5E7EB] space-y-2.5">
+              <div className="flex items-center justify-between pb-1 border-b border-[#E5E7EB]/70">
+                <span className="text-[11.5px] font-black text-[#021526] flex items-center gap-1">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#16A34A]" />
                   <span>Cancellation & Refund Policy</span>
                 </span>
-                <span className="text-[9.5px] font-bold text-[#2FA66A] bg-[#2FA66A]/10 px-1.5 py-0.5 rounded">
+                <span className="text-[9.5px] font-bold text-[#16A34A] bg-[#16A34A]/10 px-1.5 py-0.5 rounded">
                   Court-Specific
                 </span>
               </div>
 
               {/* Free Cancellation Window */}
               <div>
-                <span className="text-[10.5px] font-bold text-[#777570] block mb-1">
+                <span className="text-[10.5px] font-bold text-[#5F6368] block mb-1">
                   Notice Buffer Before Match Kickoff:
                 </span>
                 <div className="grid grid-cols-4 gap-1.5">
@@ -401,8 +390,8 @@ export const EditCourtModal: React.FC<EditCourtModalProps> = ({ court, isOpen, o
                         }}
                         className={`py-1.5 px-2 rounded-xl font-bold text-[12px] transition-all border cursor-pointer text-center ${
                           isSelected
-                            ? 'bg-[#171717] text-white border-[#171717]'
-                            : 'bg-white text-[#777570] border-[#E8E6E1]'
+                            ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 font-black shadow-2xs'
+                            : 'bg-white text-[#5F6368] border-[#E5E7EB]'
                         }`}
                       >
                         {win}
@@ -414,7 +403,7 @@ export const EditCourtModal: React.FC<EditCourtModalProps> = ({ court, isOpen, o
 
               {/* Refund Payout Percentage */}
               <div>
-                <span className="text-[10.5px] font-bold text-[#777570] block mb-1">
+                <span className="text-[10.5px] font-bold text-[#5F6368] block mb-1">
                   Eligible Refund Value:
                 </span>
                 <div className="grid grid-cols-4 gap-1.5">
@@ -430,8 +419,8 @@ export const EditCourtModal: React.FC<EditCourtModalProps> = ({ court, isOpen, o
                         }}
                         className={`py-1.5 px-2 rounded-xl font-bold text-[12px] transition-all border cursor-pointer text-center ${
                           isSelected
-                            ? 'bg-[#2FA66A] text-white border-[#2FA66A]'
-                            : 'bg-white text-[#777570] border-[#E8E6E1]'
+                            ? 'bg-[#F0FDF4] text-[#16A34A] border border-[#16A34A]/40 font-black shadow-2xs'
+                            : 'bg-white text-[#5F6368] border-[#E5E7EB]'
                         }`}
                       >
                         {pct}
@@ -446,7 +435,7 @@ export const EditCourtModal: React.FC<EditCourtModalProps> = ({ court, isOpen, o
             <div className="pt-2">
               <button
                 type="submit"
-                className="w-full h-11 bg-[#FF6B2C] hover:bg-[#e85b1e] text-white font-black text-[13.5px] rounded-xl flex items-center justify-center gap-1.5 shadow-sm active-press cursor-pointer transition-all"
+                className="w-full h-11 bg-[#F94001] hover:bg-[#D93600] text-white font-black text-[13.5px] rounded-xl flex items-center justify-center gap-1.5 shadow-sm active-press cursor-pointer transition-all"
               >
                 <Sparkles className="w-4 h-4" />
                 <span>{isRejected ? 'Resubmit Court for Admin Approval' : 'Save Changes'}</span>
