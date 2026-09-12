@@ -136,22 +136,6 @@ export const RaiseRequestModal: React.FC<RaiseRequestModalProps> = ({
   const [bankChangeReason, setBankChangeReason] = useState('Switching primary settlement pool to ICICI commercial zero-balance account.');
   const [chequeAttached, setChequeAttached] = useState(true);
 
-  // 3. New Court Approval Form State (Full Add Court Workflow)
-  const [isSamePhysicalSports, setIsSamePhysicalSports] = useState<'yes' | 'no'>('no');
-  const liveCourts = useMemo(() => {
-    return courts.filter((c) => c.status === 'Approved' || !c.status || c.status === 'Pending Approval');
-  }, [courts]);
-  const [selectedParentCourtId, setSelectedParentCourtId] = useState<string>('');
-
-  useEffect(() => {
-    if (!selectedParentCourtId && liveCourts.length > 0) {
-      setSelectedParentCourtId(liveCourts[0].id);
-    }
-  }, [liveCourts, selectedParentCourtId]);
-
-  const selectedParentCourt = useMemo(() => {
-    return liveCourts.find((c) => c.id === selectedParentCourtId) || liveCourts[0];
-  }, [liveCourts, selectedParentCourtId]);
 
   const [courtSelectedSport, setCourtSelectedSport] = useState('Football');
   const [courtName, setCourtName] = useState('');
@@ -257,68 +241,6 @@ export const RaiseRequestModal: React.FC<RaiseRequestModalProps> = ({
   const handleSubmitCourtApproval = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (isSamePhysicalSports === 'yes') {
-      if (!selectedParentCourt) {
-        showToast('Live Court Required', 'Please select an existing live court.', 'warning');
-        return;
-      }
-      const sportToAdd = courtSelectedSport || 'Cricket';
-      const finalCourtName = selectedParentCourt.name;
-      const finalDisplayName = displayName.trim() || `${selectedParentCourt.name} (${sportToAdd})`;
-
-      // 1. Add court to inventory
-      addNewCourt({
-        name: finalCourtName,
-        displayName: finalDisplayName,
-        samePhysicalSports: true,
-        parentCourtId: selectedParentCourt.id,
-        parentCourtName: selectedParentCourt.name,
-        sports: [sportToAdd],
-        pricePerHour: selectedParentCourt.pricePerHour || 1000,
-        minBookingDuration: selectedParentCourt.minBookingDuration || '1 Hour',
-        peakHoursStart: selectedParentCourt.peakHoursStart || '06:00 PM',
-        peakHoursEnd: selectedParentCourt.peakHoursEnd || '11:00 PM',
-        peakDays: selectedParentCourt.peakDays || ['Fri', 'Sat', 'Sun'],
-        peakHoursPrice: selectedParentCourt.peakHoursPrice || Math.round((selectedParentCourt.pricePerHour || 1000) * 1.4),
-        weekendPrice: selectedParentCourt.weekendPrice || Math.round((selectedParentCourt.pricePerHour || 1000) * 1.5),
-        operatingHours: selectedParentCourt.operatingHours || '06:00 AM – 11:00 PM',
-        type: selectedParentCourt.type || 'Outdoor',
-        status: 'Pending Approval',
-        statusDetails: `Under Review · Multi-sport mapping on ${selectedParentCourt.name}`,
-        cancellationWindowHours: selectedParentCourt.cancellationWindowHours ?? 12,
-        refundPercentage: selectedParentCourt.refundPercentage ?? 100,
-        cancellationPolicyLabel: selectedParentCourt.cancellationPolicyLabel || 'Free cancel up to 12h before match (100% refund)',
-      });
-
-      // 2. Create official support request ticket
-      addSupportTicket({
-        category: 'Court Approval',
-        requestType: 'court_approval',
-        subject: `New Sport Approval: ${sportToAdd} on ${selectedParentCourt.name}`,
-        description: `Request to map ${sportToAdd} onto physical ground ${selectedParentCourt.name} (${finalDisplayName}). Automatic conflict booking lock applied.`,
-        priority: 'High',
-        attachmentName: courtPhotosAttached ? 'court_marking_and_lighting_photos.zip' : undefined,
-        detailsPayload: {
-          courtName: finalCourtName,
-          displayName: finalDisplayName,
-          sports: [sportToAdd],
-          surfaceType: selectedParentCourt.type || 'Outdoor',
-          pricePerHour: selectedParentCourt.pricePerHour || 1000,
-          minBookingDuration: selectedParentCourt.minBookingDuration || '1 Hour',
-          samePhysicalSports: true,
-          parentCourtName: selectedParentCourt.name,
-          cancellationPolicyLabel: selectedParentCourt.cancellationPolicyLabel || 'Free cancellation up to 12h before match with 100% refund',
-          photosCount: courtPhotosAttached ? 4 : 0,
-        },
-      });
-
-      showToast('Court Request Submitted', `${sportToAdd} on ${selectedParentCourt.name} submitted for desk verification.`, 'success');
-      haptics.success();
-      onClose();
-      return;
-    }
-
-    // Standalone Court (isSamePhysicalSports === 'no')
     if (!courtName.trim()) {
       showToast('Court Name Required', 'Please enter court name.', 'warning');
       return;
@@ -836,379 +758,122 @@ export const RaiseRequestModal: React.FC<RaiseRequestModalProps> = ({
             {/* 3. NEW COURT APPROVAL FORM - COMPLETE ADD COURT SPECIFICATION WORKFLOW */}
             {requestType === 'court_approval' && (
               <form onSubmit={handleSubmitCourtApproval} className="space-y-4">
-                {/* SECTION 1: QUESTION: Same physical sports for this turf? */}
-                <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-[#E5E7EB] shadow-2xs space-y-2.5">
-                  <div className="flex items-center justify-between">
-                    <label className="text-[13px] font-black text-[#021526] flex items-center gap-1.5">
-                      <span className="w-4 h-4 rounded-full bg-[#021526] text-white text-[10px] font-bold flex items-center justify-center">
-                        1
-                      </span>
-                      <span>Same physical sports for this turf?</span>
-                    </label>
-                    <span className="text-[9.5px] text-[#F94001] bg-[#F94001]/10 font-bold px-2 py-0.5 rounded-full">
-                      Required
+                {/* SECTION 1: COURT INFORMATION (1 COURT = 1 SPORT) */}
+                <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-[#E5E7EB] shadow-2xs space-y-3">
+                  <div className="flex items-center gap-1.5 pb-1 border-b border-[#F3F4F4]">
+                    <span className="w-4 h-4 rounded-full bg-[#021526] text-white text-[10px] font-bold flex items-center justify-center">
+                      1
                     </span>
+                    <h3 className="text-[13px] font-black text-[#021526]">Court Information</h3>
                   </div>
 
-                  <p className="text-[11px] text-[#5F6368] leading-relaxed">
-                    Select <strong className="text-[#021526]">Yes</strong> if this sport will share the ground with an already live physical court (e.g. Football pitch also used for Box Cricket).
-                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                        Select Sport <span className="text-[#F94001]">*</span>
+                      </label>
+                      <CustomSelect
+                        value={courtSelectedSport}
+                        onChange={(val) => setCourtSelectedSport(val)}
+                        options={AVAILABLE_SPORTS}
+                        className="w-full h-11 bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-3 text-[13px] font-bold text-[#021526] focus:outline-none cursor-pointer"
+                      />
+                    </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-0.5">
-                    <button
-                      type="button"
-                      id="btn-same-physical-yes"
-                      onClick={() => {
-                        haptics.tap();
-                        setIsSamePhysicalSports('yes');
-                        if (courtSelectedSport === 'Football') {
-                          setCourtSelectedSport('Cricket');
-                        }
-                        if (selectedParentCourt) {
-                          setDisplayName(`${selectedParentCourt.name} (${courtSelectedSport === 'Football' ? 'Cricket' : courtSelectedSport})`);
-                        }
-                      }}
-                      className={`py-2.5 px-3 rounded-xl font-bold text-[12.5px] sm:text-[13px] flex items-center justify-center gap-1.5 transition-all border cursor-pointer active-press ${
-                        isSamePhysicalSports === 'yes'
-                          ? 'bg-[#F94001] text-white border-[#F94001] shadow-sm shadow-[#F94001]/20'
-                          : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:text-[#021526]'
-                      }`}
-                    >
-                      {isSamePhysicalSports === 'yes' && <Check className="w-3.5 h-3.5 text-white" />}
-                      <span>Yes (Share Physical Ground)</span>
-                    </button>
+                    <div>
+                      <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                        Court Name <span className="text-[#F94001]">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={courtName}
+                        onChange={(e) => setCourtName(e.target.value)}
+                        placeholder="e.g. Turf 1A (5-a-side)"
+                        className="w-full h-11 bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-3 text-[13px] font-bold text-[#021526] focus:outline-none focus:border-[#021526]"
+                      />
+                    </div>
+                  </div>
 
-                    <button
-                      type="button"
-                      id="btn-same-physical-no"
-                      onClick={() => {
-                        haptics.tap();
-                        setIsSamePhysicalSports('no');
-                      }}
-                      className={`py-2.5 px-3 rounded-xl font-bold text-[12.5px] sm:text-[13px] flex items-center justify-center gap-1.5 transition-all border cursor-pointer active-press ${
-                        isSamePhysicalSports === 'no'
-                          ? 'bg-[#F94001] text-white border-[#F94001] shadow-sm shadow-[#F94001]/20'
-                          : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:text-[#021526]'
-                      }`}
-                    >
-                      {isSamePhysicalSports === 'no' && <Check className="w-3.5 h-3.5 text-white" />}
-                      <span>No (Separate Ground)</span>
-                    </button>
+                  <div>
+                    <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                      Display Name <span className="text-[10px] text-[#5F6368] font-normal">(Customer-Facing, optional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={displayName}
+                      onChange={(e) => setDisplayName(e.target.value)}
+                      placeholder="e.g. Main Arena Pitch 1 (Floodlit Turf)"
+                      className="w-full h-11 bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-3 text-[13px] font-bold text-[#021526] focus:outline-none focus:border-[#021526]"
+                    />
                   </div>
                 </div>
 
-                {/* CONDITIONAL FLOW A: WHEN 'YES' (SHARE PHYSICAL GROUND) */}
-                {isSamePhysicalSports === 'yes' ? (
-                  <div className="space-y-3.5 animate-in fade-in duration-200">
-                    {/* STEP 2: SELECT EXISTING LIVE COURT */}
-                    <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-[#E5E7EB] shadow-2xs space-y-3">
-                      <div className="flex items-center justify-between pb-1 border-b border-[#F3F4F4]">
-                        <div className="flex items-center gap-1.5">
-                          <span className="w-4 h-4 rounded-full bg-[#021526] text-white text-[10px] font-bold flex items-center justify-center">
-                            2
-                          </span>
-                          <h3 className="text-[13px] font-black text-[#021526]">Select Existing Live Court</h3>
-                        </div>
-                        <span className="text-[10px] text-[#16A34A] font-extrabold flex items-center gap-1">
-                          <CheckCircle2 className="w-3 h-3" />
-                          {liveCourts.length} Live Courts Available
-                        </span>
-                      </div>
-
-                      <p className="text-[11px] text-[#5F6368]">
-                        Select the active physical ground that this new sport will map to:
-                      </p>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                        {liveCourts.map((court) => {
-                          const isSelected = selectedParentCourt?.id === court.id;
-                          return (
-                            <button
-                              key={court.id}
-                              type="button"
-                              onClick={() => {
-                                haptics.tap();
-                                setSelectedParentCourtId(court.id);
-                                setDisplayName(`${court.name} (${courtSelectedSport || 'Cricket'})`);
-                              }}
-                              className={`p-3 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2.5 select-none active-press ${
-                                isSelected
-                                  ? 'bg-[#F94001] text-white border-[#F94001] shadow-sm shadow-[#F94001]/20'
-                                  : 'bg-[#F3F4F4] text-[#021526] border-[#E5E7EB] hover:bg-[#F3F4F4]'
-                              }`}
-                            >
-                              <div className="flex items-start justify-between gap-2">
-                                <div>
-                                  <div className="flex items-center gap-1.5">
-                                    <span className="text-[13px] sm:text-[13.5px] font-black">{court.name}</span>
-                                    <span
-                                      className={`px-1.5 py-0.2 rounded text-[8.5px] font-extrabold uppercase ${
-                                        isSelected ? 'bg-white/20 text-white' : 'bg-[#16A34A]/15 text-[#16A34A]'
-                                      }`}
-                                    >
-                                      {court.status || 'Live'}
-                                    </span>
-                                  </div>
-                                  <p
-                                    className={`text-[10.5px] font-medium mt-0.5 line-clamp-1 ${
-                                      isSelected ? 'text-white/80' : 'text-[#5F6368]'
-                                    }`}
-                                  >
-                                    {court.displayName || court.name}
-                                  </p>
-                                </div>
-
-                                <div
-                                  className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${
-                                    isSelected ? 'bg-white/20 border-white' : 'border-[#D4D2CD] bg-white'
-                                  }`}
-                                >
-                                  {isSelected && <Check className="w-3 h-3 stroke-[3] text-white" />}
-                                </div>
-                              </div>
-
-                              <div className="flex items-center justify-between pt-1.5 border-t border-white/10 text-[10.5px]">
-                                <span className={`font-bold ${isSelected ? 'text-white/80' : 'text-[#5F6368]'}`}>
-                                  Sports: {court.sports?.join(', ') || 'Football'}
-                                </span>
-                                <span className="font-black text-[#F94001]">₹{court.pricePerHour}/hr</span>
-                              </div>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* STEP 3: ADD ANOTHER SPORT & DISPLAY NAME */}
-                    {selectedParentCourt && (
-                      <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-[#E5E7EB] shadow-2xs space-y-3">
-                        <div className="flex items-center gap-1.5 pb-1 border-b border-[#F3F4F4]">
-                          <span className="w-4 h-4 rounded-full bg-[#021526] text-white text-[10px] font-bold flex items-center justify-center">
-                            3
-                          </span>
-                          <h3 className="text-[13px] font-black text-[#021526]">
-                            Add Another Sport on {selectedParentCourt.name}
-                          </h3>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <div>
-                            <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
-                              Select Additional Sport <span className="text-[#F94001]">*</span>
-                            </label>
-                            <CustomSelect
-                              value={courtSelectedSport}
-                              onChange={(newSport) => {
-                                setCourtSelectedSport(newSport);
-                                setDisplayName(`${selectedParentCourt.name} (${newSport})`);
-                              }}
-                              options={AVAILABLE_SPORTS.map((sp) => ({
-                                value: sp,
-                                label: `${sp} ${selectedParentCourt.sports.includes(sp) ? '(Already active)' : ''}`,
-                              }))}
-                              className="w-full h-11 bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-3 text-[13px] font-bold text-[#021526] focus:outline-none cursor-pointer"
-                            />
-                            <span className="text-[10px] text-[#5F6368] mt-1 block">
-                              Active sports on physical turf: <strong className="text-[#021526]">{selectedParentCourt.sports.join(', ')}</strong>
-                            </span>
-                          </div>
-
-                          <div>
-                            <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
-                              Display Name <span className="text-[10px] text-[#F94001] font-bold">* (Customer-Facing)</span>
-                            </label>
-                            <input
-                              type="text"
-                              required
-                              value={displayName || `${selectedParentCourt.name} (${courtSelectedSport || 'Cricket'})`}
-                              onChange={(e) => setDisplayName(e.target.value)}
-                              placeholder={`e.g. ${selectedParentCourt.name} (Box Cricket)`}
-                              className="w-full h-11 bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-3 text-[13px] font-bold text-[#021526] focus:outline-none focus:border-[#021526]"
-                            />
-                            <span className="text-[10px] text-[#5F6368] mt-1 block">
-                              Appears on customer booking screen when selecting {courtSelectedSport || 'this sport'}.
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Shared physical ground explanation banner */}
-                        <div className="bg-[#FFF8E6] border border-[#FFE082] rounded-xl p-3 text-[11.5px] text-[#8C6B00] flex items-start gap-2.5">
-                          <AlertCircle className="w-4 h-4 text-[#E65100] shrink-0 mt-0.5" />
-                          <div className="space-y-0.5">
-                            <p className="font-bold text-[#B45309]">Physical Ground Conflict Synchronization</p>
-                            <p className="text-[#8C6B00] leading-relaxed">
-                              When a slot is booked for <strong>{courtSelectedSport || 'this sport'}</strong>, the system will automatically block the underlying physical ground <strong>{selectedParentCourt.name}</strong> to prevent double bookings.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* STEP 4: INHERITED PHYSICAL GROUND SPECS & POLICIES */}
-                    {selectedParentCourt && (
-                      <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-[#E5E7EB] shadow-2xs space-y-3">
-                        <div className="flex items-center justify-between pb-1 border-b border-[#F3F4F4]">
-                          <div className="flex items-center gap-1.5">
-                            <span className="w-4 h-4 rounded-full bg-[#021526] text-white text-[10px] font-bold flex items-center justify-center">
-                              4
-                            </span>
-                            <h3 className="text-[13px] font-black text-[#021526]">
-                              Inherited Ground Specs &amp; Policies
-                            </h3>
-                          </div>
-                          <span className="text-[10px] text-[#5F6368] font-bold">
-                            Matches parent court setup
-                          </span>
-                        </div>
-
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11.5px]">
-                          <div className="bg-[#F3F4F4] p-2.5 rounded-xl border border-[#E5E7EB]">
-                            <span className="text-[10px] font-bold text-[#5F6368] block">Regular Rate</span>
-                            <span className="text-[13px] font-black text-[#021526]">₹{selectedParentCourt.pricePerHour}/hr</span>
-                          </div>
-                          <div className="bg-[#F3F4F4] p-2.5 rounded-xl border border-[#E5E7EB]">
-                            <span className="text-[10px] font-bold text-[#5F6368] block">Min Duration</span>
-                            <span className="text-[13px] font-black text-[#021526]">{selectedParentCourt.minBookingDuration || '1 Hour'}</span>
-                          </div>
-                          <div className="bg-[#F3F4F4] p-2.5 rounded-xl border border-[#E5E7EB]">
-                            <span className="text-[10px] font-bold text-[#5F6368] block">Operating Hours</span>
-                            <span className="text-[13px] font-black text-[#021526]">{selectedParentCourt.operatingHours || '06:00 AM – 11:00 PM'}</span>
-                          </div>
-                          <div className="bg-[#F3F4F4] p-2.5 rounded-xl border border-[#E5E7EB]">
-                            <span className="text-[10px] font-bold text-[#5F6368] block">Environment</span>
-                            <span className="text-[13px] font-black text-[#021526]">{selectedParentCourt.type || 'Outdoor'}</span>
-                          </div>
-                        </div>
-
-                        <div className="bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl p-2.5 flex items-center gap-2">
-                          <ShieldCheck className="w-4 h-4 text-[#16A34A] shrink-0" />
-                          <span className="text-[11px] text-[#5F6368]">
-                            <strong className="text-[#021526]">Inherited Cancellation Rule: </strong>
-                            {selectedParentCourt.cancellationPolicyLabel || 'Free cancellation up to 12h before match with 100% refund.'}
-                          </span>
-                        </div>
-                      </div>
-                    )}
+                {/* SECTION 2: BASE DURATION & RATE */}
+                <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-[#E5E7EB] shadow-2xs space-y-3">
+                  <div className="flex items-center gap-1.5 pb-1 border-b border-[#F3F4F4]">
+                    <span className="w-4 h-4 rounded-full bg-[#021526] text-white text-[10px] font-bold flex items-center justify-center">
+                      2
+                    </span>
+                    <h3 className="text-[13px] font-black text-[#021526]">Base Duration &amp; Rate</h3>
                   </div>
-                ) : (
-                  /* CONDITIONAL FLOW B: WHEN 'NO' (SEPARATE GROUND) */
-                  <div className="space-y-3.5 animate-in fade-in duration-200">
-                    {/* SECTION 2: COURT INFORMATION */}
-                    <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-[#E5E7EB] shadow-2xs space-y-3">
-                      <div className="flex items-center gap-1.5 pb-1 border-b border-[#F3F4F4]">
-                        <span className="w-4 h-4 rounded-full bg-[#021526] text-white text-[10px] font-bold flex items-center justify-center">
-                          2
-                        </span>
-                        <h3 className="text-[13px] font-black text-[#021526]">Court Information</h3>
-                      </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                          <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
-                            Select Sport <span className="text-[#F94001]">*</span>
-                          </label>
-                          <CustomSelect
-                            value={courtSelectedSport}
-                            onChange={(val) => setCourtSelectedSport(val)}
-                            options={AVAILABLE_SPORTS}
-                            className="w-full h-11 bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-3 text-[13px] font-bold text-[#021526] focus:outline-none cursor-pointer"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
-                            Court Name <span className="text-[#F94001]">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            required
-                            value={courtName}
-                            onChange={(e) => setCourtName(e.target.value)}
-                            placeholder="e.g. Turf 1A (5-a-side)"
-                            className="w-full h-11 bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-3 text-[13px] font-bold text-[#021526] focus:outline-none focus:border-[#021526]"
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
-                          Display Name <span className="text-[10px] text-[#5F6368] font-normal">(Customer-Facing, optional)</span>
-                        </label>
-                        <input
-                          type="text"
-                          value={displayName}
-                          onChange={(e) => setDisplayName(e.target.value)}
-                          placeholder="e.g. Main Arena Pitch 1 (Floodlit Turf)"
-                          className="w-full h-11 bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-3 text-[13px] font-bold text-[#021526] focus:outline-none focus:border-[#021526]"
-                        />
-                      </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-[#5F6368] mb-1.5">
+                      Minimum Booking Duration
+                    </label>
+                    <div className="grid grid-cols-3 sm:grid-cols-5 gap-1.5">
+                      {DURATION_OPTIONS.map((dur) => (
+                        <button
+                          key={dur}
+                          type="button"
+                          onClick={() => {
+                            haptics.tap();
+                            setMinBookingTime(dur);
+                          }}
+                          className={`py-2 px-2 rounded-xl text-[11px] sm:text-[11.5px] font-bold transition-all border cursor-pointer text-center active-press ${
+                            minBookingTime === dur
+                              ? 'bg-[#F94001] text-white border-[#F94001] shadow-sm shadow-[#F94001]/20'
+                              : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:text-[#021526]'
+                          }`}
+                        >
+                          {dur}
+                        </button>
+                      ))}
                     </div>
+                  </div>
 
-                    {/* SECTION 3: BASE DURATION & RATE */}
-                    <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-[#E5E7EB] shadow-2xs space-y-3">
-                      <div className="flex items-center gap-1.5 pb-1 border-b border-[#F3F4F4]">
-                        <span className="w-4 h-4 rounded-full bg-[#021526] text-white text-[10px] font-bold flex items-center justify-center">
-                          3
-                        </span>
-                        <h3 className="text-[13px] font-black text-[#021526]">Base Duration &amp; Rate</h3>
-                      </div>
-
-                      <div>
-                        <label className="block text-[11px] font-bold text-[#5F6368] mb-1.5">
-                          Minimum Booking Duration
-                        </label>
-                        <div className="grid grid-cols-3 sm:grid-cols-5 gap-1.5">
-                          {DURATION_OPTIONS.map((dur) => (
-                            <button
-                              key={dur}
-                              type="button"
-                              onClick={() => {
-                                haptics.tap();
-                                setMinBookingTime(dur);
-                              }}
-                              className={`py-2 px-2 rounded-xl text-[11px] sm:text-[11.5px] font-bold transition-all border cursor-pointer text-center active-press ${
-                                minBookingTime === dur
-                                  ? 'bg-[#F94001] text-white border-[#F94001] shadow-sm shadow-[#F94001]/20'
-                                  : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:text-[#021526]'
-                              }`}
-                            >
-                              {dur}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
-                          Regular Hourly Price (₹/hour) <span className="text-[#F94001]">*</span>
-                        </label>
-                        <div className="relative flex items-center">
-                          <span className="absolute left-3 text-[#5F6368] font-bold text-[13px]">₹</span>
-                          <input
-                            type="number"
-                            required
-                            value={regularPrice}
-                            onChange={(e) => setRegularPrice(e.target.value)}
-                            placeholder="1000"
-                            className="w-full h-11 bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl pl-7 pr-16 text-[13.5px] font-bold text-[#021526] focus:outline-none focus:border-[#021526]"
-                          />
-                          <span className="absolute right-3 text-[11px] font-bold text-[#5F6368]">/ hour</span>
-                        </div>
-                      </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                      Regular Hourly Price (₹/hour) <span className="text-[#F94001]">*</span>
+                    </label>
+                    <div className="relative flex items-center">
+                      <span className="absolute left-3 text-[#5F6368] font-bold text-[13px]">₹</span>
+                      <input
+                        type="number"
+                        required
+                        value={regularPrice}
+                        onChange={(e) => setRegularPrice(e.target.value)}
+                        placeholder="1000"
+                        className="w-full h-11 bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl pl-7 pr-16 text-[13.5px] font-bold text-[#021526] focus:outline-none focus:border-[#021526]"
+                      />
+                      <span className="absolute right-3 text-[11px] font-bold text-[#5F6368]">/ hour</span>
                     </div>
+                  </div>
+                </div>
 
-                    {/* SECTION 4: PEAK HOURS & WEEKEND */}
-                    <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-[#F94001]/30 shadow-2xs space-y-3">
-                      <div className="flex items-center justify-between pb-1 border-b border-[#F3F4F4]">
-                        <div className="flex items-center gap-1.5">
-                          <span className="w-4 h-4 rounded-full bg-[#F94001] text-white text-[10px] font-bold flex items-center justify-center">
-                            4
-                          </span>
-                          <h3 className="text-[13px] font-black text-[#021526]">Peak Surcharge &amp; Weekend Rates</h3>
-                        </div>
-                        <span className="text-[9.5px] font-bold text-[#F94001] bg-[#F94001]/10 px-2 py-0.5 rounded-full">
-                          High Demand
-                        </span>
+                {/* SECTION 3: PEAK HOURS & WEEKEND */}
+                <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-[#F94001]/30 shadow-2xs space-y-3">
+                  <div className="flex items-center justify-between pb-1 border-b border-[#F3F4F4]">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-4 h-4 rounded-full bg-[#F94001] text-white text-[10px] font-bold flex items-center justify-center">
+                        3
+                      </span>
+                      <h3 className="text-[13px] font-black text-[#021526]">Peak Surcharge &amp; Weekend Rates</h3>
+                    </div>
+                    <span className="text-[9.5px] font-bold text-[#F94001] bg-[#F94001]/10 px-2 py-0.5 rounded-full">
+                      High Demand
+                    </span>
                       </div>
 
                       <div className="grid grid-cols-2 gap-2.5">
@@ -1299,7 +964,7 @@ export const RaiseRequestModal: React.FC<RaiseRequestModalProps> = ({
                       </div>
                     </div>
 
-                    {/* SECTION 5: COURT-SPECIFIC CANCELLATION & REFUND POLICY */}
+                    {/* SECTION 4: COURT-SPECIFIC CANCELLATION & REFUND POLICY */}
                     <div className="space-y-3">
                       {/* Card 1: Free Cancellation Window */}
                       <div className="bg-white rounded-2xl p-3.5 sm:p-4 border border-[#E5E7EB] shadow-2xs space-y-2.5">
@@ -1400,10 +1065,8 @@ export const RaiseRequestModal: React.FC<RaiseRequestModalProps> = ({
                         </span>
                       </div>
                     </div>
-                  </div>
-                )}
 
-                {/* SECTION 6: PHOTO AUDIT ATTACHMENTS */}
+                {/* SECTION 5: PHOTO AUDIT ATTACHMENTS */}
                 <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-[#E5E7EB] shadow-2xs space-y-2">
                   <label className="block text-[12px] font-bold text-[#021526]">
                     Court Photos &amp; Boundary Markings (4 Photos) *
@@ -1448,11 +1111,7 @@ export const RaiseRequestModal: React.FC<RaiseRequestModalProps> = ({
                     className="flex-1 h-11 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-[13px] sm:text-[13.5px] flex items-center justify-center gap-2 active-press shadow-sm cursor-pointer"
                   >
                     <Sparkles className="w-4 h-4" />
-                    <span>
-                      {isSamePhysicalSports === 'yes' && selectedParentCourt
-                        ? `Submit ${courtSelectedSport} on ${selectedParentCourt.name}`
-                        : 'Submit Court for Approval & Verification'}
-                    </span>
+                    <span>Submit Court for Approval & Verification</span>
                   </button>
                 </div>
               </form>

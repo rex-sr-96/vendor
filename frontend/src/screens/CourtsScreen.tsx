@@ -321,12 +321,6 @@ export const CourtsScreen: React.FC = () => {
                         {court.type}
                       </span>
                     )}
-                    {court.samePhysicalSports && (
-                      <span className="px-1.5 py-0.5 rounded-md bg-[#16A34A]/10 text-[#16A34A] text-[9.5px] font-bold flex items-center gap-0.5">
-                        <Layers className="w-2.5 h-2.5" />
-                        <span>{court.parentCourtName ? `Shares ${court.parentCourtName}` : 'Shared'}</span>
-                      </span>
-                    )}
                   </div>
 
                   {/* Pricing Container */}
