@@ -32,56 +32,24 @@ export const OtpScreen: React.FC = () => {
     return () => clearInterval(timer);
   }, [countdown]);
 
-  const handleChange = (index: number, val: string) => {
-    const cleanVal = val.replace(/\D/g, '');
-    const newOtp = [...otp];
-    if (errorMessage) setErrorMessage(null);
-    
-    if (cleanVal.length > 1) {
-      // Pasted full OTP
-      const chars = cleanVal.slice(0, 6).split('');
-      chars.forEach((char, i) => {
-        if (i < 6) newOtp[i] = char;
-      });
-      setOtp(newOtp);
-      const nextFocus = Math.min(chars.length, 5);
-      inputRefs.current[nextFocus]?.focus();
-      setActiveIdx(nextFocus);
-      return;
-    }
+  useEffect(() => {
+    inputRefs.current[0]?.focus();
+  }, []);
 
-    newOtp[index] = cleanVal;
-    setOtp(newOtp);
-
-    if (cleanVal && index < 5) {
-      inputRefs.current[index + 1]?.focus();
-      setActiveIdx(index + 1);
-    }
-  };
-
-  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Backspace' && !otp[index] && index > 0) {
-      inputRefs.current[index - 1]?.focus();
-      setActiveIdx(index - 1);
-    }
-  };
-
-  const isComplete = otp.every((digit) => digit.length === 1);
-
-  const handleVerify = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    if (!isComplete || isVerifying) return;
+  const verifyWithCode = async (codeToVerify?: string) => {
+    const enteredOtp = (codeToVerify || otp.join('')).replace(/\D/g, '');
+    if (enteredOtp.length < 6 || isVerifying) return;
 
     setErrorMessage(null);
     setIsVerifying(true);
 
-    const enteredOtp = otp.join('');
     const cleanPhone = (ownerPhone || '9876543210').replace(/\D/g, '').slice(-10);
 
     try {
       const res = await authApi.login(cleanPhone, enteredOtp, verificationId || undefined);
       if (res.onboarding_token) {
         localStorage.setItem('ibooksports_vendor_token', res.onboarding_token);
+        localStorage.setItem('ibooksports_token', res.onboarding_token);
         localStorage.setItem('ibooksports_onboarding_token', res.onboarding_token);
       }
       localStorage.setItem('ibooksports_partner_mobile', cleanPhone);
@@ -136,13 +104,64 @@ export const OtpScreen: React.FC = () => {
           ? `Logged in as ${resolvedUser.name} (${resolvedUser.role}).`
           : `Logged in to arena owner control center.`;
 
-      showToast('Authentication Successful', welcomeMsg, 'success');
+      showToast('SMS Passcode Verified', welcomeMsg, 'success');
       navigateTo('home');
     } catch (err: any) {
       setErrorMessage(err.message || 'Invalid or expired verification code. Please check and try again.');
     } finally {
       setIsVerifying(false);
     }
+  };
+
+  const handleChange = (index: number, val: string) => {
+    const cleanVal = val.replace(/\D/g, '');
+    const newOtp = [...otp];
+    if (errorMessage) setErrorMessage(null);
+    
+    if (cleanVal.length > 1) {
+      // Pasted full OTP
+      const chars = cleanVal.slice(0, 6).split('');
+      chars.forEach((char, i) => {
+        if (i < 6) newOtp[i] = char;
+      });
+      setOtp(newOtp);
+      const nextFocus = Math.min(chars.length, 5);
+      inputRefs.current[nextFocus]?.focus();
+      setActiveIdx(nextFocus);
+      if (chars.length === 6) {
+        verifyWithCode(chars.join(''));
+      }
+      return;
+    }
+
+    newOtp[index] = cleanVal;
+    setOtp(newOtp);
+
+    if (cleanVal && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+      setActiveIdx(index + 1);
+    }
+
+    if (index === 5 && cleanVal) {
+      const fullCode = newOtp.join('');
+      if (fullCode.length === 6) {
+        verifyWithCode(fullCode);
+      }
+    }
+  };
+
+  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+      setActiveIdx(index - 1);
+    }
+  };
+
+  const isComplete = otp.every((digit) => digit.length === 1);
+
+  const handleVerify = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    verifyWithCode();
   };
 
   const handleResend = async () => {
@@ -183,10 +202,10 @@ export const OtpScreen: React.FC = () => {
         {/* Centered Heading */}
         <div className="text-center mb-6">
           <h1 className="text-[24px] font-bold text-[#021526] tracking-tight">
-            Enter 6-digit code
+            Enter 6-Digit Passcode
           </h1>
           <div className="flex items-center justify-center gap-1.5 text-[13.5px] text-[#5F6368] mt-1.5">
-            <span>Sent to +91 {cleanPhone.length === 10 ? `${cleanPhone.slice(0, 5)} ${cleanPhone.slice(5)}` : '98765 43210'} via SMS</span>
+            <span>Dispatched to +91 {cleanPhone.length === 10 ? `${cleanPhone.slice(0, 5)} ${cleanPhone.slice(5)}` : '98765 43210'} via MSG91 SMS</span>
             <span>•</span>
             <button
               onClick={() => navigateTo('login')}
@@ -244,7 +263,7 @@ export const OtpScreen: React.FC = () => {
                 disabled={isResending}
                 className="text-[#F94001] font-bold hover:underline cursor-pointer"
               >
-                {isResending ? 'Sending...' : 'Resend code'}
+                {isResending ? 'Dispatching SMS via MSG91...' : 'Resend SMS Passcode'}
               </button>
             )}
           </div>
@@ -269,14 +288,14 @@ export const OtpScreen: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <span>Verify & Continue</span>
+                  <span>Verify Passcode & Enter Console</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
             </button>
 
             <p className="text-[11.5px] text-center text-[#5F6368]">
-              Didn't receive code? Check SMS or click resend code.
+              Multi-tier vendor access protected by instant MSG91 SMS OTP authentication.
             </p>
           </div>
         </div>

@@ -88,7 +88,6 @@ export const LoginScreen: React.FC = () => {
       }
 
       // Only update ownerPhone in context if the user logging in is an owner
-      // (never overwrite ownerPhone with a staff member's phone)
       if (access.userType === 'owner') {
         setVenueDetails({
           name: venueName,
@@ -99,14 +98,11 @@ export const LoginScreen: React.FC = () => {
         });
       }
 
-      const roleBadge = access.userType === 'staff' ? ` (${access.staff?.role})` : ' (Owner)';
-      showToast('OTP Dispatched', `6-digit verification code sent to +91 ${cleanPhone}${roleBadge}.`, 'success');
+      showToast('OTP Dispatched', `Secure 6-digit passcode dispatched via MSG91 SMS to +91 ${cleanPhone}.`, 'success');
       navigateTo('otp');
     } catch (err: any) {
-      console.warn('SMS gateway notice, enabling dev bypass session:', err);
-      setVerificationId(`dev_otp_${cleanPhone}_${Date.now()}`);
-      showToast('Dev Session Active', 'SMS gateway notice: Enter code 123456 to continue.', 'info');
-      navigateTo('otp');
+      const errMsg = err?.message || 'Failed to dispatch SMS OTP. Please check your mobile number and retry.';
+      setErrorMessage(errMsg);
     } finally {
       setIsLoading(false);
     }
@@ -139,9 +135,21 @@ export const LoginScreen: React.FC = () => {
         {/* Input Form */}
         <form onSubmit={handleContinue} className="space-y-4">
           <div>
-            <label htmlFor="mobile-input" className="block text-[13px] font-semibold text-[#021526] mb-2">
-              Mobile Number
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label htmlFor="mobile-input" className="block text-[13px] font-semibold text-[#021526]">
+                Mobile Number
+              </label>
+              <button
+                type="button"
+                onClick={() => {
+                  setPhoneNumber('9600309604');
+                  if (errorMessage) setErrorMessage(null);
+                }}
+                className="text-[11.5px] font-bold text-[#F94001] hover:underline cursor-pointer"
+              >
+                Use Partner Phone
+              </button>
+            </div>
             <div className="relative flex items-center bg-[#F9F9F7] border border-[#E5E7EB] rounded-2xl focus-within:border-[#F94001] focus-within:ring-4 focus-within:ring-[#F94001]/10 focus-within:bg-white transition-all overflow-hidden">
               <div className="flex items-center gap-1.5 px-3.5 py-3.5 border-r border-[#E5E7EB] bg-[#F2F1ED]/50 select-none">
                 <span className="text-base">🇮🇳</span>

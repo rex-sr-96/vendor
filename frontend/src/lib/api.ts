@@ -8,11 +8,10 @@
 
 const API_BASE = '/api';
 async function fetchMasterApi(endpoint: string, options?: RequestInit): Promise<Response> {
-  // Support Vite env var, live Render backend, and local development endpoints
+  const envUrl = typeof process !== 'undefined' ? process.env?.NEXT_PUBLIC_API_URL : undefined;
   const urls = [
-    import.meta.env.VITE_API_BASE_URL ? `${import.meta.env.VITE_API_BASE_URL}${endpoint}` : '',
+    envUrl ? `${envUrl}${endpoint}` : '',
     `https://ibooksports-backend.onrender.com/api/v1${endpoint}`,
-    `/api/v1${endpoint}`,
     `http://localhost:4000/api/v1${endpoint}`,
     `http://127.0.0.1:4000/api/v1${endpoint}`,
   ].filter(Boolean);
@@ -32,39 +31,25 @@ async function fetchMasterApi(endpoint: string, options?: RequestInit): Promise<
 export const authApi = {
   sendLoginOtp: async (mobile_number: string) => {
     const cleanNumber = mobile_number.replace(/\D/g, '').slice(-10);
-    try {
-      const response = await fetchMasterApi('/onboarding/auth/send-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mobile_number: cleanNumber }),
-      });
-      const data = await response.json().catch(() => null);
-      if (!response.ok) {
-        // If MSG91 returns 403 or provider error, activate simulated session so team isn't blocked
-        console.warn('Backend reported SMS provider limitation, activating simulated session:', data);
-        return {
-          success: true,
-          message: 'Verification session active (Development test OTP: 123456)',
-          verification_id: `dev_ver_${cleanNumber}_${Date.now()}`,
-          expires_in_seconds: 600,
-        };
-      }
-      return data as {
-        success: boolean;
-        message: string;
-        verification_id: string;
-        reqId?: string;
-        expires_in_seconds?: number;
-      };
-    } catch (err: any) {
-      console.warn('Failed to reach remote backend, fallback to local dev session:', err);
-      return {
-        success: true,
-        message: 'Verification session active (Local dev test OTP: 123456)',
-        verification_id: `dev_ver_${cleanNumber}_${Date.now()}`,
-        expires_in_seconds: 600,
-      };
+    const response = await fetchMasterApi('/onboarding/auth/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mobile_number: cleanNumber }),
+    });
+    const data = await response.json().catch(() => null);
+    if (!response.ok) {
+      throw new Error(
+        data?.message ||
+        `SMS dispatch failed with status ${response.status}. Please check your connection or retry.`
+      );
     }
+    return data as {
+      success: boolean;
+      message: string;
+      verification_id: string;
+      reqId?: string;
+      expires_in_seconds?: number;
+    };
   },
 
   login: async (mobile_number: string, otp: string, verification_id?: string) => {
