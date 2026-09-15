@@ -11,20 +11,25 @@ async function fetchMasterApi(endpoint: string, options?: RequestInit): Promise<
   const envUrl = typeof process !== 'undefined' ? process.env?.NEXT_PUBLIC_API_URL : undefined;
   const urls = [
     envUrl ? `${envUrl}${endpoint}` : '',
-    `https://ibooksports-backend.onrender.com/api/v1${endpoint}`,
     `http://localhost:4000/api/v1${endpoint}`,
     `http://127.0.0.1:4000/api/v1${endpoint}`,
+    `https://ibooksports-backend.onrender.com/api/v1${endpoint}`,
   ].filter(Boolean);
 
+  let lastResponse: Response | null = null;
   let lastError: any = null;
+
   for (const url of urls) {
     try {
       const res = await fetch(url, options);
-      if (res) return res;
+      if (res.ok) return res;
+      lastResponse = res;
     } catch (err) {
       lastError = err;
     }
   }
+
+  if (lastResponse) return lastResponse;
   throw lastError || new Error('Failed to connect to backend service. Please check your network connection.');
 }
 
