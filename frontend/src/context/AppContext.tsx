@@ -2064,7 +2064,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     // 3. Fallback hardcoded owner/admin numbers — never blocked
     // Note: staff list (step 2) is checked first, so if a number is in both
     // the staff list AND this fallback, it will correctly log in as staff.
-    const fallbackOwnerNumbers = ['6381239140', '6369591821', '9876543210'];
+    const fallbackOwnerNumbers = ['9600309604', '6381239140', '6369591821', '9876543210'];
     if (fallbackOwnerNumbers.includes(clean)) {
       return { allowed: true, userType: 'owner' as const };
     }
