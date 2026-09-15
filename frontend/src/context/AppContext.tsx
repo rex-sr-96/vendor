@@ -2174,10 +2174,26 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         queryPhone = '6369591821';
       }
       const cleanPhone = queryPhone.replace(/\D/g, '').slice(-10);
-      const res = await fetch(
-        `http://localhost:4000/api/v1/onboarding/vendor/profile?mobile=${cleanPhone}`
-      );
-      if (!res.ok) return null;
+      const envUrl = typeof process !== 'undefined' ? process.env?.NEXT_PUBLIC_API_URL : undefined;
+      const backendUrls = [
+        envUrl ? `${envUrl}/onboarding/vendor/profile?mobile=${cleanPhone}` : '',
+        `http://localhost:4000/api/v1/onboarding/vendor/profile?mobile=${cleanPhone}`,
+        `http://127.0.0.1:4000/api/v1/onboarding/vendor/profile?mobile=${cleanPhone}`,
+        `https://ibooksports-backend.onrender.com/api/v1/onboarding/vendor/profile?mobile=${cleanPhone}`,
+      ].filter(Boolean);
+
+      let res: Response | null = null;
+      for (const url of backendUrls) {
+        try {
+          const r = await fetch(url);
+          if (r.ok) {
+            res = r;
+            break;
+          }
+        } catch (e) {}
+      }
+
+      if (!res || !res.ok) return null;
       const data = await res.json();
       if (data && data.success) {
         if (data.owner) {
@@ -2588,17 +2604,29 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         },
       };
 
-      const res = await fetch(
+      const envUrl = typeof process !== 'undefined' ? process.env?.NEXT_PUBLIC_API_URL : undefined;
+      const backendUrls = [
+        envUrl ? `${envUrl}/onboarding/vendor/profile?mobile=${cleanPhone || '9876543210'}` : '',
         `http://localhost:4000/api/v1/onboarding/vendor/profile?mobile=${cleanPhone || '9876543210'}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-        }
-      );
-      return res.ok;
+        `http://127.0.0.1:4000/api/v1/onboarding/vendor/profile?mobile=${cleanPhone || '9876543210'}`,
+        `https://ibooksports-backend.onrender.com/api/v1/onboarding/vendor/profile?mobile=${cleanPhone || '9876543210'}`,
+      ].filter(Boolean);
+
+      let isSuccess = false;
+      for (const url of backendUrls) {
+        try {
+          const r = await fetch(url, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          if (r.ok) {
+            isSuccess = true;
+            break;
+          }
+        } catch (e) {}
+      }
+      return isSuccess;
     } catch (err) {
       console.error('Error syncing vendor profile to onboarding:', err);
       return false;
@@ -2619,17 +2647,29 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         },
       };
 
-      const res = await fetch(
+      const envUrl = typeof process !== 'undefined' ? process.env?.NEXT_PUBLIC_API_URL : undefined;
+      const backendUrls = [
+        envUrl ? `${envUrl}/onboarding/vendor/profile?mobile=${cleanPhone || '9876543210'}` : '',
         `http://localhost:4000/api/v1/onboarding/vendor/profile?mobile=${cleanPhone || '9876543210'}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-        }
-      );
-      if (res.ok) {
+        `http://127.0.0.1:4000/api/v1/onboarding/vendor/profile?mobile=${cleanPhone || '9876543210'}`,
+        `https://ibooksports-backend.onrender.com/api/v1/onboarding/vendor/profile?mobile=${cleanPhone || '9876543210'}`,
+      ].filter(Boolean);
+
+      let isSuccess = false;
+      for (const url of backendUrls) {
+        try {
+          const r = await fetch(url, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          if (r.ok) {
+            isSuccess = true;
+            break;
+          }
+        } catch (e) {}
+      }
+      if (isSuccess) {
         setBankDetails((prev) => ({
           ...prev,
           bankName: bankData.bankName,
@@ -2639,7 +2679,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
           accountType: bankData.accountType ? `${bankData.accountType} Commercial Account` : prev.accountType,
         }));
       }
-      return res.ok;
+      return isSuccess;
     } catch (err) {
       console.error('Error submitting bank change to backend:', err);
       return false;
