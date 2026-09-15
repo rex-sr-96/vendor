@@ -60,49 +60,27 @@ export const authApi = {
   login: async (mobile_number: string, otp: string, verification_id?: string) => {
     const cleanNumber = mobile_number.replace(/\D/g, '').slice(-10);
     const cleanOtp = otp.replace(/\D/g, '');
-    try {
-      const response = await fetchMasterApi('/onboarding/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          mobile_number: cleanNumber,
-          otp: cleanOtp,
-          verification_id,
-        }),
-      });
-      const data = await response.json().catch(() => null);
-      if (!response.ok) {
-        if (cleanOtp === '123456') {
-          return {
-            success: true,
-            message: 'Logged in successfully (Development bypass code)',
-            onboarding_token: `onb_tok_${cleanNumber}_dev`,
-            application_id: 'APP10237',
-            current_step: 8,
-          };
-        }
-        throw new Error(data?.message || 'Invalid verification code. Please check and try again.');
-      }
-      return data as {
-        success: boolean;
-        message: string;
-        onboarding_token: string;
-        application_id: string;
-        current_step: number;
-        session?: any;
-      };
-    } catch (err: any) {
-      if (cleanOtp === '123456') {
-        return {
-          success: true,
-          message: 'Logged in successfully (Development bypass code)',
-          onboarding_token: `onb_tok_${cleanNumber}_dev`,
-          application_id: 'APP10237',
-          current_step: 8,
-        };
-      }
-      throw err;
+    const response = await fetchMasterApi('/onboarding/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        mobile_number: cleanNumber,
+        otp: cleanOtp,
+        verification_id,
+      }),
+    });
+    const data = await response.json().catch(() => null);
+    if (!response.ok) {
+      throw new Error(data?.message || 'Invalid or expired verification code. Please check and try again.');
     }
+    return data as {
+      success: boolean;
+      message: string;
+      onboarding_token: string;
+      application_id: string;
+      current_step: number;
+      session?: any;
+    };
   },
 };
 
