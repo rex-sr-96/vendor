@@ -26,6 +26,26 @@ export interface VerifyOtpResponse {
   error?: string;
 }
 
+export function getAuthToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  return (
+    localStorage.getItem('userToken') ||
+    localStorage.getItem('token') ||
+    localStorage.getItem('turftown_token') ||
+    localStorage.getItem('ibooksports_vendor_token') ||
+    localStorage.getItem('ibooksports_token') ||
+    null
+  );
+}
+
+export function getAuthHeaders(): Record<string, string> {
+  const token = getAuthToken();
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+}
+
 export const vendorApi = {
   // Step 1: Send MSG91 OTP for vendor login (Validates APPROVED status)
   async sendLoginOtp(mobileNumber: string): Promise<SendOtpResponse> {
@@ -68,21 +88,68 @@ export const vendorApi = {
     if (!response.ok || data.success === false) {
       throw new Error(data.message || data.error || 'Invalid OTP. Please try again.');
     }
+    if (data.token && typeof window !== 'undefined') {
+      localStorage.setItem('userToken', data.token);
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('turftown_token', data.token);
+    }
     return data;
+  },
+
+  // Common Authenticated Vendor Endpoints (Dynamic via JWT)
+  async getMyCourts() {
+    const response = await fetch(`${API_BASE_URL}/courts`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    if (!response.ok) throw new Error('Failed to fetch courts.');
+    return response.json();
+  },
+
+  async getMySlots() {
+    const response = await fetch(`${API_BASE_URL}/slots`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    if (!response.ok) throw new Error('Failed to fetch slots.');
+    return response.json();
+  },
+
+  async getMyBookings() {
+    const response = await fetch(`${API_BASE_URL}/bookings`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    if (!response.ok) throw new Error('Failed to fetch bookings.');
+    return response.json();
+  },
+
+  async getMyStaff() {
+    const response = await fetch(`${API_BASE_URL}/vendor-staff`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    if (!response.ok) throw new Error('Failed to fetch staff.');
+    return response.json();
+  },
+
+  async getMyProfile() {
+    const response = await fetch(`${API_BASE_URL}/onboarding/vendor/profile`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    if (!response.ok) throw new Error('Failed to fetch vendor profile.');
+    return response.json();
   },
 
   // Submit Court Creation Request (Syncs with Supabase)
   async submitCourtRequest(payload: {
-    vendor_id?: string;
-    venue_id?: string;
     court_data: any;
     reason?: string;
   }) {
     const response = await fetch(`${API_BASE_URL}/court-requests`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: getAuthHeaders(),
       body: JSON.stringify(payload),
     });
 
@@ -93,3 +160,4 @@ export const vendorApi = {
     return data;
   },
 };
+

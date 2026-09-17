@@ -7,6 +7,31 @@
  */
 
 const API_BASE = '/api';
+
+export function getAuthToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    return (
+      localStorage.getItem('userToken') ||
+      localStorage.getItem('token') ||
+      localStorage.getItem('turftown_token') ||
+      localStorage.getItem('ibooksports_vendor_token') ||
+      localStorage.getItem('ibooksports_token') ||
+      null
+    );
+  } catch {
+    return null;
+  }
+}
+
+export function getAuthHeaders(): Record<string, string> {
+  const token = getAuthToken();
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+}
+
 async function fetchMasterApi(endpoint: string, options?: RequestInit): Promise<Response> {
   const envUrl = typeof process !== 'undefined' ? process.env?.NEXT_PUBLIC_API_URL : undefined;
   const urls = [
@@ -16,12 +41,24 @@ async function fetchMasterApi(endpoint: string, options?: RequestInit): Promise<
     `https://ibooksports-backend.onrender.com/api/v1${endpoint}`,
   ].filter(Boolean);
 
+  const token = getAuthToken();
+  const mergedHeaders: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...((options?.headers as any) || {}),
+  };
+
+  const finalOptions: RequestInit = {
+    ...options,
+    headers: mergedHeaders,
+  };
+
   let lastResponse: Response | null = null;
   let lastError: any = null;
 
   for (const url of urls) {
     try {
-      const res = await fetch(url, options);
+      const res = await fetch(url, finalOptions);
       if (res.ok) return res;
       lastResponse = res;
     } catch (err) {
@@ -73,9 +110,17 @@ export const authApi = {
     if (!response.ok || data?.success === false) {
       throw new Error(data?.message || 'Invalid or expired verification code. Please check and try again.');
     }
+    if ((data?.token || data?.onboarding_token) && typeof window !== 'undefined') {
+      const token = data.token || data.onboarding_token;
+      localStorage.setItem('userToken', token);
+      localStorage.setItem('token', token);
+      localStorage.setItem('turftown_token', token);
+      localStorage.setItem('ibooksports_vendor_token', token);
+    }
     return data as {
       success: boolean;
       message: string;
+      token?: string;
       onboarding_token: string;
       application_id: string;
       current_step: number;
@@ -85,9 +130,16 @@ export const authApi = {
 };
 
 async function fetchJSON<T>(url: string, options?: RequestInit): Promise<T> {
+  const token = getAuthToken();
+  const mergedHeaders: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...((options?.headers as any) || {}),
+  };
+
   const response = await fetch(`${API_BASE}${url}`, {
-    headers: { 'Content-Type': 'application/json' },
     ...options,
+    headers: mergedHeaders,
   });
   if (!response.ok) {
     throw new Error(`API Error: ${response.status} ${response.statusText}`);
