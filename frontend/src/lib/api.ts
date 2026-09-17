@@ -42,7 +42,7 @@ export const authApi = {
       body: JSON.stringify({ mobile_number: cleanNumber }),
     });
     const data = await response.json().catch(() => null);
-    if (!response.ok) {
+    if (!response.ok || data?.success === false) {
       throw new Error(
         data?.message ||
         `SMS dispatch failed with status ${response.status}. Please check your connection or retry.`
@@ -70,7 +70,7 @@ export const authApi = {
       }),
     });
     const data = await response.json().catch(() => null);
-    if (!response.ok) {
+    if (!response.ok || data?.success === false) {
       throw new Error(data?.message || 'Invalid or expired verification code. Please check and try again.');
     }
     return data as {
