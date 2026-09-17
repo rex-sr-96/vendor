@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { ShieldCheck, ArrowRight } from 'lucide-react';
+import { ShieldCheck, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
+import { vendorApi } from '../services/api';
 
 // Helper to extract clean 10-digit Indian phone number
 const extract10DigitPhone = (raw: string): string => {
@@ -24,21 +25,42 @@ const extract10DigitPhone = (raw: string): string => {
 
 export const LoginScreen: React.FC = () => {
   const { navigateTo, ownerPhone, setVenueDetails, venueName, venueAddress, venueCity } = useApp();
-  const [phoneNumber, setPhoneNumber] = useState(() => extract10DigitPhone(ownerPhone || '9876543210'));
+  const [phoneNumber, setPhoneNumber] = useState(() => extract10DigitPhone(ownerPhone || '6369591821'));
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const cleanPhone = extract10DigitPhone(phoneNumber);
   const isValidPhone = cleanPhone.length === 10;
 
-  const handleContinue = (e: React.FormEvent) => {
+  const handleContinue = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isValidPhone) return;
-    setVenueDetails({
-      name: venueName,
-      address: venueAddress,
-      city: venueCity,
-      phone: cleanPhone,
-    });
-    navigateTo('otp');
+    if (!isValidPhone || isLoading) return;
+
+    setIsLoading(true);
+    setErrorMessage('');
+
+    try {
+      const res = await vendorApi.sendLoginOtp(cleanPhone);
+      if (res.verification_id) {
+        sessionStorage.setItem('vendor_otp_verification_id', res.verification_id);
+      }
+      sessionStorage.setItem('vendor_login_phone', cleanPhone);
+
+      setVenueDetails({
+        name: res.venue_name || venueName,
+        address: venueAddress,
+        city: venueCity,
+        phone: cleanPhone,
+      });
+
+      navigateTo('otp');
+    } catch (err: any) {
+      setErrorMessage(
+        err.message || 'Mobile number is not approved or registered. Please verify your onboarding status.',
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -65,11 +87,19 @@ export const LoginScreen: React.FC = () => {
           </p>
         </div>
 
+        {/* Error message banner */}
+        {errorMessage && (
+          <div className="mb-5 p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium flex items-start gap-2.5">
+            <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+            <div className="leading-snug">{errorMessage}</div>
+          </div>
+        )}
+
         {/* Input Form */}
         <form onSubmit={handleContinue} className="space-y-4">
           <div>
             <label htmlFor="mobile-input" className="block text-[13px] font-semibold text-[#021526] mb-2">
-              Mobile Number
+              Mobile Number (Approved Vendors Only)
             </label>
             <div className="relative flex items-center bg-[#F3F4F4] border border-[#E5E7EB] rounded-[14px] focus-within:border-[#F94001] focus-within:bg-white transition-all overflow-hidden">
               <div className="flex items-center gap-1.5 px-3.5 py-3.5 border-r border-[#E5E7EB] bg-[#F3F4F4]/50 select-none">
@@ -82,7 +112,10 @@ export const LoginScreen: React.FC = () => {
                 maxLength={15}
                 placeholder="98765 43210"
                 value={phoneNumber}
-                onChange={(e) => setPhoneNumber(extract10DigitPhone(e.target.value))}
+                onChange={(e) => {
+                  setErrorMessage('');
+                  setPhoneNumber(extract10DigitPhone(e.target.value));
+                }}
                 onPaste={(e) => {
                   e.preventDefault();
                   const pasted = e.clipboardData.getData('text');
@@ -93,7 +126,7 @@ export const LoginScreen: React.FC = () => {
             </div>
             <p className="text-[12px] text-[#5F6368] mt-2 flex items-center gap-1.5">
               <ShieldCheck className="w-3.5 h-3.5 text-[#16A34A]" />
-              We'll send a 6-digit one-time code to verify your number.
+              We'll send a 6-digit one-time SMS code via MSG91 to verify.
             </p>
           </div>
         </form>
@@ -105,15 +138,24 @@ export const LoginScreen: React.FC = () => {
           id="btn-login-continue"
           type="button"
           onClick={handleContinue}
-          disabled={!isValidPhone}
+          disabled={!isValidPhone || isLoading}
           className={`w-full h-13 rounded-2xl font-bold text-[15px] flex items-center justify-center gap-2 transition-all active-press ${
-            isValidPhone
+            isValidPhone && !isLoading
               ? 'bg-[#F94001] text-white shadow-md hover:bg-[#D93600] cursor-pointer'
               : 'bg-[#E5E7EB] text-[#5F6368] cursor-not-allowed'
           }`}
         >
-          <span>Continue</span>
-          <ArrowRight className="w-4 h-4" />
+          {isLoading ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              <span>Verifying & Sending OTP...</span>
+            </>
+          ) : (
+            <>
+              <span>Continue</span>
+              <ArrowRight className="w-4 h-4" />
+            </>
+          )}
         </button>
 
         <p className="text-[11px] text-center text-[#5F6368] leading-normal px-2">

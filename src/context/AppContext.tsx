@@ -18,6 +18,7 @@ import {
   NotificationPreferencesConfig,
   NotificationItem,
 } from '../types';
+import { vendorApi } from '../services/api';
 import {
   initialBookings,
   initialCourts,
@@ -507,6 +508,31 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     };
     setCourts((prev) => [...prev, court]);
     showToast('Court Added', `${court.name} created and submitted for verification.`, 'success');
+
+    // Sync court creation to backend & Supabase court_requests in real-time
+    vendorApi
+      .submitCourtRequest({
+        venue_id: venueName,
+        court_data: {
+          name: court.name,
+          displayName: court.displayName,
+          sports: court.sports,
+          pricePerHour: court.pricePerHour,
+          minBookingDuration: court.minBookingDuration,
+          peakHoursStart: court.peakHoursStart,
+          peakHoursEnd: court.peakHoursEnd,
+          peakDays: court.peakDays,
+          peakHoursPrice: court.peakHoursPrice,
+          weekendPrice: court.weekendPrice,
+          operatingHours: court.operatingHours,
+          type: court.type,
+          status: 'PENDING',
+        },
+        reason: 'New court added by venue owner from mobile app',
+      })
+      .catch((err) => {
+        console.warn('Court request background sync:', err);
+      });
   };
 
   const addNewBooking = (newBooking: Partial<Booking>) => {
