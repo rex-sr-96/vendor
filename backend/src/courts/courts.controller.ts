@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query } from '@nestjs/common';
 import { CourtsService } from './courts.service';
 import { Court } from '../types';
 
@@ -7,8 +7,8 @@ export class CourtsController {
   constructor(private readonly courtsService: CourtsService) {}
 
   @Get()
-  findAll(): Court[] {
-    return this.courtsService.findAll();
+  findAll(@Query('venueId') venueId?: string, @Query('venue_id') venue_id?: string): Court[] {
+    return this.courtsService.findAll(venueId || venue_id);
   }
 
   @Post()

@@ -6,7 +6,10 @@ import { initialCourts } from '../data/mock-data';
 export class CourtsService {
   private courts: Court[] = [...initialCourts];
 
-  findAll(): Court[] {
+  findAll(venueId?: string): Court[] {
+    if (venueId && venueId !== 'APP10238' && venueId !== 'VEN_1821' && venueId !== '6369591821') {
+      return [];
+    }
     return this.courts;
   }
 
