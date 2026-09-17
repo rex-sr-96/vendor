@@ -153,11 +153,10 @@ export const CourtsScreen: React.FC = () => {
               <button
                 key={sport}
                 onClick={() => { haptics.tap(); setSportFilter(sport); }}
-                className={`px-3 py-1.5 rounded-xl text-[12px] font-bold transition-all whitespace-nowrap cursor-pointer ${
-                  isSelected
-                    ? 'bg-[#F94001] text-white shadow-sm'
-                    : 'bg-[#F3F4F4] text-[#5F6368] hover:text-[#021526] hover:bg-[#EBE9E3] border border-[#E5E7EB]'
-                }`}
+                className={`px-3 py-1.5 rounded-xl text-[12px] font-bold transition-all whitespace-nowrap cursor-pointer ${isSelected
+                  ? 'bg-[#F94001] text-white shadow-sm'
+                  : 'bg-[#F3F4F4] text-[#5F6368] hover:text-[#021526] hover:bg-[#EBE9E3] border border-[#E5E7EB]'
+                  }`}
               >
                 {sport}
               </button>
@@ -184,23 +183,21 @@ export const CourtsScreen: React.FC = () => {
             return (
               <div
                 key={court.id}
-                className={`bg-white rounded-2xl p-4 border shadow-2xs hover:shadow-sm transition-all flex flex-col justify-between group ${
-                  isActive
-                    ? 'border-[#E5E7EB] hover:border-[#021526]/20'
-                    : 'border-[#E5E7EB] opacity-75'
-                }`}
+                className={`bg-white rounded-3xl p-5 border shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group ${isActive
+                  ? 'border-[#E5E7EB] hover:border-[#021526]/20'
+                  : 'border-[#E5E7EB] opacity-75'
+                  }`}
               >
                 {/* Top Card Info */}
                 <div>
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
-                      <h3 className={`text-[15px] font-black tracking-tight transition-colors truncate ${
-                        isActive ? 'text-[#021526] group-hover:text-[#F94001]' : 'text-[#5F6368]'
-                      }`}>
+                      <h3 className={`text-[18px] font-black tracking-tight transition-colors ${isActive ? 'text-[#021526] group-hover:text-[#F94001]' : 'text-[#5F6368]'
+                        }`}>
                         {court.name}
                       </h3>
                       {court.displayName && court.displayName !== court.name && (
-                        <p className="text-[11px] font-medium text-[#5F6368] mt-0.5 truncate">
+                        <p className="text-[12px] font-semibold text-[#5F6368] mt-0.5 truncate">
                           {court.displayName}
                         </p>
                       )}
@@ -209,22 +206,21 @@ export const CourtsScreen: React.FC = () => {
                     {/* Active / Inactive / Pending / Rejected Status Badge */}
                     <div className="flex items-center gap-1.5 shrink-0">
                       {court.status === 'Pending Approval' ? (
-                        <span className="px-1.5 py-0.5 rounded-full text-[9.5px] font-bold flex items-center gap-1 bg-amber-500/10 text-amber-700 border border-amber-500/20">
-                          <Clock className="w-2.5 h-2.5" />
-                          Pending
+                        <span className="px-2 py-0.5 rounded-full text-[10.5px] font-extrabold flex items-center gap-1 bg-amber-500/15 text-amber-700 border border-amber-500/20">
+                          <Clock className="w-3 h-3" />
+                          Pending Review
                         </span>
                       ) : court.status === 'Rejected' ? (
-                        <span className="px-1.5 py-0.5 rounded-full text-[9.5px] font-bold flex items-center gap-1 bg-[#DC2626]/10 text-[#DC2626] border border-[#DC2626]/25">
-                          <X className="w-2.5 h-2.5" />
+                        <span className="px-2 py-0.5 rounded-full text-[10.5px] font-extrabold flex items-center gap-1 bg-rose-500/15 text-rose-700 border border-rose-500/20">
+                          <X className="w-3 h-3" />
                           Rejected
                         </span>
                       ) : (
-                        <span className={`px-1.5 py-0.5 rounded-full text-[9.5px] font-bold flex items-center gap-1 ${
-                          isActive
-                            ? 'bg-[#16A34A]/10 text-[#15803D] border border-[#16A34A]/20'
-                            : 'bg-[#F59E0B]/10 text-[#B87C0D] border border-[#F59E0B]/20'
-                        }`}>
-                          <CheckCircle2 className="w-2.5 h-2.5" />
+                        <span className={`px-2 py-0.5 rounded-full text-[10.5px] font-extrabold flex items-center gap-1 ${isActive
+                          ? 'bg-[#16A34A]/15 text-[#15803D]'
+                          : 'bg-[#F59E0B]/15 text-[#B87C0D]'
+                          }`}>
+                          <CheckCircle2 className="w-3 h-3" />
                           {isActive ? 'Active' : 'Inactive'}
                         </span>
                       )}
@@ -233,31 +229,31 @@ export const CourtsScreen: React.FC = () => {
 
                   {/* Active / Inactive Toggle or Pending / Rejected Notification */}
                   {court.status === 'Pending Approval' ? (
-                    <div className="mt-2.5 flex items-center justify-between bg-amber-50/60 rounded-xl px-3 py-2 border border-amber-200/60">
-                      <div className="flex items-center gap-1.5">
-                        <Clock className="w-3 h-3 text-amber-600 shrink-0" />
+                    <div className="mt-3 flex items-center justify-between bg-amber-50/70 rounded-xl px-3.5 py-2.5 border border-amber-200/80">
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                         <div>
-                          <span className="text-[11px] font-bold text-amber-900 block leading-tight">
+                          <span className="text-[12px] font-bold text-amber-900 block leading-tight">
                             Awaiting Admin Approval
                           </span>
                           {court.requestId && (
-                            <span className="text-[9.5px] text-amber-700 font-mono">
-                              {court.requestId}
+                            <span className="text-[10px] text-amber-700 font-mono font-semibold">
+                              Request: {court.requestId}
                             </span>
                           )}
                         </div>
                       </div>
-                      <span className="text-[9.5px] font-bold px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-200">
+                      <span className="text-[10.5px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-300/60">
                         Under Review
                       </span>
                     </div>
                   ) : court.status === 'Rejected' ? (
                     <div className="mt-3 space-y-2">
-                      <div className="flex items-start gap-2 bg-[#DC2626]/8 rounded-xl p-3 border border-[#DC2626]/30">
-                        <AlertTriangle className="w-4 h-4 text-[#DC2626] shrink-0 mt-0.5" />
+                      <div className="flex items-start gap-2 bg-rose-50 rounded-xl p-3 border border-rose-200">
+                        <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
                         <div className="flex-1 min-w-0 text-[11px]">
-                          <p className="font-bold text-[#DC2626]">Request Rejected by Admin</p>
-                          <p className="text-[#991B1B] mt-0.5 leading-relaxed">
+                          <p className="font-bold text-rose-900">Request Rejected by Admin</p>
+                          <p className="text-rose-700 mt-0.5 leading-relaxed">
                             {court.rejectionReason || 'Court details need correction before activation.'}
                           </p>
                         </div>
@@ -268,17 +264,17 @@ export const CourtsScreen: React.FC = () => {
                           haptics.tap();
                           setEditingCourt(court);
                         }}
-                        className="w-full py-2 px-3 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white text-[11.5px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs active-press"
+                        className="w-full py-2 px-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-[11.5px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs active-press"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                         <span>Edit &amp; Resubmit for Approval</span>
                       </button>
                     </div>
                   ) : (
-                    <div className="mt-2.5 flex items-center justify-between bg-[#F3F4F4] rounded-xl px-3 py-2 border border-[#E5E7EB]">
-                      <div className="flex items-center gap-1.5">
-                        <Power className={`w-3 h-3 ${isActive ? 'text-[#16A34A]' : 'text-[#5F6368]'}`} />
-                        <span className="text-[11px] font-bold text-[#021526]">
+                    <div className="mt-3 flex items-center justify-between bg-[#F3F4F4] rounded-xl px-3.5 py-2.5 border border-[#E5E7EB]">
+                      <div className="flex items-center gap-2">
+                        <Power className={`w-3.5 h-3.5 ${isActive ? 'text-[#16A34A]' : 'text-[#5F6368]'}`} />
+                        <span className="text-[12px] font-bold text-[#021526]">
                           {isActive ? 'Court is Active' : 'Court is Inactive'}
                         </span>
                       </div>
@@ -287,90 +283,94 @@ export const CourtsScreen: React.FC = () => {
                         id={`toggle-court-active-${court.id}`}
                         disabled={isStaff}
                         onClick={() => toggleCourtActive(court.id)}
-                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-200 cursor-pointer focus:outline-none disabled:cursor-not-allowed ${
-                          isActive ? 'bg-[#16A34A]' : 'bg-[#E5E7EB]'
-                        }`}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 cursor-pointer focus:outline-none disabled:cursor-not-allowed ${isActive ? 'bg-[#16A34A]' : 'bg-[#E5E7EB]'
+                          }`}
                         aria-label={isActive ? 'Deactivate court' : 'Activate court'}
                       >
                         <span
-                          className={`inline-block transform rounded-full bg-white shadow transition-transform duration-200 ${
-                            isActive ? 'translate-x-5' : 'translate-x-1'
-                          }`}
-                          style={{ width: '14px', height: '14px' }}
+                          className={`inline-block h-4.5 w-4.5 transform rounded-full bg-white shadow-md transition-transform duration-200 ${isActive ? 'translate-x-6' : 'translate-x-1'
+                            }`}
+                          style={{ width: '18px', height: '18px' }}
                         />
                       </button>
                     </div>
                   )}
 
                   {/* Sports & Spec Badges */}
-                  <div className="flex flex-wrap items-center gap-1 mt-2">
+                  <div className="flex flex-wrap items-center gap-1.5 mt-2.5">
                     {court.sports.map((s) => (
                       <span
                         key={s}
-                        className="px-2 py-0.5 rounded-md bg-[#F3F4F4] border border-[#E5E7EB] text-[#021526] text-[10px] font-bold uppercase tracking-wide"
+                        className="px-2.5 py-0.5 rounded-lg bg-[#F3F4F4] border border-[#E5E7EB] text-[#021526] text-[11px] font-bold"
                       >
                         {s}
                       </span>
                     ))}
-                    <span className="px-1.5 py-0.5 rounded-md bg-[#F94001]/10 text-[#F94001] text-[9.5px] font-bold flex items-center gap-0.5">
-                      <Clock className="w-2.5 h-2.5" />
-                      <span>Min: {court.minBookingDuration || '1 Hour'}</span>
+                    <span className="px-2 py-0.5 rounded-lg bg-[#F94001]/10 text-[#F94001] text-[10.5px] font-extrabold flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      <span>Min: {court.minBookingDuration || '1 hour'}</span>
                     </span>
                     {court.type && (
-                      <span className="px-1.5 py-0.5 rounded-md bg-[#021526]/5 text-[#5F6368] text-[9.5px] font-bold">
+                      <span className="px-2 py-0.5 rounded-lg bg-[#021526]/5 text-[#021526] text-[10.5px] font-bold">
                         {court.type}
+                      </span>
+                    )}
+                    {court.samePhysicalSports && (
+                      <span className="px-2 py-0.5 rounded-lg bg-[#16A34A]/10 text-[#16A34A] text-[10.5px] font-extrabold flex items-center gap-1">
+                        <Layers className="w-3 h-3" />
+                        <span>{court.parentCourtName ? `Shares ${court.parentCourtName}` : 'Shared Ground'}</span>
                       </span>
                     )}
                   </div>
 
                   {/* Pricing Container */}
-                  <div className="mt-2.5 bg-[#F8F9FA] rounded-xl p-2.5 border border-[#E5E7EB] space-y-1.5 text-[10.5px]">
+                  <div className="mt-3.5 bg-[#F3F4F4] rounded-2xl p-3 border border-[#E5E7EB] space-y-2 text-[11.5px]">
                     <div className="flex items-center justify-between">
-                      <span className="font-medium text-[#5F6368]">Standard Rate</span>
-                      <span className="text-[12.5px] font-black text-[#021526]">
+                      <span className="font-bold text-[#5F6368]">Standard Hourly Rate</span>
+                      <span className="text-[15px] font-black text-[#021526]">
                         ₹{(court.pricePerHour || 1000).toLocaleString('en-IN')}/hr
                       </span>
                     </div>
-                    <div className="flex items-center justify-between pt-1 border-t border-[#E5E7EB]/60">
-                      <span className="font-medium text-[#F94001] flex items-center gap-1">
-                        <Flame className="w-3 h-3" />
-                        <span>Peak</span>
-                        <span className="text-[9.5px] font-normal text-[#5F6368]">
+                    <div className="flex items-center justify-between pt-1.5 border-t border-[#E5E7EB]/60">
+                      <span className="font-bold text-[#F94001] flex items-center gap-1">
+                        <Flame className="w-3.5 h-3.5" />
+                        <span>Peak Hours Rate</span>
+                        <span className="text-[10px] font-normal text-[#5F6368]">
                           ({court.peakHoursStart || '06:00 PM'}–{court.peakHoursEnd || '11:00 PM'})
                         </span>
                       </span>
-                      <span className="text-[12px] font-black text-[#F94001]">
+                      <span className="text-[13px] font-black text-[#F94001]">
                         ₹{(court.peakHoursPrice || (court.pricePerHour || 1000) + 400).toLocaleString('en-IN')}/hr
                       </span>
                     </div>
-                    <div className="flex items-center justify-between pt-1 border-t border-[#E5E7EB]/60">
-                      <span className="font-medium text-[#5F6368] flex items-center gap-1">
-                        <Sun className="w-3 h-3 text-[#B87C0D]" />
-                        <span>Weekend</span>
-                        <span className="text-[9.5px] font-normal text-[#5F6368]">
+                    <div className="flex items-center justify-between pt-1.5 border-t border-[#E5E7EB]/60">
+                      <span className="font-bold text-[#021526] flex items-center gap-1">
+                        <Sun className="w-3.5 h-3.5 text-[#B87C0D]" />
+                        <span>Weekend Rate</span>
+                        <span className="text-[10px] font-normal text-[#5F6368]">
                           ({court.peakDays?.join(', ') || 'Fri, Sat, Sun'})
                         </span>
                       </span>
-                      <span className="text-[12px] font-black text-[#021526]">
+                      <span className="text-[13px] font-black text-[#021526]">
                         ₹{(court.weekendPrice || (court.pricePerHour || 1000) + 500).toLocaleString('en-IN')}/hr
                       </span>
                     </div>
-                    <div className="flex items-center justify-between pt-1 border-t border-[#E5E7EB]/60">
-                      <span className="font-medium text-[#5F6368]">Hours</span>
-                      <span className="font-bold text-[#021526] text-[10px]">{court.operatingHours || '06:00 AM – 11:00 PM'}</span>
+                    <div className="flex items-center justify-between pt-1.5 border-t border-[#E5E7EB]/60 text-[10.5px]">
+                      <span className="font-semibold text-[#5F6368]">Operating Hours</span>
+                      <span className="font-black text-[#021526]">{court.operatingHours || '06:00 AM – 11:00 PM'}</span>
                     </div>
                   </div>
 
                   {/* Surface Description */}
                   {(court.statusDetails || court.type) && (
-                    <p className="text-[10px] font-medium text-[#5F6368] mt-2 line-clamp-1">
+                    <p className="text-[11.5px] font-medium text-[#5F6368] mt-2.5 line-clamp-2">
                       {court.statusDetails || `${court.type || 'Outdoor'} turf pitch with standard markings`}
                     </p>
                   )}
 
                   {/* Cancellation Policy Tag */}
-                  <div className="mt-2 flex items-center gap-1 text-[10px] font-medium text-[#5F6368] bg-[#F3F4F4] border border-[#E5E7EB] px-2 py-1.5 rounded-lg">
-                    <ShieldCheck className="w-3 h-3 text-[#16A34A] shrink-0" />
+                  <div className="mt-2.5 flex items-center gap-1.5 text-[11px] font-bold text-[#5F6368] bg-[#F3F4F4] border border-[#E5E7EB] px-2.5 py-1.5 rounded-xl">
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#16A34A] shrink-0" />
                     <span className="truncate">
                       {court.cancellationPolicyLabel ||
                         (court.cancellationWindowHours !== undefined
@@ -383,12 +383,12 @@ export const CourtsScreen: React.FC = () => {
                 </div>
 
                 {/* Action Buttons Footer */}
-                <div className="pt-3 mt-3 border-t border-[#F3F4F4] flex items-center gap-1.5">
+                <div className="pt-4 mt-4 border-t border-[#F3F4F4] flex items-center gap-2">
                   <button
                     onClick={() => { haptics.tap(); navigateTo('slots'); }}
-                    className="flex-1 py-1.5 px-2.5 rounded-xl bg-[#F3F4F4] hover:bg-[#EBE9E3] text-[#021526] text-[11px] font-bold flex items-center justify-center gap-1 transition-colors cursor-pointer"
+                    className="flex-1 py-2 px-3 rounded-xl bg-[#F3F4F4] hover:bg-[#EBE9E3] text-[#021526] text-[12px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                   >
-                    <Calendar className="w-3 h-3 text-[#5F6368]" />
+                    <Calendar className="w-3.5 h-3.5 text-[#5F6368]" />
                     <span>View Slots</span>
                   </button>
 
@@ -396,19 +396,19 @@ export const CourtsScreen: React.FC = () => {
                     <>
                       <button
                         onClick={() => { haptics.tap(); setEditingCourt(court); }}
-                        className="py-1.5 px-2.5 rounded-xl bg-white hover:bg-[#F3F4F4] border border-[#E5E7EB] text-[#021526] text-[11px] font-bold flex items-center justify-center gap-1 transition-colors cursor-pointer active-press"
+                        className="py-2 px-3 rounded-xl bg-white hover:bg-[#F3F4F4] border border-[#E5E7EB] text-[#021526] text-[12px] font-bold flex items-center justify-center gap-1 transition-colors cursor-pointer active-press"
                       >
-                        <Edit2 className="w-3 h-3 text-[#5F6368]" />
+                        <Edit2 className="w-3.5 h-3.5 text-[#5F6368]" />
                         <span>Edit</span>
                       </button>
 
                       <button
                         id={`btn-delete-court-${court.id}`}
                         onClick={() => { haptics.tap(); setDeletingCourt(court); }}
-                        className="py-1.5 px-2 rounded-xl bg-white hover:bg-red-50 border border-[#E5E7EB] hover:border-red-200 text-[#5F6368] hover:text-red-600 text-[11px] font-bold flex items-center justify-center transition-colors cursor-pointer active-press"
+                        className="py-2 px-2.5 rounded-xl bg-white hover:bg-red-50 border border-[#E5E7EB] hover:border-red-200 text-[#5F6368] hover:text-red-600 text-[12px] font-bold flex items-center justify-center transition-colors cursor-pointer active-press"
                         aria-label={`Delete ${court.name}`}
                       >
-                        <Trash2 className="w-3 h-3" />
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </>
                   )}

@@ -1,7 +1,7 @@
 // iBookSports Vendor Portal API Client
 const API_BASE_URL =
   (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_BASE_URL) ||
-  'http://localhost:4000/api/v1';
+  'https://ibooksports-backend.onrender.com/api/v1';
 
 export interface SendOtpResponse {
   success: boolean;
