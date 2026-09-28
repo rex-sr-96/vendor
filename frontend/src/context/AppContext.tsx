@@ -464,7 +464,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
           const updated = prevCourts.map((c) => {
             const reqId = c.requestId || c.id;
             const bReq = backendRequests.find(
-              (r: any) => r.id === reqId || (r.court_id && (r.court_id === c.id || r.court_id === c.courtId))
+              (r: any) =>
+                r.id === reqId ||
+                (r.court_id && (r.court_id === c.id || r.court_id === c.courtId)) ||
+                (r.court_name && c.name && r.court_name.toLowerCase() === c.name.toLowerCase())
             );
             if (!bReq) return c;
 
@@ -1914,14 +1917,18 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setStaffMembers((prev) => [newStaff, ...prev]);
 
     try {
-      const res = await fetch('http://localhost:4000/api/v1/staff', {
+      const res = await fetch('http://localhost:4000/api/v1/vendor-staff', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          venue_id: 'APP10236',
+          venueId: 'APP10236',
           name: member.name,
           email: member.email,
-          phone_number: cleanDigits || '9876543210',
-          role: member.role || 'OPERATIONS_MANAGER',
+          phone: formattedPhone || cleanDigits || '9876543210',
+          role: member.role || 'Staff',
+          shift: member.shift || 'Standard',
+          status: 'Active',
         }),
       });
       if (res.ok) {
@@ -1931,7 +1938,29 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         );
       }
     } catch (e) {
-      // Local fallback
+      // Direct Supabase REST fallback
+      try {
+        await fetch('https://xnmmoqujxdfeceggjkiy.supabase.co/rest/v1/venue_staff', {
+          method: 'POST',
+          headers: {
+            apikey: 'sb_publishable__UTAPkS12U8tlVnj9Cadsw_ZrJ_qmcb',
+            Authorization: 'Bearer sb_publishable__UTAPkS12U8tlVnj9Cadsw_ZrJ_qmcb',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: tempId,
+            venue_id: 'APP10236',
+            name: member.name,
+            role: member.role || 'Staff',
+            phone: formattedPhone || cleanDigits || '9876543210',
+            email: member.email || null,
+            shift: member.shift || 'Standard',
+            status: 'Active',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          }),
+        });
+      } catch (err) {}
     }
 
     showToast('Staff Added', `${newStaff.name} added as ${newStaff.role}.`, 'success');
@@ -1962,10 +1991,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       const payload: any = {};
       if (updatedData.name) payload.name = updatedData.name;
       if (updatedData.email) payload.email = updatedData.email;
-      if (cleanDigits && cleanDigits.length === 10) payload.phone_number = cleanDigits;
+      if (cleanDigits && cleanDigits.length === 10) payload.phone = cleanDigits;
       if (updatedData.role) payload.role = updatedData.role;
+      if (updatedData.shift) payload.shift = updatedData.shift;
 
-      const res = await fetch(`http://localhost:4000/api/v1/staff/${id}`, {
+      const res = await fetch(`http://localhost:4000/api/v1/vendor-staff/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -1978,25 +2008,43 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
               ? {
                   ...s,
                   ...updated,
-                  phone: formattedPhone || (updated.phone_number ? `+91 ${updated.phone_number.slice(0, 5)} ${updated.phone_number.slice(5)}` : s.phone),
-                  phone_number: updated.phone_number || cleanDigits || s.phone_number,
+                  phone: formattedPhone || (updated.phone ? `+91 ${updated.phone.slice(0, 5)} ${updated.phone.slice(5)}` : s.phone),
+                  phone_number: updated.phone || cleanDigits || s.phone_number,
                 }
               : s
           )
         );
       }
     } catch (e) {
-      // Local fallback
+      // Direct Supabase REST fallback
+      try {
+        await fetch(`https://xnmmoqujxdfeceggjkiy.supabase.co/rest/v1/venue_staff?id=eq.${id}`, {
+          method: 'PATCH',
+          headers: {
+            apikey: 'sb_publishable__UTAPkS12U8tlVnj9Cadsw_ZrJ_qmcb',
+            Authorization: 'Bearer sb_publishable__UTAPkS12U8tlVnj9Cadsw_ZrJ_qmcb',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ...(updatedData.name && { name: updatedData.name }),
+            ...(updatedData.role && { role: updatedData.role }),
+            ...(cleanDigits && { phone: cleanDigits }),
+            ...(updatedData.email !== undefined && { email: updatedData.email }),
+            updated_at: new Date().toISOString(),
+          }),
+        });
+      } catch (err) {}
     }
 
     showToast('Staff Updated', 'Staff role & details updated successfully.', 'success');
   };
 
   const toggleStaffStatus = async (id: string) => {
+    let nextStatus = 'Active';
     setStaffMembers((prev) =>
       prev.map((s) => {
         if (s.id === id) {
-          const nextStatus = s.status === 'Active' ? 'Inactive' : 'Active';
+          nextStatus = s.status === 'Active' ? 'Inactive' : 'Active';
           return { ...s, status: nextStatus };
         }
         return s;
@@ -2004,12 +2052,43 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     );
 
     try {
-      await fetch(`http://localhost:4000/api/v1/staff/${id}/status`, {
+      await fetch(`http://localhost:4000/api/v1/vendor-staff/${id}/status`, {
         method: 'PATCH',
       });
     } catch (e) {
-      // Local fallback
+      // Direct Supabase REST fallback
+      try {
+        await fetch(`https://xnmmoqujxdfeceggjkiy.supabase.co/rest/v1/venue_staff?id=eq.${id}`, {
+          method: 'PATCH',
+          headers: {
+            apikey: 'sb_publishable__UTAPkS12U8tlVnj9Cadsw_ZrJ_qmcb',
+            Authorization: 'Bearer sb_publishable__UTAPkS12U8tlVnj9Cadsw_ZrJ_qmcb',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status: nextStatus, updated_at: new Date().toISOString() }),
+        });
+      } catch (err) {}
     }
+  };
+
+  const deleteStaffMember = async (id: string) => {
+    setStaffMembers((prev) => prev.filter((s) => s.id !== id));
+    try {
+      await fetch(`http://localhost:4000/api/v1/vendor-staff/${id}`, {
+        method: 'DELETE',
+      });
+    } catch (e) {
+      try {
+        await fetch(`https://xnmmoqujxdfeceggjkiy.supabase.co/rest/v1/venue_staff?id=eq.${id}`, {
+          method: 'DELETE',
+          headers: {
+            apikey: 'sb_publishable__UTAPkS12U8tlVnj9Cadsw_ZrJ_qmcb',
+            Authorization: 'Bearer sb_publishable__UTAPkS12U8tlVnj9Cadsw_ZrJ_qmcb',
+          },
+        });
+      } catch (err) {}
+    }
+    showToast('Staff Deleted', 'Staff member removed from Supabase.', 'info');
   };
 
   const updateStaffPermissions = (id: string, permKey: keyof StaffMember['permissions']) => {
@@ -2182,10 +2261,16 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         `https://ibooksports-backend.onrender.com/api/v1/onboarding/vendor/profile?mobile=${cleanPhone}`,
       ].filter(Boolean);
 
+      const token = typeof window !== 'undefined' ? localStorage.getItem('turftown_token') || '' : '';
+      const reqHeaders: Record<string, string> = {};
+      if (token) {
+        reqHeaders['Authorization'] = `Bearer ${token}`;
+      }
+
       let res: Response | null = null;
       for (const url of backendUrls) {
         try {
-          const r = await fetch(url);
+          const r = await fetch(url, { headers: reqHeaders });
           if (r.ok) {
             res = r;
             break;
@@ -2360,27 +2445,56 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         }
       }
 
-      // Live Staff Members from backend
+      // Live Staff Members from Supabase / Backend API
       try {
-        const staffRes = await fetch('http://localhost:4000/api/v1/staff');
+        let staffData: any[] = [];
+        const staffRes = await fetch('http://localhost:4000/api/v1/vendor-staff?venueId=APP10236');
         if (staffRes.ok) {
-          const staffData = await staffRes.json();
-          if (Array.isArray(staffData)) {
-            setStaffMembers(
-              staffData.map((s: any) => {
-                const rawPhone = s.phone || s.phone_number || '';
-                const cleanDigits = String(rawPhone).replace(/\D/g, '').slice(-10);
-                const formatted = cleanDigits.length === 10
-                  ? `+91 ${cleanDigits.slice(0, 5)} ${cleanDigits.slice(5)}`
-                  : rawPhone;
-                return {
-                  ...s,
-                  phone: formatted,
-                  phone_number: s.phone_number || rawPhone,
-                };
-              })
-            );
+          staffData = await staffRes.json();
+        } else {
+          // Direct Supabase REST fetch
+          const supaRes = await fetch(
+            'https://xnmmoqujxdfeceggjkiy.supabase.co/rest/v1/venue_staff?venue_id=in.(APP10236,VEN-APP10236,10236)&order=created_at.asc',
+            {
+              headers: {
+                apikey: 'sb_publishable__UTAPkS12U8tlVnj9Cadsw_ZrJ_qmcb',
+                Authorization: 'Bearer sb_publishable__UTAPkS12U8tlVnj9Cadsw_ZrJ_qmcb',
+              },
+            }
+          );
+          if (supaRes.ok) {
+            staffData = await supaRes.json();
           }
+        }
+
+        if (Array.isArray(staffData) && staffData.length > 0) {
+          setStaffMembers(
+            staffData.map((s: any) => {
+              const rawPhone = s.phone || s.phone_number || '';
+              const cleanDigits = String(rawPhone).replace(/\D/g, '').slice(-10);
+              const formatted = cleanDigits.length === 10
+                ? `+91 ${cleanDigits.slice(0, 5)} ${cleanDigits.slice(5)}`
+                : rawPhone;
+              return {
+                id: s.id,
+                venueId: s.venue_id || s.venueId || 'APP10236',
+                name: s.name,
+                role: s.role || 'Staff',
+                phone: formatted,
+                phone_number: cleanDigits || rawPhone,
+                email: s.email || '',
+                shift: s.shift || 'Standard',
+                status: s.status || 'Active',
+                permissions: {
+                  manageBookings: s.manage_bookings ?? s.manageBookings ?? true,
+                  collectCash: s.collect_cash ?? s.collectCash ?? false,
+                  blockSlots: s.block_slots ?? s.blockSlots ?? false,
+                  viewFinances: s.view_finances ?? s.viewFinances ?? false,
+                  editPricing: s.edit_pricing ?? s.editPricing ?? false,
+                },
+              };
+            })
+          );
         }
       } catch (e) {
         // Safe fallback
@@ -2431,9 +2545,23 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const syncCourtRequests = async () => {
     try {
       const cleanPhone = (ownerPhone || '6369591821').replace(/\D/g, '').slice(-10);
-      const res = await fetch(`http://localhost:4000/api/v1/court-requests?mobile=${cleanPhone}`);
-      if (!res.ok) return;
-      const crqData = await res.json();
+      let crqData: any[] = [];
+      try {
+        const res = await fetch(`http://localhost:4000/api/v1/court-requests?mobile=${cleanPhone}`);
+        if (res.ok) {
+          crqData = await res.json();
+        }
+      } catch {}
+
+      if (!Array.isArray(crqData) || crqData.length === 0) {
+        try {
+          const resAll = await fetch('http://localhost:4000/api/v1/court-requests');
+          if (resAll.ok) {
+            crqData = await resAll.json();
+          }
+        } catch {}
+      }
+
       if (!Array.isArray(crqData)) return;
 
       setCourts((currentCourts) => {
@@ -2445,9 +2573,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
           const isPending = req.status === 'PENDING';
           const isRejected = req.status === 'REJECTED';
           const targetStatus: CourtStatus = isApproved ? 'Approved' : isPending ? 'Pending Approval' : 'Rejected';
+          const resolvedCourtId = req.court_id || `CRT-${req.id?.replace(/\D/g, '') || Math.floor(1000 + Math.random() * 9000)}`;
 
           const idx = updated.findIndex(
-            (c) => c.requestId === req.id || c.name.toLowerCase() === req.court_name.toLowerCase()
+            (c) =>
+              c.requestId === req.id ||
+              (req.court_id && (c.id === req.court_id || c.courtId === req.court_id)) ||
+              (c.name && req.court_name && c.name.toLowerCase() === req.court_name.toLowerCase())
           );
 
           if (idx >= 0) {
@@ -2456,11 +2588,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
               current.status !== targetStatus ||
               current.rejectionReason !== req.rejection_reason ||
               current.requestId !== req.id ||
-              current.isActive !== isApproved
+              current.isActive !== isApproved ||
+              (isApproved && (!current.courtId || current.courtId !== resolvedCourtId))
             ) {
               changed = true;
               updated[idx] = {
                 ...current,
+                id: isApproved ? resolvedCourtId : current.id,
+                courtId: isApproved ? resolvedCourtId : current.courtId,
+                displayName: req.display_name || current.displayName || req.court_name,
                 requestId: req.id,
                 status: targetStatus,
                 isActive: isApproved,
@@ -2469,13 +2605,14 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
                   ? `Awaiting Admin Approval · Request ID: ${req.id}`
                   : isRejected
                   ? `Rejected: ${req.rejection_reason || 'Requires correction'}`
-                  : current.statusDetails || 'Operational · Approved by Admin',
+                  : `Operational · Approved by Admin (Court ID: ${resolvedCourtId})`,
               };
             }
           } else {
             changed = true;
             updated.push({
-              id: `court-req-${req.id}`,
+              id: isApproved ? resolvedCourtId : `court-req-${req.id}`,
+              courtId: isApproved ? resolvedCourtId : undefined,
               name: req.court_name,
               displayName: req.display_name || req.court_name,
               sports: Array.isArray(req.sports) ? req.sports : ['Football'],
@@ -2496,7 +2633,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
                 ? `Awaiting Admin Approval · Request ID: ${req.id}`
                 : isRejected
                 ? `Rejected: ${req.rejection_reason || 'Requires correction'}`
-                : 'Operational · Approved by Admin',
+                : `Operational · Approved by Admin (Court ID: ${resolvedCourtId})`,
             });
           }
         }

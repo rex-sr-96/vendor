@@ -275,11 +275,35 @@ export const SlotsScreen: React.FC = () => {
     const dayCloseMins = currentDaySchedule?.closeTime ? parseTimeToMinutes(currentDaySchedule.closeTime) : 23 * 60;
 
     filteredCourts.forEach((court) => {
+      // Resolve all court IDs sharing the same physical pitch/ground
+      const linkedCourtIds = new Set<string>([court.id]);
+      if (court.parentCourtId) linkedCourtIds.add(court.parentCourtId);
+      
+      const pgId = court.physicalGroundId || (court as any).physicalPitchId;
+      courts.forEach((c) => {
+        if (
+          (pgId && (c.physicalGroundId === pgId || (c as any).physicalPitchId === pgId || c.id === pgId)) ||
+          c.parentCourtId === court.id ||
+          court.parentCourtId === c.id
+        ) {
+          linkedCourtIds.add(c.id);
+        }
+      });
+
+      // Also link by base name if same physical sport flag is active
+      const baseName = court.name.replace(/\s*\[.*?\]/g, '').replace(/\s*\(.*?\)/g, '').trim().toLowerCase();
+      courts.forEach((c) => {
+        const otherBase = c.name.replace(/\s*\[.*?\]/g, '').replace(/\s*\(.*?\)/g, '').trim().toLowerCase();
+        if (otherBase === baseName && baseName.length >= 3) {
+          linkedCourtIds.add(c.id);
+        }
+      });
+
       const courtBookings = bookings.filter(
-        (b) => b.courtId === court.id && b.date === currentDate && b.status !== 'Cancelled' && b.status !== 'Expired'
+        (b) => linkedCourtIds.has(b.courtId) && b.date === currentDate && b.status !== 'Cancelled' && b.status !== 'Expired'
       );
       const courtBlocks = slots.filter(
-        (s) => s.courtId === court.id && s.state === 'maintenance' && (s.date === currentDate || !s.date)
+        (s) => linkedCourtIds.has(s.courtId) && s.state === 'maintenance' && (s.date === currentDate || !s.date)
       );
 
       const basePrice = court.pricePerHour || 1000;
@@ -314,9 +338,11 @@ export const SlotsScreen: React.FC = () => {
         });
 
         if (matchedBooking) {
+          const isSiblingBooking = matchedBooking.courtId !== court.id;
           let cellState: SlotState | 'ongoing' = 'booked';
-          if (matchedBooking.status === 'Ongoing') cellState = 'ongoing';
-          else if (matchedBooking.status === 'Payment Pending') cellState = 'pending';
+          if (isSiblingBooking) cellState = 'pending';
+          else if (matchedBooking.status === 'Ongoing') cellState = 'ongoing';
+          else if (matchedBooking.status === 'Payment Pending' || matchedBooking.status === 'Held') cellState = 'pending';
 
           return {
             courtId: court.id,
@@ -333,6 +359,7 @@ export const SlotsScreen: React.FC = () => {
             slotId: `slot-${court.id}-${idx}`,
             price: matchedBooking.totalAmount || price,
             isPeak,
+            isSiblingBooking: (matchedBooking && matchedBooking.courtId !== court.id) || false,
           };
         }
 
@@ -363,6 +390,7 @@ export const SlotsScreen: React.FC = () => {
             blockId: matchedBlock.id,
             price,
             isPeak,
+            isSiblingBooking: (matchedBooking && matchedBooking.courtId !== court.id) || false,
           };
         }
 
@@ -382,6 +410,7 @@ export const SlotsScreen: React.FC = () => {
             slotId: `slot-closed-${court.id}-${idx}`,
             price,
             isPeak,
+            isSiblingBooking: (matchedBooking && matchedBooking.courtId !== court.id) || false,
           };
         }
 
@@ -401,6 +430,7 @@ export const SlotsScreen: React.FC = () => {
             slotId: `slot-closed-${court.id}-${idx}`,
             price,
             isPeak,
+            isSiblingBooking: (matchedBooking && matchedBooking.courtId !== court.id) || false,
           };
         }
 
@@ -419,7 +449,8 @@ export const SlotsScreen: React.FC = () => {
           slotId: `slot-avail-${court.id}-${idx}`,
           price,
           isPeak,
-        };
+            isSiblingBooking: (matchedBooking && matchedBooking.courtId !== court.id) || false,
+          };
       });
     });
 
@@ -1422,13 +1453,15 @@ export const SlotsScreen: React.FC = () => {
                                   <span className="text-[10px] font-black truncate">Live</span>
                                 </div>
                               ) : isBooked ? (
-                                <span className="text-[10px] font-bold truncate px-1 text-white">
-                                  {cell.booking?.customerName.split(' ')[0]}
+                                <span className="text-[10px] font-bold truncate px-1 text-white" title={cell.booking?.courtId !== cell.courtId ? `Occupied on ${cell.booking?.courtName || 'Shared Ground'} (${cell.booking?.sport})` : cell.booking?.customerName}>
+                                  {cell.booking?.courtId !== cell.courtId
+                                    ? `⚑ ${cell.booking?.sport || 'Shared'}`
+                                    : (cell.booking?.customerName.split(' ')[0] || 'Booked')}
                                 </span>
                               ) : isPending ? (
                                 <div className="flex items-center gap-1 px-1">
                                   <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] animate-pulse" />
-                                  <span className="text-[9.5px] font-black truncate text-[#F59E0B]">Hold</span>
+                                  <span className="text-[9.5px] font-black truncate text-[#F59E0B]">{cell.isSiblingBooking ? `Hold (${cell.booking?.sport || "Shared"})` : "Hold"}</span>
                                 </div>
                               ) : isMaintenance ? (
                                 <span className="text-[9.5px] font-bold truncate px-1">
