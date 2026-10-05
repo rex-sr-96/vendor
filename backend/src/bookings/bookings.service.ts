@@ -1,17 +1,90 @@
-import { Injectable } from '@nestjs/common';
-import { Booking } from '../types';
+import { Injectable, Optional } from '@nestjs/common';
+import * as QRCode from 'qrcode';
+import { Booking, PaymentQrResponse } from '../types';
 import { initialBookings } from '../data/mock-data';
+import { SettingsService } from '../settings/settings.service';
 
 @Injectable()
 export class BookingsService {
   private bookings: Booking[] = [...initialBookings];
+
+  constructor(@Optional() private readonly settingsService?: SettingsService) {}
 
   findAll(): Booking[] {
     return this.bookings;
   }
 
   findOne(id: string): Booking | undefined {
-    return this.bookings.find((b) => b.id === id);
+    return this.bookings.find(
+      (b) =>
+        b.id === id ||
+        b.bookingNumber === id ||
+        b.id.replace(/-/g, '').toLowerCase() === id.replace(/-/g, '').toLowerCase() ||
+        (b.bookingNumber && b.bookingNumber.replace(/-/g, '').toLowerCase() === id.replace(/-/g, '').toLowerCase()),
+    );
+  }
+
+  async getPaymentQr(id: string, requestedAmount?: number): Promise<PaymentQrResponse> {
+    const booking = this.findOne(id);
+
+    const bookingNumber = booking?.bookingNumber || (id.startsWith('BK') ? id : `BK-${id}`);
+    const bookingId = booking?.id || (id.includes('-') && id.length > 20 ? id : `bkid-${id}`);
+
+    const finalAmount =
+      requestedAmount !== undefined && !isNaN(requestedAmount) && requestedAmount > 0
+        ? requestedAmount
+        : booking?.balanceAmount !== undefined && booking.balanceAmount > 0
+        ? booking.balanceAmount
+        : booking?.totalAmount || 1200;
+
+    const balanceAmount = booking?.balanceAmount !== undefined ? booking.balanceAmount : 0;
+    const customerName = booking?.customerName || 'Customer';
+    const courtName = booking?.courtName || 'Turf 1';
+
+    const paymentSettings = this.settingsService ? this.settingsService.getPaymentSettings() : undefined;
+    const venueName =
+      (booking as any)?.venueName ||
+      process.env.VENUE_NAME ||
+      'iBookSports Arena';
+
+    const payeeVpa =
+      process.env.PAYEE_VPA ||
+      process.env.UPI_ID ||
+      paymentSettings?.upiId ||
+      'ibooksports@icici';
+
+    const encodedPa = encodeURIComponent(payeeVpa);
+    const encodedPn = encodeURIComponent(venueName);
+    const note = `Payment for ${bookingNumber}`;
+    const encodedTn = encodeURIComponent(note);
+    const upiUri = `upi://pay?pa=${encodedPa}&pn=${encodedPn}&am=${finalAmount}&cu=INR&tn=${encodedTn}`;
+
+    let qrCodeDataUrl: string;
+    try {
+      qrCodeDataUrl = await QRCode.toDataURL(upiUri, {
+        errorCorrectionLevel: 'M',
+        margin: 2,
+        scale: 8,
+        width: 300,
+      });
+    } catch {
+      qrCodeDataUrl = `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==`;
+    }
+
+    return {
+      success: true,
+      bookingNumber,
+      bookingId,
+      amount: finalAmount,
+      balanceAmount,
+      upiUri,
+      qrCodeDataUrl,
+      payeeVpa,
+      customerName,
+      courtName,
+      venueName,
+      message: `Dynamic UPI Payment QR generated for ₹${finalAmount}. Customer can scan with GPay, PhonePe, Paytm, or BHIM.`,
+    };
   }
 
   create(data: Partial<Booking>): Booking {

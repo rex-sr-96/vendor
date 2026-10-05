@@ -5,18 +5,29 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Enable CORS for frontend (Next.js on port 3000)
+  // Enable CORS for all clients (Mobile app, Web app, etc.)
   app.enableCors({
-    origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    origin: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
 
-  // Global API prefix
-  app.setGlobalPrefix('api');
+  // Global API prefix: api/v1
+  app.setGlobalPrefix('api/v1', {
+    exclude: ['health', ''],
+  });
+
+  // Backward compatibility middleware: route /api/* requests (without /v1) to /api/v1/*
+  const expressApp = app.getHttpAdapter().getInstance();
+  expressApp.use((req: any, _res: any, next: any) => {
+    if (req.url && req.url.startsWith('/api/') && !req.url.startsWith('/api/v1/')) {
+      req.url = req.url.replace('/api/', '/api/v1/');
+    }
+    next();
+  });
 
   const port = process.env.PORT || 4000;
   await app.listen(port);
-  console.log(`🏟️  TurfTown Backend running on http://localhost:${port}/api`);
+  console.log(`🏟️  TurfTown Backend running on http://localhost:${port}/api/v1`);
 }
 bootstrap();

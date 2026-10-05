@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Patch, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Body, Query } from '@nestjs/common';
 import { BookingsService } from './bookings.service';
-import { Booking } from '../types';
+import { Booking, PaymentQrResponse } from '../types';
 
 @Controller('bookings')
 export class BookingsController {
@@ -9,6 +9,15 @@ export class BookingsController {
   @Get()
   findAll(): Booking[] {
     return this.bookingsService.findAll();
+  }
+
+  @Get(':id/payment-qr')
+  async getPaymentQr(
+    @Param('id') id: string,
+    @Query('amount') amount?: string | number,
+  ): Promise<PaymentQrResponse> {
+    const parsedAmount = amount !== undefined && amount !== '' ? Number(amount) : undefined;
+    return await this.bookingsService.getPaymentQr(id, parsedAmount);
   }
 
   @Get(':id')

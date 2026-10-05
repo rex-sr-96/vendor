@@ -3,11 +3,14 @@ export type PaymentStatus = 'Paid' | 'Partially Paid' | 'Pending';
 
 export interface Booking {
   id: string;
+  bookingNumber?: string;
+  venueId?: string;
+  venueName?: string;
   customerName: string;
   customerPhone: string;
   courtId: string;
   courtName: string;
-  sport: 'Football' | 'Cricket' | 'Badminton' | 'Pickleball';
+  sport: 'Football' | 'Cricket' | 'Badminton' | 'Pickleball' | string;
   date: string;
   timeSlot: string;
   totalAmount: number;
@@ -15,11 +18,26 @@ export interface Booking {
   balanceAmount: number;
   status: BookingStatus;
   paymentStatus: PaymentStatus;
-  paymentMethod?: 'UPI' | 'Cash' | 'Online Link' | 'Card';
+  paymentMethod?: 'UPI' | 'Cash' | 'Online Link' | 'Card' | string;
   createdAt: string;
   notes?: string;
   holdExpiresInMinutes?: number;
   reservationType?: 'direct_booking' | 'payment_link_request';
+}
+
+export interface PaymentQrResponse {
+  success: boolean;
+  bookingNumber: string;
+  bookingId: string;
+  amount: number;
+  balanceAmount: number;
+  upiUri: string;
+  qrCodeDataUrl: string;
+  payeeVpa: string;
+  customerName: string;
+  courtName: string;
+  venueName: string;
+  message?: string;
 }
 
 export type CourtStatus = 'Approved' | 'Pending Approval' | 'Rejected';

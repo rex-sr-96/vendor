@@ -10,15 +10,17 @@ export class AppController {
       version: '1.0.0',
       timestamp: new Date().toISOString(),
       endpoints: [
-        '/api/bookings',
-        '/api/courts',
-        '/api/slots',
-        '/api/payments',
-        '/api/settlements',
-        '/api/settings',
-        '/api/staff',
-        '/api/notifications',
-        '/api/support',
+        '/api/v1/bookings',
+        '/api/v1/bookings/:id/payment-qr',
+        '/api/v1/vendor/qr/upi/:bookingId',
+        '/api/v1/courts',
+        '/api/v1/slots',
+        '/api/v1/payments',
+        '/api/v1/settlements',
+        '/api/v1/settings',
+        '/api/v1/staff',
+        '/api/v1/notifications',
+        '/api/v1/support',
       ],
     };
   }
@@ -26,7 +28,7 @@ export class AppController {
   @Get('health')
   getHealth() {
     return {
-      status: 'healthy',
+      status: 'ok',
       uptime: process.uptime(),
       timestamp: new Date().toISOString(),
     };
