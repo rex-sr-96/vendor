@@ -29,7 +29,7 @@ export function parseTimeToMinutes(tStr: string): number {
   const isPM = /PM/i.test(tStr);
   const isAM = /AM/i.test(tStr);
   const clean = tStr.replace(/AM|PM/i, '').trim();
-  const [hStr, mStr] = clean.split(':');
+  const [hStr, mStr] = typeof clean === 'string' ? clean.split(':') : ['6', '00'];
   let h = parseInt(hStr, 10) || 0;
   const m = parseInt(mStr || '0', 10) || 0;
   if (isPM && h < 12) h += 12;
@@ -40,7 +40,7 @@ export function parseTimeToMinutes(tStr: string): number {
 export function parseBookingRangeToMinutes(timeSlotStr: string): { startMins: number; endMins: number } | null {
   if (!timeSlotStr) return null;
   const cleanStr = timeSlotStr.replace(/\(.*?\)/g, '').trim();
-  const parts = cleanStr.split(/[–\-]| to /i).map((p) => p.trim());
+  const parts = typeof cleanStr === 'string' ? cleanStr.split(/[–\-]| to /i).map((p) => p.trim()) : [];
   if (parts.length >= 2) {
     const p0 = parts[0];
     const p1 = parts[1];
@@ -84,7 +84,7 @@ export function getAvailableExtensionSlots(
   allBookings: Booking[],
   court?: Court
 ): ExtensionAvailabilityResult {
-  const parts = booking.timeSlot.split('–');
+  const parts = typeof booking.timeSlot === 'string' ? booking.timeSlot.split('–') : [];
   const matchStartTimeStr = parts[0]?.trim() || '6:00 PM';
   const currentEndTimeStr = parts[1]?.trim() || '8:00 PM';
 
@@ -112,7 +112,7 @@ export function getAvailableExtensionSlots(
   );
 
   const otherRanges = otherBookings.map((b) => {
-    const bParts = b.timeSlot.split('–');
+    const bParts = typeof b.timeSlot === 'string' ? b.timeSlot.split('–') : [];
     const sStr = bParts[0]?.trim() || '';
     const eStr = bParts[1]?.trim() || '';
     return {

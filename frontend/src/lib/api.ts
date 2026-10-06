@@ -59,7 +59,10 @@ async function fetchMasterApi(endpoint: string, options?: RequestInit): Promise<
   for (const url of urls) {
     try {
       const res = await fetch(url, finalOptions);
-      if (res.ok) return res;
+      // If server responded (success or business error like 400/401/404), return it
+      if (res.status < 500) {
+        return res;
+      }
       lastResponse = res;
     } catch (err) {
       lastError = err;
@@ -309,4 +312,75 @@ export const vendorRequestsApi = {
     return data;
   },
 };
+
+export const qrApi = {
+  // 1. Verify / Check-in customer entry pass scanned via Vendor Camera
+  verifyPass: async (qrData: string, action: 'VERIFY' | 'CHECK_IN' = 'CHECK_IN') => {
+    const res = await fetchMasterApi('/bookings/verify-qr', {
+      method: 'POST',
+      body: JSON.stringify({ qr_data: qrData, action }),
+    });
+    const data = await res.json();
+    if (!res.ok || data.success === false) {
+      throw new Error(data.message || 'Invalid or unverified QR entry pass.');
+    }
+    return data as {
+      success: boolean;
+      valid: boolean;
+      actionTaken: string;
+      message: string;
+      booking: any;
+      paymentSummary: {
+        status: string;
+        totalAmount: number;
+        paidAmount: number;
+        balanceDue: number;
+      };
+    };
+  },
+
+  // 2. Fetch Digital Entry Pass QR Code Data URL
+  getEntryPassQr: async (bookingId: string) => {
+    const res = await fetchMasterApi(`/bookings/${bookingId}/qr-pass`);
+    const data = await res.json();
+    if (!res.ok || data.success === false) {
+      throw new Error(data.message || 'Failed to generate entry pass QR code.');
+    }
+    return data as {
+      success: boolean;
+      bookingNumber: string;
+      bookingId: string;
+      venueId: string;
+      passUrl: string;
+      qrCodeDataUrl: string;
+      customer: { name: string; phone: string };
+      slot: { courtName: string; sport: string; date: string; timeSlot: string };
+      payment: { totalAmount: number; paidAmount: number; balanceAmount: number; paymentStatus: string; status: string };
+    };
+  },
+
+  // 3. Generate Dynamic Counter UPI Payment QR Code
+  getUpiPaymentQr: async (bookingId: string, amount?: number) => {
+    const query = amount ? `?amount=${amount}` : '';
+    const res = await fetchMasterApi(`/bookings/${bookingId}/payment-qr${query}`);
+    const data = await res.json();
+    if (!res.ok || data.success === false) {
+      throw new Error(data.message || 'Failed to generate UPI payment QR.');
+    }
+    return data as {
+      success: boolean;
+      bookingNumber: string;
+      bookingId: string;
+      amount: number;
+      balanceAmount: number;
+      upiUri: string;
+      qrCodeDataUrl: string;
+      payeeVpa: string;
+      customerName: string;
+      courtName: string;
+      message: string;
+    };
+  },
+};
+
 

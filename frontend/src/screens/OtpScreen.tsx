@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import { ChevronLeft, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
 import { authApi } from '../lib/api';
+import { purgeAllVendorSessionStorage } from '../utils/authStorage';
 
 export const OtpScreen: React.FC = () => {
   const {
@@ -47,62 +48,60 @@ export const OtpScreen: React.FC = () => {
 
     try {
       const res = await authApi.login(cleanPhone, enteredOtp, verificationId || undefined);
-      if (res.onboarding_token) {
-        localStorage.setItem('ibooksports_vendor_token', res.onboarding_token);
-        localStorage.setItem('ibooksports_token', res.onboarding_token);
-        localStorage.setItem('ibooksports_onboarding_token', res.onboarding_token);
+      
+      // 1. COMPLETELY PURGE ANY OLD VENDOR DATA / SESSION KEYS BEFORE LOGGING IN
+      purgeAllVendorSessionStorage();
+
+      const validToken = res.accessToken || res.token || res.onboarding_token || '';
+      if (validToken) {
+        localStorage.setItem('ibooksports_vendor_token', validToken);
+        localStorage.setItem('ibooksports_token', validToken);
+        localStorage.setItem('accessToken', validToken);
+        localStorage.setItem('token', validToken);
+        sessionStorage.setItem('accessToken', validToken);
+        sessionStorage.setItem('ibooksports_vendor_token', validToken);
       }
       localStorage.setItem('ibooksports_partner_mobile', cleanPhone);
+      sessionStorage.setItem('ibooksports_partner_mobile', cleanPhone);
 
-      // Determine user identity (staff member or owner)
-      let resolvedUser: any = null;
-      if (typeof window !== 'undefined') {
-        try {
-          const pendingStr = sessionStorage.getItem('turftown_pending_user');
-          if (pendingStr) {
-            resolvedUser = JSON.parse(pendingStr);
-            sessionStorage.removeItem('turftown_pending_user');
-          }
-        } catch (e) {
-          console.warn('Could not parse pending user', e);
-        }
-      }
-
-      if (!resolvedUser) {
-        const access = checkPhoneAccess(cleanPhone);
-        if (access.userType === 'staff' && access.staff) {
-          resolvedUser = {
-            type: 'staff',
-            id: access.staff.id,
-            name: access.staff.name,
-            role: access.staff.role,
-            phone: cleanPhone,
-            email: access.staff.email,
-            permissions: access.staff.permissions,
-          };
-        } else {
-          resolvedUser = {
-            type: 'owner',
-            name: ownerName || 'Arena Owner',
-            role: 'Arena Director',
-            phone: cleanPhone,
-          };
-        }
-      }
-
-      // Refresh vendor profile from backend FIRST to ensure real owner name and venue details
+      // 2. Fetch authenticated vendor profile directly using token
+      let profileData: any = null;
       try {
-        await refreshFromOnboarding(cleanPhone);
+        profileData = await refreshFromOnboarding(cleanPhone);
       } catch (e) {
         console.warn('Profile refresh fallback:', e);
       }
 
+      const authoritativeOwnerName =
+        profileData?.owner?.name ||
+        profileData?.partner_details?.name ||
+        res.owner_name ||
+        'Venue Partner';
+
+      const authoritativeVenueName =
+        profileData?.venue?.name ||
+        profileData?.business_details?.venue_name ||
+        res.venue_name ||
+        'Sports Arena';
+
+      const resolvedUser = {
+        type: 'owner',
+        name: authoritativeOwnerName,
+        role: 'Arena Director',
+        phone: cleanPhone,
+        venueName: authoritativeVenueName,
+      };
+
       setCurrentUser(resolvedUser);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('turftown_current_user', JSON.stringify(resolvedUser));
+        sessionStorage.setItem('owner_name', authoritativeOwnerName);
+      }
 
       const welcomeMsg =
         resolvedUser.type === 'staff'
           ? `Logged in as ${resolvedUser.name} (${resolvedUser.role}).`
-          : `Logged in to arena owner control center.`;
+          : `Logged in to ${resolvedUser.venueName || 'Arena Owner Control Center'} as ${resolvedUser.name}.`;
 
       showToast('SMS Passcode Verified', welcomeMsg, 'success');
       navigateTo('home');

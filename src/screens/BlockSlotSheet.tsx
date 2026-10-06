@@ -68,12 +68,16 @@ export const BlockSlotSheet: React.FC = () => {
     e.preventDefault();
     haptics.success();
 
+    const safeFromTime = typeof fromTime === 'string' && fromTime ? fromTime : '06:00 AM';
+    const baseHour = parseInt(safeFromTime.split(':')[0] || '6', 10) || 6;
+    const isPM = safeFromTime.toUpperCase().includes('PM');
+    const ampm = isPM ? 'PM' : 'AM';
     const timeLabel =
       duration === '2hrs'
-        ? `${fromTime.split(':')[0]}–${parseInt(fromTime.split(':')[0], 10) + 2} ${fromTime.includes('PM') ? 'PM' : 'AM'}`
+        ? `${baseHour}–${baseHour + 2} ${ampm}`
         : duration === 'half_day'
-        ? `${fromTime.split(':')[0]}–${parseInt(fromTime.split(':')[0], 10) + 4} ${fromTime.includes('PM') ? 'PM' : 'AM'}`
-        : `${fromTime.split(':')[0]}–${parseInt(fromTime.split(':')[0], 10) + 1} ${fromTime.includes('PM') ? 'PM' : 'AM'}`;
+        ? `${baseHour}–${baseHour + 4} ${ampm}`
+        : `${baseHour}–${baseHour + 1} ${ampm}`;
 
     const reason =
       maintenanceOptions.find((m) => m.id === selectedMaintenanceType)?.title ||

@@ -566,7 +566,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         courtId: booking.courtId,
         courtName: booking.courtName,
         sport: booking.sport,
-        time: booking.timeSlot.split('–')[0].trim(),
+        time: typeof booking.timeSlot === 'string' ? (booking.timeSlot.split('–')[0]?.trim() || '06:00 PM') : '06:00 PM',
         timeFull: booking.timeSlot,
         state: 'booked',
         bookingId: booking.id,
@@ -580,6 +580,29 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
     showToast('Booking Created', `Booking #${booking.id} confirmed for ${booking.customerName}.`, 'success');
     setActiveModal(null);
+
+    // Call backend API to record in Supabase and trigger WhatsApp confirmation to customer's mobile number
+    vendorApi
+      .createBooking({
+        venue_id: venueName,
+        customer_name: booking.customerName,
+        customer_phone: booking.customerPhone,
+        court_id: booking.courtId,
+        court_name: booking.courtName,
+        sport: booking.sport,
+        date: booking.date,
+        time_slot: booking.timeSlot,
+        total_amount: booking.totalAmount,
+        paid_amount: booking.paidAmount,
+        payment_method: paid > 0 ? 'Cash/UPI' : 'Pay at Counter',
+        notes: booking.notes,
+      })
+      .then(() => {
+        showToast('WhatsApp Sent', `Confirmation message sent to ${booking.customerPhone}`, 'info');
+      })
+      .catch((err) => {
+        console.warn('Booking backend sync / WhatsApp dispatch warning:', err);
+      });
   };
 
   const createSupportTicket = (ticket: Omit<SupportTicket, 'id' | 'status' | 'date'>) => {

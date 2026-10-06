@@ -113,7 +113,7 @@ export const EditCourtModal: React.FC<EditCourtModalProps> = ({ court, isOpen, o
       return;
     }
 
-    const windowHoursNum = parseInt(cancellationNoticeHours.split(' ')[0], 10) || 12;
+    const windowHoursNum = parseInt(typeof cancellationNoticeHours === 'string' ? cancellationNoticeHours.split(' ')[0] : '12', 10) || 12;
     const refundPercentNum = parseInt(refundPercentage.replace('%', ''), 10) || 100;
     const policyLabel = `Free cancel up to ${cancellationNoticeHours} before kickoff (${refundPercentage} refund)`;
 

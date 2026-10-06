@@ -159,5 +159,75 @@ export const vendorApi = {
     }
     return data;
   },
+
+  // Create New Booking (Triggers backend Supabase record & WhatsApp confirmation)
+  async createBooking(payload: {
+    venue_id?: string;
+    customer_name: string;
+    customer_phone: string;
+    court_id: string;
+    court_name?: string;
+    sport?: string;
+    date: string;
+    time_slot: string;
+    total_amount: number;
+    paid_amount: number;
+    payment_method?: string;
+    notes?: string;
+  }) {
+    const response = await fetch(`${API_BASE_URL}/bookings`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to create booking.');
+    }
+    return data;
+  },
 };
+
+export const qrApi = {
+  // Verify or Check-in Scanned QR Pass
+  async verifyPass(qrData: string, action: 'VERIFY' | 'CHECK_IN' = 'CHECK_IN') {
+    const response = await fetch(`${API_BASE_URL}/bookings/verify-qr`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ qr_data: qrData, action }),
+    });
+    const data = await response.json();
+    if (!response.ok || data.success === false) {
+      throw new Error(data.message || 'Invalid or unverified QR entry pass.');
+    }
+    return data;
+  },
+
+  // Get Digital Pass QR Code Image Data URL
+  async getEntryPassQr(bookingId: string) {
+    const response = await fetch(`${API_BASE_URL}/bookings/${bookingId}/qr-pass`, {
+      headers: getAuthHeaders(),
+    });
+    const data = await response.json();
+    if (!response.ok || data.success === false) {
+      throw new Error(data.message || 'Failed to generate QR pass.');
+    }
+    return data;
+  },
+
+  // Dynamic Counter UPI Payment QR Code
+  async getUpiPaymentQr(bookingId: string, amount?: number) {
+    const query = amount ? `?amount=${amount}` : '';
+    const response = await fetch(`${API_BASE_URL}/bookings/${bookingId}/payment-qr${query}`, {
+      headers: getAuthHeaders(),
+    });
+    const data = await response.json();
+    if (!response.ok || data.success === false) {
+      throw new Error(data.message || 'Failed to generate UPI payment QR.');
+    }
+    return data;
+  },
+};
+
 

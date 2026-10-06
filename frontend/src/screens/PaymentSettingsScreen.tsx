@@ -255,6 +255,35 @@ export const PaymentSettingsScreen: React.FC = () => {
               );
             })}
           </div>
+
+          {/* Dynamic Counter UPI ID Configuration */}
+          <div className="pt-3 border-t border-[#F3F4F4] space-y-2">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="text-[13.5px] font-black text-[#021526]">Venue Counter UPI ID</h4>
+                <p className="text-[11px] text-[#5F6368]">Used to generate live NPCI Dynamic QR codes (GPay, PhonePe, Paytm)</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                value={paymentSettings.upiId || '9600309604@okaxis'}
+                onChange={(e) => updatePaymentSettings({ upiId: e.target.value.trim() })}
+                placeholder="e.g. 9600309604@okaxis"
+                className="flex-1 px-3.5 py-2.5 rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] text-[13px] font-mono font-bold text-[#021526] focus:border-[#021526] focus:bg-white focus:outline-hidden"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  haptics.success();
+                  showToast('UPI ID Saved', `Dynamic QR will receive payments to ${paymentSettings.upiId || '9600309604@okaxis'}`, 'success');
+                }}
+                className="px-3.5 py-2.5 rounded-xl bg-[#021526] text-white font-bold text-[12px] hover:bg-black active-press cursor-pointer shrink-0 shadow-2xs"
+              >
+                Save
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 

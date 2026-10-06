@@ -1,6 +1,7 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  productionBrowserSourceMaps: true,
   // Proxy API calls to NestJS backend during development
   async rewrites() {
     return [

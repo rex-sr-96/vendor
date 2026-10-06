@@ -146,8 +146,26 @@ export const HelpFAQScreen: React.FC = () => {
     let isMounted = true;
     async function loadCmsFaqs() {
       try {
-        const res = await fetch('http://localhost:4000/api/v1/cms/public/vendor-faq');
-        if (res.ok) {
+        const envUrl = typeof process !== 'undefined' ? process.env?.NEXT_PUBLIC_API_URL : undefined;
+        const urls = [
+          envUrl ? `${envUrl}/cms/public/vendor-faq` : '',
+          'https://ibooksports-backend.onrender.com/api/v1/cms/public/vendor-faq',
+          'http://localhost:4000/api/v1/cms/public/vendor-faq',
+          'http://127.0.0.1:4000/api/v1/cms/public/vendor-faq',
+        ].filter(Boolean);
+
+        let res: Response | null = null;
+        for (const url of urls) {
+          try {
+            const r = await fetch(url);
+            if (r.ok) {
+              res = r;
+              break;
+            }
+          } catch (e) {}
+        }
+
+        if (res && res.ok) {
           const data = await res.json();
           if (isMounted && data && Array.isArray(data.faqs) && data.faqs.length > 0) {
             const mapped: FAQItem[] = data.faqs.map((f: any) => ({

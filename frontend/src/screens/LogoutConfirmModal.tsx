@@ -3,6 +3,7 @@ import { useApp } from '@/context/AppContext';
 import { LogOut, X, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { haptics } from '@/utils/haptics';
+import { purgeAllVendorSessionStorage } from '@/utils/authStorage';
 
 export const LogoutConfirmModal: React.FC = () => {
   const {
@@ -28,10 +29,7 @@ export const LogoutConfirmModal: React.FC = () => {
     haptics.tap();
     setActiveModal(null);
     setCurrentUser(null);
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('turftown_current_user');
-      sessionStorage.removeItem('turftown_pending_user');
-    }
+    purgeAllVendorSessionStorage();
     navigateTo('login');
     showToast('Signed Out', 'You have been safely signed out.', 'info');
   };

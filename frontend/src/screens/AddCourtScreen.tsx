@@ -69,11 +69,37 @@ export const AddCourtScreen: React.FC<AddCourtScreenProps> = ({ onClose }) => {
   const { goBack, addNewCourt, showToast, courts } = useApp();
   const handleClose = () => { if (onClose) onClose(); else goBack(); };
 
+  // 1. Shared Physical Ground Toggle & Parent Court
+  const [isSamePhysicalSports, setIsSamePhysicalSports] = useState<'yes' | 'no'>('no');
+  const availableParentCourts = useMemo(() => {
+    return (courts || []).filter((c) => c.status === 'Approved' || c.isActive);
+  }, [courts]);
+  const [selectedParentCourtId, setSelectedParentCourtId] = useState<string>(
+    availableParentCourts[0]?.id || ''
+  );
+
+  useEffect(() => {
+    if (availableParentCourts.length > 0 && !selectedParentCourtId) {
+      setSelectedParentCourtId(availableParentCourts[0].id);
+    }
+  }, [availableParentCourts, selectedParentCourtId]);
 
   // 2. Court info
   const [selectedSports, setSelectedSports] = useState<string[]>(['Football']);
   const [courtName, setCourtName] = useState('');
   const [displayName, setDisplayName] = useState('');
+
+  // Auto-suggest court name when cloning
+  useEffect(() => {
+    if (isSamePhysicalSports === 'yes' && selectedParentCourtId) {
+      const parent = availableParentCourts.find((c) => c.id === selectedParentCourtId);
+      if (parent) {
+        const sportName = selectedSports[0] || 'Sport';
+        const baseName = parent.name.replace(/\s*\[.*?\]/g, '').replace(/\s*\(.*?\)/g, '').trim();
+        setCourtName(`${baseName} [${sportName.toUpperCase()}]`);
+      }
+    }
+  }, [isSamePhysicalSports, selectedParentCourtId, selectedSports, availableParentCourts]);
 
   // 3. Base duration & rate (for standalone court)
   const [minBookingTime, setMinBookingTime] = useState('1 Hour');
@@ -116,7 +142,10 @@ export const AddCourtScreen: React.FC<AddCourtScreenProps> = ({ onClose }) => {
       return;
     }
 
-    const windowHoursNum = parseInt(cancellationNoticeHours.split(' ')[0], 10) || 12;
+    const isShared = isSamePhysicalSports === 'yes';
+    const parentCourt = isShared ? availableParentCourts.find((c) => c.id === selectedParentCourtId) : undefined;
+
+    const windowHoursNum = parseInt(typeof cancellationNoticeHours === 'string' ? cancellationNoticeHours.split(' ')[0] : '12', 10) || 12;
     const refundPercentNum = parseInt(refundPercentage.replace('%', ''), 10) || 100;
     const policyLabel = `Free cancel up to ${cancellationNoticeHours} before kickoff (${refundPercentage} refund)`;
 
@@ -127,7 +156,9 @@ export const AddCourtScreen: React.FC<AddCourtScreenProps> = ({ onClose }) => {
     addNewCourt({
       name: courtName.trim(),
       displayName: displayName.trim() || undefined,
-      samePhysicalSports: false,
+      samePhysicalSports: isShared,
+      parentCourtId: isShared ? selectedParentCourtId : undefined,
+      parentCourtName: isShared ? (parentCourt?.name || 'Existing Court') : undefined,
       sports: [selectedSports[0] || 'Football'],
       pricePerHour: parsedPrice,
       minBookingDuration: minBookingTime,
@@ -138,12 +169,20 @@ export const AddCourtScreen: React.FC<AddCourtScreenProps> = ({ onClose }) => {
       weekendPrice: parsedWeekendPrice,
       operatingHours: `${peakHoursStart} – ${peakHoursEnd}`,
       status: 'Pending Approval',
-      statusDetails: 'Submitted · Custom pricing & cancellation rules configured',
+      statusDetails: isShared
+        ? `Submitted · Cloned physical ground from ${parentCourt?.name || 'Existing Court'}`
+        : 'Submitted · Custom pricing & cancellation rules configured',
       cancellationWindowHours: windowHoursNum,
       refundPercentage: refundPercentNum,
       cancellationPolicyLabel: policyLabel,
     });
-    showToast('Court Added', `${courtName} created with custom cancellation policy`, 'success');
+    showToast(
+      'Court Added',
+      isShared
+        ? `${courtName} cloned from ${parentCourt?.name || 'existing turf'} with anti-double booking protection`
+        : `${courtName} created with custom cancellation policy`,
+      'success'
+    );
     haptics.success();
     closeAfter();
   };
@@ -174,14 +213,117 @@ export const AddCourtScreen: React.FC<AddCourtScreenProps> = ({ onClose }) => {
 
       <form onSubmit={handleSaveCourt} className="space-y-3.5">
         {/* ========================================================================= */}
-        {/* SECTION 1: COURT INFORMATION (1 COURT = 1 SPORT)                          */}
+        {/* SECTION 1: PHYSICAL COURT SHARING / CLONING                               */}
+        {/* ========================================================================= */}
+        <div className="bg-white p-4 rounded-2xl border border-[#E5E7EB] shadow-2xs space-y-3">
+          <div className="flex items-center justify-between pb-1 border-b border-[#F3F4F4]">
+            <div className="flex items-center gap-1.5">
+              <span className="w-4 h-4 rounded-full bg-[#021526] text-white text-[10px] font-bold flex items-center justify-center">
+                1
+              </span>
+              <h3 className="text-[13px] font-black text-[#021526]">Physical Court &amp; Ground Sharing</h3>
+            </div>
+            <span className="text-[9.5px] font-bold text-[#F94001] bg-[#F94001]/10 px-2 py-0.5 rounded-full">
+              Anti-Double Booking
+            </span>
+          </div>
+
+          <div>
+            <label className="block text-[12px] font-bold text-[#021526] mb-1">
+              Do you want to use the same physical court/ground for another sport?
+            </label>
+            <p className="text-[11px] text-[#5F6368] mb-2.5">
+              Select <strong className="text-[#021526]">Yes</strong> if this sport shares the exact same pitch/turf as an existing court (e.g. Turf 1 used for Football &amp; Badminton).
+            </p>
+
+            <div className="grid grid-cols-2 gap-2.5">
+              <button
+                type="button"
+                id="btn-same-physical-yes"
+                onClick={() => {
+                  haptics.tap();
+                  setIsSamePhysicalSports('yes');
+                }}
+                className={`py-2.5 px-3 rounded-xl font-bold text-[12.5px] flex items-center justify-center gap-2 transition-all border cursor-pointer ${
+                  isSamePhysicalSports === 'yes'
+                    ? 'bg-[#021526] text-white border-[#021526] shadow-sm'
+                    : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:border-[#021526]/30'
+                }`}
+              >
+                {isSamePhysicalSports === 'yes' && <Check className="w-4 h-4 text-[#16A34A]" />}
+                <span>Yes (Share Physical Ground)</span>
+              </button>
+
+              <button
+                type="button"
+                id="btn-same-physical-no"
+                onClick={() => {
+                  haptics.tap();
+                  setIsSamePhysicalSports('no');
+                }}
+                className={`py-2.5 px-3 rounded-xl font-bold text-[12.5px] flex items-center justify-center gap-2 transition-all border cursor-pointer ${
+                  isSamePhysicalSports === 'no'
+                    ? 'bg-[#021526] text-white border-[#021526] shadow-sm'
+                    : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:border-[#021526]/30'
+                }`}
+              >
+                {isSamePhysicalSports === 'no' && <Check className="w-4 h-4 text-[#16A34A]" />}
+                <span>No (New Separate Ground)</span>
+              </button>
+            </div>
+          </div>
+
+          {/* If YES: Select Existing Physical Court */}
+          {isSamePhysicalSports === 'yes' && (
+            <div className="pt-2 border-t border-[#F3F4F4] space-y-2.5">
+              <div>
+                <label className="block text-[11px] font-bold text-[#5F6368] mb-1">
+                  Select Existing Physical Court to Clone / Share Space With: <span className="text-[#F94001]">*</span>
+                </label>
+                {availableParentCourts.length > 0 ? (
+                  <select
+                    id="select-parent-court-dropdown"
+                    value={selectedParentCourtId}
+                    onChange={(e) => {
+                      haptics.tap();
+                      setSelectedParentCourtId(e.target.value);
+                    }}
+                    className="w-full bg-[#F3F4F4] border border-[#E5E7EB] rounded-xl px-3 py-2 text-[13px] font-bold text-[#021526] focus:outline-none focus:border-[#021526] cursor-pointer"
+                  >
+                    {availableParentCourts.map((pc) => (
+                      <option key={pc.id} value={pc.id}>
+                        {pc.name} ({pc.sports?.[0] || 'Sport'}) — ₹{pc.pricePerHour}/hr
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <div className="p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-[11.5px] text-amber-800">
+                    No approved courts found yet to clone. You can create a new court first, or submit this request.
+                  </div>
+                )}
+              </div>
+
+              {/* Anti Double Booking Info Card */}
+              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex items-start gap-2.5 text-emerald-900">
+                <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                <div className="text-[11px] leading-relaxed">
+                  <strong className="font-bold text-emerald-950 block text-[11.5px]">Anti-Double Booking Active</strong>
+                  When a slot is booked for one sport on this shared ground, it will automatically lock that slot for all other sports on this physical ground.
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ========================================================================= */}
+        {/* SECTION 2: COURT INFORMATION                                              */}
         {/* ========================================================================= */}
         <div className="bg-white p-4 rounded-2xl border border-[#E5E7EB] shadow-2xs space-y-3">
           <div className="flex items-center gap-1.5 pb-1 border-b border-[#F3F4F4]">
             <span className="w-4 h-4 rounded-full bg-[#021526] text-white text-[10px] font-bold flex items-center justify-center">
-              1
+              2
             </span>
-            <h3 className="text-[13px] font-black text-[#021526]">Court Information</h3>
+            <h3 className="text-[13px] font-black text-[#021526]">Court Information &amp; Sport</h3>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

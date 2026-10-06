@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { haptics } from '../utils/haptics';
 import { SlotState, Court, Booking } from '../types';
+import { safeSplit, safeFirstPart } from '../utils/stringUtils';
 import { DateMonthPickerSheet } from '../components/DateMonthPickerSheet';
 import { parseTimeToMinutes, parseBookingRangeToMinutes } from '../utils/extensionSlots';
 import { ExtendSlotModal } from '../components/ExtendSlotModal';
@@ -46,6 +47,7 @@ interface MatrixCellData {
   state: SlotState | 'ongoing' | 'closed';
   isPast: boolean;
   booking?: Booking;
+  isSiblingBooking?: boolean;
   maintenanceReason?: string;
   slotId: string;
   blockId?: string;
@@ -88,7 +90,7 @@ function formatAppDate(date: Date): string {
 // Helper to parse 'DD Mon YYYY' or 'YYYY-MM-DD' into Date
 function parseAppDate(dateStr: string): Date {
   if (!dateStr) return new Date(TODAY_BASELINE);
-  const parts = dateStr.trim().split(' ');
+  const parts = (dateStr ? String(dateStr).trim().split(' ') : []);
   if (parts.length === 3) {
     const day = parseInt(parts[0], 10);
     const mIdx = MONTH_NAMES_SHORT.findIndex(
@@ -291,9 +293,9 @@ export const SlotsScreen: React.FC = () => {
       });
 
       // Also link by base name if same physical sport flag is active
-      const baseName = court.name.replace(/\s*\[.*?\]/g, '').replace(/\s*\(.*?\)/g, '').trim().toLowerCase();
+      const baseName = (court?.displayName || court?.name || '').replace(/\s*\[.*?\]/g, '').replace(/\s*\(.*?\)/g, '').trim().toLowerCase();
       courts.forEach((c) => {
-        const otherBase = c.name.replace(/\s*\[.*?\]/g, '').replace(/\s*\(.*?\)/g, '').trim().toLowerCase();
+        const otherBase = (c?.displayName || c?.name || '').replace(/\s*\[.*?\]/g, '').replace(/\s*\(.*?\)/g, '').trim().toLowerCase();
         if (otherBase === baseName && baseName.length >= 3) {
           linkedCourtIds.add(c.id);
         }
@@ -342,7 +344,7 @@ export const SlotsScreen: React.FC = () => {
           let cellState: SlotState | 'ongoing' = 'booked';
           if (isSiblingBooking) cellState = 'pending';
           else if (matchedBooking.status === 'Ongoing') cellState = 'ongoing';
-          else if (matchedBooking.status === 'Payment Pending' || matchedBooking.status === 'Held') cellState = 'pending';
+          else if ((matchedBooking.status as any) === 'Payment Pending' || (matchedBooking.status as any) === 'Held') cellState = 'pending';
 
           return {
             courtId: court.id,
@@ -1205,9 +1207,9 @@ export const SlotsScreen: React.FC = () => {
                               {isSelectedSlot
                                 ? `${cell.displayStartTime}–${cell.displayEndTime}`
                                 : isOngoing
-                                  ? (cell.booking?.customerName ? `Live · ${cell.booking.customerName.split(' ')[0]}` : 'Live Match')
+                                  ? (cell.booking?.customerName ? `Live · ${safeFirstPart(cell.booking.customerName, ' ', 'Live')}` : 'Live Match')
                                   : isBooked
-                                    ? (cell.booking?.customerName ? cell.booking.customerName.split(' ')[0] : 'Reserved')
+                                    ? (cell.booking?.customerName ? safeFirstPart(cell.booking.customerName, ' ', 'Reserved') : 'Reserved')
                                     : isPending
                                       ? 'Payment Due'
                                       : isMaintenance
@@ -1332,7 +1334,7 @@ export const SlotsScreen: React.FC = () => {
                       <div className="flex items-center justify-between gap-1">
                         <div className="flex items-center gap-1.5 min-w-0">
                           <span className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-[#021526] text-white flex items-center justify-center font-black text-[10px] sm:text-[11px] shrink-0 shadow-2xs">
-                            {court.name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()}
+                            {safeSplit(court?.name || 'Court', ' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase() || 'CT'}
                           </span>
                           <h3 className="text-[11.5px] sm:text-[13.5px] font-black tracking-tight truncate text-[#021526]">
                             {court.name}
@@ -1456,7 +1458,7 @@ export const SlotsScreen: React.FC = () => {
                                 <span className="text-[10px] font-bold truncate px-1 text-white" title={cell.booking?.courtId !== cell.courtId ? `Occupied on ${cell.booking?.courtName || 'Shared Ground'} (${cell.booking?.sport})` : cell.booking?.customerName}>
                                   {cell.booking?.courtId !== cell.courtId
                                     ? `⚑ ${cell.booking?.sport || 'Shared'}`
-                                    : (cell.booking?.customerName.split(' ')[0] || 'Booked')}
+                                    : safeFirstPart(cell.booking?.customerName, ' ', 'Booked')}
                                 </span>
                               ) : isPending ? (
                                 <div className="flex items-center gap-1 px-1">

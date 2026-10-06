@@ -153,6 +153,8 @@ export const NewBookingModal: React.FC = () => {
     const court = courts.find((c) => c.id === courtId) || courts[0];
     const computedSlot = computeTimeSlotLabel();
 
+    const today = new Date().toISOString().split('T')[0];
+
     haptics.success();
     createNewBooking({
       customerName,
@@ -161,7 +163,7 @@ export const NewBookingModal: React.FC = () => {
       courtName: court ? court.name : 'Turf 1',
       sport: (sport as any) || 'Football',
       timeSlot: computedSlot,
-      date: 'Today, 28 Aug 2026',
+      date: today,
       totalAmount: total,
       paidAmount: paid,
       notes: durationHours > 1 ? `${durationHours}-hour continuous reservation (${startTime} to ${endTime})` : undefined,

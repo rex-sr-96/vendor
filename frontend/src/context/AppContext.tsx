@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { BankAccount } from '../types';
+import { getAuthToken } from '../lib/api';
 import {
   ScreenType,
   BottomNavTab,
@@ -271,6 +272,7 @@ interface AppContextType {
   // Staff & Owner Authentication Control
   currentUser: LoggedInUser | null;
   setCurrentUser: (user: LoggedInUser | null) => void;
+  syncLiveBookings: (token?: string) => Promise<void>;
   checkPhoneAccess: (rawPhone: string) => {
     allowed: boolean;
     reason?: string;
@@ -395,6 +397,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       } catch (e) {}
     }
   }, [bookings]);
+
+  // Initial mount sync for live vendor bookings & live venue profile
+  useEffect(() => {
+    syncLiveBookings();
+    fetchOnboardingProfile();
+  }, []);
 
   const [courts, setCourts] = useState<Court[]>(initialCourts);
   const [slots, setSlots] = useState<Slot[]>(initialSlots);
@@ -1674,7 +1682,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         courtId: booking.courtId,
         courtName: booking.courtName,
         sport: booking.sport,
-        time: booking.timeSlot.split('–')[0].trim(),
+        time: typeof booking.timeSlot === 'string' ? (booking.timeSlot.split('–')[0]?.trim() || '06:00 PM') : '06:00 PM',
         timeFull: booking.timeSlot,
         state: isFullyPaid ? 'booked' : paid > 0 ? 'booked' : 'locked',
         bookingId: booking.id,
@@ -2040,7 +2048,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   const toggleStaffStatus = async (id: string) => {
-    let nextStatus = 'Active';
+    let nextStatus: 'Active' | 'On Leave' | 'Inactive' = 'Active';
     setStaffMembers((prev) =>
       prev.map((s) => {
         if (s.id === id) {
@@ -2233,7 +2241,22 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const fetchOnboardingProfile = async (phoneToQuery?: string) => {
     try {
       setIsLoadingOnboardingProfile(true);
-      let queryPhone = phoneToQuery;
+      const token = typeof window !== 'undefined' ? getAuthToken() || '' : '';
+      let activeVendorId: string | null = null;
+      let tokenPhone: string | null = null;
+
+      if (token) {
+        try {
+          const parts = token.split('.');
+          if (parts.length === 3) {
+            const payload = JSON.parse(atob(parts[1]));
+            activeVendorId = payload.vendorId || payload.venueId || payload.sub || null;
+            if (payload.mobile) tokenPhone = payload.mobile;
+          }
+        } catch {}
+      }
+
+      let queryPhone = phoneToQuery || tokenPhone;
       if (!queryPhone && currentUser?.phone) {
         queryPhone = currentUser.phone;
       }
@@ -2249,20 +2272,21 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       if (!queryPhone) {
         queryPhone = ownerPhone;
       }
-      if (!queryPhone) {
-        queryPhone = '6369591821';
-      }
-      const cleanPhone = queryPhone.replace(/\D/g, '').slice(-10);
+
+      const cleanPhone = queryPhone ? queryPhone.replace(/\D/g, '').slice(-10) : '';
       const envUrl = typeof process !== 'undefined' ? process.env?.NEXT_PUBLIC_API_URL : undefined;
       const backendUrls = [
-        envUrl ? `${envUrl}/onboarding/vendor/profile?mobile=${cleanPhone}` : '',
-        `http://localhost:4000/api/v1/onboarding/vendor/profile?mobile=${cleanPhone}`,
-        `http://127.0.0.1:4000/api/v1/onboarding/vendor/profile?mobile=${cleanPhone}`,
-        `https://ibooksports-backend.onrender.com/api/v1/onboarding/vendor/profile?mobile=${cleanPhone}`,
+        envUrl ? `${envUrl}/vendor/profile` : '',
+        'http://localhost:4000/api/v1/vendor/profile',
+        'https://ibooksports-backend.onrender.com/api/v1/vendor/profile',
+        envUrl && cleanPhone ? `${envUrl}/onboarding/vendor/profile?mobile=${cleanPhone}` : '',
+        cleanPhone ? `http://localhost:4000/api/v1/onboarding/vendor/profile?mobile=${cleanPhone}` : '',
+        cleanPhone ? `https://ibooksports-backend.onrender.com/api/v1/onboarding/vendor/profile?mobile=${cleanPhone}` : '',
       ].filter(Boolean);
 
-      const token = typeof window !== 'undefined' ? localStorage.getItem('turftown_token') || '' : '';
-      const reqHeaders: Record<string, string> = {};
+      const reqHeaders: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
       if (token) {
         reqHeaders['Authorization'] = `Bearer ${token}`;
       }
@@ -2533,6 +2557,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       // Sync court requests for this vendor from backend
       await syncCourtRequests();
 
+      // Sync live isolated bookings for this authenticated vendor from backend
+      await syncLiveBookings();
+
       return data || null;
     } catch (err) {
       console.warn('Could not auto-fetch onboarding profile from backend:', err);
@@ -2639,8 +2666,114 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         }
         return changed ? updated : currentCourts;
       });
+
+      return crqData;
     } catch (e) {
       // Ignore background sync error
+      return null;
+    }
+  };
+
+  const syncLiveBookings = async (authToken?: string) => {
+    try {
+      const token = authToken || getAuthToken();
+      if (!token) {
+        setBookings([]);
+        if (typeof window !== 'undefined') localStorage.removeItem('turftown_bookings');
+        return;
+      }
+
+      // Extract active vendor ID from JWT token payload if available
+      let activeVendorId: string | null = null;
+      try {
+        const parts = token.split('.');
+        if (parts.length === 3) {
+          const payload = JSON.parse(atob(parts[1]));
+          activeVendorId = payload.vendorId || payload.venueId || payload.sub || null;
+        }
+      } catch {}
+
+      const envUrl = typeof process !== 'undefined' ? process.env?.NEXT_PUBLIC_API_URL : undefined;
+      const urls = [
+        envUrl ? `${envUrl}/vendor/bookings` : '',
+        envUrl && activeVendorId ? `${envUrl}/bookings?venueId=${encodeURIComponent(activeVendorId)}` : '',
+        envUrl ? `${envUrl}/bookings` : '',
+        'http://localhost:4000/api/v1/vendor/bookings',
+        activeVendorId ? `http://localhost:4000/api/v1/bookings?venueId=${encodeURIComponent(activeVendorId)}` : '',
+        'http://localhost:4000/api/v1/bookings',
+        'https://ibooksports-backend.onrender.com/api/v1/vendor/bookings',
+        activeVendorId ? `https://ibooksports-backend.onrender.com/api/v1/bookings?venueId=${encodeURIComponent(activeVendorId)}` : '',
+        'https://ibooksports-backend.onrender.com/api/v1/bookings',
+        '/api/bookings',
+      ].filter(Boolean);
+
+      let rawList: any[] | null = null;
+      for (const u of urls) {
+        try {
+          const res = await fetch(u, {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (res.ok) {
+            const parsed = await res.json();
+            if (Array.isArray(parsed)) {
+              rawList = parsed;
+              break;
+            } else if (parsed && Array.isArray(parsed.data)) {
+              rawList = parsed.data;
+              break;
+            }
+          }
+        } catch {}
+      }
+
+      if (Array.isArray(rawList)) {
+        // STRICT VENDOR SCOPING GUARD: Only include bookings for this vendor
+        let scopedList = rawList;
+        if (activeVendorId) {
+          const vid = String(activeVendorId).trim().toUpperCase();
+          const vidNumeric = vid.replace(/\D/g, '');
+          scopedList = rawList.filter((r: any) => {
+            const rawV = String(r.venueId || r.venue_id || '').trim().toUpperCase();
+            if (!rawV) return true;
+            return (
+              rawV === vid ||
+              rawV === `APP${vidNumeric}` ||
+              rawV === `VEN_${vidNumeric}` ||
+              rawV === vidNumeric ||
+              rawV.includes(vid)
+            );
+          });
+        }
+
+        const mapped: Booking[] = scopedList.map((r: any) => ({
+          id: r.bookingNumber || r.booking_number || r.id,
+          customerName: r.customerName || r.customer_name || 'Walk-in Guest',
+          customerPhone: r.customerPhone || r.customer_phone || '',
+          courtId: r.courtId || r.court_id || 'court-1',
+          courtName: r.courtName || r.court_name || 'Turf 1',
+          sport: (r.sport || 'Football') as any,
+          date: r.date || new Date().toISOString().slice(0, 10),
+          timeSlot: r.timeSlot || r.time_slot || '06:00 PM - 07:00 PM',
+          totalAmount: Number(r.totalAmount || r.total_amount || 0),
+          paidAmount: Number(r.paidAmount || r.paid_amount || 0),
+          balanceAmount: Number(r.balanceAmount || r.balance_amount || 0),
+          status: (r.status || 'Confirmed') as any,
+          paymentStatus: (r.paymentStatus || r.payment_status || 'Paid') as any,
+          paymentMethod: r.paymentMethod || r.payment_method || 'UPI',
+          createdAt: r.createdAt || r.created_at || new Date().toISOString(),
+          notes: r.notes || undefined,
+          holdExpiresInMinutes: r.status === 'Payment Pending' || r.status === 'Expired' ? 0 : 15,
+        }));
+        setBookings(mapped);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('turftown_bookings', JSON.stringify(mapped));
+        }
+      }
+    } catch (err) {
+      console.warn('[AppContext] Could not sync live bookings:', err);
     }
   };
 
@@ -2679,7 +2812,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             status: mappedStatus,
             priority: mappedPriority,
             attachmentName: t.attachment_name,
-            date: t.created_at ? t.created_at.split(' ')[0] : 'Today',
+            date: t.created_at && typeof t.created_at === 'string' ? t.created_at.split(' ')[0] : 'Today',
             adminReply: t.resolution_notes,
           };
         });
@@ -2950,6 +3083,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         setVerificationId,
         currentUser,
         setCurrentUser,
+        syncLiveBookings,
         checkPhoneAccess,
       }}
     >

@@ -246,7 +246,7 @@ export const RaiseRequestModal: React.FC<RaiseRequestModalProps> = ({
       return;
     }
 
-    const windowHoursNum = parseInt(cancellationNoticeHours.split(' ')[0], 10) || 12;
+    const windowHoursNum = parseInt(typeof cancellationNoticeHours === 'string' ? cancellationNoticeHours.split(' ')[0] : '12', 10) || 12;
     const refundPercentNum = parseInt(refundPercentage.replace('%', ''), 10) || 100;
     const policyLabel = `Free cancel up to ${cancellationNoticeHours} before match (${refundPercentage} refund)`;
     const parsedPrice = parseInt(regularPrice, 10) || 1000;

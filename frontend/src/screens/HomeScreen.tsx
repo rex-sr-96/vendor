@@ -147,7 +147,7 @@ export const HomeScreen: React.FC = () => {
 
     const rangeStats = ranges.map((r) => {
       const matching = bookings.filter((bk) => {
-        const parts = bk.date?.split(' ') || [];
+        const parts = typeof bk.date === 'string' ? bk.date.split(' ') : [];
         const day = parseInt(parts[0], 10);
         return !isNaN(day) && day >= r.startDay && day <= r.endDay;
       });
@@ -837,7 +837,7 @@ export const HomeScreen: React.FC = () => {
                   >
                     <div className="flex items-center gap-2.5">
                       <span className="text-[12px] font-bold text-[#5F6368] w-14 font-mono truncate">
-                        {b.timeSlot?.split('–')[0]?.trim() || 'Slot'}
+                        {typeof b.timeSlot === 'string' ? (b.timeSlot.split('–')[0]?.trim() || 'Slot') : 'Slot'}
                       </span>
                       <div
                         className={`w-2 h-2 rounded-full ${

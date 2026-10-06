@@ -96,10 +96,11 @@ export const ExportReportScreen: React.FC = () => {
   // Date parsing helper
   const parseDateToTimestamp = (dateStr: string): number => {
     try {
+      if (!dateStr || typeof dateStr !== 'string') return 0;
       if (dateStr.includes('-')) {
         return new Date(dateStr).getTime();
       }
-      const parts = dateStr.split(' ');
+      const parts = dateStr.trim().split(' ');
       if (parts.length === 3) {
         const months: Record<string, number> = {
           Jan: 0,

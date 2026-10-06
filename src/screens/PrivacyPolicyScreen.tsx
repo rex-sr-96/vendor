@@ -17,6 +17,27 @@ import { haptics } from '../utils/haptics';
 
 export const PrivacyPolicyScreen: React.FC = () => {
   const { goBack, venueName } = useApp();
+  const [policyData, setPolicyData] = React.useState<{
+    title: string;
+    version: string;
+    effective_date: string;
+    rich_text_html: string;
+  } | null>(null);
+
+  React.useEffect(() => {
+    async function loadPrivacy() {
+      try {
+        const res = await fetch('http://localhost:4000/api/v1/cms/public/privacy-policy');
+        if (res.ok) {
+          const data = await res.json();
+          if (data?.rich_text_html) setPolicyData(data);
+        }
+      } catch (err) {
+        console.warn('Could not load live Privacy Policy:', err);
+      }
+    }
+    loadPrivacy();
+  }, []);
 
   const sections = [
     {
@@ -112,30 +133,47 @@ export const PrivacyPolicyScreen: React.FC = () => {
         </p>
       </div>
 
-      {/* Sections List */}
-      <div className="space-y-2.5">
-        {sections.map((sec) => {
-          const Icon = sec.icon;
-          return (
-            <div
-              key={sec.id}
-              className="bg-white rounded-2xl p-4 border border-[#E5E7EB] shadow-2xs space-y-2"
-            >
-              <div className="flex items-center gap-2.5">
-                <div className="w-7 h-7 rounded-lg bg-[#F3F4F4] text-[#021526] flex items-center justify-center border border-[#E5E7EB]">
-                  <Icon className="w-3.5 h-3.5" />
+      {policyData?.rich_text_html ? (
+        <div className="bg-white rounded-2xl p-5 border border-[#E5E7EB] shadow-2xs">
+          <div
+            className="prose prose-sm max-w-none text-[#262524] leading-relaxed
+              [&_h1]:text-[18px] [&_h1]:font-black [&_h1]:text-[#021526] [&_h1]:mb-2
+              [&_h2]:text-[16px] [&_h2]:font-extrabold [&_h2]:text-[#021526] [&_h2]:mb-2
+              [&_h3]:text-[14px] [&_h3]:font-bold [&_h3]:text-[#021526] [&_h3]:mb-1.5 [&_h3]:mt-3
+              [&_p]:mb-2.5 [&_p]:text-[#5F6368] [&_p]:text-[12.5px]
+              [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-2.5 [&_ul]:space-y-1 [&_ul]:text-[12.5px] [&_ul]:text-[#5F6368]
+              [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-2.5 [&_ol]:space-y-1 [&_ol]:text-[12.5px] [&_ol]:text-[#5F6368]
+              [&_blockquote]:border-l-3 [&_blockquote]:border-[#F94001] [&_blockquote]:bg-[#F3F4F4] [&_blockquote]:p-3 [&_blockquote]:rounded-r-xl [&_blockquote]:text-[12px] [&_blockquote]:text-[#403E3B] [&_blockquote]:italic [&_blockquote]:my-3
+              [&_strong]:text-[#021526]"
+            dangerouslySetInnerHTML={{ __html: policyData.rich_text_html }}
+          />
+        </div>
+      ) : (
+        /* Sections List */
+        <div className="space-y-2.5">
+          {sections.map((sec) => {
+            const Icon = sec.icon;
+            return (
+              <div
+                key={sec.id}
+                className="bg-white rounded-2xl p-4 border border-[#E5E7EB] shadow-2xs space-y-2"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded-lg bg-[#F3F4F4] text-[#021526] flex items-center justify-center border border-[#E5E7EB]">
+                    <Icon className="w-3.5 h-3.5" />
+                  </div>
+                  <h3 className="text-[13.5px] font-extrabold text-[#021526]">
+                    {sec.title}
+                  </h3>
                 </div>
-                <h3 className="text-[13.5px] font-extrabold text-[#021526]">
-                  {sec.title}
-                </h3>
+                <p className="text-[12px] text-[#5F6368] leading-relaxed pl-9.5">
+                  {sec.content}
+                </p>
               </div>
-              <p className="text-[12px] text-[#5F6368] leading-relaxed pl-9.5">
-                {sec.content}
-              </p>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* Grievance & Privacy Contact Card */}
       <div className="bg-[#F3F4F4] rounded-2xl p-4 border border-[#E5E7EB] space-y-2.5">

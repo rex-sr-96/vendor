@@ -78,7 +78,7 @@ const DAYS_SHORT = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 
 // Helper to parse '28 Aug 2026' or '28 August 2026'
 const parseBookingDate = (dateStr: string) => {
-  const parts = dateStr.trim().split(' ');
+  const parts = typeof dateStr === 'string' ? dateStr.trim().split(' ') : [];
   if (parts.length >= 3) {
     const day = parseInt(parts[0], 10);
     const mStr = parts[1].toLowerCase().slice(0, 3);
@@ -414,7 +414,7 @@ export const NewBookingModal: React.FC = () => {
         isPassed,
         isHold,
         isBooked,
-        bookingCustomer: matchedBooking?.customerName?.split(' ')[0] || '',
+        bookingCustomer: typeof matchedBooking?.customerName === 'string' ? matchedBooking.customerName.split(' ')[0] : '',
         isBlocked,
         isSelected,
         isSelectionStart,

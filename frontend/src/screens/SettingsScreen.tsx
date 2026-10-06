@@ -160,6 +160,67 @@ export const SettingsScreen: React.FC = () => {
 
   const [previewDoc, setPreviewDoc] = useState<{ title: string; docId: string; url: string; type: 'image' | 'doc' } | null>(null);
 
+  // Live CMS Content for Privacy Policy & Terms
+  const [privacyData, setPrivacyData] = useState<{
+    title: string;
+    version: string;
+    effective_date: string;
+    rich_text_html: string;
+  } | null>(null);
+
+  const [termsData, setTermsData] = useState<{
+    title: string;
+    version: string;
+    effective_date: string;
+    rich_text_html: string;
+  } | null>(null);
+
+  useEffect(() => {
+    async function loadCmsData() {
+      try {
+        const envUrl = typeof process !== 'undefined' ? process.env?.NEXT_PUBLIC_API_URL : undefined;
+        const privUrls = [
+          envUrl ? `${envUrl}/cms/public/privacy-policy` : '',
+          'https://ibooksports-backend.onrender.com/api/v1/cms/public/privacy-policy',
+          'http://localhost:4000/api/v1/cms/public/privacy-policy',
+        ].filter(Boolean);
+        const termsUrls = [
+          envUrl ? `${envUrl}/cms/public/terms-and-conditions` : '',
+          'https://ibooksports-backend.onrender.com/api/v1/cms/public/terms-and-conditions',
+          'http://localhost:4000/api/v1/cms/public/terms-and-conditions',
+        ].filter(Boolean);
+
+        let privData = null;
+        for (const url of privUrls) {
+          try {
+            const r = await fetch(url);
+            if (r.ok) {
+              privData = await r.json();
+              break;
+            }
+          } catch (e) {}
+        }
+
+        let termsData = null;
+        for (const url of termsUrls) {
+          try {
+            const r = await fetch(url);
+            if (r.ok) {
+              termsData = await r.json();
+              break;
+            }
+          } catch (e) {}
+        }
+
+        if (privData?.rich_text_html) setPrivacyData(privData);
+        if (termsData?.rich_text_html) setTermsData(termsData);
+      } catch (err) {
+        console.warn('Could not load live CMS in Settings:', err);
+      }
+    }
+    loadCmsData();
+  }, []);
+
   const aadhaarInputRef = React.useRef<HTMLInputElement>(null);
   const profilePhotoInputRef = React.useRef<HTMLInputElement>(null);
   const bankProofInputRef = React.useRef<HTMLInputElement>(null);
@@ -1572,81 +1633,115 @@ export const SettingsScreen: React.FC = () => {
           )}
 
           {/* ===================================================================== */}
-          {/* TAB 7: PRIVACY POLICY (RICH TEXT DOCUMENT)                            */}
+          {/* TAB 7: PRIVACY POLICY (LIVE CMS RICH TEXT DOCUMENT)                   */}
           {/* ===================================================================== */}
           {activeTab === 'privacy' && (
             <div className="space-y-5 text-[#262524] text-[13px] leading-relaxed">
               <div className="border-b border-[#F3F4F4] pb-3">
                 <span className="text-[10.5px] font-bold text-[#16A34A] bg-[#16A34A]/10 px-2 py-0.5 rounded-full inline-flex items-center gap-1 mb-1">
                   <Shield className="w-3 h-3" />
-                  <span>Official Privacy Policy · Version 2.4</span>
+                  <span>Official Privacy Policy · Version {privacyData?.version || '2.4'}</span>
                 </span>
                 <h3 className="text-[20px] font-black text-[#021526] tracking-tight">
-                  Venue & Player Data Protection Policy
+                  {privacyData?.title || 'Venue & Player Data Protection Policy'}
                 </h3>
                 <p className="text-[11.5px] text-[#5F6368]">
-                  Effective: 1 August 2026 · Governing operations for {venueName}
+                  Effective: {privacyData?.effective_date || '1 August 2026'} · Governing operations for {venueName}
                 </p>
               </div>
 
-              <div className="bg-[#F3F4F4] border-l-3 border-[#F94001] p-3.5 rounded-r-xl text-[12.5px] text-[#403E3B]">
-                TurfTown ensures bank-grade 256-bit encryption for all booking transactions, customer phone numbers, and IMPS bank settlements. Data is never sold or utilized for third-party ad targeting.
-              </div>
+              {privacyData?.rich_text_html ? (
+                <div
+                  className="prose prose-sm max-w-none text-[#262524] leading-relaxed
+                    [&_h1]:text-[18px] [&_h1]:font-black [&_h1]:text-[#021526] [&_h1]:mb-2
+                    [&_h2]:text-[16px] [&_h2]:font-extrabold [&_h2]:text-[#021526] [&_h2]:mb-2
+                    [&_h3]:text-[14px] [&_h3]:font-bold [&_h3]:text-[#021526] [&_h3]:mb-1.5 [&_h3]:mt-3
+                    [&_p]:mb-2.5 [&_p]:text-[#5F6368] [&_p]:text-[12.5px]
+                    [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-2.5 [&_ul]:space-y-1 [&_ul]:text-[12.5px] [&_ul]:text-[#5F6368]
+                    [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-2.5 [&_ol]:space-y-1 [&_ol]:text-[12.5px] [&_ol]:text-[#5F6368]
+                    [&_blockquote]:border-l-3 [&_blockquote]:border-[#F94001] [&_blockquote]:bg-[#F3F4F4] [&_blockquote]:p-3 [&_blockquote]:rounded-r-xl [&_blockquote]:text-[12px] [&_blockquote]:text-[#403E3B] [&_blockquote]:italic [&_blockquote]:my-3
+                    [&_strong]:text-[#021526]"
+                  dangerouslySetInnerHTML={{ __html: privacyData.rich_text_html }}
+                />
+              ) : (
+                <>
+                  <div className="bg-[#F3F4F4] border-l-3 border-[#F94001] p-3.5 rounded-r-xl text-[12.5px] text-[#403E3B]">
+                    TurfTown ensures bank-grade 256-bit encryption for all booking transactions, customer phone numbers, and IMPS bank settlements. Data is never sold or utilized for third-party ad targeting.
+                  </div>
 
-              <div className="space-y-1.5">
-                <h4 className="text-[15px] font-black text-[#021526]">1. Data Collection & Processing</h4>
-                <p className="text-[#5F6368]">
-                  We gather necessary venue records, staff credentials, player names, and phone numbers exclusively to facilitate ground bookings, prevent double-scheduling, and automate dynamic UPI QR payments.
-                </p>
-              </div>
+                  <div className="space-y-1.5">
+                    <h4 className="text-[15px] font-black text-[#021526]">1. Data Collection & Processing</h4>
+                    <p className="text-[#5F6368]">
+                      We gather necessary venue records, staff credentials, player names, and phone numbers exclusively to facilitate ground bookings, prevent double-scheduling, and automate dynamic UPI QR payments.
+                    </p>
+                  </div>
 
-              <div className="space-y-1.5">
-                <h4 className="text-[15px] font-black text-[#021526]">2. Financial Reconciliations & Security</h4>
-                <p className="text-[#5F6368]">
-                  Payment metadata, UPI reference strings, and settlement audit trails are processed under RBI-compliant gateway standards with automatic midnight T+0 IMPS direct payout.
-                </p>
-              </div>
+                  <div className="space-y-1.5">
+                    <h4 className="text-[15px] font-black text-[#021526]">2. Financial Reconciliations & Security</h4>
+                    <p className="text-[#5F6368]">
+                      Payment metadata, UPI reference strings, and settlement audit trails are processed under RBI-compliant gateway standards with automatic midnight T+0 IMPS direct payout.
+                    </p>
+                  </div>
 
-              <div className="space-y-1.5">
-                <h4 className="text-[15px] font-black text-[#021526]">3. Data Retention & Operator Rights</h4>
-                <p className="text-[#5F6368]">
-                  Venue owners retain full ownership of customer transaction records and may download comprehensive Excel, CSV, or PDF statements at any time via the Export Reports tool.
-                </p>
-              </div>
+                  <div className="space-y-1.5">
+                    <h4 className="text-[15px] font-black text-[#021526]">3. Data Retention & Operator Rights</h4>
+                    <p className="text-[#5F6368]">
+                      Venue owners retain full ownership of customer transaction records and may download comprehensive Excel, CSV, or PDF statements at any time via the Export Reports tool.
+                    </p>
+                  </div>
+                </>
+              )}
             </div>
           )}
 
           {/* ===================================================================== */}
-          {/* TAB 8: TERMS & CONDITIONS                                             */}
+          {/* TAB 8: TERMS & CONDITIONS (LIVE CMS RICH TEXT DOCUMENT)               */}
           {/* ===================================================================== */}
           {activeTab === 'terms' && (
             <div className="space-y-5 text-[#262524] text-[13px] leading-relaxed">
               <div className="border-b border-[#F3F4F4] pb-3">
                 <span className="text-[10.5px] font-bold text-[#F94001] bg-[#F94001]/10 px-2 py-0.5 rounded-full inline-flex items-center gap-1 mb-1">
                   <FileText className="w-3 h-3" />
-                  <span>Platform Terms of Service · Version 2.4</span>
+                  <span>Platform Terms of Service · Version {termsData?.version || '3.0'}</span>
                 </span>
                 <h3 className="text-[20px] font-black text-[#021526] tracking-tight">
-                  TurfTown Partner Terms & Conditions
+                  {termsData?.title || 'TurfTown Partner Terms & Conditions'}
                 </h3>
                 <p className="text-[11.5px] text-[#5F6368]">
                   Operating agreement between TurfTown and {venueName}
                 </p>
               </div>
 
-              <div className="space-y-1.5">
-                <h4 className="text-[15px] font-black text-[#021526]">1. Booking Honor System</h4>
-                <p className="text-[#5F6368]">
-                  All confirmed player reservations placed online or manually entered at the ground must be honored during reserved timeframes. Emergency court closures must be initiated with reasonable notice.
-                </p>
-              </div>
+              {termsData?.rich_text_html ? (
+                <div
+                  className="prose prose-sm max-w-none text-[#262524] leading-relaxed
+                    [&_h1]:text-[18px] [&_h1]:font-black [&_h1]:text-[#021526] [&_h1]:mb-2
+                    [&_h2]:text-[16px] [&_h2]:font-extrabold [&_h2]:text-[#021526] [&_h2]:mb-2
+                    [&_h3]:text-[14px] [&_h3]:font-bold [&_h3]:text-[#021526] [&_h3]:mb-1.5 [&_h3]:mt-3
+                    [&_p]:mb-2.5 [&_p]:text-[#5F6368] [&_p]:text-[12.5px]
+                    [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-2.5 [&_ul]:space-y-1 [&_ul]:text-[12.5px] [&_ul]:text-[#5F6368]
+                    [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-2.5 [&_ol]:space-y-1 [&_ol]:text-[12.5px] [&_ol]:text-[#5F6368]
+                    [&_blockquote]:border-l-3 [&_blockquote]:border-[#F94001] [&_blockquote]:bg-[#F3F4F4] [&_blockquote]:p-3 [&_blockquote]:rounded-r-xl [&_blockquote]:text-[12px] [&_blockquote]:text-[#403E3B] [&_blockquote]:italic [&_blockquote]:my-3
+                    [&_strong]:text-[#021526]"
+                  dangerouslySetInnerHTML={{ __html: termsData.rich_text_html }}
+                />
+              ) : (
+                <>
+                  <div className="space-y-1.5">
+                    <h4 className="text-[15px] font-black text-[#021526]">1. Booking Honor System</h4>
+                    <p className="text-[#5F6368]">
+                      All confirmed player reservations placed online or manually entered at the ground must be honored during reserved timeframes. Emergency court closures must be initiated with reasonable notice.
+                    </p>
+                  </div>
 
-              <div className="space-y-1.5">
-                <h4 className="text-[15px] font-black text-[#021526]">2. Cancellation Rules</h4>
-                <p className="text-[#5F6368]">
-                  Refunds and cancellations are governed strictly by the court-specific buffer hours and payout percentages configured in your Cancellation Settings panel.
-                </p>
-              </div>
+                  <div className="space-y-1.5">
+                    <h4 className="text-[15px] font-black text-[#021526]">2. Cancellation Rules</h4>
+                    <p className="text-[#5F6368]">
+                      Refunds and cancellations are governed strictly by the court-specific buffer hours and payout percentages configured in your Cancellation Settings panel.
+                    </p>
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>

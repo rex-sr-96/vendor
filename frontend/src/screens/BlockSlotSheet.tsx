@@ -24,7 +24,7 @@ function parseTimeToMinutes(tStr: string, isEndTime = false): number {
   const isPM = /PM/i.test(tStr);
   const isAM = /AM/i.test(tStr);
   const clean = tStr.replace(/AM|PM/i, '').trim();
-  const [hStr, mStr] = clean.split(':');
+  const [hStr, mStr] = typeof clean === 'string' ? clean.split(':') : ['6', '00'];
   let h = parseInt(hStr, 10) || 0;
   const m = parseInt(mStr || '0', 10) || 0;
   if (isPM && h < 12) h += 12;
@@ -49,7 +49,7 @@ function formatMinutesToTime(totalMins: number): string {
 // Parses a range like "8:00–10:00 PM", "6–7 AM", "06:00 AM – 07:00 AM", "6:00–7:00 AM" into { startMin, endMin }
 function parseRangeToMinutes(rangeStr: string): { startMin: number; endMin: number } | null {
   if (!rangeStr) return null;
-  const parts = rangeStr.split(/[–\-]| to /i).map((s) => s.trim());
+  const parts = typeof rangeStr === 'string' ? rangeStr.split(/[–\-]| to /i).map((s) => s.trim()) : [];
   if (parts.length < 2) {
     const m = parseTimeToMinutes(parts[0]);
     return { startMin: m, endMin: m + 60 };

@@ -23,8 +23,26 @@ export const PrivacyPolicyScreen: React.FC = () => {
     let isMounted = true;
     async function loadPrivacyPolicy() {
       try {
-        const res = await fetch('http://localhost:4000/api/v1/cms/public/privacy-policy');
-        if (res.ok) {
+        const envUrl = typeof process !== 'undefined' ? process.env?.NEXT_PUBLIC_API_URL : undefined;
+        const urls = [
+          envUrl ? `${envUrl}/cms/public/privacy-policy` : '',
+          'https://ibooksports-backend.onrender.com/api/v1/cms/public/privacy-policy',
+          'http://localhost:4000/api/v1/cms/public/privacy-policy',
+          'http://127.0.0.1:4000/api/v1/cms/public/privacy-policy',
+        ].filter(Boolean);
+
+        let res: Response | null = null;
+        for (const url of urls) {
+          try {
+            const r = await fetch(url);
+            if (r.ok) {
+              res = r;
+              break;
+            }
+          } catch (e) {}
+        }
+
+        if (res && res.ok) {
           const data = await res.json();
           if (isMounted && data && data.rich_text_html) {
             setPolicyData({

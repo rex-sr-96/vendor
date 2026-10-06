@@ -110,7 +110,7 @@ export const BookingListScreen: React.FC = () => {
   const parseDateToTimestamp = (dateStr: string): number => {
     try {
       if (!dateStr) return 0;
-      const parts = dateStr.split(' ');
+      const parts = typeof dateStr === 'string' ? dateStr.split(' ') : [];
       if (parts.length === 3) {
         const months: Record<string, number> = {
           Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5,
@@ -368,7 +368,7 @@ export const BookingListScreen: React.FC = () => {
 
     // Calculate new end time
     // e.g. "6:00–8:00 PM" -> split into start "6:00 PM" and end "8:00 PM"
-    const slotParts = booking.timeSlot.split('–');
+    const slotParts = typeof booking.timeSlot === 'string' ? booking.timeSlot.split('–') : ['6:00 PM', '7:00 PM'];
     const startTime = slotParts[0]?.trim() || '6:00 PM';
     const currentEndTime = slotParts[1]?.trim() || '8:00 PM';
 
@@ -378,9 +378,9 @@ export const BookingListScreen: React.FC = () => {
     try {
       const isPM = currentEndTime.toUpperCase().includes('PM');
       const isAM = currentEndTime.toUpperCase().includes('AM');
-      const timeClean = currentEndTime.replace(/AM|PM/i, '').trim();
-      const [hStr, mStr] = timeClean.split(':');
-      let hours = parseInt(hStr, 10);
+      const timeClean = typeof currentEndTime === 'string' ? currentEndTime.replace(/AM|PM/i, '').trim() : '8:00';
+      const [hStr, mStr] = timeClean.includes(':') ? timeClean.split(':') : [timeClean, '00'];
+      let hours = parseInt(hStr || '8', 10);
       let mins = parseInt(mStr || '0', 10);
 
       if (isPM && hours < 12) hours += 12;

@@ -372,11 +372,10 @@ export const ExportReportScreen: React.FC = () => {
                     setTimeframe('month');
                   }
                 }}
-                className={`py-2 px-3 rounded-xl font-black text-[12.5px] flex items-center justify-center gap-2 transition-all border cursor-pointer ${
-                  reportDomain === 'bookings'
+                className={`py-2 px-3 rounded-xl font-black text-[12.5px] flex items-center justify-center gap-2 transition-all border cursor-pointer ${reportDomain === 'bookings'
                     ? 'bg-[#021526] text-white border-[#021526] shadow-sm'
                     : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:text-[#021526]'
-                }`}
+                  }`}
               >
                 <CalendarIcon className={`w-4 h-4 ${reportDomain === 'bookings' ? 'text-[#F94001]' : 'text-[#5F6368]'}`} />
                 <span>Bookings</span>
@@ -388,11 +387,10 @@ export const ExportReportScreen: React.FC = () => {
                   haptics.tap();
                   setReportDomain('revenue');
                 }}
-                className={`py-2 px-3 rounded-xl font-black text-[12.5px] flex items-center justify-center gap-2 transition-all border cursor-pointer ${
-                  reportDomain === 'revenue'
+                className={`py-2 px-3 rounded-xl font-black text-[12.5px] flex items-center justify-center gap-2 transition-all border cursor-pointer ${reportDomain === 'revenue'
                     ? 'bg-[#021526] text-white border-[#021526] shadow-sm'
                     : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:text-[#021526]'
-                }`}
+                  }`}
               >
                 <Wallet className={`w-4 h-4 ${reportDomain === 'revenue' ? 'text-[#F94001]' : 'text-[#5F6368]'}`} />
                 <span>Revenue & Payouts</span>
@@ -415,11 +413,10 @@ export const ExportReportScreen: React.FC = () => {
                         setTimeframe('month');
                       }
                     }}
-                    className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
-                      revenueType === 'booking_payments'
+                    className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${revenueType === 'booking_payments'
                         ? 'bg-[#FFF1EC] text-[#021526] border-2 border-[#F94001] shadow-2xs'
                         : 'bg-[#F3F4F4] border-[#E5E7EB] text-[#021526] hover:bg-white'
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center gap-1.5">
                       <CreditCard className="w-3.5 h-3.5 text-[#F94001]" />
@@ -439,11 +436,10 @@ export const ExportReportScreen: React.FC = () => {
                         setTimeframe('month');
                       }
                     }}
-                    className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
-                      revenueType === 'bank_settlements'
+                    className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${revenueType === 'bank_settlements'
                         ? 'bg-[#FFF1EC] text-[#021526] border-2 border-[#F94001] shadow-2xs'
                         : 'bg-[#F3F4F4] border-[#E5E7EB] text-[#021526] hover:bg-white'
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center gap-1.5">
                       <Building className="w-3.5 h-3.5 text-[#16A34A]" />
@@ -479,11 +475,10 @@ export const ExportReportScreen: React.FC = () => {
                       haptics.tap();
                       setTimeframe('day');
                     }}
-                    className={`py-2 px-3 rounded-xl font-black text-[12px] transition-all border cursor-pointer capitalize text-center ${
-                      timeframe === 'day'
+                    className={`py-2 px-3 rounded-xl font-black text-[12px] transition-all border cursor-pointer capitalize text-center ${timeframe === 'day'
                         ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 shadow-2xs font-black'
                         : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:text-[#021526]'
-                    }`}
+                      }`}
                   >
                     Day
                   </button>
@@ -494,11 +489,10 @@ export const ExportReportScreen: React.FC = () => {
                       haptics.tap();
                       setTimeframe('month');
                     }}
-                    className={`py-2 px-3 rounded-xl font-black text-[12px] transition-all border cursor-pointer capitalize text-center ${
-                      timeframe === 'month'
+                    className={`py-2 px-3 rounded-xl font-black text-[12px] transition-all border cursor-pointer capitalize text-center ${timeframe === 'month'
                         ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 shadow-2xs font-black'
                         : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:text-[#021526]'
-                    }`}
+                      }`}
                   >
                     Monthly
                   </button>
@@ -509,11 +503,10 @@ export const ExportReportScreen: React.FC = () => {
                       haptics.tap();
                       setTimeframe('custom');
                     }}
-                    className={`py-2 px-3 rounded-xl font-black text-[12px] transition-all border cursor-pointer capitalize text-center ${
-                      timeframe === 'custom'
+                    className={`py-2 px-3 rounded-xl font-black text-[12px] transition-all border cursor-pointer capitalize text-center ${timeframe === 'custom'
                         ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 shadow-2xs font-black'
                         : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:text-[#021526]'
-                    }`}
+                      }`}
                   >
                     Custom Range
                   </button>
@@ -526,11 +519,10 @@ export const ExportReportScreen: React.FC = () => {
                       haptics.tap();
                       setTimeframe('month');
                     }}
-                    className={`py-2 px-3 rounded-xl font-black text-[12px] transition-all border cursor-pointer capitalize text-center ${
-                      timeframe === 'month'
+                    className={`py-2 px-3 rounded-xl font-black text-[12px] transition-all border cursor-pointer capitalize text-center ${timeframe === 'month'
                         ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 shadow-2xs font-black'
                         : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:text-[#021526]'
-                    }`}
+                      }`}
                   >
                     Monthly
                   </button>
@@ -542,11 +534,10 @@ export const ExportReportScreen: React.FC = () => {
                       setTimeframe('year');
                       setIsYearPickerOpen(true);
                     }}
-                    className={`py-2 px-3 rounded-xl font-black text-[12px] transition-all border cursor-pointer capitalize text-center ${
-                      timeframe === 'year'
+                    className={`py-2 px-3 rounded-xl font-black text-[12px] transition-all border cursor-pointer capitalize text-center ${timeframe === 'year'
                         ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 shadow-2xs font-black'
                         : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:text-[#021526]'
-                    }`}
+                      }`}
                   >
                     Yearly
                   </button>
@@ -583,11 +574,10 @@ export const ExportReportScreen: React.FC = () => {
                         key={p}
                         type="button"
                         onClick={() => setSelectedDayText(p)}
-                        className={`px-2 py-0.5 rounded-lg text-[10.5px] font-bold border cursor-pointer transition-colors ${
-                          selectedDayText === p
+                        className={`px-2 py-0.5 rounded-lg text-[10.5px] font-bold border cursor-pointer transition-colors ${selectedDayText === p
                             ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 shadow-2xs'
                             : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:text-[#021526]'
-                        }`}
+                          }`}
                       >
                         {p.slice(0, 6)}
                       </button>
@@ -629,11 +619,10 @@ export const ExportReportScreen: React.FC = () => {
                         key={m.value}
                         type="button"
                         onClick={() => setSelectedMonthText(m.value)}
-                        className={`py-1.5 rounded-lg text-[10.5px] font-bold border text-center cursor-pointer transition-colors ${
-                          selectedMonthText === m.value
+                        className={`py-1.5 rounded-lg text-[10.5px] font-bold border text-center cursor-pointer transition-colors ${selectedMonthText === m.value
                             ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 shadow-2xs font-black'
                             : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:text-[#021526]'
-                        }`}
+                          }`}
                       >
                         {m.label}
                       </button>
@@ -686,11 +675,10 @@ export const ExportReportScreen: React.FC = () => {
                           haptics.tap();
                           setSelectedYearText(yr);
                         }}
-                        className={`py-1.5 rounded-lg text-[10.5px] font-bold border text-center cursor-pointer transition-all ${
-                          selectedYearText === yr
+                        className={`py-1.5 rounded-lg text-[10.5px] font-bold border text-center cursor-pointer transition-all ${selectedYearText === yr
                             ? 'bg-[#FFF1EC] text-[#F94001] border border-[#F94001]/40 shadow-2xs font-black'
                             : 'bg-[#F3F4F4] text-[#5F6368] border-[#E5E7EB] hover:text-[#021526] hover:bg-[#F3F4F4]'
-                        }`}
+                          }`}
                       >
                         {yr} {yr === '2026' ? '★' : ''}
                       </button>
@@ -750,11 +738,10 @@ export const ExportReportScreen: React.FC = () => {
                       haptics.tap();
                       setFormat(fmt.id);
                     }}
-                    className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
-                      isSelected
+                    className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${isSelected
                         ? 'bg-[#FFF1EC] text-[#021526] border-2 border-[#F94001] shadow-2xs'
                         : 'bg-[#F3F4F4] border-[#E5E7EB] text-[#021526] hover:bg-white'
-                    }`}
+                      }`}
                   >
                     <Icon className={`w-4 h-4 mx-auto mb-1 ${fmt.color}`} />
                     <span className="text-[11.5px] font-black block">{fmt.label}</span>
@@ -769,11 +756,10 @@ export const ExportReportScreen: React.FC = () => {
             type="button"
             disabled={isExporting || activeRecordCount === 0}
             onClick={handleExport}
-            className={`w-full h-11 rounded-xl font-black text-[13px] flex items-center justify-center gap-2 shadow-sm active-press cursor-pointer transition-all ${
-              activeRecordCount === 0
+            className={`w-full h-11 rounded-xl font-black text-[13px] flex items-center justify-center gap-2 shadow-sm active-press cursor-pointer transition-all ${activeRecordCount === 0
                 ? 'bg-[#E5E7EB] text-[#5F6368] cursor-not-allowed'
                 : 'bg-[#F94001] hover:bg-[#D93600] text-white'
-            }`}
+              }`}
           >
             {isExporting ? (
               <>
@@ -860,8 +846,8 @@ export const ExportReportScreen: React.FC = () => {
                   {reportDomain === 'bookings'
                     ? 'Schedule of verified court bookings'
                     : revenueType === 'booking_payments'
-                    ? 'Customer payment collections ledger'
-                    : 'T+0 direct IMPS bank payout receipts'}
+                      ? 'Customer payment collections ledger'
+                      : 'T+0 direct IMPS bank payout receipts'}
                 </p>
               </div>
 
@@ -1079,8 +1065,8 @@ export const ExportReportScreen: React.FC = () => {
                     customPickingTarget === 'start'
                       ? customStartText
                       : customPickingTarget === 'end'
-                      ? customEndText
-                      : selectedDayText;
+                        ? customEndText
+                        : selectedDayText;
 
                   const isSelected = currentTargetVal === fullDateStr;
 
@@ -1101,11 +1087,10 @@ export const ExportReportScreen: React.FC = () => {
                         }
                         setIsDatePickerOpen(false);
                       }}
-                      className={`py-2 rounded-xl transition-all cursor-pointer text-center ${
-                        isSelected
+                      className={`py-2 rounded-xl transition-all cursor-pointer text-center ${isSelected
                           ? 'bg-[#F94001] text-white font-black shadow-xs'
                           : 'text-[#021526] hover:bg-[#F3F4F4]'
-                      }`}
+                        }`}
                     >
                       {dayNum}
                     </button>
@@ -1223,11 +1208,10 @@ export const ExportReportScreen: React.FC = () => {
                         haptics.tap();
                         setSelectedPickerYear(yr);
                       }}
-                      className={`px-2.5 py-1 rounded-lg text-[10.5px] font-bold border transition-all cursor-pointer ${
-                        selectedPickerYear === yr
+                      className={`px-2.5 py-1 rounded-lg text-[10.5px] font-bold border transition-all cursor-pointer ${selectedPickerYear === yr
                           ? 'bg-[#F94001] text-white border-[#F94001] shadow-2xs'
                           : 'bg-white text-[#5F6368] border-[#E5E7EB] hover:text-[#021526]'
-                      }`}
+                        }`}
                     >
                       {yr} {yr === 2026 ? '(Current)' : ''}
                     </button>
@@ -1251,11 +1235,10 @@ export const ExportReportScreen: React.FC = () => {
                         setSelectedMonthText(monthValue);
                         setIsMonthPickerOpen(false);
                       }}
-                      className={`py-2.5 rounded-xl text-[12.5px] font-black transition-all border cursor-pointer text-center ${
-                        isSelected
+                      className={`py-2.5 rounded-xl text-[12.5px] font-black transition-all border cursor-pointer text-center ${isSelected
                           ? 'bg-[#F94001] text-white border-[#F94001] shadow-sm'
                           : 'bg-[#F3F4F4] text-[#021526] border-[#E5E7EB] hover:bg-[#F3F4F4]'
-                      }`}
+                        }`}
                     >
                       <div className="flex flex-col items-center">
                         <span>{m}</span>
@@ -1279,11 +1262,10 @@ export const ExportReportScreen: React.FC = () => {
                     setSelectedMonthText(`${selectedPickerYear}`);
                     setIsMonthPickerOpen(false);
                   }}
-                  className={`w-full py-2 rounded-xl text-[12px] font-bold border transition-all cursor-pointer ${
-                    selectedMonthText === `${selectedPickerYear}`
+                  className={`w-full py-2 rounded-xl text-[12px] font-bold border transition-all cursor-pointer ${selectedMonthText === `${selectedPickerYear}`
                       ? 'bg-[#F94001] text-white border-[#F94001] shadow-sm'
                       : 'bg-[#F3F4F4] text-[#021526] border-[#E5E7EB] hover:bg-[#F3F4F4]'
-                  }`}
+                    }`}
                 >
                   Full Financial Year {selectedPickerYear} (All Records)
                 </button>
@@ -1382,11 +1364,10 @@ export const ExportReportScreen: React.FC = () => {
                         setSelectedYearText(yr);
                         setIsYearPickerOpen(false);
                       }}
-                      className={`p-2.5 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
-                        isSelected
+                      className={`p-2.5 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between ${isSelected
                           ? 'bg-[#F94001] text-white border-[#F94001] shadow-sm ring-2 ring-[#F94001]/30'
                           : 'bg-[#F3F4F4] text-[#021526] border-[#E5E7EB] hover:bg-[#F3F4F4]'
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center justify-between">
                         <span className="text-[15px] font-black">{yr}</span>
@@ -1401,9 +1382,8 @@ export const ExportReportScreen: React.FC = () => {
                         ) : null}
                       </div>
                       <span
-                        className={`text-[9.5px] font-medium mt-1 ${
-                          isSelected ? 'text-white/80 font-semibold' : 'text-[#5F6368]'
-                        }`}
+                        className={`text-[9.5px] font-medium mt-1 ${isSelected ? 'text-white/80 font-semibold' : 'text-[#5F6368]'
+                          }`}
                       >
                         {fyLabel}
                       </span>
