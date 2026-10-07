@@ -56,7 +56,7 @@ export const LoginScreen: React.FC = () => {
       navigateTo('otp');
     } catch (err: any) {
       setErrorMessage(
-        err.message || 'Mobile number is not approved or registered. Please verify your onboarding status.',
+        err.message || 'Failed to send OTP. Please check your mobile number and try again.',
       );
     } finally {
       setIsLoading(false);
