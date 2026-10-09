@@ -4,7 +4,7 @@ import { ChevronLeft, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
 import { vendorApi } from '../services/api';
 
 export const OtpScreen: React.FC = () => {
-  const { navigateTo, ownerPhone, setVenueDetails, venueName, venueAddress, venueCity } = useApp();
+  const { navigateTo, ownerPhone, setVenueDetails, venueName, venueAddress, venueCity, loadLiveVendorData } = useApp();
   const [otp, setOtp] = useState<string[]>(['', '', '', '', '', '']);
   const [countdown, setCountdown] = useState<number>(30);
   const [activeIdx, setActiveIdx] = useState<number>(0);
@@ -12,7 +12,7 @@ export const OtpScreen: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  const storedPhone = (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('vendor_login_phone')) || ownerPhone || '6369591821';
+  const storedPhone = (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('vendor_login_phone')) || ownerPhone || '';
   const verificationId = (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('vendor_otp_verification_id')) || undefined;
 
   useEffect(() => {
@@ -91,6 +91,8 @@ export const OtpScreen: React.FC = () => {
 
       if (res.token) {
         localStorage.setItem('vendor_auth_token', res.token);
+        localStorage.setItem('userToken', res.token);
+        localStorage.setItem('token', res.token);
       }
 
       if (res.session?.business_details || res.venue_name) {
@@ -100,6 +102,11 @@ export const OtpScreen: React.FC = () => {
           city: venueCity,
           phone: storedPhone,
         });
+      }
+
+      // Synchronize authenticated vendor's live database records
+      if (loadLiveVendorData) {
+        await loadLiveVendorData();
       }
 
       // Navigate straight to main dashboard

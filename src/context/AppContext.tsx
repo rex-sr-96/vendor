@@ -20,20 +20,11 @@ import {
 } from '../types';
 import { vendorApi } from '../services/api';
 import {
-  initialBookings,
-  initialCourts,
-  initialSlots,
-  initialPaymentRecords,
-  initialSettlements,
   initialOperatingHours,
   initialBookingSettings,
   initialPaymentSettings,
-  initialSupportTickets,
-  initialAmenities,
   initialCancellationPolicy,
-  initialStaffMembers,
   initialNotificationPreferences,
-  initialNotifications,
 } from '../data/mockData';
 
 interface AppContextType {
@@ -143,6 +134,9 @@ interface AppContextType {
   isPhoneFrame: boolean;
   setIsPhoneFrame: (val: boolean | ((prev: boolean) => boolean)) => void;
 
+  // Live vendor data loader
+  loadLiveVendorData: () => Promise<void>;
+
   // Auth / Venue setup simulation
   ownerName: string;
   venueName: string;
@@ -159,16 +153,123 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [activeTab, setActiveTab] = useState<BottomNavTab>('home');
   const [screenHistory, setScreenHistory] = useState<ScreenType[]>(['splash']);
 
-  const [bookings, setBookings] = useState<Booking[]>(initialBookings);
-  const [courts, setCourts] = useState<Court[]>(initialCourts);
-  const [slots, setSlots] = useState<Slot[]>(initialSlots);
-  const [payments, setPayments] = useState<PaymentRecord[]>(initialPaymentRecords);
-  const [settlements, setSettlements] = useState<SettlementRecord[]>(initialSettlements);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [courts, setCourts] = useState<Court[]>([]);
+  const [slots, setSlots] = useState<Slot[]>([]);
+  const [payments, setPayments] = useState<PaymentRecord[]>([]);
+  const [settlements, setSettlements] = useState<SettlementRecord[]>([]);
   const [operatingHours, setOperatingHours] = useState<OperatingHourDay[]>(initialOperatingHours);
   const [bookingSettings, setBookingSettings] = useState<BookingSettingsConfig>(initialBookingSettings);
   const [paymentSettings, setPaymentSettings] = useState<PaymentSettingsConfig>(initialPaymentSettings);
-  const [supportTickets, setSupportTickets] = useState<SupportTicket[]>(initialSupportTickets);
-  const [amenities, setAmenities] = useState<AmenityItem[]>(initialAmenities);
+  const [supportTickets, setSupportTickets] = useState<SupportTicket[]>([]);
+  const [amenities, setAmenities] = useState<AmenityItem[]>([]);
+
+  // Venue & Owner Info (Dynamic from live authenticated backend only)
+  const [venueName, setVenueName] = useState<string>('');
+  const [venueAddress, setVenueAddress] = useState<string>('');
+  const [venueCity, setVenueCity] = useState<string>('');
+  const [ownerPhone, setOwnerPhone] = useState<string>('');
+  const [ownerName, setOwnerName] = useState<string>('');
+
+  const loadLiveVendorData = async () => {
+    try {
+      const token =
+        typeof window !== 'undefined'
+          ? localStorage.getItem('vendor_auth_token') ||
+            localStorage.getItem('userToken') ||
+            localStorage.getItem('token') ||
+            localStorage.getItem('turftown_token')
+          : null;
+      if (!token) return;
+
+      // 1. Fetch live Profile
+      try {
+        const profile = await vendorApi.getMyProfile();
+        if (profile) {
+          const vName =
+            profile.business_details?.venue_name ||
+            profile.venue_name ||
+            profile.venue?.venue_name ||
+            '';
+          if (vName) setVenueName(vName);
+
+          const vAddr =
+            profile.business_details?.venue_address ||
+            profile.venue_address ||
+            profile.venue?.venue_address ||
+            '';
+          if (vAddr) setVenueAddress(vAddr);
+
+          const vCity =
+            profile.partner_details?.district ||
+            profile.partner_details?.state ||
+            profile.venue?.city ||
+            '';
+          if (vCity) setVenueCity(vCity);
+
+          const phone =
+            profile.mobile_number ||
+            profile.partner_details?.mobile_number ||
+            profile.owner?.mobile ||
+            '';
+          if (phone) setOwnerPhone(phone);
+
+          const name =
+            profile.partner_details?.name ||
+            profile.partner_name ||
+            profile.owner?.name ||
+            '';
+          if (name) setOwnerName(name);
+        }
+      } catch (e) {}
+
+      // 2. Fetch live Courts
+      try {
+        const courtsRes = await vendorApi.getMyCourts();
+        if (Array.isArray(courtsRes)) {
+          setCourts(courtsRes);
+        }
+      } catch (e) {}
+
+      // 3. Fetch live Bookings (isolated strictly to authenticated vendor)
+      try {
+        const bookingsRes = await vendorApi.getMyBookings();
+        if (Array.isArray(bookingsRes)) {
+          setBookings(bookingsRes);
+        }
+      } catch (e) {}
+
+      // 4. Fetch live Staff
+      try {
+        const staffRes = await vendorApi.getMyStaff();
+        if (Array.isArray(staffRes)) {
+          setStaffMembers(staffRes);
+        }
+      } catch (e) {}
+
+      // 5. Fetch live Slots
+      try {
+        const slotsRes = await vendorApi.getMySlots();
+        if (Array.isArray(slotsRes)) {
+          setSlots(slotsRes);
+        }
+      } catch (e) {}
+
+      // 6. Fetch live Settlements
+      try {
+        const settlementsRes = await vendorApi.getMySettlements();
+        if (Array.isArray(settlementsRes)) {
+          setSettlements(settlementsRes);
+        }
+      } catch (e) {}
+    } catch (err) {
+      console.warn('[AppContext] Live vendor sync error:', err);
+    }
+  };
+
+  useEffect(() => {
+    loadLiveVendorData();
+  }, []);
 
   useEffect(() => {
     async function loadAdminAmenities() {
@@ -177,40 +278,36 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         if (res.ok) {
           const adminAmns = await res.json();
           if (Array.isArray(adminAmns) && adminAmns.length > 0) {
-            setAmenities((prev) =>
-              adminAmns.map((a: any) => {
-                const existing = prev.find(
-                  (p) => p.id === a.amenity_id || p.name.toLowerCase() === a.name.toLowerCase()
-                );
-                return {
-                  id: a.amenity_id,
-                  name: a.name,
-                  category: a.category || 'Facility',
-                  enabled: existing ? existing.enabled : true,
-                  price: existing ? existing.price || 0 : a.amenity_id === 'AMN_GEAR' ? 100 : 0,
-                  description: existing?.description || `Standard venue amenity: ${a.name}`,
-                  iconName: a.icon || 'Sparkles',
-                  icon: a.icon || 'Sparkles',
-                  details: existing?.details || `${a.category || 'Facility'} standard amenity`,
-                };
-              })
+            setAmenities(
+              adminAmns.map((a: any) => ({
+                id: a.amenity_id,
+                name: a.name,
+                category: a.category || 'Facility',
+                enabled: true,
+                price: a.amenity_id === 'AMN_GEAR' ? 100 : 0,
+                description: `Standard venue amenity: ${a.name}`,
+                iconName: a.icon || 'Sparkles',
+                icon: a.icon || 'Sparkles',
+                details: `${a.category || 'Facility'} standard amenity`,
+              }))
             );
           }
         }
       } catch (err) {
-        // Fallback to initialAmenities
+        // Empty if not reachable
       }
     }
     loadAdminAmenities();
   }, []);
+
   const [cancellationPolicy, setCancellationPolicy] = useState<CancellationPolicyConfig>(initialCancellationPolicy);
-  const [staffMembers, setStaffMembers] = useState<StaffMember[]>(initialStaffMembers);
+  const [staffMembers, setStaffMembers] = useState<StaffMember[]>([]);
   const [notificationPreferences, setNotificationPreferences] = useState<NotificationPreferencesConfig>(initialNotificationPreferences);
-  const [notifications, setNotifications] = useState<NotificationItem[]>(initialNotifications);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
 
   const unreadNotifCount = notifications.filter((n) => !n.read).length;
 
-  const [selectedBookingId, setSelectedBookingId] = useState<string | null>('BK10231');
+  const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
   
   const [activeModal, setActiveModal] = useState<
@@ -220,12 +317,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const [isPhoneFrame, setIsPhoneFrame] = useState<boolean>(true);
 
-  // Venue Info
-  const [venueName, setVenueName] = useState<string>('TurfTown Arena');
-  const [venueAddress, setVenueAddress] = useState<string>('12/4 Outer Ring Road, Koramangala');
-  const [venueCity, setVenueCity] = useState<string>('Bengaluru');
-  const [ownerPhone, setOwnerPhone] = useState<string>('9876543210');
-  const ownerName = 'Kavin S.';
+
 
   const selectedBooking = bookings.find((b) => b.id === selectedBookingId);
   const selectedSlot = slots.find((s) => s.id === selectedSlotId);
@@ -786,6 +878,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         venueCity,
         ownerPhone,
         setVenueDetails,
+        loadLiveVendorData,
       }}
     >
       {children}

@@ -24,23 +24,27 @@ export const QRPaymentSheet: React.FC = () => {
 
   if (activeModal !== 'qr_payment' || !selectedBooking) return null;
 
-  const balance = selectedBooking.balanceAmount || selectedBooking.totalAmount;
-  const fin = calculateBookingFinancials(balance);
-  const payableAmount = fin.totalCustomerPayable || balance;
+  const isRemainingDue = selectedBooking.paidAmount > 0 && selectedBooking.balanceAmount > 0;
+  const payableAmount = isRemainingDue 
+    ? selectedBooking.balanceAmount 
+    : (selectedBooking.balanceAmount || selectedBooking.totalAmount || 0);
 
-  // Resolve Real Payee UPI ID
+  const fin = calculateBookingFinancials(selectedBooking.totalAmount || payableAmount);
+
+  // Resolve Real Payee UPI ID (without extra spaces or bad characters)
   const rawUpiId = (
     paymentSettings?.upiId ||
     '9600309604@okaxis'
   ).trim();
 
-  // Resolve Business/Venue Name for Payee
-  const payeeName = 'iBookSports Arena';
+  // Resolve Business/Venue Name for Payee (alphanumeric for safe scanner intent)
+  const payeeName = 'iBookSports';
 
   const bookingCode = selectedBooking.id.startsWith('BK-') ? selectedBooking.id : `BK-${selectedBooking.id}`;
 
-  // Standard NPCI UPI URI Specification (100% compatible with GPay, PhonePe, Paytm, BHIM, CRED)
-  const upiPayloadUri = `upi://pay?pa=${encodeURIComponent(rawUpiId)}&pn=${encodeURIComponent(payeeName)}&am=${payableAmount.toFixed(2)}&cu=INR&tn=${encodeURIComponent(`Booking ${bookingCode}`)}&tr=${encodeURIComponent(`${bookingCode.replace(/[^A-Za-z0-9]/g, '')}_${Date.now()}`)}`;
+  // Standard Universal NPCI UPI URI Specification (100% compatible with GPay, PhonePe, Paytm, BHIM, CRED, Amazon Pay, Any Bank App)
+  // Crucial: pa should NOT encode '@' (pa=user@bank), no 'tr' parameter (which fails for P2P/standard VPAs on GPay/PhonePe)
+  const upiPayloadUri = `upi://pay?pa=${rawUpiId}&pn=${encodeURIComponent(payeeName)}&am=${payableAmount.toFixed(2)}&cu=INR&tn=${encodeURIComponent(`Booking ${bookingCode}`)}`;
 
   // Generate Real High-Resolution QR Code
   useEffect(() => {
@@ -142,20 +146,41 @@ export const QRPaymentSheet: React.FC = () => {
             <div className="text-center py-2 space-y-3">
               {/* Financial Breakdown Card */}
               <div className="bg-[#F8FAFC] p-3 rounded-2xl border border-[#E2E8F0] text-[12px] space-y-1.5 text-left">
-                <div className="flex justify-between text-[#64748B]">
-                  <span>Court / Slot Due:</span>
-                  <strong className="text-[#021526]">₹{fin.courtTotal.toLocaleString('en-IN')}</strong>
-                </div>
-                <div className="flex justify-between text-[#64748B]">
-                  <span>Convenience Fee (5% + 18% GST):</span>
-                  <strong className="text-[#021526]">₹{fin.totalConvenienceWithGst.toLocaleString('en-IN')}</strong>
-                </div>
-                <div className="flex justify-between items-baseline pt-1.5 border-t border-[#E2E8F0] font-bold text-[#021526]">
-                  <span>Total Amount:</span>
-                  <span className="text-[18px] font-black text-[#021526]">
-                    ₹{payableAmount.toLocaleString('en-IN')}
-                  </span>
-                </div>
+                {isRemainingDue ? (
+                  <>
+                    <div className="flex justify-between text-[#64748B]">
+                      <span>Total Court Price:</span>
+                      <strong className="text-[#021526]">₹{fin.courtTotal.toLocaleString('en-IN')}</strong>
+                    </div>
+                    <div className="flex justify-between text-[#16A34A] font-semibold">
+                      <span>Advance Already Paid:</span>
+                      <span>-₹{selectedBooking.paidAmount.toLocaleString('en-IN')}</span>
+                    </div>
+                    <div className="flex justify-between items-baseline pt-1.5 border-t border-[#E2E8F0] font-bold text-[#021526]">
+                      <span className="text-[#B87C0D]">Remaining Balance Due:</span>
+                      <span className="text-[18px] font-black text-[#B87C0D]">
+                        ₹{payableAmount.toLocaleString('en-IN')}
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex justify-between text-[#64748B]">
+                      <span>Court Total (Venue):</span>
+                      <strong className="text-[#021526]">₹{fin.courtTotal.toLocaleString('en-IN')}</strong>
+                    </div>
+                    <div className="flex justify-between text-[#64748B]">
+                      <span>Platform Fee (5% + 18% GST):</span>
+                      <strong className="text-[#B87C0D]">+₹{fin.totalConvenienceWithGst.toLocaleString('en-IN')}</strong>
+                    </div>
+                    <div className="flex justify-between items-baseline pt-1.5 border-t border-[#E2E8F0] font-bold text-[#021526]">
+                      <span>Total Amount Payable:</span>
+                      <span className="text-[18px] font-black text-[#021526]">
+                        ₹{payableAmount.toLocaleString('en-IN')}
+                      </span>
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* Real Scannable QR Code Canvas */}

@@ -25,7 +25,7 @@ const extract10DigitPhone = (raw: string): string => {
 
 export const LoginScreen: React.FC = () => {
   const { navigateTo, ownerPhone, setVenueDetails, venueName, venueAddress, venueCity } = useApp();
-  const [phoneNumber, setPhoneNumber] = useState(() => extract10DigitPhone(ownerPhone || '6369591821'));
+  const [phoneNumber, setPhoneNumber] = useState(() => extract10DigitPhone(ownerPhone || ''));
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 

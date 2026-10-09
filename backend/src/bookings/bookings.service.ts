@@ -51,13 +51,12 @@ export class BookingsService {
       process.env.PAYEE_VPA ||
       process.env.UPI_ID ||
       paymentSettings?.upiId ||
-      'ibooksports@icici';
-
-    const encodedPa = encodeURIComponent(payeeVpa);
+      'ibooksports@upi';
+    const rawPa = payeeVpa.trim();
     const encodedPn = encodeURIComponent(venueName);
     const note = `Payment for ${bookingNumber}`;
     const encodedTn = encodeURIComponent(note);
-    const upiUri = `upi://pay?pa=${encodedPa}&pn=${encodedPn}&am=${finalAmount}&cu=INR&tn=${encodedTn}`;
+    const upiUri = `upi://pay?pa=${rawPa}&pn=${encodedPn}&am=${Number(finalAmount).toFixed(2)}&cu=INR&tn=${encodedTn}`;
 
     let qrCodeDataUrl: string;
     try {

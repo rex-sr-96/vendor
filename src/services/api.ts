@@ -88,10 +88,12 @@ export const vendorApi = {
     if (!response.ok || data.success === false) {
       throw new Error(data.message || data.error || 'Invalid OTP. Please try again.');
     }
-    if (data.token && typeof window !== 'undefined') {
-      localStorage.setItem('userToken', data.token);
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('turftown_token', data.token);
+    const token = data.accessToken || data.token;
+    if (token && typeof window !== 'undefined') {
+      localStorage.setItem('userToken', token);
+      localStorage.setItem('token', token);
+      localStorage.setItem('turftown_token', token);
+      localStorage.setItem('vendor_auth_token', token);
     }
     return data;
   },
@@ -130,6 +132,15 @@ export const vendorApi = {
       headers: getAuthHeaders(),
     });
     if (!response.ok) throw new Error('Failed to fetch staff.');
+    return response.json();
+  },
+
+  async getMySettlements() {
+    const response = await fetch(`${API_BASE_URL}/vendor/settlements`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    if (!response.ok) return [];
     return response.json();
   },
 
